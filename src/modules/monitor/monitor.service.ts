@@ -13,12 +13,21 @@ export class MonitorService {
 async checkOfflineDevices() {
   this.logger.log('cron rodou');
 
-  const minutesOffline = 1;
+  const minutesOffline = 5; // em produção: 5 minutos
   const cutoff = new Date(Date.now() - minutesOffline * 60 * 1000);
 
-  const offline = await this.prisma.device.findMany({
+  // Buscar devices que passaram do cutoff e ainda não foram marcados como offline
+  const offlineCandidates = await this.prisma.device.findMany({
     where: {
-      OR: [{ lastSeen: null }, { lastSeen: { lt: cutoff } }],
+      AND: [
+        { isOffline: false }, // só devices que ainda estão marcados como online
+        {
+          OR: [
+            { lastSeen: null },
+            { lastSeen: { lt: cutoff } }
+          ]
+        }
+      ]
     },
   });
 
@@ -26,15 +35,27 @@ async checkOfflineDevices() {
 
   this.logger.log(
     `devices: ${allDevices
-      .map((d) => `${d.id} lastSeen=${d.lastSeen ? d.lastSeen.toISOString() : 'null'}`)
+      .map((d) => `${d.id} lastSeen=${d.lastSeen ? d.lastSeen.toISOString() : 'null'} isOffline=${d.isOffline}`)
       .join(' | ')}`,
   );
 
   this.logger.log(`cutoff=${cutoff.toISOString()}`);
-  this.logger.log(`offlineFound=${offline.length}`);
+  this.logger.log(`offlineCandidates=${offlineCandidates.length}`);
 
-  if (offline.length > 0) {
-    this.logger.warn(`Devices offline: ${offline.map((d) => d.id).join(', ')}`);
+  // Para cada device offline, marcar como offline e alertar (apenas 1x por transição)
+  for (const device of offlineCandidates) {
+    await this.prisma.device.update({
+      where: { id: device.id },
+      data: {
+        isOffline: true,
+        offlineSince: new Date(),
+        lastAlertAt: new Date(),
+      },
+    });
+
+    this.logger.warn(`Device ${device.id} ficou OFFLINE!`);
+
+    // TODO: implementar webhook n8n quando N8N_OFFLINE_WEBHOOK_URL estiver configurado
   }
 }
 }
