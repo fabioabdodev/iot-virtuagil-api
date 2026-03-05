@@ -1,10 +1,18 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { IotModule } from './iot/iot.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { IngestModule } from './modules/ingest/ingest.module';
+import { MonitorModule } from './modules/monitor/monitor.module';
 
 @Module({
-  imports: [IotModule],
+  imports: [
+    ScheduleModule.forRoot(),
+    PrismaModule,
+    IngestModule,
+    MonitorModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
