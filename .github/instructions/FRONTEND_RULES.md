@@ -11,6 +11,9 @@ O frontend do sistema deve ser desenvolvido em:
 - TypeScript
 - Tailwind CSS
 - shadcn/ui
+- lucide icons
+
+**atenção** caso tenha outras bibliotecas UI e outras de desenvolvimento que você queria usar, pode aplicar. Apenas me avise.
 
 Objetivo do frontend:
 
