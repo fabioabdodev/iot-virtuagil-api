@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  output: 'standalone',
   outputFileTracingRoot: path.join(process.cwd(), '../..'),
 };
 

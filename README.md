@@ -170,6 +170,65 @@ Pipeline GitHub Actions em `.github/workflows/ci.yml`:
 - testes unitários
 - testes e2e
 
+## Deploy (Swarm + Traefik + Cloudflare)
+
+Arquivos adicionados:
+
+- `deploy/swarm/stack.prod.yml`
+- `deploy/swarm/.env.prod.example`
+- `.github/workflows/deploy.yml`
+- `apps/web/Dockerfile`
+
+### 1. Preparar VPS (uma vez)
+
+1. Garantir Docker Swarm ativo no manager.
+2. Garantir rede externa do Traefik:
+
+```bash
+docker network create --driver overlay --attachable traefik-public
+```
+
+3. Criar pasta de deploy:
+
+```bash
+mkdir -p /opt/iot-freezer-api/deploy/swarm
+```
+
+4. Criar `/opt/iot-freezer-api/.env.prod` com base em `deploy/swarm/.env.prod.example`.
+
+### 2. Segredos do GitHub Actions
+
+Configurar em `Settings > Secrets and variables > Actions`:
+
+- `VPS_HOST`
+- `VPS_PORT`
+- `VPS_USER`
+- `VPS_SSH_KEY`
+- `GHCR_USERNAME`
+- `GHCR_TOKEN` (PAT com `read:packages`; se for publicar por outro usuário, incluir `write:packages`)
+
+### 3. DNS no Cloudflare
+
+Criar registros proxied:
+
+- `monitor.virtuagil.com.br` -> IP da VPS
+- `api-monitor.virtuagil.com.br` -> IP da VPS
+
+SSL/TLS recomendado:
+
+- Cloudflare: `Full (strict)`
+- Traefik com `certresolver=cloudflare` (já definido nas labels do stack)
+
+### 4. Deploy
+
+Push na branch `main` (ou `workflow_dispatch`) dispara:
+
+1. Build + push de imagens para GHCR:
+   - `ghcr.io/fabioabdodev/iot-freezer-api/api:latest`
+   - `ghcr.io/fabioabdodev/iot-freezer-api/web:latest`
+2. Cópia do `stack.prod.yml` para VPS.
+3. `docker stack deploy` no Swarm.
+
 ## Variáveis de ambiente (resumo)
 
 - `PORT`
