@@ -22,7 +22,7 @@ services:
       ALERT_QUEUE_RETRY_DELAY_MS: ${ALERT_QUEUE_RETRY_DELAY_MS:-1000}
     networks:
       - internal
-      - traefik-public
+      - network_public
     deploy:
       replicas: 1
       restart_policy:
@@ -32,7 +32,7 @@ services:
         order: start-first
       labels:
         - traefik.enable=true
-        - traefik.docker.network=traefik-public
+        - traefik.docker.network=network_public
         - traefik.http.routers.iot-api.rule=Host(`api-monitor.virtuagil.com.br`)
         - traefik.http.routers.iot-api.entrypoints=websecure
         - traefik.http.routers.iot-api.tls=true
@@ -47,7 +47,7 @@ services:
       NEXT_PUBLIC_API_BASE_URL: https://api-monitor.virtuagil.com.br
     networks:
       - internal
-      - traefik-public
+      - network_public
     deploy:
       replicas: 1
       restart_policy:
@@ -57,7 +57,7 @@ services:
         order: start-first
       labels:
         - traefik.enable=true
-        - traefik.docker.network=traefik-public
+        - traefik.docker.network=network_public
         - traefik.http.routers.iot-web.rule=Host(`monitor.virtuagil.com.br`)
         - traefik.http.routers.iot-web.entrypoints=websecure
         - traefik.http.routers.iot-web.tls=true
@@ -65,7 +65,7 @@ services:
         - traefik.http.services.iot-web.loadbalancer.server.port=3000
 
 networks:
-  traefik-public:
+  network_public:
     external: true
   internal:
     driver: overlay
