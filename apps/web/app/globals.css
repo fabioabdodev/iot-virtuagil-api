@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 224 43% 7%;
+  --card: 222 36% 11%;
+  --ink: 210 40% 96%;
+  --muted: 215 14% 67%;
+  --line: 221 26% 23%;
+  --ok: 152 64% 46%;
+  --bad: 0 80% 63%;
+  --accent: 196 86% 56%;
+}
+
+* {
+  border-color: hsl(var(--line));
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  color: hsl(var(--ink));
+  background:
+    radial-gradient(
+      circle at 12% 18%,
+      rgba(35, 210, 255, 0.16),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 88% 10%,
+      rgba(69, 145, 255, 0.14),
+      transparent 34%
+    ),
+    linear-gradient(180deg, #05070d 0%, #0a1020 100%);
+}
+
+.glass {
+  background: color-mix(in srgb, hsl(var(--card)) 92%, #000 8%);
+  backdrop-filter: blur(10px);
+}

@@ -69,6 +69,8 @@ prisma/*.db-journal
 # next / frontend
 .next/
 out/
+apps/web/node_modules/
+apps/web/.next/
 
 # misc local files
 *.local
