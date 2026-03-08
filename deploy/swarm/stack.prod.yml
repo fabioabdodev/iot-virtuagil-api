@@ -36,11 +36,12 @@ services:
         - traefik.http.routers.iot-api.rule=Host(`api-monitor.virtuagil.com.br`)
         - traefik.http.routers.iot-api.entrypoints=websecure
         - traefik.http.routers.iot-api.tls=true
-        - traefik.http.routers.iot-api.tls.certresolver=cloudflare
+        - traefik.http.routers.iot-api.tls.certresolver=letsencryptresolver
         - traefik.http.services.iot-api.loadbalancer.server.port=3000
 
   web:
     image: ghcr.io/fabioabdodev/iot-freezer-api/web:latest
+    command: ["node", "/app/app/server.js"]
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -61,7 +62,7 @@ services:
         - traefik.http.routers.iot-web.rule=Host(`monitor.virtuagil.com.br`)
         - traefik.http.routers.iot-web.entrypoints=websecure
         - traefik.http.routers.iot-web.tls=true
-        - traefik.http.routers.iot-web.tls.certresolver=cloudflare
+        - traefik.http.routers.iot-web.tls.certresolver=letsencryptresolver
         - traefik.http.services.iot-web.loadbalancer.server.port=3000
 
 networks:
