@@ -5,12 +5,14 @@
 :root {
   --bg: 224 43% 7%;
   --card: 222 36% 11%;
+  --card-strong: 221 41% 9%;
   --ink: 210 40% 96%;
   --muted: 215 14% 67%;
   --line: 221 26% 23%;
   --ok: 152 64% 46%;
   --bad: 0 80% 63%;
   --accent: 196 86% 56%;
+  --accent-2: 42 96% 61%;
 }
 
 * {
@@ -26,6 +28,11 @@ body {
   color: hsl(var(--ink));
   background:
     radial-gradient(
+      circle at 50% 0%,
+      rgba(255, 213, 74, 0.08),
+      transparent 24%
+    ),
+    radial-gradient(
       circle at 12% 18%,
       rgba(35, 210, 255, 0.16),
       transparent 38%
@@ -35,10 +42,85 @@ body {
       rgba(69, 145, 255, 0.14),
       transparent 34%
     ),
-    linear-gradient(180deg, #05070d 0%, #0a1020 100%);
+    linear-gradient(180deg, #05070d 0%, #091120 52%, #08101b 100%);
+  background-attachment: fixed;
 }
 
 .glass {
   background: color-mix(in srgb, hsl(var(--card)) 92%, #000 8%);
   backdrop-filter: blur(10px);
+}
+
+::selection {
+  background: rgba(58, 201, 255, 0.25);
+}
+
+@layer components {
+  .shell {
+    @apply relative overflow-hidden rounded-[28px] border border-line/70 bg-card/65 shadow-lift backdrop-blur-xl;
+  }
+
+  .panel {
+    @apply rounded-[24px] border border-line/70 bg-card/60 shadow-lift backdrop-blur-xl;
+  }
+
+  .panel-strong {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, hsl(var(--card-strong)) 92%, #000 8%),
+        color-mix(in srgb, hsl(var(--card)) 88%, #000 12%)
+      );
+    @apply rounded-[28px] border border-line/70 shadow-lift backdrop-blur-xl;
+  }
+
+  .field {
+    @apply w-full rounded-2xl border border-line/70 bg-bg/40 px-4 py-3 text-sm text-ink outline-none transition focus:border-accent focus:bg-card/80;
+  }
+
+  .field::placeholder {
+    color: hsl(var(--muted));
+  }
+
+  .btn-primary {
+    background:
+      linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent-2)) 100%);
+    @apply inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-2xl border border-line/70 bg-card/70 px-4 py-3 text-sm font-semibold text-ink transition hover:border-accent/40 hover:bg-card;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-2xl border border-bad/40 bg-bad/10 px-4 py-3 text-sm font-semibold text-bad transition hover:bg-bad/20;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-line/70 bg-card/70 px-3 py-1.5 text-xs text-muted;
+  }
+
+  .metric-card {
+    @apply panel relative overflow-hidden p-5;
+  }
+
+  .data-table {
+    @apply min-w-full text-sm;
+  }
+
+  .data-table thead tr {
+    @apply text-left text-xs uppercase tracking-[0.18em] text-muted;
+  }
+
+  .data-table th {
+    @apply px-4 py-3 font-medium;
+  }
+
+  .data-table tbody tr {
+    @apply border-t border-line/60;
+  }
+
+  .data-table td {
+    @apply px-4 py-3 align-middle;
+  }
 }

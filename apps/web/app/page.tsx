@@ -1,11 +1,17 @@
 'use client';
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Activity,
   AlertTriangle,
+  ArrowRight,
+  Boxes,
+  ChartNoAxesCombined,
+  CircleDot,
   KeyRound,
+  RefreshCw,
   Snowflake,
   Thermometer,
 } from 'lucide-react';
@@ -15,6 +21,14 @@ import Image from 'next/image';
 import { DeviceForm } from '@/components/device-form';
 import { DeviceHistoryPanel } from '@/components/device-history-panel';
 import { AlertRulesPanel } from '@/components/alert-rules-panel';
+import { SimulationLabPanel } from '@/components/simulation-lab-panel';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
+import { Feedback } from '@/components/ui/feedback';
+import { Input } from '@/components/ui/input';
+import { MetricCard } from '@/components/ui/metric-card';
+import { Panel } from '@/components/ui/panel';
 import { useDeviceMutations } from '@/hooks/use-device-mutations';
 import { useDevices } from '@/hooks/use-devices';
 
@@ -30,7 +44,9 @@ export default function DashboardPage() {
   return (
     <Suspense
       fallback={
-        <main className="mx-auto max-w-6xl px-4 py-8">Carregando...</main>
+        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          Carregando...
+        </main>
       }
     >
       <DashboardContent />
@@ -42,6 +58,7 @@ function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // O filtro principal vive na URL para facilitar refresh e compartilhamento do estado atual.
   const queryClientId = searchParams.get('clientId') ?? '';
 
   const [clientIdDraft, setClientIdDraft] = useState(queryClientId);
@@ -54,15 +71,18 @@ function DashboardContent() {
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Mantem o campo de filtro sincronizado quando a URL muda por navegacao ou refresh.
     setClientIdDraft(queryClientId);
   }, [queryClientId]);
 
   useEffect(() => {
+    // O token fica apenas no navegador para evitar expor isso em query string ou no servidor.
     const savedToken = window.localStorage.getItem(TOKEN_STORAGE_KEY) ?? '';
     setAuthToken(savedToken);
     setAuthTokenDraft(savedToken);
   }, []);
 
+  // String vazia nao deve ser enviada para a API como clientId valido.
   const clientId = useMemo(
     () => queryClientId.trim() || undefined,
     [queryClientId],
@@ -83,6 +103,7 @@ function DashboardContent() {
     authToken,
   );
 
+  // Os cards superiores sao derivados localmente para evitar roundtrip extra na API.
   const online = devices.filter((d) => !d.isOffline).length;
   const offline = devices.filter((d) => d.isOffline).length;
 
@@ -101,6 +122,7 @@ function DashboardContent() {
   }
 
   function saveToken() {
+    // Ao salvar, ja refazemos a busca para refletir o novo contexto de autorizacao.
     const nextToken = authTokenDraft.trim();
     window.localStorage.setItem(TOKEN_STORAGE_KEY, nextToken);
     setAuthToken(nextToken);
@@ -115,6 +137,7 @@ function DashboardContent() {
   }
 
   async function handleDeleteDevice(id: string) {
+    // A remocao afeta selecao e formulario; por isso limpamos os estados relacionados.
     const confirmed = window.confirm(
       `Tem certeza que deseja remover o device ${id}?`,
     );
@@ -130,134 +153,188 @@ function DashboardContent() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <section className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="glass rounded-2xl border px-3 py-2">
-            <Image
-              src="/brand/virtuagil_logo_low.png"
-              alt="Virtuagil"
-              width={146}
-              height={42}
-              priority
-            />
-          </div>
-          <div>
-            <p className="text-sm text-muted">Plataforma de monitoramento</p>
-            <h1 className="text-xl font-semibold tracking-tight">
-              Dashboard de Dispositivos
-            </h1>
-          </div>
-        </div>
-
-        <div className="glass flex w-full flex-col gap-3 rounded-2xl border p-3 lg:w-auto lg:min-w-[420px]">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <input
-              value={clientIdDraft}
-              onChange={(event) => setClientIdDraft(event.target.value)}
-              placeholder="Filtrar por clientId"
-              className="w-full rounded-lg border border-line bg-card/70 px-3 py-2 text-sm outline-none focus:border-accent"
-            />
-            <button
-              onClick={applyFilters}
-              className="rounded-lg border border-line bg-card/80 px-3 py-2 text-sm font-medium hover:bg-card"
-            >
-              Aplicar
-            </button>
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <div className="relative w-full">
-              <KeyRound className="pointer-events-none absolute left-2 top-2.5 h-4 w-4 text-muted" />
-              <input
-                type="password"
-                value={authTokenDraft}
-                onChange={(event) => setAuthTokenDraft(event.target.value)}
-                placeholder="Token (opcional)"
-                className="w-full rounded-lg border border-line bg-card/70 py-2 pl-8 pr-3 text-sm outline-none focus:border-accent"
-              />
+    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <Panel variant="shell" className="mb-6 grid gap-6 p-5 lg:grid-cols-[1.35fr_0.95fr] lg:p-7">
+        <div className="relative overflow-hidden rounded-[24px] border border-line/50 bg-gradient-to-br from-card/90 via-card/70 to-bg/20 p-6">
+          <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_top,rgba(255,208,77,0.14),transparent_42%),radial-gradient(circle_at_bottom,rgba(49,189,255,0.18),transparent_45%)]" />
+          <div className="relative z-10">
+            <div className="mb-5 flex flex-wrap items-center gap-4">
+              <div className="glass rounded-2xl border px-3 py-2">
+                <Image
+                  src="/brand/virtuagil_logo_low.png"
+                  alt="Virtuagil"
+                  width={146}
+                  height={42}
+                  priority
+                />
+              </div>
+              <Badge>
+                <CircleDot className="h-3.5 w-3.5 text-ok" />
+                Operacao em tempo real
+              </Badge>
             </div>
-            <button
-              onClick={saveToken}
-              className="rounded-lg border border-line bg-card/80 px-3 py-2 text-sm font-medium hover:bg-card"
-            >
-              Salvar token
-            </button>
-            <button
-              onClick={clearToken}
-              className="rounded-lg border border-line bg-card/80 px-3 py-2 text-sm font-medium hover:bg-card"
-            >
-              Limpar
-            </button>
+
+            <p className="mb-3 text-sm uppercase tracking-[0.22em] text-muted">
+              Plataforma de monitoramento
+            </p>
+            <h1 className="max-w-2xl font-[var(--font-display)] text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+              Dashboard de dispositivos com telemetria, alertas e historico
+              operacional em uma unica camada.
+            </h1>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-muted sm:text-base">
+              Use o simulador para movimentar os dados, filtre por tenant e
+              acompanhe rapidamente leituras fora de faixa e devices sem
+              comunicacao.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Badge>
+                <Boxes className="h-3.5 w-3.5 text-accent" />
+                {devices.length} devices rastreados
+              </Badge>
+              <Badge>
+                <ChartNoAxesCombined className="h-3.5 w-3.5 text-[hsl(var(--accent-2))]" />
+                Historico e tendencia
+              </Badge>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/lab" className="btn-secondary px-4 py-3 text-sm font-semibold">
+                Abrir laboratorio
+              </Link>
+            </div>
           </div>
         </div>
+
+        <Panel variant="strong" className="p-4 sm:p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-muted">
+                Contexto de acesso
+              </p>
+              <h2 className="mt-1 text-lg font-semibold">Filtros e token</h2>
+            </div>
+            <Badge>
+              <KeyRound className="h-3.5 w-3.5 text-accent" />
+              Sessao local
+            </Badge>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Input
+                value={clientIdDraft}
+                onChange={(event) => setClientIdDraft(event.target.value)}
+                placeholder="Filtrar por clientId"
+              />
+              <Button onClick={applyFilters} variant="primary" className="min-w-[120px]">
+                Aplicar
+              </Button>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="relative w-full">
+                <KeyRound className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                <Input
+                  type="password"
+                  value={authTokenDraft}
+                  onChange={(event) => setAuthTokenDraft(event.target.value)}
+                  placeholder="Token (opcional)"
+                  className="pl-11"
+                />
+              </div>
+              <Button onClick={saveToken} variant="secondary" className="min-w-[110px]">
+                Salvar
+              </Button>
+              <Button onClick={clearToken} variant="secondary" className="min-w-[110px]">
+                Limpar
+              </Button>
+            </div>
+          </div>
+        </Panel>
+      </Panel>
+
+      <section className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          className="animate-fade-up"
+          title="Dispositivos"
+          value={devices.length}
+          icon={<Snowflake className="h-5 w-5 text-accent" />}
+          accentClassName="bg-accent/10"
+        />
+        <MetricCard
+          className="animate-fade-up [animation-delay:80ms]"
+          title="Online"
+          value={<span className="text-ok">{online}</span>}
+          icon={<Activity className="h-5 w-5 text-ok" />}
+          accentClassName="bg-ok/10"
+        />
+        <MetricCard
+          className="animate-fade-up [animation-delay:120ms]"
+          title="Offline"
+          value={<span className="text-bad">{offline}</span>}
+          icon={<AlertTriangle className="h-5 w-5 text-bad" />}
+          accentClassName="bg-bad/10"
+        />
+        <MetricCard
+          className="animate-fade-up [animation-delay:160ms]"
+          title="Atualizacao"
+          value={
+            <span className="text-sm font-medium sm:text-base">
+              {new Date().toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
+          }
+          icon={<Thermometer className="h-5 w-5 text-[hsl(var(--accent-2))]" />}
+          accentClassName="bg-[hsl(var(--accent-2))/0.12]"
+        />
       </section>
 
-      <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="glass animate-fade-up rounded-2xl border p-5 shadow-lift">
-          <p className="mb-2 text-sm text-muted">Dispositivos</p>
-          <p className="text-3xl font-semibold">{devices.length}</p>
-          <Snowflake className="mt-3 h-4 w-4 text-accent" />
-        </div>
-        <div className="glass animate-fade-up rounded-2xl border p-5 shadow-lift [animation-delay:80ms]">
-          <p className="mb-2 text-sm text-muted">Online</p>
-          <p className="text-3xl font-semibold text-ok">{online}</p>
-          <Activity className="mt-3 h-4 w-4 text-ok" />
-        </div>
-        <div className="glass animate-fade-up rounded-2xl border p-5 shadow-lift [animation-delay:120ms]">
-          <p className="mb-2 text-sm text-muted">Offline</p>
-          <p className="text-3xl font-semibold text-bad">{offline}</p>
-          <AlertTriangle className="mt-3 h-4 w-4 text-bad" />
-        </div>
-        <div className="glass animate-fade-up rounded-2xl border p-5 shadow-lift [animation-delay:160ms]">
-          <p className="mb-2 text-sm text-muted">Atualizacao</p>
-          <p className="text-sm font-medium">
-            {new Date().toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </p>
-          <Thermometer className="mt-3 h-4 w-4 text-accent" />
-        </div>
-      </section>
+      <Panel className="animate-fade-up p-4 [animation-delay:220ms] sm:p-5">
+        <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.18em] text-muted">
+              Operacao
+            </p>
+            <h2 className="mt-1 text-xl font-semibold">Resumo operacional</h2>
+            <p className="mt-2 max-w-2xl text-sm text-muted">
+              Visualize o estado atual da frota, ajuste configuracoes do device e
+              abra o historico sem sair da tela principal.
+            </p>
+          </div>
 
-      <section className="glass animate-fade-up rounded-2xl border p-4 shadow-lift [animation-delay:220ms]">
-        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold">Resumo operacional</h2>
-          <div className="flex items-center gap-2">
-            {clientId ? (
-              <span className="rounded-full border border-line bg-card/70 px-2 py-1 text-xs text-muted">
-                clientId: {clientId}
-              </span>
-            ) : (
-              <span className="rounded-full border border-line bg-card/70 px-2 py-1 text-xs text-muted">
-                clientId: todos
-              </span>
-            )}
-            <button
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge>clientId: {clientId ?? 'todos'}</Badge>
+            <Button
               onClick={() => {
                 void refetch();
               }}
-              className="rounded-lg border border-line bg-card/80 px-3 py-2 text-sm font-medium hover:bg-card"
+              variant="secondary"
+              className="px-3 py-2.5"
             >
+              <RefreshCw className="mr-2 h-4 w-4" />
               Atualizar
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 setEditingDeviceId(null);
                 setFormMode((current) =>
                   current === 'create' ? 'closed' : 'create',
                 );
               }}
-              className="rounded-lg border border-line bg-card/80 px-3 py-2 text-sm font-medium hover:bg-card"
+              variant="primary"
+              className="px-4 py-2.5"
             >
               {formMode === 'create' ? 'Fechar cadastro' : 'Novo device'}
-            </button>
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
 
         {formMode === 'create' ? (
-          <div className="mb-4">
+          <div className="mb-5">
             <DeviceForm
               mode="create"
               clientId={clientId}
@@ -275,7 +352,7 @@ function DashboardContent() {
         ) : null}
 
         {formMode === 'edit' && editingDevice ? (
-          <div className="mb-4">
+          <div className="mb-5">
             <DeviceForm
               mode="edit"
               clientId={clientId}
@@ -306,60 +383,60 @@ function DashboardContent() {
         {createMutation.isError ||
         updateMutation.isError ||
         deleteMutation.isError ? (
-          <p className="mb-3 text-sm text-bad">
+          <Feedback variant="danger" className="mb-3">
             Erro ao salvar alteracoes do device. Verifique os dados e tente
             novamente.
-          </p>
+          </Feedback>
         ) : null}
 
-        {isLoading ? <p className="text-sm text-muted">Carregando...</p> : null}
+        {isLoading ? <Feedback>Carregando...</Feedback> : null}
         {isError ? (
-          <p className="text-sm text-bad">Erro ao carregar dispositivos.</p>
+          <Feedback variant="danger">Erro ao carregar dispositivos.</Feedback>
         ) : null}
 
         {!isLoading && !isError ? (
           <div className="space-y-4">
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-separate border-spacing-y-2 text-sm">
+            <DataTableWrapper>
+              <DataTable>
                 <thead>
-                  <tr className="text-left text-muted">
-                    <th className="px-3 py-2">Device</th>
-                    <th className="px-3 py-2">Status</th>
-                    <th className="px-3 py-2">Temperatura</th>
-                    <th className="px-3 py-2">Faixa</th>
-                    <th className="px-3 py-2">Ultima leitura</th>
-                    <th className="px-3 py-2 text-right">Acoes</th>
-                    <th className="px-3 py-2 text-right">Historico</th>
+                  <tr>
+                    <th>Device</th>
+                    <th>Status</th>
+                    <th>Temperatura</th>
+                    <th>Faixa</th>
+                    <th>Ultima leitura</th>
+                    <th className="text-right">Acoes</th>
+                    <th className="text-right">Historico</th>
                   </tr>
                 </thead>
                 <tbody>
                   {devices.map((device) => (
-                    <tr
-                      key={device.id}
-                      className="rounded-xl border bg-card/70"
-                    >
-                      <td className="px-3 py-3 font-medium">
-                        {device.name ?? device.id}
+                    <tr key={device.id}>
+                      <td className="font-medium">
+                        <div className="flex flex-col">
+                          <span>{device.name ?? device.id}</span>
+                          <span className="text-xs text-muted">{device.id}</span>
+                        </div>
                       </td>
-                      <td className="px-3 py-3">
+                      <td>
                         <span
-                          className={`rounded-full border px-2 py-1 text-xs ${statusClass(device.isOffline)}`}
+                          className={`rounded-full border px-2.5 py-1 text-xs ${statusClass(device.isOffline)}`}
                         >
                           {device.isOffline ? 'Offline' : 'Online'}
                         </span>
                       </td>
-                      <td className="px-3 py-3">
+                      <td>
                         {device.lastTemperature != null
                           ? `${device.lastTemperature.toFixed(1)} C`
                           : 'Sem dados'}
                       </td>
-                      <td className="px-3 py-3 text-muted">
+                      <td className="text-muted">
                         {device.minTemperature != null ||
                         device.maxTemperature != null
                           ? `${device.minTemperature ?? '-'} / ${device.maxTemperature ?? '-'}`
                           : 'Nao configurada'}
                       </td>
-                      <td className="px-3 py-3 text-muted">
+                      <td className="text-muted">
                         {device.lastReadingAt
                           ? formatDistanceToNow(
                               new Date(device.lastReadingAt),
@@ -370,46 +447,49 @@ function DashboardContent() {
                             )
                           : 'Sem leitura'}
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="text-right">
                         <div className="inline-flex items-center gap-2">
-                          <button
+                          <Button
                             onClick={() => {
                               setEditingDeviceId(device.id);
                               setFormMode('edit');
                             }}
-                            className="rounded-lg border border-line bg-card/80 px-2 py-1.5 text-xs font-medium hover:bg-card"
+                            variant="secondary"
+                            size="sm"
                           >
                             Editar
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => {
                               void handleDeleteDevice(device.id);
                             }}
-                            className="rounded-lg border border-bad/40 bg-bad/10 px-2 py-1.5 text-xs font-medium text-bad hover:bg-bad/20"
+                            variant="danger"
+                            size="sm"
                           >
                             Excluir
-                          </button>
+                          </Button>
                         </div>
                       </td>
-                      <td className="px-3 py-3 text-right">
-                        <button
+                      <td className="text-right">
+                        <Button
                           onClick={() => {
                             setSelectedDeviceId((current) =>
                               current === device.id ? null : device.id,
                             );
                           }}
-                          className="rounded-lg border border-line bg-card/80 px-3 py-1.5 text-xs font-medium hover:bg-card"
+                          variant="secondary"
+                          size="sm"
                         >
                           {selectedDeviceId === device.id
                             ? 'Fechar'
                             : 'Ver grafico'}
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+              </DataTable>
+            </DataTableWrapper>
 
             {selectedDevice ? (
               <DeviceHistoryPanel
@@ -420,13 +500,19 @@ function DashboardContent() {
             ) : null}
           </div>
         ) : null}
-      </section>
+      </Panel>
 
-      <AlertRulesPanel
-        clientId={clientId}
-        authToken={authToken}
-        devices={devices}
-      />
+      <div className="mt-6">
+        <AlertRulesPanel
+          clientId={clientId}
+          authToken={authToken}
+          devices={devices}
+        />
+      </div>
+
+      <div className="mt-6">
+        <SimulationLabPanel clientId={clientId} />
+      </div>
     </main>
   );
 }

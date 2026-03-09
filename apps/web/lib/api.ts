@@ -5,6 +5,7 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000';
 
 function buildAuthHeaders(authToken?: string) {
+  // O token e opcional para permitir uso local e ambientes sem autenticacao no dashboard.
   const headers: HeadersInit = {};
   if (authToken) {
     headers.Authorization = `Bearer ${authToken}`;
@@ -17,6 +18,7 @@ export async function fetchDevices(
   limit = 50,
   authToken?: string,
 ): Promise<DeviceSummary[]> {
+  // O clientId filtra os dados por tenant sem duplicar endpoints no backend.
   const query = new URLSearchParams();
   query.set('limit', String(limit));
   if (clientId) query.set('clientId', clientId);
@@ -39,6 +41,7 @@ export async function fetchDeviceReadings(
   limit = 48,
   authToken?: string,
 ): Promise<DeviceReading[]> {
+  // Reaproveitamos o mesmo padrao de filtros para manter consistencia com a listagem principal.
   const query = new URLSearchParams();
   query.set('limit', String(limit));
   if (clientId) query.set('clientId', clientId);

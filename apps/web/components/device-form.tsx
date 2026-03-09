@@ -5,6 +5,9 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { DeviceSummary } from '@/types/device';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Panel } from '@/components/ui/panel';
 
 const deviceIdRegex = /^[a-zA-Z0-9_-]{3,50}$/;
 
@@ -127,109 +130,82 @@ export function DeviceForm({
       onSubmit={handleSubmit(async (values) => {
         await onSubmit(formSchema.parse(values));
       })}
-      className="glass rounded-2xl border p-4"
+      className=""
     >
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-semibold">
-          {mode === 'create' ? 'Novo device' : `Editar ${device?.id ?? ''}`}
-        </h3>
-        {onCancel ? (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-lg border border-line px-2 py-1 text-xs text-muted"
-          >
-            Fechar
-          </button>
-        ) : null}
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label className="mb-1 block text-xs text-muted">ID</label>
-          <input
-            {...register('id')}
-            disabled={mode === 'edit'}
-            className="w-full rounded-lg border border-line bg-card/70 px-3 py-2 text-sm outline-none focus:border-accent disabled:opacity-60"
-            placeholder="freezer_01"
-          />
-          {errors.id ? (
-            <p className="mt-1 text-xs text-bad">{errors.id.message}</p>
+      <Panel variant="strong" className="p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-sm font-semibold tracking-wide text-ink">
+            {mode === 'create' ? 'Novo device' : `Editar ${device?.id ?? ''}`}
+          </h3>
+          {onCancel ? (
+            <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
+              Fechar
+            </Button>
           ) : null}
         </div>
 
-        <div>
-          <label className="mb-1 block text-xs text-muted">clientId</label>
-          <input
-            {...register('clientId')}
-            className="w-full rounded-lg border border-line bg-card/70 px-3 py-2 text-sm outline-none focus:border-accent"
-            placeholder="cliente_a"
-          />
-          {errors.clientId ? (
-            <p className="mt-1 text-xs text-bad">{errors.clientId.message}</p>
-          ) : null}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-xs text-muted">ID</label>
+            <Input
+              {...register('id')}
+              disabled={mode === 'edit'}
+              placeholder="freezer_01"
+            />
+            {errors.id ? (
+              <p className="mt-1 text-xs text-bad">{errors.id.message}</p>
+            ) : null}
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">clientId</label>
+            <Input {...register('clientId')} placeholder="cliente_a" />
+            {errors.clientId ? (
+              <p className="mt-1 text-xs text-bad">{errors.clientId.message}</p>
+            ) : null}
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">Nome</label>
+            <Input {...register('name')} placeholder="Freezer Loja" />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">Localizacao</label>
+            <Input {...register('location')} placeholder="Camara fria" />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">Min temp (C)</label>
+            <Input {...register('minTemperature')} placeholder="-20" />
+            {errors.minTemperature ? (
+              <p className="mt-1 text-xs text-bad">
+                {errors.minTemperature.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">Max temp (C)</label>
+            <Input {...register('maxTemperature')} placeholder="-10" />
+            {errors.maxTemperature ? (
+              <p className="mt-1 text-xs text-bad">
+                {errors.maxTemperature.message}
+              </p>
+            ) : null}
+          </div>
         </div>
 
-        <div>
-          <label className="mb-1 block text-xs text-muted">Nome</label>
-          <input
-            {...register('name')}
-            className="w-full rounded-lg border border-line bg-card/70 px-3 py-2 text-sm outline-none focus:border-accent"
-            placeholder="Freezer Loja"
-          />
+        <div className="mt-4 flex items-center gap-2">
+          <Button type="submit" variant="primary" disabled={loading} className="min-w-[168px]">
+            {loading
+              ? 'Salvando...'
+              : mode === 'create'
+                ? 'Criar device'
+                : 'Salvar alteracoes'}
+          </Button>
         </div>
-
-        <div>
-          <label className="mb-1 block text-xs text-muted">Localizacao</label>
-          <input
-            {...register('location')}
-            className="w-full rounded-lg border border-line bg-card/70 px-3 py-2 text-sm outline-none focus:border-accent"
-            placeholder="Camara fria"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1 block text-xs text-muted">Min temp (C)</label>
-          <input
-            {...register('minTemperature')}
-            className="w-full rounded-lg border border-line bg-card/70 px-3 py-2 text-sm outline-none focus:border-accent"
-            placeholder="-20"
-          />
-          {errors.minTemperature ? (
-            <p className="mt-1 text-xs text-bad">
-              {errors.minTemperature.message}
-            </p>
-          ) : null}
-        </div>
-
-        <div>
-          <label className="mb-1 block text-xs text-muted">Max temp (C)</label>
-          <input
-            {...register('maxTemperature')}
-            className="w-full rounded-lg border border-line bg-card/70 px-3 py-2 text-sm outline-none focus:border-accent"
-            placeholder="-10"
-          />
-          {errors.maxTemperature ? (
-            <p className="mt-1 text-xs text-bad">
-              {errors.maxTemperature.message}
-            </p>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="mt-4 flex items-center gap-2">
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-lg border border-line bg-card/80 px-3 py-2 text-sm font-medium hover:bg-card disabled:opacity-60"
-        >
-          {loading
-            ? 'Salvando...'
-            : mode === 'create'
-              ? 'Criar device'
-              : 'Salvar alteracoes'}
-        </button>
-      </div>
+      </Panel>
     </form>
   );
 }

@@ -12,6 +12,10 @@ import {
 } from 'recharts';
 import { useDeviceReadings } from '@/hooks/use-device-readings';
 import { DeviceSummary } from '@/types/device';
+import { Badge } from '@/components/ui/badge';
+import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
+import { Feedback } from '@/components/ui/feedback';
+import { Panel } from '@/components/ui/panel';
 
 type DeviceHistoryPanelProps = {
   device: DeviceSummary;
@@ -40,32 +44,32 @@ export function DeviceHistoryPanel({
   }));
 
   return (
-    <div className="mt-4 rounded-xl border border-line bg-card/60 p-4">
+    <Panel className="mt-6 p-5">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold">
+        <h3 className="text-sm font-semibold tracking-wide">
           Historico - {device.name ?? device.id}
         </h3>
-        <span className="text-xs text-muted">Ultimos 48 pontos</span>
+        <Badge>Ultimos 48 pontos</Badge>
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted">Carregando historico...</p>
+        <Feedback>Carregando historico...</Feedback>
       ) : null}
       {isError ? (
-        <p className="text-sm text-bad">
+        <Feedback variant="danger">
           Erro ao carregar historico do device.
-        </p>
+        </Feedback>
       ) : null}
 
       {!isLoading && !isError && points.length === 0 ? (
-        <p className="text-sm text-muted">
+        <Feedback>
           Sem dados de temperatura para este device.
-        </p>
+        </Feedback>
       ) : null}
 
       {!isLoading && !isError && points.length > 0 ? (
         <div className="space-y-4">
-          <div className="h-64 w-full rounded-lg border border-line/70 bg-bg/30 p-2">
+          <div className="h-72 w-full rounded-[22px] border border-line/70 bg-bg/30 p-3">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={points}>
                 <XAxis
@@ -99,8 +103,8 @@ export function DeviceHistoryPanel({
             </ResponsiveContainer>
           </div>
 
-          <div className="max-h-48 overflow-auto rounded-lg border border-line/70 bg-bg/20">
-            <table className="min-w-full text-xs">
+          <DataTableWrapper className="max-h-52 overflow-auto rounded-[22px] bg-bg/20">
+            <DataTable className="text-xs">
               <thead>
                 <tr className="text-left text-muted">
                   <th className="px-3 py-2">Horario</th>
@@ -123,10 +127,10 @@ export function DeviceHistoryPanel({
                     </tr>
                   ))}
               </tbody>
-            </table>
-          </div>
+            </DataTable>
+          </DataTableWrapper>
         </div>
       ) : null}
-    </div>
+    </Panel>
   );
 }
