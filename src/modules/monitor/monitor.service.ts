@@ -16,15 +16,13 @@ export class MonitorService {
 
   @Cron('*/1 * * * *')
   async checkOfflineDevices() {
-    this.logger.log('cron rodou');
-
     const minutesOffline =
       this.configService.get<number>('DEVICE_OFFLINE_MINUTES') ?? 5;
     const temperatureCooldownMinutes =
       this.configService.get<number>('TEMPERATURE_ALERT_COOLDOWN_MINUTES') ?? 5;
 
     const cutoff = new Date(Date.now() - minutesOffline * 60 * 1000);
-
+    const totalDevices = await this.prisma.device.count();
     const offlineCandidates = await this.prisma.device.findMany({
       where: {
         AND: [
@@ -35,22 +33,9 @@ export class MonitorService {
         ],
       },
     });
-
-    const allDevices = await this.prisma.device.findMany({
-      orderBy: { id: 'asc' },
-    });
-
     this.logger.log(
-      `devices: ${allDevices
-        .map(
-          (d) =>
-            `${d.id} lastSeen=${d.lastSeen ? d.lastSeen.toISOString() : 'null'} isOffline=${d.isOffline}`,
-        )
-        .join(' | ')}`,
+      `Monitor tick totalDevices=${totalDevices} offlineCandidates=${offlineCandidates.length} cutoff=${cutoff.toISOString()} offlineThresholdMinutes=${minutesOffline}`,
     );
-
-    this.logger.log(`cutoff=${cutoff.toISOString()}`);
-    this.logger.log(`offlineCandidates=${offlineCandidates.length}`);
 
     for (const device of offlineCandidates) {
       await this.prisma.device.update({
@@ -62,7 +47,9 @@ export class MonitorService {
         },
       });
 
-      this.logger.warn(`Device ${device.id} ficou OFFLINE!`);
+      this.logger.warn(
+        `Device ${device.id} ficou OFFLINE lastSeen=${device.lastSeen ? device.lastSeen.toISOString() : 'null'}`,
+      );
       // TODO: enviar webhook de offline no proximo passo
     }
 
@@ -82,8 +69,11 @@ export class MonitorService {
     } as any);
 
     if (rules.length === 0) {
+      this.logger.debug('No configurable temperature rules enabled; using legacy device thresholds');
       return false;
     }
+
+    this.logger.log(`Processing configurable temperature rules count=${rules.length}`);
 
     const devicesByClient = new Map<string, any[]>();
 
@@ -145,6 +135,9 @@ export class MonitorService {
 
     if (!outOfRange) {
       if ((state as any).breachStartedAt) {
+        this.logger.debug(
+          `Temperature back to normal for device=${device.id} rule=${rule.id} temperature=${temperature}`,
+        );
         await this.prisma.alertRuleState.update({
           where: { id: (state as any).id },
           data: { breachStartedAt: null },
@@ -163,6 +156,9 @@ export class MonitorService {
 
     const toleranceMs = (rule.toleranceMinutes ?? 0) * 60 * 1000;
     if (now.getTime() - breachStartedAt.getTime() < toleranceMs) {
+      this.logger.debug(
+        `Tolerance window active for device=${device.id} rule=${rule.id} temperature=${temperature}`,
+      );
       return;
     }
 
@@ -172,6 +168,9 @@ export class MonitorService {
       lastTriggeredAt &&
       now.getTime() - lastTriggeredAt.getTime() < cooldownMs
     ) {
+      this.logger.debug(
+        `Cooldown active for device=${device.id} rule=${rule.id} temperature=${temperature}`,
+      );
       return;
     }
 
@@ -260,6 +259,9 @@ export class MonitorService {
     maxTemperature: number | null;
     occurredAt: string;
   }) {
+    this.logger.log(
+      `Queueing temperature alert device=${payload.deviceId} rule=${payload.ruleId ?? 'legacy'} temperature=${payload.temperature}`,
+    );
     this.alertQueue.enqueue({
       type: 'temperature_out_of_range',
       clientId: payload.clientId,

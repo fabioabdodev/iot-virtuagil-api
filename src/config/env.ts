@@ -1,6 +1,7 @@
 import { envSchema } from './env.schema';
 
 export function validateEnv(config: Record<string, unknown>) {
+  // Falhar cedo aqui evita subir a API com ambiente inconsistente em producao.
   const result = envSchema.safeParse(config);
 
   if (!result.success) {

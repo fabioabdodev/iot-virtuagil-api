@@ -16,11 +16,14 @@ import { InfraModule } from './infra/infra.module';
 
 @Module({
   imports: [
+    // Le e valida as variaveis de ambiente antes de qualquer modulo depender delas.
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnv,
     }),
+    // Infra agrupa componentes compartilhados, como cache e entrega de alertas.
     InfraModule,
+    // Scheduler habilita tarefas recorrentes usadas pelo monitoramento dos devices.
     ScheduleModule.forRoot(),
     PrismaModule,
     IngestModule,

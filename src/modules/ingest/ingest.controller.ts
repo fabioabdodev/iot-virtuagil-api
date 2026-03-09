@@ -35,6 +35,9 @@ export class IngestController {
       throw new UnauthorizedException('Invalid device key');
     }
 
+    this.logger.log(
+      `Accepted ingest for device_id=${body.device_id} temperature=${body.temperature}`,
+    );
     await this.ingest.ingestTemperature(body);
     return { ok: true };
   }

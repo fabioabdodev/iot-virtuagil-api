@@ -18,6 +18,8 @@ export class IngestService {
   async ingestTemperature(body: TemperatureDto) {
     this.enforceDeviceRateLimit(body.device_id);
 
+    const receivedAt = new Date();
+
     await this.prisma.temperatureLog.create({
       data: {
         deviceId: body.device_id,
@@ -28,13 +30,13 @@ export class IngestService {
     await this.prisma.device.upsert({
       where: { id: body.device_id },
       update: {
-        lastSeen: new Date(),
+        lastSeen: receivedAt,
         isOffline: false,
         offlineSince: null,
       },
       create: {
         id: body.device_id,
-        lastSeen: new Date(),
+        lastSeen: receivedAt,
         isOffline: false,
       },
     });
@@ -42,6 +44,10 @@ export class IngestService {
     this.cache.invalidatePrefix('devices:dashboard:');
     this.cache.invalidatePrefix('devices:history:');
     this.cache.invalidatePrefix('readings:');
+
+    this.logger.debug(
+      `Persisted temperature for device_id=${body.device_id} temperature=${body.temperature} receivedAt=${receivedAt.toISOString()}`,
+    );
   }
 
   private enforceDeviceRateLimit(deviceId: string) {

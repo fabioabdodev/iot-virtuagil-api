@@ -14,6 +14,7 @@ export class DevicesService {
   ) {}
 
   async create(dto: CreateDeviceDto) {
+    // Evita cadastrar limites invertidos, o que quebraria monitoramento e UI.
     if (
       dto.minTemperature != null &&
       dto.maxTemperature != null &&
@@ -40,6 +41,7 @@ export class DevicesService {
   }
 
   async listForDashboard(clientId?: string, limit = 100) {
+    // O dashboard e muito consultado; por isso normalizamos limite e usamos cache curto.
     const normalizedLimit = Number.isFinite(limit) ? limit : 100;
     const safeLimit = Math.max(1, Math.min(normalizedLimit, 500));
     const cacheKey = `devices:dashboard:${clientId ?? 'all'}:${safeLimit}`;
@@ -69,6 +71,7 @@ export class DevicesService {
     );
 
     const payload = devices.map((device) => {
+      // Junta cadastro do device com a ultima leitura para evitar multiplas chamadas no frontend.
       const latest = latestByDevice.get(device.id);
       return {
         id: device.id,
@@ -90,6 +93,7 @@ export class DevicesService {
   }
 
   async findOne(id: string, clientId?: string) {
+    // A validacao de clientId impede que um tenant consulte device de outro tenant.
     const device = await this.prisma.device.findUnique({ where: { id } });
     if (clientId) {
       if (!device || (device as any).clientId !== clientId) {

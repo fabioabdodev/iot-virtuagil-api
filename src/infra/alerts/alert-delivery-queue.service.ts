@@ -35,6 +35,14 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
       attempts: 0,
       nextAttemptAt: Date.now(),
     });
+
+    this.logger.log(
+      `Queued alert device=${payload.deviceId} queueDepth=${this.jobs.length}`,
+    );
+  }
+
+  getQueueDepth() {
+    return this.jobs.length;
   }
 
   onModuleDestroy() {
@@ -93,6 +101,9 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
           occurred_at: job.payload.occurredAt,
         }),
       });
+      this.logger.log(
+        `Delivered alert device=${job.payload.deviceId} attempts=${job.attempts + 1}`,
+      );
       this.removeJob(job);
     } catch (error) {
       job.attempts += 1;
@@ -111,6 +122,9 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
       const retryDelayMs =
         this.configService.get<number>('ALERT_QUEUE_RETRY_DELAY_MS') ?? 2000;
       job.nextAttemptAt = Date.now() + retryDelayMs;
+      this.logger.warn(
+        `Retrying alert device=${job.payload.deviceId} attempt=${job.attempts} nextAttemptAt=${new Date(job.nextAttemptAt).toISOString()}`,
+      );
     }
   }
 
@@ -119,4 +133,3 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
     if (idx >= 0) this.jobs.splice(idx, 1);
   }
 }
-
