@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button';
 import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
 import { Feedback } from '@/components/ui/feedback';
 import { Input } from '@/components/ui/input';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { MetricCard } from '@/components/ui/metric-card';
 import { Panel } from '@/components/ui/panel';
 import { useDeviceMutations } from '@/hooks/use-device-mutations';
@@ -70,6 +71,9 @@ function DashboardContent() {
   );
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null);
   const [deletingDeviceId, setDeletingDeviceId] = useState<string | null>(null);
+  const [pendingDeleteDeviceId, setPendingDeleteDeviceId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     // Mantem o campo de filtro sincronizado quando a URL muda por navegacao ou refresh.
@@ -139,16 +143,12 @@ function DashboardContent() {
 
   async function handleDeleteDevice(id: string) {
     // A remocao afeta selecao e formulario; por isso limpamos os estados relacionados.
-    const confirmed = window.confirm(
-      `Tem certeza que deseja remover o device ${id}?`,
-    );
-    if (!confirmed) return;
-
     setDeletingDeviceId(id);
     try {
       await deleteMutation.mutateAsync(id);
     } finally {
       setDeletingDeviceId(null);
+      setPendingDeleteDeviceId(null);
     }
 
     if (selectedDeviceId === id) setSelectedDeviceId(null);
@@ -160,6 +160,25 @@ function DashboardContent() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <ConfirmDialog
+        open={Boolean(pendingDeleteDeviceId)}
+        title="Excluir device?"
+        description={
+          <>
+            O device <strong>{pendingDeleteDeviceId}</strong> sera removido do
+            dashboard e do historico.
+          </>
+        }
+        confirmLabel="Excluir device"
+        loading={deleteMutation.isPending}
+        onCancel={() => setPendingDeleteDeviceId(null)}
+        onConfirm={() => {
+          if (pendingDeleteDeviceId) {
+            void handleDeleteDevice(pendingDeleteDeviceId);
+          }
+        }}
+      />
+
       <Panel variant="shell" className="mb-6 grid gap-6 p-5 lg:grid-cols-[1.35fr_0.95fr] lg:p-7">
         <div className="relative overflow-hidden rounded-[24px] border border-line/50 bg-gradient-to-br from-card/90 via-card/70 to-bg/20 p-6">
           <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_top,rgba(255,208,77,0.14),transparent_42%),radial-gradient(circle_at_bottom,rgba(49,189,255,0.18),transparent_45%)]" />
@@ -473,7 +492,7 @@ function DashboardContent() {
                           </Button>
                           <Button
                             onClick={() => {
-                              void handleDeleteDevice(device.id);
+                              setPendingDeleteDeviceId(device.id);
                             }}
                             variant="danger"
                             size="sm"

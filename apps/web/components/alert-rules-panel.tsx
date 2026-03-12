@@ -10,6 +10,7 @@ import { DeviceSummary } from '@/types/device';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Feedback } from '@/components/ui/feedback';
 import { Input, Select } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
@@ -81,6 +82,7 @@ export function AlertRulesPanel({
     authToken,
   );
   const [deletingRuleId, setDeletingRuleId] = useState<string | null>(null);
+  const [pendingRuleId, setPendingRuleId] = useState<string | null>(null);
 
   const {
     register,
@@ -100,18 +102,31 @@ export function AlertRulesPanel({
   });
 
   async function handleRemove(id: string) {
-    const confirmed = window.confirm('Remover regra de alerta?');
-    if (!confirmed) return;
     setDeletingRuleId(id);
     try {
       await deleteMutation.mutateAsync(id);
     } finally {
       setDeletingRuleId(null);
+      setPendingRuleId(null);
     }
   }
 
   return (
     <Panel className="animate-fade-up p-5 [animation-delay:280ms]">
+      <ConfirmDialog
+        open={Boolean(pendingRuleId)}
+        title="Excluir regra?"
+        description="A regra sera removida imediatamente da lista deste cliente."
+        confirmLabel="Excluir regra"
+        loading={deleteMutation.isPending}
+        onCancel={() => setPendingRuleId(null)}
+        onConfirm={() => {
+          if (pendingRuleId) {
+            void handleRemove(pendingRuleId);
+          }
+        }}
+      />
+
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Regras de alerta</h2>
         {!clientId ? (
@@ -240,7 +255,7 @@ export function AlertRulesPanel({
                   <td className="text-right">
                     <Button
                       onClick={() => {
-                        void handleRemove(rule.id);
+                        setPendingRuleId(rule.id);
                       }}
                       variant="danger"
                       size="sm"
