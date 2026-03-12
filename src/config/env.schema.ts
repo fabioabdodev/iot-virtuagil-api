@@ -3,10 +3,11 @@ import { z } from 'zod';
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(3000),
+  CORS_ORIGINS: z.string().optional(),
 
-  DATABASE_URL: z.string().min(1, 'DATABASE_URL é obrigatória'),
+  DATABASE_URL: z.string().min(1, 'DATABASE_URL e obrigatoria'),
 
-  DEVICE_API_KEY: z.string().min(1, 'DEVICE_API_KEY é obrigatória').optional(),
+  DEVICE_API_KEY: z.string().min(1, 'DEVICE_API_KEY e obrigatoria').optional(),
 
   N8N_OFFLINE_WEBHOOK_URL: z.string().url().optional(),
   N8N_TEMPERATURE_ALERT_WEBHOOK_URL: z.string().url().optional(),
