@@ -37,6 +37,9 @@ export function DeviceHistoryPanel({
 
   const points = (data ?? []).map((item) => ({
     temperature: item.temperature,
+    isOutOfRange:
+      (device.minTemperature != null && item.temperature < device.minTemperature) ||
+      (device.maxTemperature != null && item.temperature > device.maxTemperature),
     label: format(new Date(item.createdAt), 'HH:mm'),
     fullLabel: format(new Date(item.createdAt), 'dd/MM HH:mm', {
       locale: ptBR,
@@ -49,7 +52,14 @@ export function DeviceHistoryPanel({
         <h3 className="text-sm font-semibold tracking-wide">
           Historico - {device.name ?? device.id}
         </h3>
-        <Badge>Ultimos 48 pontos</Badge>
+        <div className="flex items-center gap-2">
+          {device.minTemperature != null || device.maxTemperature != null ? (
+            <Badge>
+              Faixa {device.minTemperature ?? '-'} / {device.maxTemperature ?? '-'}
+            </Badge>
+          ) : null}
+          <Badge>Ultimos 48 pontos</Badge>
+        </div>
       </div>
 
       {isLoading ? <Feedback>Carregando historico...</Feedback> : null}
@@ -98,10 +108,19 @@ export function DeviceHistoryPanel({
                 <Line
                   type="monotone"
                   dataKey="temperature"
-                  stroke="hsl(var(--accent))"
+                  stroke={
+                    points.some((point) => point.isOutOfRange)
+                      ? 'hsl(var(--bad))'
+                      : 'hsl(var(--accent))'
+                  }
                   strokeWidth={2.5}
                   dot={false}
-                  activeDot={{ r: 4 }}
+                  activeDot={{
+                    r: 4,
+                    fill: points.some((point) => point.isOutOfRange)
+                      ? 'hsl(var(--bad))'
+                      : 'hsl(var(--accent))',
+                  }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -122,11 +141,26 @@ export function DeviceHistoryPanel({
                   .map((row, index) => (
                     <tr
                       key={`${device.id}-${row.fullLabel}-${index}`}
-                      className="border-t border-line/60"
+                      className={
+                        row.isOutOfRange
+                          ? 'border-t border-bad/20 bg-bad/5'
+                          : 'border-t border-line/60'
+                      }
                     >
                       <td className="px-3 py-2 text-muted">{row.fullLabel}</td>
-                      <td className="px-3 py-2 font-medium">
-                        {row.temperature.toFixed(1)} C
+                      <td
+                        className={
+                          row.isOutOfRange
+                            ? 'px-3 py-2 font-semibold text-bad'
+                            : 'px-3 py-2 font-medium'
+                        }
+                      >
+                        <div className="flex items-center gap-2">
+                          <span>{row.temperature.toFixed(1)} C</span>
+                          {row.isOutOfRange ? (
+                            <Badge variant="danger">Fora da faixa</Badge>
+                          ) : null}
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -41,6 +41,17 @@ function statusClass(isOffline: boolean) {
     : 'bg-ok/10 text-ok border-ok/20';
 }
 
+function isTemperatureOutOfRange(
+  temperature: number | null,
+  minTemperature: number | null,
+  maxTemperature: number | null,
+) {
+  if (temperature == null) return false;
+  if (minTemperature != null && temperature < minTemperature) return true;
+  if (maxTemperature != null && temperature > maxTemperature) return true;
+  return false;
+}
+
 export default function DashboardPage() {
   return (
     <Suspense
@@ -442,7 +453,18 @@ function DashboardContent() {
                 </thead>
                 <tbody>
                   {devices.map((device) => (
-                    <tr key={device.id}>
+                    <tr
+                      key={device.id}
+                      className={
+                        isTemperatureOutOfRange(
+                          device.lastTemperature,
+                          device.minTemperature,
+                          device.maxTemperature,
+                        )
+                          ? 'bg-bad/5'
+                          : undefined
+                      }
+                    >
                       <td className="font-medium">
                         <div className="flex flex-col">
                           <span>{device.name ?? device.id}</span>
@@ -457,9 +479,32 @@ function DashboardContent() {
                         </span>
                       </td>
                       <td>
-                        {device.lastTemperature != null
-                          ? `${device.lastTemperature.toFixed(1)} C`
-                          : 'Sem dados'}
+                        {device.lastTemperature != null ? (
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={
+                                isTemperatureOutOfRange(
+                                  device.lastTemperature,
+                                  device.minTemperature,
+                                  device.maxTemperature,
+                                )
+                                  ? 'font-semibold text-bad'
+                                  : undefined
+                              }
+                            >
+                              {device.lastTemperature.toFixed(1)} C
+                            </span>
+                            {isTemperatureOutOfRange(
+                              device.lastTemperature,
+                              device.minTemperature,
+                              device.maxTemperature,
+                            ) ? (
+                              <Badge variant="danger">Alerta</Badge>
+                            ) : null}
+                          </div>
+                        ) : (
+                          'Sem dados'
+                        )}
                       </td>
                       <td className="text-muted">
                         {device.minTemperature != null ||
