@@ -217,6 +217,9 @@ Estado em 13/03/2026:
 - apoio operacional atual:
   - `npm run db:seed` agora tambem prepara atuadores demo e comandos iniciais
   - laboratorio web possui comandos prontos para validar schema, cadastro, comando e historico do `acionamento`
+- base de frontend atual:
+  - `React Query` segue como camada principal para dados remotos
+  - `Context API` foi introduzido apenas para sessao/token do frontend
 - validacoes concluidas localmente:
   - `npm run build` no backend
   - `npm run build` em `apps/web`

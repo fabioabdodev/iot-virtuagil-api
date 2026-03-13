@@ -1,8 +1,13 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { AuthProvider } from '@/lib/auth-context';
 import { QueryProvider } from '@/lib/query-provider';
 
 export function Providers({ children }: { children: ReactNode }) {
-  return <QueryProvider>{children}</QueryProvider>;
+  return (
+    <AuthProvider>
+      <QueryProvider>{children}</QueryProvider>
+    </AuthProvider>
+  );
 }

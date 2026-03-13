@@ -31,10 +31,9 @@ import { Input } from '@/components/ui/input';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { MetricCard } from '@/components/ui/metric-card';
 import { Panel } from '@/components/ui/panel';
+import { useAuth } from '@/lib/auth-context';
 import { useDeviceMutations } from '@/hooks/use-device-mutations';
 import { useDevices } from '@/hooks/use-devices';
-
-const TOKEN_STORAGE_KEY = 'iot_web_auth_token';
 
 function statusClass(isOffline: boolean) {
   return isOffline
@@ -76,7 +75,7 @@ function DashboardContent() {
 
   const [clientIdDraft, setClientIdDraft] = useState(queryClientId);
   const [authTokenDraft, setAuthTokenDraft] = useState('');
-  const [authToken, setAuthToken] = useState('');
+  const { authToken, saveToken: persistToken, clearToken: removeToken } = useAuth();
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
   const [formMode, setFormMode] = useState<'closed' | 'create' | 'edit'>(
     'closed',
@@ -93,11 +92,8 @@ function DashboardContent() {
   }, [queryClientId]);
 
   useEffect(() => {
-    // O token fica apenas no navegador para evitar expor isso em query string ou no servidor.
-    const savedToken = window.localStorage.getItem(TOKEN_STORAGE_KEY) ?? '';
-    setAuthToken(savedToken);
-    setAuthTokenDraft(savedToken);
-  }, []);
+    setAuthTokenDraft(authToken);
+  }, [authToken]);
 
   // String vazia nao deve ser enviada para a API como clientId valido.
   const clientId = useMemo(
@@ -141,14 +137,12 @@ function DashboardContent() {
   function saveToken() {
     // Ao salvar, ja refazemos a busca para refletir o novo contexto de autorizacao.
     const nextToken = authTokenDraft.trim();
-    window.localStorage.setItem(TOKEN_STORAGE_KEY, nextToken);
-    setAuthToken(nextToken);
+    persistToken(nextToken);
     void refetch();
   }
 
   function clearToken() {
-    window.localStorage.removeItem(TOKEN_STORAGE_KEY);
-    setAuthToken('');
+    removeToken();
     setAuthTokenDraft('');
     void refetch();
   }
