@@ -280,6 +280,11 @@ Estado em 13/03/2026:
 - blocos administrativos agora mostram mensagem clara quando o usuario nao e admin ou quando falta `clientId`
 - estados vazios do dashboard agora orientam onboarding inicial para devices, regras e atuadores
 - dashboard agora possui painel de perfil comercial minimo do cliente para operacao manual
+- dashboard agora possui um bloco de prontidao comercial que traduz o estado tecnico da conta em narrativa de demonstracao:
+  - score de readiness
+  - modulos contratados
+  - devices, regras e atuadores ja configurados
+  - proximos passos sugeridos para onboarding e venda
 - banco real agora possui os campos comerciais minimos em `Client`:
   - `document`
   - `phone`

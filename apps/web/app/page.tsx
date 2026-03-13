@@ -27,6 +27,7 @@ import { ClientModulesPanel } from '@/components/client-modules-panel';
 import { ClientProfilePanel } from '@/components/client-profile-panel';
 import { SetupGuideCard } from '@/components/setup-guide-card';
 import { UsersPanel } from '@/components/users-panel';
+import { CommercialReadinessPanel } from '@/components/commercial-readiness-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
@@ -397,6 +398,14 @@ function DashboardContent() {
           accentClassName="bg-[hsl(var(--accent-2))/0.12]"
         />
       </section>
+
+      <CommercialReadinessPanel
+        clientId={scopedClientId}
+        authToken={authToken}
+        currentUser={user}
+        devices={devices}
+        clientModules={clientModules}
+      />
 
       <Panel className="animate-fade-up p-4 [animation-delay:220ms] sm:p-5">
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
