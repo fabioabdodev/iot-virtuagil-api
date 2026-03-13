@@ -213,6 +213,14 @@ Regras atuais:
 
 Ver `.github/instructions/ROADMAP.md` para a sequencia de evolucao.
 
+## Ferramenta preferida para teste manual rapido
+
+Quando a validacao for manual:
+
+- preferir Insomnia
+- usar `.github/instructions/MANUAL_TESTS.md` como roteiro base
+- evitar complicar a validacao com processos pesados quando a API puder ser verificada diretamente
+
 ## Registro operacional recente
 
 Correcoes validadas em producao:
@@ -288,6 +296,10 @@ Estado em 13/03/2026:
   - modulos contratados
   - devices, regras e atuadores ja configurados
   - proximos passos sugeridos para onboarding e venda
+- dashboard agora possui um bloco de atividade operacional que combina:
+  - devices offline ou fora da faixa
+  - comandos recentes do modulo `acionamento`
+  - leitura rapida para operacao e demonstracao
 - banco real agora possui os campos comerciais minimos em `Client`:
   - `document`
   - `phone`
