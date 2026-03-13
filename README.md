@@ -142,6 +142,29 @@ Observacoes praticas:
 - o recomendado e manter tambem um processo proprio de export do banco com `pg_dump` ou `supabase db dump`
 - esse dump deve ser armazenado fora do Supabase
 
+Rotina inicial recomendada neste projeto:
+
+```bash
+npm run backup:db
+```
+
+Teste sem executar:
+
+```bash
+npm run backup:db:dry-run
+```
+
+Notas praticas:
+
+- o script prefere `DIRECT_DATABASE_URL`
+- o dump e salvo por padrao em `backups/db`
+- o arquivo deve ser copiado para fora da VPS principal
+- backup sem teste de restauracao nao deve ser tratado como confiavel
+
+Guia interno complementar:
+
+- `.github/instructions/BACKUP_RULES.md`
+
 Uso de webhook no banco:
 
 - o Supabase possui suporte a Database Webhooks

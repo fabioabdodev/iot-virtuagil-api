@@ -6,6 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "backup:db": "node ./scripts/db-backup.mjs",
+    "backup:db:dry-run": "node ./scripts/db-backup.mjs --dry-run",
     "build": "nest build",
     "db:seed": "node ./scripts/db-seed.mjs",
     "db:verify-actuation": "node ./scripts/verify-actuation-schema.mjs",

@@ -23,6 +23,7 @@ Funcionalidades ja implementadas:
    - ambiente local
    - deploy em Docker Swarm
    - banco no Supabase
+   - rotina inicial de backup do banco
    - integracao com n8n e Evolution
 5. Gestao
    - clients
@@ -206,6 +207,7 @@ Regras atuais:
 - nunca comitar `.env`
 - nunca logar `DATABASE_URL`, tokens ou webhooks sensiveis
 - segredos de pipeline devem ficar em GitHub Secrets
+- backup do banco deve ser guardado fora da VPS principal
 
 ## Direcao de evolucao
 
@@ -255,6 +257,7 @@ Estado em 13/03/2026:
 - apoio operacional atual:
   - `npm run db:seed` agora tambem prepara atuadores demo e comandos iniciais
   - laboratorio web possui comandos prontos para validar schema, cadastro, comando e historico do `acionamento`
+  - o projeto agora possui `npm run backup:db` e `npm run backup:db:dry-run` como base inicial de backup do PostgreSQL
 - base de frontend atual:
   - `React Query` segue como camada principal para dados remotos
   - `Context API` foi introduzido para sessao/token do frontend
@@ -308,6 +311,7 @@ Estado em 13/03/2026:
   - manter `DIRECT_DATABASE_URL` configurado nos ambientes onde houver migrate/verificacao administrativa
   - revisar por que `npx prisma migrate deploy` encontrou timeout no advisory lock mesmo com o schema ja presente
   - avaliar se o proximo refinamento do dashboard deve incluir CTA comercial mais explicito para expansao modular
+  - definir onde os dumps de backup serao armazenados fora da VPS principal
 - restricao importante:
   - ainda nao existem hardwares fisicos disponiveis
   - continuidade deve priorizar simulacao, contratos de API, dashboard e operacao manual
@@ -323,3 +327,4 @@ Estado em 13/03/2026:
   - em 13/03/2026 `npm run db:seed` foi executado novamente com sucesso apos essa migration
   - em 13/03/2026 os clientes `virtuagil` e `cliente_teste` foram confirmados no Supabase com `document`, `phone`, `billingEmail` e `status` populados
   - em 13/03/2026 foi revisado o GitHub Actions atual: `ci.yml` nao roda migrations e `deploy.yml` nao roda `prisma migrate deploy`, entao o advisory lock do Prisma nao parece vir do workflow atual por si so
+  - em 13/03/2026 foi criada uma base inicial de backup com documentacao interna e script `npm run backup:db` usando `pg_dump`
