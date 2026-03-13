@@ -280,6 +280,13 @@ Estado em 13/03/2026:
 - blocos administrativos agora mostram mensagem clara quando o usuario nao e admin ou quando falta `clientId`
 - estados vazios do dashboard agora orientam onboarding inicial para devices, regras e atuadores
 - dashboard agora possui painel de perfil comercial minimo do cliente para operacao manual
+- banco real agora possui os campos comerciais minimos em `Client`:
+  - `document`
+  - `phone`
+  - `billingEmail`
+  - `status`
+  - `notes`
+  - `updatedAt`
 - banco real agora possui tabela `ClientModule` e o seed foi executado novamente com sucesso
 - validacoes concluidas localmente:
   - `npm run build` no backend
@@ -293,7 +300,6 @@ Estado em 13/03/2026:
   - `npm run db:verify-actuation` confirmou migration e tabelas do `acionamento` no banco real usando `DIRECT_DATABASE_URL`
   - fluxo integrado real validado: `POST /auth/login` -> `POST /actuators` -> `POST /actuators/:id/commands` -> `GET /actuators/:id/commands`
 - pendencia imediata:
-  - aplicar no banco real a migration `20260313170000_expand_clients_business_profile` antes de depender desses novos campos em producao
   - manter `DIRECT_DATABASE_URL` configurado nos ambientes onde houver migrate/verificacao administrativa
   - revisar por que `npx prisma migrate deploy` encontrou timeout no advisory lock mesmo com o schema ja presente
   - avaliar se o proximo refinamento do dashboard deve incluir CTA comercial mais explicito para expansao modular
@@ -308,3 +314,6 @@ Estado em 13/03/2026:
   - em 13/03/2026 as estruturas faltantes de `User` e `ClientModule` foram alinhadas diretamente no banco real e registradas em `_prisma_migrations` para compatibilizar o ambiente com o codigo atual
   - em 13/03/2026 o seed foi executado com sucesso no banco real apos esse alinhamento
   - em 13/03/2026 o fluxo do `acionamento` foi validado ponta a ponta com login real e API local: login `201`, criacao de atuador `201`, comando `201` e historico `200`
+  - em 13/03/2026 a migration `20260313170000_expand_clients_business_profile` foi aplicada ao banco real por `prisma db execute` e registrada manualmente em `_prisma_migrations` via `psql`, porque `prisma migrate deploy` continuou batendo no advisory lock
+  - em 13/03/2026 `npm run db:seed` foi executado novamente com sucesso apos essa migration
+  - em 13/03/2026 os clientes `virtuagil` e `cliente_teste` foram confirmados no Supabase com `document`, `phone`, `billingEmail` e `status` populados
