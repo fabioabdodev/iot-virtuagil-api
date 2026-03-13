@@ -41,15 +41,21 @@ model Device {
 }
 
 model Client {
-  id        String   @id
-  name      String
-  createdAt DateTime @default(now())
-  devices   Device[]
-  alertRules AlertRule[]
-  actuators Actuator[]
+  id                String             @id
+  name              String
+  document          String?
+  phone             String?
+  billingEmail      String?
+  status            String             @default("active")
+  notes             String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  devices           Device[]
+  alertRules        AlertRule[]
+  actuators         Actuator[]
   actuationCommands ActuationCommand[]
-  users     User[]
-  modules   ClientModule[]
+  users             User[]
+  modules           ClientModule[]
 }
 
 model AlertRule {

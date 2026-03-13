@@ -24,6 +24,7 @@ import { ActuationPanel } from '@/components/actuation-panel';
 import { AlertRulesPanel } from '@/components/alert-rules-panel';
 import { SimulationLabPanel } from '@/components/simulation-lab-panel';
 import { ClientModulesPanel } from '@/components/client-modules-panel';
+import { ClientProfilePanel } from '@/components/client-profile-panel';
 import { SetupGuideCard } from '@/components/setup-guide-card';
 import { UsersPanel } from '@/components/users-panel';
 import { Badge } from '@/components/ui/badge';
@@ -736,6 +737,20 @@ function DashboardContent() {
           />
         </div>
       )}
+
+      <div className="mt-6">
+        <ClientProfilePanel
+          clientId={scopedClientId}
+          authToken={authToken}
+          currentUser={user}
+          canManage={canManageClientModules}
+          blockedReason={
+            scopedClientId
+              ? 'Somente usuarios admin podem alterar o cadastro comercial do cliente.'
+              : 'Defina um clientId para revisar o perfil comercial da conta.'
+          }
+        />
+      </div>
 
       <div className="mt-6">
         <UsersPanel

@@ -9,7 +9,15 @@ export class ClientsService {
 
   async create(dto: CreateClientDto) {
     return this.prisma.client.create({
-      data: { id: dto.id, name: dto.name },
+      data: {
+        id: dto.id,
+        name: dto.name,
+        document: dto.document,
+        phone: dto.phone,
+        billingEmail: dto.billingEmail,
+        status: dto.status ?? 'active',
+        notes: dto.notes,
+      },
     });
   }
 
@@ -29,7 +37,14 @@ export class ClientsService {
     await this.findOne(id);
     return this.prisma.client.update({
       where: { id },
-      data: { name: dto.name },
+      data: {
+        name: dto.name,
+        document: dto.document,
+        phone: dto.phone,
+        billingEmail: dto.billingEmail,
+        status: dto.status,
+        notes: dto.notes,
+      },
     });
   }
 
@@ -38,4 +53,3 @@ export class ClientsService {
     return this.prisma.client.delete({ where: { id } });
   }
 }
-

@@ -26,6 +26,7 @@ Funcionalidades ja implementadas:
    - integracao com n8n e Evolution
 5. Gestao
    - clients
+   - perfil comercial minimo por cliente
    - devices
    - alert rules
    - dashboard web
@@ -69,6 +70,7 @@ Pendencias principais restantes:
 
 - recuperacao de senha
 - billing / assinaturas
+- cobranca automatizada
 - refinamento de dashboards por perfil de usuario
 - multiplos tipos reais de sensor no mesmo fluxo de ingestao
 - app mobile
@@ -189,6 +191,14 @@ Regras atuais:
 - o backend faz scoping por `clientId` do usuario autenticado
 - admin de cliente atua apenas dentro do proprio tenant
 - admin de plataforma e representado por usuario com `clientId = null`
+- dados comerciais do cliente permanecem enxutos e manuais:
+  - `name`
+  - `document`
+  - `phone`
+  - `billingEmail`
+  - `status`
+  - `notes`
+  - sem gateway de pagamento nesta fase
 
 ## Seguranca
 
@@ -266,10 +276,11 @@ Estado em 13/03/2026:
   - backend ja possui `/client-modules`
   - seed define modulos habilitados por cliente demo
   - dashboard ja esconde/exibe `temperatura` e `acionamento` conforme contratacao
-  - dashboard agora explica visualmente quando um modulo nao foi contratado
-  - blocos administrativos agora mostram mensagem clara quando o usuario nao e admin ou quando falta `clientId`
-  - estados vazios do dashboard agora orientam onboarding inicial para devices, regras e atuadores
-  - banco real agora possui tabela `ClientModule` e o seed foi executado novamente com sucesso
+- dashboard agora explica visualmente quando um modulo nao foi contratado
+- blocos administrativos agora mostram mensagem clara quando o usuario nao e admin ou quando falta `clientId`
+- estados vazios do dashboard agora orientam onboarding inicial para devices, regras e atuadores
+- dashboard agora possui painel de perfil comercial minimo do cliente para operacao manual
+- banco real agora possui tabela `ClientModule` e o seed foi executado novamente com sucesso
 - validacoes concluidas localmente:
   - `npm run build` no backend
   - `npm run build` em `apps/web`
@@ -282,6 +293,7 @@ Estado em 13/03/2026:
   - `npm run db:verify-actuation` confirmou migration e tabelas do `acionamento` no banco real usando `DIRECT_DATABASE_URL`
   - fluxo integrado real validado: `POST /auth/login` -> `POST /actuators` -> `POST /actuators/:id/commands` -> `GET /actuators/:id/commands`
 - pendencia imediata:
+  - aplicar no banco real a migration `20260313170000_expand_clients_business_profile` antes de depender desses novos campos em producao
   - manter `DIRECT_DATABASE_URL` configurado nos ambientes onde houver migrate/verificacao administrativa
   - revisar por que `npx prisma migrate deploy` encontrou timeout no advisory lock mesmo com o schema ja presente
   - avaliar se o proximo refinamento do dashboard deve incluir CTA comercial mais explicito para expansao modular

@@ -9,6 +9,7 @@ import {
 import { AuthSession, AuthUser, LoginInput } from '@/types/auth';
 import { UserInput, UserSummary } from '@/types/user';
 import { ClientModule } from '@/types/client-module';
+import { ClientInput, ClientSummary } from '@/types/client';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000';
@@ -453,6 +454,43 @@ export async function fetchUsers(
   }
 
   return response.json() as Promise<UserSummary[]>;
+}
+
+export async function fetchClient(
+  id: string,
+  authToken?: string,
+): Promise<ClientSummary> {
+  const response = await fetch(`${API_BASE_URL}/clients/${id}`, {
+    cache: 'no-store',
+    headers: buildAuthHeaders(authToken),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Falha ao carregar cliente'));
+  }
+
+  return response.json() as Promise<ClientSummary>;
+}
+
+export async function updateClient(
+  id: string,
+  input: ClientInput,
+  authToken?: string,
+): Promise<ClientSummary> {
+  const response = await fetch(`${API_BASE_URL}/clients/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...buildAuthHeaders(authToken),
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Falha ao atualizar cliente'));
+  }
+
+  return response.json() as Promise<ClientSummary>;
 }
 
 export async function createUser(

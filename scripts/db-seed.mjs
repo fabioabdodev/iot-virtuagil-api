@@ -27,14 +27,37 @@ Opcoes:
 
 async function seedClients() {
   const clients = [
-    { id: 'virtuagil', name: 'Virtuagil Demo' },
-    { id: 'cliente_teste', name: 'Cliente de Teste' },
+    {
+      id: 'virtuagil',
+      name: 'Virtuagil Demo',
+      document: '12.345.678/0001-90',
+      phone: '31988887777',
+      billingEmail: 'financeiro@virtuagil.com.br',
+      status: 'active',
+      notes: 'Conta demo principal usada para vendas, laboratorio e validacao operacional.',
+    },
+    {
+      id: 'cliente_teste',
+      name: 'Cliente de Teste',
+      document: '98.765.432/0001-10',
+      phone: '31999990000',
+      billingEmail: 'contato@cliente-teste.com.br',
+      status: 'inactive',
+      notes: 'Conta secundaria para cenarios de contratacao parcial e onboarding.',
+    },
   ];
 
   for (const client of clients) {
     await prisma.client.upsert({
       where: { id: client.id },
-      update: { name: client.name },
+      update: {
+        name: client.name,
+        document: client.document,
+        phone: client.phone,
+        billingEmail: client.billingEmail,
+        status: client.status,
+        notes: client.notes,
+      },
       create: client,
     });
   }
@@ -343,7 +366,7 @@ async function main() {
 
   if (args.has('--dry-run')) {
     console.log(
-      '[seed] dry-run: seriam criados/atualizados 2 clients, 3 devices, 3 alert-rules, 2 users, 2 actuators, 3 actuation-commands e 24 leituras por device sem historico.',
+      '[seed] dry-run: seriam criados/atualizados 2 clients com dados comerciais minimos, 3 devices, 3 alert-rules, 2 users, 2 actuators, 3 actuation-commands e 24 leituras por device sem historico.',
     );
     return;
   }

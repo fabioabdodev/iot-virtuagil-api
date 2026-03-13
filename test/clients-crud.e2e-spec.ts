@@ -15,7 +15,16 @@ describe('Clients CRUD (e2e)', () => {
     const fakePrisma = {
       client: {
         create: jest.fn(({ data }: any) => {
-          const row = { ...data, createdAt: new Date('2026-03-07T00:00:00.000Z') };
+          const row = {
+            status: 'active',
+            document: null,
+            phone: null,
+            billingEmail: null,
+            notes: null,
+            ...data,
+            createdAt: new Date('2026-03-07T00:00:00.000Z'),
+            updatedAt: new Date('2026-03-07T00:00:00.000Z'),
+          };
           clients.set(data.id, row);
           return Promise.resolve(row);
         }),
@@ -88,7 +97,12 @@ describe('Clients CRUD (e2e)', () => {
   it('should create, list, update and delete client', async () => {
     await request(app.getHttpServer())
       .post('/clients')
-      .send({ id: 'client_a', name: 'Client A' })
+      .send({
+        id: 'client_a',
+        name: 'Client A',
+        billingEmail: 'financeiro@clientea.com',
+        status: 'active',
+      })
       .expect(201);
 
     await request(app.getHttpServer())
@@ -97,18 +111,32 @@ describe('Clients CRUD (e2e)', () => {
       .expect((res) => {
         expect(res.body).toEqual(
           expect.arrayContaining([
-            expect.objectContaining({ id: 'client_a', name: 'Client A' }),
+            expect.objectContaining({
+              id: 'client_a',
+              name: 'Client A',
+              billingEmail: 'financeiro@clientea.com',
+              status: 'active',
+            }),
           ]),
         );
       });
 
     await request(app.getHttpServer())
       .patch('/clients/client_a')
-      .send({ name: 'Client A Updated' })
+      .send({
+        name: 'Client A Updated',
+        phone: '31988887777',
+        status: 'delinquent',
+      })
       .expect(200)
       .expect((res) => {
         expect(res.body).toEqual(
-          expect.objectContaining({ id: 'client_a', name: 'Client A Updated' }),
+          expect.objectContaining({
+            id: 'client_a',
+            name: 'Client A Updated',
+            phone: '31988887777',
+            status: 'delinquent',
+          }),
         );
       });
 

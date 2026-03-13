@@ -29,9 +29,33 @@ describe('ClientsService', () => {
   });
 
   it('should create client', async () => {
-    fakePrisma.client.create.mockResolvedValue({ id: 'client_a', name: 'Client A' });
-    const result = await service.create({ id: 'client_a', name: 'Client A' });
-    expect(result).toEqual({ id: 'client_a', name: 'Client A' });
+    fakePrisma.client.create.mockResolvedValue({
+      id: 'client_a',
+      name: 'Client A',
+      status: 'active',
+      billingEmail: 'financeiro@clientea.com',
+    });
+    const result = await service.create({
+      id: 'client_a',
+      name: 'Client A',
+      billingEmail: 'financeiro@clientea.com',
+    });
+    expect(fakePrisma.client.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        id: 'client_a',
+        name: 'Client A',
+        billingEmail: 'financeiro@clientea.com',
+        status: 'active',
+      }),
+    });
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'client_a',
+        name: 'Client A',
+        status: 'active',
+        billingEmail: 'financeiro@clientea.com',
+      }),
+    );
   });
 
   it('should throw not found when client does not exist', async () => {
@@ -39,4 +63,3 @@ describe('ClientsService', () => {
     await expect(service.findOne('missing')).rejects.toBeInstanceOf(NotFoundException);
   });
 });
-
