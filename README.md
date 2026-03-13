@@ -292,6 +292,8 @@ O seed e idempotente:
 
 - atualiza clientes e devices demo existentes
 - recria configuracao esperada das regras
+- cria atuadores demo do modulo `acionamento`
+- cria historico inicial de comandos quando ainda nao existir
 - so cria historico de temperatura se o device ainda nao tiver leituras
 
 ## Verificacao do modulo acionamento

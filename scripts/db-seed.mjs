@@ -180,6 +180,87 @@ async function seedTemperatureHistory() {
   }
 }
 
+async function seedActuators() {
+  const actuators = [
+    {
+      id: 'sauna_main',
+      clientId: 'virtuagil',
+      deviceId: 'freezer_01',
+      name: 'Sauna principal',
+      location: 'Area molhada',
+      currentState: 'off',
+      lastCommandAt: null,
+      lastCommandBy: null,
+    },
+    {
+      id: 'exaustor_lab',
+      clientId: 'virtuagil',
+      deviceId: 'freezer_02',
+      name: 'Exaustor laboratorio',
+      location: 'Laboratorio',
+      currentState: 'on',
+      lastCommandAt: new Date(Date.now() - 20 * 60 * 1000),
+      lastCommandBy: 'seed',
+    },
+  ];
+
+  for (const actuator of actuators) {
+    await prisma.actuator.upsert({
+      where: { id: actuator.id },
+      update: {
+        clientId: actuator.clientId,
+        deviceId: actuator.deviceId,
+        name: actuator.name,
+        location: actuator.location,
+        currentState: actuator.currentState,
+        lastCommandAt: actuator.lastCommandAt,
+        lastCommandBy: actuator.lastCommandBy,
+      },
+      create: actuator,
+    });
+  }
+}
+
+async function seedActuationCommands() {
+  const commandCount = await prisma.actuationCommand.count();
+
+  if (commandCount > 0) {
+    return;
+  }
+
+  const now = Date.now();
+  const commands = [
+    {
+      actuatorId: 'sauna_main',
+      clientId: 'virtuagil',
+      desiredState: 'on',
+      source: 'seed',
+      note: 'Aquecimento inicial',
+      executedAt: new Date(now - 90 * 60 * 1000),
+    },
+    {
+      actuatorId: 'sauna_main',
+      clientId: 'virtuagil',
+      desiredState: 'off',
+      source: 'seed',
+      note: 'Encerramento automatico',
+      executedAt: new Date(now - 45 * 60 * 1000),
+    },
+    {
+      actuatorId: 'exaustor_lab',
+      clientId: 'virtuagil',
+      desiredState: 'on',
+      source: 'seed',
+      note: 'Ventilacao preventiva',
+      executedAt: new Date(now - 20 * 60 * 1000),
+    },
+  ];
+
+  await prisma.actuationCommand.createMany({
+    data: commands,
+  });
+}
+
 async function main() {
   if (args.has('--help')) {
     printHelp();
@@ -187,7 +268,9 @@ async function main() {
   }
 
   if (args.has('--dry-run')) {
-    console.log('[seed] dry-run: seriam criados/atualizados 2 clients, 3 devices, 3 alert-rules e 24 leituras por device sem historico.');
+    console.log(
+      '[seed] dry-run: seriam criados/atualizados 2 clients, 3 devices, 3 alert-rules, 2 actuators, 3 actuation-commands e 24 leituras por device sem historico.',
+    );
     return;
   }
 
@@ -197,6 +280,8 @@ async function main() {
   await seedDevices();
   await seedAlertRules();
   await seedTemperatureHistory();
+  await seedActuators();
+  await seedActuationCommands();
 
   console.log('[seed] concluido com sucesso.');
 }

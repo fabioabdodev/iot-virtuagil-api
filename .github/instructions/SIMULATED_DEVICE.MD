@@ -104,6 +104,11 @@ npm run db:seed
 O seed cria clients, devices, regras e historico inicial sem duplicar o que ja
 existir.
 
+No estado atual, o seed tambem prepara:
+
+- atuadores demo
+- historico inicial de comandos do modulo `acionamento`
+
 ## Simulacao atual do modulo acionamento
 
 Enquanto nao houver hardware fisico:

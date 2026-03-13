@@ -214,6 +214,9 @@ Estado em 13/03/2026:
   - edicao e exclusao de atuadores
   - botoes de ligar e desligar
   - historico recente de comandos
+- apoio operacional atual:
+  - `npm run db:seed` agora tambem prepara atuadores demo e comandos iniciais
+  - laboratorio web possui comandos prontos para validar schema, cadastro, comando e historico do `acionamento`
 - validacoes concluidas localmente:
   - `npm run build` no backend
   - `npm run build` em `apps/web`

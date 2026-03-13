@@ -38,11 +38,18 @@ const troubleshootingItems = [
     command:
       'npm run simulate:iot -- --devices freezer_01,freezer_02 --preset normal --ensure-devices --api-key SUA_CHAVE',
   },
+  {
+    title: 'Modulo acionamento nao aparece',
+    description:
+      'Confirme se a migration foi aplicada e se o banco atual possui as tabelas do modulo.',
+    command: 'npm run db:verify-actuation',
+  },
 ];
 
 const workflowSteps = [
   'Suba a API local com `npm run start:dev`.',
   'Opcionalmente rode `npm run db:seed` para carregar clientes e historico demo.',
+  'Se estiver validando o banco atual, rode `npm run db:verify-actuation`.',
   'Use o simulador com `--ensure-devices` para criar os devices e iniciar a telemetria.',
   'Abra o dashboard principal e acompanhe cards, tabela e historico.',
   'Cadastre um atuador e teste comandos manuais de ligar/desligar no dashboard.',
@@ -170,6 +177,10 @@ export default function LabPage() {
               <p className="rounded-2xl border border-line/70 bg-card/40 px-4 py-3">
                 Prefira `--ensure-devices` quando estiver preparando ambiente do
                 zero.
+              </p>
+              <p className="rounded-2xl border border-line/70 bg-card/40 px-4 py-3">
+                Antes de depurar o `acionamento`, rode `npm run db:verify-actuation`
+                para confirmar schema e tabelas no banco atual.
               </p>
               <p className="rounded-2xl border border-line/70 bg-card/40 px-4 py-3">
                 Use `preset alerta` e `preset critico` para validar regras e

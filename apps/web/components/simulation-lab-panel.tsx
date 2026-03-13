@@ -48,9 +48,16 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
     {
       title: 'Popular base demo',
       description:
-        'Cria clientes, devices, regras e historico inicial para demonstracao sem hardware real.',
+        'Cria clientes, devices, regras, atuadores demo e historicos iniciais sem hardware real.',
       command: 'npm run db:seed',
       badge: 'seed',
+    },
+    {
+      title: 'Verificar migration',
+      description:
+        'Confirma se a migration do modulo de acionamento entrou no banco configurado.',
+      command: 'npm run db:verify-actuation',
+      badge: 'schema',
     },
     {
       title: 'Cadastrar atuador',
@@ -60,12 +67,34 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
       badge: 'acionamento',
     },
     {
-      title: 'Enviar comando manual',
+      title: 'Enviar comando ON',
       description:
         'Liga ou desliga a carga pela API para testar dashboard e historico do atuador.',
       command:
         'curl -X POST http://localhost:3000/actuators/sauna_main/commands -H "Content-Type: application/json" -d "{\\"desiredState\\":\\"on\\",\\"source\\":\\"lab\\"}"',
       badge: 'manual',
+    },
+    {
+      title: 'Enviar comando OFF',
+      description:
+        'Desliga a carga pela API para validar transicao de estado e novo item no historico.',
+      command:
+        'curl -X POST http://localhost:3000/actuators/sauna_main/commands -H "Content-Type: application/json" -d "{\\"desiredState\\":\\"off\\",\\"source\\":\\"lab\\"}"',
+      badge: 'manual',
+    },
+    {
+      title: 'Listar atuadores',
+      description:
+        'Consulta os atuadores do tenant atual para conferir seed, cadastro e estado operacional.',
+      command: `curl "http://localhost:3000/actuators?clientId=${clientId ?? 'virtuagil'}"`,
+      badge: 'consulta',
+    },
+    {
+      title: 'Historico do atuador',
+      description:
+        'Busca os ultimos comandos emitidos para um atuador especifico.',
+      command: 'curl http://localhost:3000/actuators/sauna_main/commands',
+      badge: 'log',
     },
   ];
 
@@ -133,7 +162,9 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
                 </Feedback>
               ) : (
                 <span className="text-xs text-muted">
-                  Ajuste `SUA_CHAVE` antes de executar.
+                  {scenario.command.includes('SUA_CHAVE')
+                    ? 'Ajuste `SUA_CHAVE` antes de executar.'
+                    : 'Pronto para testar no terminal local.'}
                 </span>
               )}
 
