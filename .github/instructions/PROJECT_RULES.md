@@ -261,6 +261,7 @@ Estado em 13/03/2026:
   - login agora usa rate limit e bloqueio temporario contra brute force
   - backend ja esta preparado para `Cloudflare Turnstile` quando `TURNSTILE_SECRET_KEY` for configurada
   - frontend ainda nao exibe o widget do Turnstile; a integracao visual fica para etapa posterior
+  - banco real agora possui tabela `User` e o seed foi executado novamente com sucesso
 - modulos por cliente:
   - backend ja possui `/client-modules`
   - seed define modulos habilitados por cliente demo
@@ -268,6 +269,7 @@ Estado em 13/03/2026:
   - dashboard agora explica visualmente quando um modulo nao foi contratado
   - blocos administrativos agora mostram mensagem clara quando o usuario nao e admin ou quando falta `clientId`
   - estados vazios do dashboard agora orientam onboarding inicial para devices, regras e atuadores
+  - banco real agora possui tabela `ClientModule` e o seed foi executado novamente com sucesso
 - validacoes concluidas localmente:
   - `npm run build` no backend
   - `npm run build` em `apps/web`
@@ -278,10 +280,10 @@ Estado em 13/03/2026:
   - teste e2e de devices passando
   - teste e2e de clients passando
   - `npm run db:verify-actuation` confirmou migration e tabelas do `acionamento` no banco real usando `DIRECT_DATABASE_URL`
+  - fluxo integrado real validado: `POST /auth/login` -> `POST /actuators` -> `POST /actuators/:id/commands` -> `GET /actuators/:id/commands`
 - pendencia imediata:
   - manter `DIRECT_DATABASE_URL` configurado nos ambientes onde houver migrate/verificacao administrativa
   - revisar por que `npx prisma migrate deploy` encontrou timeout no advisory lock mesmo com o schema ja presente
-  - usar o checklist do README para validar criacao, comando e historico no ambiente integrado
   - avaliar se o proximo refinamento do dashboard deve incluir CTA comercial mais explicito para expansao modular
 - restricao importante:
   - ainda nao existem hardwares fisicos disponiveis
@@ -291,3 +293,6 @@ Estado em 13/03/2026:
   - em 13/03/2026 o Cloudflare foi ajustado para `Full (strict)`; `monitor.virtuagil.com.br` ficou funcional com proxy e o dominio raiz apresentou `526` por falta de origem HTTPS valida
   - em 13/03/2026, apos configurar `DIRECT_DATABASE_URL`, `npm run db:verify-actuation` confirmou no banco real a migration `20260313013000_create_actuation_module` e as tabelas `Actuator` e `ActuationCommand`
   - em 13/03/2026 `npx prisma migrate deploy` ainda retornou timeout no advisory lock (`pg_advisory_lock`), mesmo com o schema do `acionamento` ja confirmado como presente
+  - em 13/03/2026 as estruturas faltantes de `User` e `ClientModule` foram alinhadas diretamente no banco real e registradas em `_prisma_migrations` para compatibilizar o ambiente com o codigo atual
+  - em 13/03/2026 o seed foi executado com sucesso no banco real apos esse alinhamento
+  - em 13/03/2026 o fluxo do `acionamento` foi validado ponta a ponta com login real e API local: login `201`, criacao de atuador `201`, comando `201` e historico `200`
