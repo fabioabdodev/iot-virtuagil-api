@@ -277,11 +277,10 @@ Estado em 13/03/2026:
   - teste e2e de client-modules passando
   - teste e2e de devices passando
   - teste e2e de clients passando
+  - `npm run db:verify-actuation` confirmou migration e tabelas do `acionamento` no banco real usando `DIRECT_DATABASE_URL`
 - pendencia imediata:
-  - aplicar `npx prisma migrate deploy` no banco conectado ao ambiente desejado
-  - configurar `DIRECT_DATABASE_URL` no ambiente local/producao para rodar migrations sem depender do pooler
-  - confirmar no banco real se as tabelas `Actuator` e `ActuationCommand` foram criadas
-  - usar `npm run db:verify-actuation` como verificacao rapida apos a migration
+  - manter `DIRECT_DATABASE_URL` configurado nos ambientes onde houver migrate/verificacao administrativa
+  - revisar por que `npx prisma migrate deploy` encontrou timeout no advisory lock mesmo com o schema ja presente
   - usar o checklist do README para validar criacao, comando e historico no ambiente integrado
   - avaliar se o proximo refinamento do dashboard deve incluir CTA comercial mais explicito para expansao modular
 - restricao importante:
@@ -290,3 +289,5 @@ Estado em 13/03/2026:
 - observacao operacional:
   - em 13/03/2026 houve tentativa de `npx prisma migrate deploy` contra o banco configurado, mas o comando excedeu o tempo de execucao e nao confirmou conclusao
   - em 13/03/2026 o Cloudflare foi ajustado para `Full (strict)`; `monitor.virtuagil.com.br` ficou funcional com proxy e o dominio raiz apresentou `526` por falta de origem HTTPS valida
+  - em 13/03/2026, apos configurar `DIRECT_DATABASE_URL`, `npm run db:verify-actuation` confirmou no banco real a migration `20260313013000_create_actuation_module` e as tabelas `Actuator` e `ActuationCommand`
+  - em 13/03/2026 `npx prisma migrate deploy` ainda retornou timeout no advisory lock (`pg_advisory_lock`), mesmo com o schema do `acionamento` ja confirmado como presente
