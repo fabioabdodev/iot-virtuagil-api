@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
+import { AccessNotice } from '@/components/ui/access-notice';
 import { Feedback } from '@/components/ui/feedback';
 import { Input, Select } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
@@ -42,14 +43,22 @@ type UsersPanelProps = {
   clientId?: string;
   authToken?: string;
   currentUser: AuthUser | null;
+  canManage: boolean;
+  blockedReason?: string;
 };
 
 export function UsersPanel({
   clientId,
   authToken,
   currentUser,
+  canManage,
+  blockedReason,
 }: UsersPanelProps) {
-  const { data, isLoading, isError, error } = useUsers(clientId, authToken);
+  const { data, isLoading, isError, error } = useUsers(
+    clientId,
+    authToken,
+    canManage,
+  );
   const { createMutation, updateMutation, deleteMutation } = useUserMutations(
     clientId,
     authToken,
@@ -115,10 +124,18 @@ export function UsersPanel({
   }
 
   if (!clientId) {
+    return <AccessNotice title="Gestao de usuarios" description="Selecione um cliente para liberar o cadastro e a manutencao de usuarios." badge="clientId obrigatorio" hint="Esse bloco trabalha por tenant. Defina o `clientId` no topo do dashboard para continuar." />;
+  }
+
+  if (!canManage) {
     return (
-      <Panel className="animate-fade-up p-5 [animation-delay:340ms]">
-        <Feedback>Defina um `clientId` para gerenciar usuarios.</Feedback>
-      </Panel>
+      <AccessNotice
+        title="Gestao de usuarios"
+        description="A administracao de usuarios fica restrita a perfis admin do cliente ou da plataforma."
+        badge={currentUser?.role ?? 'sem permissao'}
+        tone="warning"
+        hint={blockedReason ?? 'Use um usuario admin para criar, editar ou desativar acessos.'}
+      />
     );
   }
 

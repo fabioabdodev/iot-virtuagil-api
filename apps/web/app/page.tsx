@@ -31,6 +31,7 @@ import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
 import { Feedback } from '@/components/ui/feedback';
 import { Input } from '@/components/ui/input';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { AccessNotice } from '@/components/ui/access-notice';
 import { MetricCard } from '@/components/ui/metric-card';
 import { Panel } from '@/components/ui/panel';
 import { useAuth } from '@/lib/auth-context';
@@ -110,6 +111,9 @@ function DashboardContent() {
     [queryClientId],
   );
   const scopedClientId = clientId ?? user?.clientId ?? undefined;
+  const isAdmin = user?.role === 'admin';
+  const canManageUsers = Boolean(scopedClientId && isAdmin);
+  const canManageClientModules = Boolean(scopedClientId && isAdmin);
   const {
     data: clientModulesData,
     isLoading: isLoadingClientModules,
@@ -669,6 +673,15 @@ function DashboardContent() {
             devices={devices}
           />
         </div>
+      ) : scopedClientId ? (
+        <div className="mt-6">
+          <AccessNotice
+            title="Modulo temperatura indisponivel"
+            description="Este cliente nao contratou o modulo de temperatura, por isso devices, leituras e regras ficam bloqueados nesta conta."
+            badge="nao contratado"
+            hint="Habilite o modulo no painel de contratacao para liberar devices, historico e alertas."
+          />
+        </div>
       ) : null}
 
       {actuationEnabled ? (
@@ -681,11 +694,12 @@ function DashboardContent() {
         </div>
       ) : (
         <div className="mt-6">
-          <Panel className="animate-fade-up p-5 [animation-delay:300ms]">
-            <Feedback>
-              O modulo `acionamento` nao esta habilitado para este cliente.
-            </Feedback>
-          </Panel>
+          <AccessNotice
+            title="Modulo acionamento indisponivel"
+            description="O cliente atual ainda nao contratou o modulo de acionamento, entao o controle manual de cargas permanece bloqueado."
+            badge="nao contratado"
+            hint="Quando o modulo for habilitado, este bloco libera cadastro de atuadores, comandos e historico operacional."
+          />
         </div>
       )}
 
@@ -694,6 +708,12 @@ function DashboardContent() {
           clientId={scopedClientId}
           authToken={authToken}
           currentUser={user}
+          canManage={canManageUsers}
+          blockedReason={
+            scopedClientId
+              ? 'Somente usuarios admin podem gerenciar acessos deste cliente.'
+              : 'Defina um clientId para administrar os usuarios de uma conta especifica.'
+          }
         />
       </div>
 
@@ -702,6 +722,12 @@ function DashboardContent() {
           clientId={scopedClientId}
           authToken={authToken}
           currentUser={user}
+          canManage={canManageClientModules}
+          blockedReason={
+            scopedClientId
+              ? 'Somente usuarios admin podem alterar os modulos contratados deste cliente.'
+              : 'Defina um clientId para revisar e ajustar a contratacao modular.'
+          }
         />
       </div>
 

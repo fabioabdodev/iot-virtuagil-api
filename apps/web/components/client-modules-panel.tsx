@@ -4,6 +4,7 @@ import { Boxes, LockOpen } from 'lucide-react';
 import { useClientModuleMutations } from '@/hooks/use-client-module-mutations';
 import { useClientModules } from '@/hooks/use-client-modules';
 import { AuthUser } from '@/types/auth';
+import { AccessNotice } from '@/components/ui/access-notice';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Feedback } from '@/components/ui/feedback';
@@ -13,21 +14,37 @@ type ClientModulesPanelProps = {
   clientId?: string;
   authToken?: string;
   currentUser: AuthUser | null;
+  canManage: boolean;
+  blockedReason?: string;
 };
 
 export function ClientModulesPanel({
   clientId,
   authToken,
   currentUser,
+  canManage,
+  blockedReason,
 }: ClientModulesPanelProps) {
-  const { data, isLoading, isError, error } = useClientModules(clientId, authToken);
+  const { data, isLoading, isError, error } = useClientModules(
+    clientId,
+    authToken,
+    canManage,
+  );
   const mutation = useClientModuleMutations(clientId, authToken);
 
   if (!clientId) {
+    return <AccessNotice title="Modulos contratados" description="Selecione um cliente para consultar e ajustar os modulos habilitados na conta." badge="clientId obrigatorio" hint="A contratacao e gerenciada cliente a cliente, por isso esse painel precisa de um tenant definido." />;
+  }
+
+  if (!canManage) {
     return (
-      <Panel className="animate-fade-up p-5 [animation-delay:360ms]">
-        <Feedback>Defina um `clientId` para gerenciar os modulos do cliente.</Feedback>
-      </Panel>
+      <AccessNotice
+        title="Modulos contratados"
+        description="A habilitacao de modulos contratados e uma acao administrativa, usada para controlar o que cada cliente pode operar."
+        badge={currentUser?.role ?? 'sem permissao'}
+        tone="warning"
+        hint={blockedReason ?? 'Entre com um usuario admin para alterar contratacao de temperatura e acionamento.'}
+      />
     );
   }
 

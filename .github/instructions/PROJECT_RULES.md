@@ -257,6 +257,8 @@ Estado em 13/03/2026:
   - backend ja possui `/client-modules`
   - seed define modulos habilitados por cliente demo
   - dashboard ja esconde/exibe `temperatura` e `acionamento` conforme contratacao
+  - dashboard agora explica visualmente quando um modulo nao foi contratado
+  - blocos administrativos agora mostram mensagem clara quando o usuario nao e admin ou quando falta `clientId`
 - validacoes concluidas localmente:
   - `npm run build` no backend
   - `npm run build` em `apps/web`
@@ -271,7 +273,7 @@ Estado em 13/03/2026:
   - confirmar no banco real se as tabelas `Actuator` e `ActuationCommand` foram criadas
   - usar `npm run db:verify-actuation` como verificacao rapida apos a migration
   - usar o checklist do README para validar criacao, comando e historico no ambiente integrado
-  - refletir no frontend, com mais rigor visual, mensagens quando o modulo nao estiver contratado ou o usuario nao tiver permissao
+  - avaliar se o proximo refinamento do dashboard deve incluir CTA comercial ou onboarding quando um modulo nao estiver contratado
 - restricao importante:
   - ainda nao existem hardwares fisicos disponiveis
   - continuidade deve priorizar simulacao, contratos de API, dashboard e operacao manual
