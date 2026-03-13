@@ -27,9 +27,18 @@ export class AuthService {
       where: { email: dto.email.toLowerCase().trim() },
     } as any);
 
-    if (!user || !this.verifyPassword(dto.password, (user as any).passwordHash)) {
+    if (
+      !user ||
+      !(user as any).isActive ||
+      !this.verifyPassword(dto.password, (user as any).passwordHash)
+    ) {
       throw new UnauthorizedException('Invalid email or password');
     }
+
+    await this.prisma.user.update({
+      where: { id: (user as any).id },
+      data: { lastLoginAt: new Date() },
+    } as any);
 
     const token = this.signToken({
       sub: (user as any).id,
@@ -41,7 +50,10 @@ export class AuthService {
 
     return {
       token,
-      user: this.sanitizeUser(user),
+      user: this.sanitizeUser({
+        ...(user as any),
+        lastLoginAt: new Date(),
+      }),
     };
   }
 
@@ -71,6 +83,9 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
+      phone: user.phone ?? null,
+      isActive: user.isActive,
+      lastLoginAt: user.lastLoginAt ?? null,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };

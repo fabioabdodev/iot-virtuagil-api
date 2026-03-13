@@ -194,6 +194,7 @@ async function seedUsers() {
       name: 'Administrador Virtuagil',
       clientId: 'virtuagil',
       role: 'admin',
+      phone: '31988887777',
       password: 'virtuagil123',
     },
     {
@@ -201,6 +202,7 @@ async function seedUsers() {
       name: 'Operador Virtuagil',
       clientId: 'virtuagil',
       role: 'operator',
+      phone: '31999996666',
       password: 'operador123',
     },
   ];
@@ -212,12 +214,16 @@ async function seedUsers() {
         clientId: user.clientId,
         name: user.name,
         role: user.role,
+        phone: user.phone,
+        isActive: true,
       },
       create: {
         clientId: user.clientId,
         name: user.name,
         email: user.email,
         role: user.role,
+        phone: user.phone,
+        isActive: true,
         passwordHash: hashPassword(user.password),
       },
     });

@@ -4,6 +4,9 @@ export type AuthUser = {
   name: string;
   email: string;
   role: 'operator' | 'admin';
+  phone?: string | null;
+  isActive?: boolean;
+  lastLoginAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
 };

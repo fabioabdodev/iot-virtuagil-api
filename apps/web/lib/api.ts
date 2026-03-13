@@ -7,6 +7,7 @@ import {
   ActuatorSummary,
 } from '@/types/actuator';
 import { AuthSession, AuthUser, LoginInput } from '@/types/auth';
+import { UserInput, UserSummary } from '@/types/user';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000';
@@ -432,4 +433,80 @@ export async function fetchCurrentUser(authToken: string): Promise<AuthUser> {
   }
 
   return response.json() as Promise<AuthUser>;
+}
+
+export async function fetchUsers(
+  clientId?: string,
+  authToken?: string,
+): Promise<UserSummary[]> {
+  const query = new URLSearchParams();
+  if (clientId) query.set('clientId', clientId);
+
+  const response = await fetch(`${API_BASE_URL}/users?${query.toString()}`, {
+    cache: 'no-store',
+    headers: buildAuthHeaders(authToken),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Falha ao carregar usuarios'));
+  }
+
+  return response.json() as Promise<UserSummary[]>;
+}
+
+export async function createUser(
+  input: UserInput,
+  authToken?: string,
+): Promise<UserSummary> {
+  const response = await fetch(`${API_BASE_URL}/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...buildAuthHeaders(authToken),
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Falha ao criar usuario'));
+  }
+
+  return response.json() as Promise<UserSummary>;
+}
+
+export async function updateUser(
+  id: string,
+  input: UserInput,
+  authToken?: string,
+): Promise<UserSummary> {
+  const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...buildAuthHeaders(authToken),
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Falha ao atualizar usuario'));
+  }
+
+  return response.json() as Promise<UserSummary>;
+}
+
+export async function deleteUser(
+  id: string,
+  authToken?: string,
+): Promise<UserSummary> {
+  const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    method: 'DELETE',
+    headers: buildAuthHeaders(authToken),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Falha ao remover usuario'));
+  }
+
+  return response.json() as Promise<UserSummary>;
 }

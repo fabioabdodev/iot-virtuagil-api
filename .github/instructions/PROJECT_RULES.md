@@ -227,11 +227,15 @@ Estado em 13/03/2026:
   - usuarios demo sao criados pelo seed
   - protecao obrigatoria das rotas administrativas ainda e proxima etapa
   - frontend ja consome login real e restaura sessao via `GET /auth/me`
+  - usuarios agora possuem `phone`, `isActive` e `lastLoginAt`
+  - backend ja possui CRUD basico em `/users`
+  - dashboard ja possui painel inicial de gestao de usuarios por cliente
 - validacoes concluidas localmente:
   - `npm run build` no backend
   - `npm run build` em `apps/web`
   - teste e2e de auth passando
   - teste e2e de atuadores passando
+  - teste e2e de usuarios passando
 - pendencia imediata:
   - aplicar `npx prisma migrate deploy` no banco conectado ao ambiente desejado
   - confirmar no banco real se as tabelas `Actuator` e `ActuationCommand` foram criadas

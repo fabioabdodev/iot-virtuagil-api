@@ -23,6 +23,7 @@ import { DeviceHistoryPanel } from '@/components/device-history-panel';
 import { ActuationPanel } from '@/components/actuation-panel';
 import { AlertRulesPanel } from '@/components/alert-rules-panel';
 import { SimulationLabPanel } from '@/components/simulation-lab-panel';
+import { UsersPanel } from '@/components/users-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
@@ -652,6 +653,14 @@ function DashboardContent() {
           clientId={clientId}
           authToken={authToken}
           devices={devices}
+        />
+      </div>
+
+      <div className="mt-6">
+        <UsersPanel
+          clientId={clientId ?? user?.clientId ?? undefined}
+          authToken={authToken}
+          currentUser={user}
         />
       </div>
 

@@ -30,6 +30,9 @@ describe('Auth (e2e)', () => {
       email: 'operator@virtuagil.com.br',
       passwordHash,
       role: 'operator',
+      phone: null,
+      isActive: true,
+      lastLoginAt: null,
       createdAt: new Date('2026-03-13T00:00:00.000Z'),
       updatedAt: new Date('2026-03-13T00:00:00.000Z'),
     });
@@ -41,6 +44,14 @@ describe('Auth (e2e)', () => {
           const found =
             Array.from(users.values()).find((row) => row.id === where.id) ?? null;
           return Promise.resolve(found);
+        }),
+        update: jest.fn(({ where, data }: any) => {
+          const current =
+            Array.from(users.values()).find((row) => row.id === where.id) ?? null;
+          if (!current) return Promise.resolve(null);
+          const next = { ...current, ...data };
+          users.set(next.email, next);
+          return Promise.resolve(next);
         }),
       },
     };
