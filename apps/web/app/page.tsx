@@ -24,6 +24,7 @@ import { ActuationPanel } from '@/components/actuation-panel';
 import { AlertRulesPanel } from '@/components/alert-rules-panel';
 import { SimulationLabPanel } from '@/components/simulation-lab-panel';
 import { ClientModulesPanel } from '@/components/client-modules-panel';
+import { SetupGuideCard } from '@/components/setup-guide-card';
 import { UsersPanel } from '@/components/users-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -656,7 +657,32 @@ function DashboardContent() {
           </div>
         ) : null}
         {!isLoading && !isError && temperatureEnabled && devices.length === 0 ? (
-          <Feedback>Sem dispositivos para este clientId.</Feedback>
+          <SetupGuideCard
+            eyebrow="Primeiros passos"
+            title="Seu modulo de temperatura ainda nao tem devices"
+            description="Este cliente ja pode comecar a operar. O proximo passo e cadastrar pelo menos um equipamento e movimentar leituras para validar historico, offline e alertas."
+            steps={[
+              {
+                title: 'Cadastrar o primeiro device',
+                description: 'Informe um ID unico, um nome amigavel e a faixa minima e maxima de temperatura.',
+              },
+              {
+                title: 'Enviar leituras ou usar o laboratorio',
+                description: 'Movimente dados com simulacao para ver online, offline, historico e destaque visual no dashboard.',
+              },
+              {
+                title: 'Criar regra de alerta',
+                description: 'Depois do primeiro device, configure cooldown e tolerancia para operacao real.',
+              },
+            ]}
+            primaryActionLabel="Cadastrar primeiro device"
+            onPrimaryAction={() => {
+              setEditingDeviceId(null);
+              setFormMode('create');
+            }}
+            secondaryHref="/lab"
+            secondaryLabel="Abrir laboratorio"
+          />
         ) : null}
         {!isLoadingClientModules && !temperatureEnabled ? (
           <Feedback>
@@ -671,6 +697,10 @@ function DashboardContent() {
             clientId={scopedClientId}
             authToken={authToken}
             devices={devices}
+            onCreateDevice={() => {
+              setEditingDeviceId(null);
+              setFormMode('create');
+            }}
           />
         </div>
       ) : scopedClientId ? (
@@ -690,6 +720,10 @@ function DashboardContent() {
             clientId={scopedClientId}
             authToken={authToken}
             devices={devices}
+            onCreateDevice={() => {
+              setEditingDeviceId(null);
+              setFormMode('create');
+            }}
           />
         </div>
       ) : (

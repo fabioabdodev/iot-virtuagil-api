@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Feedback } from '@/components/ui/feedback';
 import { Input, Select } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
+import { SetupGuideCard } from '@/components/setup-guide-card';
 
 const formSchema = z
   .object({
@@ -69,12 +70,14 @@ type AlertRulesPanelProps = {
   clientId?: string;
   authToken?: string;
   devices: DeviceSummary[];
+  onCreateDevice?: () => void;
 };
 
 export function AlertRulesPanel({
   clientId,
   authToken,
   devices,
+  onCreateDevice,
 }: AlertRulesPanelProps) {
   const { data, isLoading, isError, error } = useAlertRules(
     clientId,
@@ -290,7 +293,32 @@ export function AlertRulesPanel({
           </DataTable>
         </DataTableWrapper>
       ) : null}
-      {!isLoading && !isError && (data?.length ?? 0) === 0 ? (
+      {!isLoading && !isError && (data?.length ?? 0) === 0 && devices.length === 0 ? (
+        <SetupGuideCard
+          eyebrow="Regras de alerta"
+          title="Cadastre um device antes da primeira regra"
+          description="As regras ficam mais claras quando voce ja tem pelo menos um equipamento monitorado para vincular limites e historico."
+          steps={[
+            {
+              title: 'Cadastrar o primeiro device',
+              description: 'Crie um equipamento com faixa minima e maxima para habilitar monitoramento.',
+            },
+            {
+              title: 'Simular ou enviar leituras',
+              description: 'Movimente o historico para validar online, offline e temperatura fora da faixa.',
+            },
+            {
+              title: 'Voltar aqui para criar a regra',
+              description: 'Depois disso, configure cooldown e tolerancia do alerta.',
+            },
+          ]}
+          primaryActionLabel={onCreateDevice ? 'Cadastrar primeiro device' : undefined}
+          onPrimaryAction={onCreateDevice}
+          secondaryHref="/lab"
+          secondaryLabel="Abrir laboratorio"
+        />
+      ) : null}
+      {!isLoading && !isError && (data?.length ?? 0) === 0 && devices.length > 0 ? (
         <Feedback>Sem regras cadastradas para este clientId.</Feedback>
       ) : null}
     </Panel>

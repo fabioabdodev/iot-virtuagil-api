@@ -19,6 +19,7 @@ import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
 import { Feedback } from '@/components/ui/feedback';
 import { Input, Select } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
+import { SetupGuideCard } from '@/components/setup-guide-card';
 
 const formSchema = z.object({
   id: z
@@ -45,6 +46,7 @@ type ActuationPanelProps = {
   clientId?: string;
   authToken?: string;
   devices: DeviceSummary[];
+  onCreateDevice?: () => void;
 };
 
 function actuatorStateBadge(state: 'on' | 'off') {
@@ -57,6 +59,7 @@ export function ActuationPanel({
   clientId,
   authToken,
   devices,
+  onCreateDevice,
 }: ActuationPanelProps) {
   const { data, isLoading, isError, error } = useActuators(clientId, authToken);
   const {
@@ -563,9 +566,31 @@ export function ActuationPanel({
           ) : null}
 
           {!isLoading && !isError && actuators.length === 0 ? (
-            <Feedback>
-              Nenhum atuador cadastrado para este clientId.
-            </Feedback>
+            <SetupGuideCard
+              eyebrow="Acionamento"
+              title="Configure o primeiro atuador deste cliente"
+              description="Mesmo sem hardware fisico, voce ja pode cadastrar a carga, emitir comandos on/off e validar o historico operacional pelo dashboard."
+              steps={[
+                {
+                  title: 'Cadastrar o atuador',
+                  description: 'Use um identificador como `sauna_main` ou `exaustor_01`.',
+                },
+                {
+                  title: devices.length > 0 ? 'Vincular a um device' : 'Opcionalmente vincular a um device',
+                  description: devices.length > 0
+                    ? 'Escolha um equipamento da lista para contextualizar a carga dentro do cliente.'
+                    : 'Quando houver devices cadastrados, voce podera relacionar o atuador ao equipamento monitorado.',
+                },
+                {
+                  title: 'Emitir comandos pelo dashboard',
+                  description: 'Teste ligar, desligar e acompanhe o log recente sem depender de rele fisico.',
+                },
+              ]}
+              secondaryHref="/lab"
+              secondaryLabel="Abrir laboratorio"
+              primaryActionLabel={!devices.length && onCreateDevice ? 'Cadastrar device primeiro' : undefined}
+              onPrimaryAction={!devices.length ? onCreateDevice : undefined}
+            />
           ) : null}
         </>
       )}
