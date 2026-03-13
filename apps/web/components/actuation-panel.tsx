@@ -4,15 +4,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Power, RadioTower, ScrollText, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useActuatorCommands } from '@/hooks/use-actuator-commands';
 import { useActuatorMutations } from '@/hooks/use-actuator-mutations';
 import { useActuators } from '@/hooks/use-actuators';
+import { ActuatorSummary } from '@/types/actuator';
 import { DeviceSummary } from '@/types/device';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
 import { Feedback } from '@/components/ui/feedback';
 import { Input, Select } from '@/components/ui/input';
@@ -57,14 +59,27 @@ export function ActuationPanel({
   devices,
 }: ActuationPanelProps) {
   const { data, isLoading, isError, error } = useActuators(clientId, authToken);
-  const { createMutation, commandMutation } = useActuatorMutations(
+  const {
+    createMutation,
+    commandMutation,
+    updateMutation,
+    deleteMutation,
+  } = useActuatorMutations(
     clientId,
     authToken,
   );
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const [editingActuatorId, setEditingActuatorId] = useState<string | null>(null);
   const [selectedActuatorId, setSelectedActuatorId] = useState<string | null>(
     null,
   );
   const [commandingActuatorId, setCommandingActuatorId] = useState<string | null>(
+    null,
+  );
+  const [pendingDeleteActuatorId, setPendingDeleteActuatorId] = useState<
+    string | null
+  >(null);
+  const [deletingActuatorId, setDeletingActuatorId] = useState<string | null>(
     null,
   );
 
@@ -91,6 +106,27 @@ export function ActuationPanel({
   });
 
   const actuators = data ?? [];
+  const editingActuator =
+    actuators.find((actuator) => actuator.id === editingActuatorId) ?? null;
+
+  useEffect(() => {
+    if (formMode === 'edit' && editingActuator) {
+      reset({
+        id: editingActuator.id,
+        name: editingActuator.name,
+        deviceId: editingActuator.deviceId ?? '',
+        location: editingActuator.location ?? '',
+      });
+      return;
+    }
+
+    reset({
+      id: '',
+      name: '',
+      deviceId: '',
+      location: '',
+    });
+  }, [editingActuator, formMode, reset]);
 
   async function handleCommand(actuatorId: string, desiredState: 'on' | 'off') {
     setCommandingActuatorId(actuatorId);
@@ -108,8 +144,49 @@ export function ActuationPanel({
     }
   }
 
+  async function handleDeleteActuator(actuatorId: string) {
+    setDeletingActuatorId(actuatorId);
+    try {
+      await deleteMutation.mutateAsync(actuatorId);
+      if (editingActuatorId === actuatorId) {
+        setEditingActuatorId(null);
+        setFormMode('create');
+      }
+      if (selectedActuatorId === actuatorId) {
+        setSelectedActuatorId(null);
+      }
+    } finally {
+      setDeletingActuatorId(null);
+      setPendingDeleteActuatorId(null);
+    }
+  }
+
+  function beginEditing(actuator: ActuatorSummary) {
+    setEditingActuatorId(actuator.id);
+    setFormMode('edit');
+  }
+
   return (
     <Panel className="animate-fade-up p-5 [animation-delay:300ms]">
+      <ConfirmDialog
+        open={Boolean(pendingDeleteActuatorId)}
+        title="Excluir atuador?"
+        description={
+          <>
+            O atuador <strong>{pendingDeleteActuatorId}</strong> sera removido do
+            modulo de acionamento.
+          </>
+        }
+        confirmLabel="Excluir atuador"
+        loading={deleteMutation.isPending}
+        onCancel={() => setPendingDeleteActuatorId(null)}
+        onConfirm={() => {
+          if (pendingDeleteActuatorId) {
+            void handleDeleteActuator(pendingDeleteActuatorId);
+          }
+        }}
+      />
+
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.18em] text-muted">
@@ -137,13 +214,27 @@ export function ActuationPanel({
           <form
             onSubmit={handleSubmit(async (rawValues) => {
               const values = formSchema.parse(rawValues);
-              await createMutation.mutateAsync({
-                id: values.id,
-                clientId,
-                deviceId: values.deviceId,
-                name: values.name,
-                location: values.location,
-              });
+              if (formMode === 'edit' && editingActuator) {
+                await updateMutation.mutateAsync({
+                  id: editingActuator.id,
+                  payload: {
+                    clientId,
+                    deviceId: values.deviceId,
+                    name: values.name,
+                    location: values.location,
+                  },
+                });
+                setEditingActuatorId(null);
+                setFormMode('create');
+              } else {
+                await createMutation.mutateAsync({
+                  id: values.id,
+                  clientId,
+                  deviceId: values.deviceId,
+                  name: values.name,
+                  location: values.location,
+                });
+              }
               reset();
             })}
           >
@@ -155,7 +246,11 @@ export function ActuationPanel({
                 <label className="mb-1 block text-xs text-muted">
                   Id do atuador
                 </label>
-                <Input {...register('id')} placeholder="sauna_main" />
+                <Input
+                  {...register('id')}
+                  placeholder="sauna_main"
+                  disabled={formMode === 'edit'}
+                />
                 {errors.id ? (
                   <p className="mt-1 text-xs text-bad">{errors.id.message}</p>
                 ) : null}
@@ -189,26 +284,57 @@ export function ActuationPanel({
               </div>
 
               <div className="sm:col-span-2 lg:col-span-4">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  loading={createMutation.isPending}
-                  className="min-w-[180px]"
-                >
-                  {createMutation.isPending ? 'Criando...' : 'Cadastrar atuador'}
-                </Button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    loading={
+                      formMode === 'edit'
+                        ? updateMutation.isPending
+                        : createMutation.isPending
+                    }
+                    className="min-w-[180px]"
+                  >
+                    {formMode === 'edit'
+                      ? updateMutation.isPending
+                        ? 'Salvando...'
+                        : 'Salvar alteracoes'
+                      : createMutation.isPending
+                        ? 'Criando...'
+                        : 'Cadastrar atuador'}
+                  </Button>
+                  {formMode === 'edit' ? (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        setEditingActuatorId(null);
+                        setFormMode('create');
+                      }}
+                    >
+                      Cancelar edicao
+                    </Button>
+                  ) : null}
+                </div>
               </div>
             </Panel>
           </form>
 
-          {createMutation.isError ? (
+          {createMutation.isError || updateMutation.isError ? (
             <Feedback variant="danger" className="mb-3">
-              {createMutation.error?.message ?? 'Falha ao criar atuador.'}
+              {createMutation.error?.message ??
+                updateMutation.error?.message ??
+                'Falha ao salvar atuador.'}
             </Feedback>
           ) : null}
           {commandMutation.isError ? (
             <Feedback variant="danger" className="mb-3">
               {commandMutation.error?.message ?? 'Falha ao enviar comando.'}
+            </Feedback>
+          ) : null}
+          {deleteMutation.isError ? (
+            <Feedback variant="danger" className="mb-3">
+              {deleteMutation.error?.message ?? 'Falha ao remover atuador.'}
             </Feedback>
           ) : null}
 
@@ -229,6 +355,7 @@ export function ActuationPanel({
                       <th>Estado</th>
                       <th>Vinculo</th>
                       <th>Ultimo comando</th>
+                      <th className="text-right">Cadastro</th>
                       <th className="text-right">Controle</th>
                       <th className="text-right">Historico</th>
                     </tr>
@@ -278,6 +405,35 @@ export function ActuationPanel({
                           ) : (
                             'Sem comando'
                           )}
+                        </td>
+                        <td className="text-right">
+                          <div className="inline-flex items-center gap-2">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => {
+                                beginEditing(actuator);
+                              }}
+                            >
+                              Editar
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              loading={deletingActuatorId === actuator.id}
+                              disabled={
+                                deleteMutation.isPending &&
+                                deletingActuatorId !== actuator.id
+                              }
+                              onClick={() => {
+                                setPendingDeleteActuatorId(actuator.id);
+                              }}
+                            >
+                              {deletingActuatorId === actuator.id
+                                ? 'Excluindo...'
+                                : 'Excluir'}
+                            </Button>
+                          </div>
                         </td>
                         <td className="text-right">
                           <div className="inline-flex items-center gap-2">

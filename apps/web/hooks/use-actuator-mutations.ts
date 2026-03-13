@@ -1,7 +1,12 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createActuator, issueActuatorCommand } from '@/lib/api';
+import {
+  createActuator,
+  deleteActuator,
+  issueActuatorCommand,
+  updateActuator,
+} from '@/lib/api';
 import {
   ActuationCommand,
   ActuationCommandInput,
@@ -50,6 +55,14 @@ export function useActuatorMutations(clientId?: string, authToken?: string) {
     );
   };
 
+  const removeActuatorFromCaches = (actuatorId: string) => {
+    queryClient.setQueriesData(
+      { queryKey: ['actuators'] },
+      (current: ActuatorSummary[] | undefined) =>
+        current?.filter((row) => row.id !== actuatorId) ?? current,
+    );
+  };
+
   const createMutation = useMutation({
     mutationFn: (payload: ActuatorInput) => createActuator(payload, authToken),
     onSuccess: async (actuator) => {
@@ -75,9 +88,33 @@ export function useActuatorMutations(clientId?: string, authToken?: string) {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: Omit<ActuatorInput, 'id'>;
+    }) => updateActuator(id, payload, authToken),
+    onSuccess: async (actuator) => {
+      upsertActuatorInCaches(actuator);
+      await invalidateActuators();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteActuator(id, authToken),
+    onSuccess: async (actuator) => {
+      removeActuatorFromCaches(actuator.id);
+      await invalidateActuators();
+    },
+  });
+
   return {
     createMutation,
     commandMutation,
+    updateMutation,
+    deleteMutation,
     scopedClientId: clientId,
   };
 }

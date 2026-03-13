@@ -211,6 +211,7 @@ Estado em 13/03/2026:
   - historico em `GET /actuators/:id/commands`
 - dashboard web ja possui:
   - cadastro de atuadores
+  - edicao e exclusao de atuadores
   - botoes de ligar e desligar
   - historico recente de comandos
 - validacoes concluidas localmente:
@@ -219,6 +220,9 @@ Estado em 13/03/2026:
   - teste e2e de atuadores passando
 - pendencia imediata:
   - aplicar `npx prisma migrate deploy` no banco conectado ao ambiente desejado
+  - confirmar no banco real se as tabelas `Actuator` e `ActuationCommand` foram criadas
 - restricao importante:
   - ainda nao existem hardwares fisicos disponiveis
   - continuidade deve priorizar simulacao, contratos de API, dashboard e operacao manual
+- observacao operacional:
+  - em 13/03/2026 houve tentativa de `npx prisma migrate deploy` contra o banco configurado, mas o comando excedeu o tempo de execucao e nao confirmou conclusao

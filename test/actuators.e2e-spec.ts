@@ -179,4 +179,60 @@ describe('Actuators (e2e)', () => {
       })
       .expect(400);
   });
+
+  it('should update actuator fields', async () => {
+    await request(app.getHttpServer())
+      .post('/actuators')
+      .send({
+        id: 'sauna_main',
+        clientId: 'client_a',
+        deviceId: 'device_a',
+        name: 'Sauna principal',
+        location: 'Area molhada',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .patch('/actuators/sauna_main')
+      .send({
+        name: 'Sauna premium',
+        location: 'Spa interno',
+      })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            id: 'sauna_main',
+            name: 'Sauna premium',
+            location: 'Spa interno',
+          }),
+        );
+      });
+  });
+
+  it('should delete actuator and return 404 afterwards', async () => {
+    await request(app.getHttpServer())
+      .post('/actuators')
+      .send({
+        id: 'sauna_main',
+        clientId: 'client_a',
+        name: 'Sauna principal',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .delete('/actuators/sauna_main')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            id: 'sauna_main',
+          }),
+        );
+      });
+
+    await request(app.getHttpServer())
+      .get('/actuators/sauna_main')
+      .expect(404);
+  });
 });

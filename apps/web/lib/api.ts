@@ -315,6 +315,47 @@ export async function createActuator(
   return response.json() as Promise<ActuatorSummary>;
 }
 
+export async function updateActuator(
+  id: string,
+  input: Omit<ActuatorInput, 'id'>,
+  authToken?: string,
+): Promise<ActuatorSummary> {
+  const response = await fetch(`${API_BASE_URL}/actuators/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...buildAuthHeaders(authToken),
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await extractApiErrorMessage(response, 'Falha ao atualizar atuador'),
+    );
+  }
+
+  return response.json() as Promise<ActuatorSummary>;
+}
+
+export async function deleteActuator(
+  id: string,
+  authToken?: string,
+): Promise<ActuatorSummary> {
+  const response = await fetch(`${API_BASE_URL}/actuators/${id}`, {
+    method: 'DELETE',
+    headers: buildAuthHeaders(authToken),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await extractApiErrorMessage(response, 'Falha ao remover atuador'),
+    );
+  }
+
+  return response.json() as Promise<ActuatorSummary>;
+}
+
 export async function issueActuatorCommand(
   actuatorId: string,
   input: ActuationCommandInput,
