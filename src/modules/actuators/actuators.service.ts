@@ -45,9 +45,9 @@ export class ActuatorsService {
     return actuator;
   }
 
-  async update(id: string, dto: UpdateActuatorDto) {
-    const existing = await this.findOne(id);
-    const nextClientId = dto.clientId ?? (existing as any).clientId;
+  async update(id: string, dto: UpdateActuatorDto, clientId?: string) {
+    const existing = await this.findOne(id, clientId);
+    const nextClientId = clientId ?? dto.clientId ?? (existing as any).clientId;
     const nextDeviceId =
       dto.deviceId === undefined ? (existing as any).deviceId : dto.deviceId;
 
@@ -65,13 +65,13 @@ export class ActuatorsService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, clientId?: string) {
+    await this.findOne(id, clientId);
     return this.prisma.actuator.delete({ where: { id } } as any);
   }
 
-  async listCommands(actuatorId: string, limit = 20) {
-    await this.findOne(actuatorId);
+  async listCommands(actuatorId: string, limit = 20, clientId?: string) {
+    await this.findOne(actuatorId, clientId);
     const safeLimit = Math.max(1, Math.min(Number.isFinite(limit) ? limit : 20, 100));
 
     return this.prisma.actuationCommand.findMany({
@@ -81,8 +81,12 @@ export class ActuatorsService {
     } as any);
   }
 
-  async createCommand(actuatorId: string, dto: CreateActuationCommandDto) {
-    const actuator = await this.findOne(actuatorId);
+  async createCommand(
+    actuatorId: string,
+    dto: CreateActuationCommandDto,
+    clientId?: string,
+  ) {
+    const actuator = await this.findOne(actuatorId, clientId);
     const now = new Date();
 
     const command = await this.prisma.actuationCommand.create({

@@ -4,6 +4,7 @@ import request from 'supertest';
 import { ClientsController } from '../src/modules/clients/clients.controller';
 import { ClientsService } from '../src/modules/clients/clients.service';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { RoleGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
 
 describe('Clients CRUD (e2e)', () => {
   let app: INestApplication;
@@ -46,7 +47,28 @@ describe('Clients CRUD (e2e)', () => {
         ClientsService,
         { provide: PrismaService, useValue: fakePrisma },
       ],
-    }).compile();
+    })
+      .overrideGuard(SessionAuthGuard)
+      .useValue({
+        canActivate: (context: any) => {
+          context.switchToHttp().getRequest().authUser = {
+            id: 'platform_admin',
+            clientId: null,
+            name: 'Platform Admin',
+            email: 'platform@virtuagil.com.br',
+            role: 'admin',
+            phone: null,
+            isActive: true,
+            lastLoginAt: null,
+            createdAt: new Date('2026-03-13T00:00:00.000Z'),
+            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+          };
+          return true;
+        },
+      })
+      .overrideGuard(RoleGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(
@@ -60,7 +82,7 @@ describe('Clients CRUD (e2e)', () => {
   });
 
   afterEach(async () => {
-    await app.close();
+    if (app) await app.close();
   });
 
   it('should create, list, update and delete client', async () => {
@@ -95,4 +117,3 @@ describe('Clients CRUD (e2e)', () => {
     await request(app.getHttpServer()).get('/clients/client_a').expect(404);
   });
 });
-

@@ -4,6 +4,7 @@ import request from 'supertest';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { ClientModulesController } from '../src/modules/client-modules/client-modules.controller';
 import { ClientModulesService } from '../src/modules/client-modules/client-modules.service';
+import { RoleGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
 
 describe('Client Modules (e2e)', () => {
   let app: INestApplication;
@@ -50,7 +51,28 @@ describe('Client Modules (e2e)', () => {
         ClientModulesService,
         { provide: PrismaService, useValue: fakePrisma },
       ],
-    }).compile();
+    })
+      .overrideGuard(SessionAuthGuard)
+      .useValue({
+        canActivate: (context: any) => {
+          context.switchToHttp().getRequest().authUser = {
+            id: 'user_admin',
+            clientId: 'virtuagil',
+            name: 'Admin Virtuagil',
+            email: 'admin@virtuagil.com.br',
+            role: 'admin',
+            phone: null,
+            isActive: true,
+            lastLoginAt: null,
+            createdAt: new Date('2026-03-13T00:00:00.000Z'),
+            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+          };
+          return true;
+        },
+      })
+      .overrideGuard(RoleGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(

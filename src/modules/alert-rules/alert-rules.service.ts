@@ -44,16 +44,19 @@ export class AlertRulesService {
     } as any);
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, clientId?: string) {
     const rule = await this.prisma.alertRule.findUnique({ where: { id } } as any);
     if (!rule) throw new NotFoundException('Alert rule not found');
+    if (clientId && (rule as any).clientId !== clientId) {
+      throw new NotFoundException('Alert rule not found for client');
+    }
     return rule;
   }
 
-  async update(id: string, dto: UpdateAlertRuleDto) {
-    const existing = await this.findOne(id);
+  async update(id: string, dto: UpdateAlertRuleDto, clientId?: string) {
+    const existing = await this.findOne(id, clientId);
 
-    const nextClientId = dto.clientId ?? (existing as any).clientId;
+    const nextClientId = clientId ?? dto.clientId ?? (existing as any).clientId;
     const nextDeviceId = dto.deviceId ?? (existing as any).deviceId;
     const nextMin = dto.minValue ?? (existing as any).minValue ?? undefined;
     const nextMax = dto.maxValue ?? (existing as any).maxValue ?? undefined;
@@ -77,8 +80,8 @@ export class AlertRulesService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, clientId?: string) {
+    await this.findOne(id, clientId);
     return this.prisma.alertRule.delete({ where: { id } } as any);
   }
 

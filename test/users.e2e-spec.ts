@@ -5,7 +5,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { UsersController } from '../src/modules/users/users.controller';
 import { UsersService } from '../src/modules/users/users.service';
 import { AuthService } from '../src/modules/auth/auth.service';
-import { ConfigService } from '@nestjs/config';
+import { RoleGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
 
 describe('Users (e2e)', () => {
   let app: INestApplication;
@@ -13,14 +13,6 @@ describe('Users (e2e)', () => {
   beforeEach(async () => {
     const users = new Map<string, any>();
     const clients = new Map<string, any>([['virtuagil', { id: 'virtuagil', name: 'Virtuagil' }]]);
-
-    const fakeConfig = {
-      get: jest.fn((key: string) => {
-        if (key === 'AUTH_SECRET') return 'super-secret-auth-key-123';
-        if (key === 'AUTH_TOKEN_TTL_HOURS') return 24;
-        return undefined;
-      }),
-    };
 
     const fakePrisma = {
       client: {
@@ -74,11 +66,36 @@ describe('Users (e2e)', () => {
       controllers: [UsersController],
       providers: [
         UsersService,
-        AuthService,
         { provide: PrismaService, useValue: fakePrisma },
-        { provide: ConfigService, useValue: fakeConfig },
+        {
+          provide: AuthService,
+          useValue: {
+            hashPassword: (value: string) => `hashed:${value}`,
+          },
+        },
       ],
-    }).compile();
+    })
+      .overrideGuard(SessionAuthGuard)
+      .useValue({
+        canActivate: (context: any) => {
+          context.switchToHttp().getRequest().authUser = {
+            id: 'user_admin',
+            clientId: 'virtuagil',
+            name: 'Admin Virtuagil',
+            email: 'admin@virtuagil.com.br',
+            role: 'admin',
+            phone: null,
+            isActive: true,
+            lastLoginAt: null,
+            createdAt: new Date('2026-03-13T00:00:00.000Z'),
+            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+          };
+          return true;
+        },
+      })
+      .overrideGuard(RoleGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(

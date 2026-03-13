@@ -6,6 +6,7 @@ import { DevicesService } from '../src/modules/devices/devices.service';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { CacheService } from '../src/infra/cache/cache.service';
 import { ConfigService } from '@nestjs/config';
+import { ModuleAccessGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
 
 describe('Devices CRUD (e2e)', () => {
   let app: INestApplication;
@@ -20,6 +21,11 @@ describe('Devices CRUD (e2e)', () => {
     }> = [];
 
     fakePrisma = {
+      clientModule: {
+        findUnique: jest.fn(() =>
+          Promise.resolve({ enabled: true }),
+        ),
+      },
       device: {
         create: jest.fn(({ data }: any) => {
           const row = { ...data, lastSeen: null, offlineSince: null };
@@ -106,7 +112,28 @@ describe('Devices CRUD (e2e)', () => {
           useValue: { get: jest.fn((key: string) => (key === 'CACHE_TTL_SECONDS' ? 15 : undefined)) },
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(SessionAuthGuard)
+      .useValue({
+        canActivate: (context: any) => {
+          context.switchToHttp().getRequest().authUser = {
+            id: 'user_admin',
+            clientId: 'virtuagil',
+            name: 'Admin Virtuagil',
+            email: 'admin@virtuagil.com.br',
+            role: 'admin',
+            phone: null,
+            isActive: true,
+            lastLoginAt: null,
+            createdAt: new Date('2026-03-13T00:00:00.000Z'),
+            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+          };
+          return true;
+        },
+      })
+      .overrideGuard(ModuleAccessGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(

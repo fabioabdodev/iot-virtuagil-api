@@ -4,6 +4,7 @@ import request from 'supertest';
 import { ActuatorsController } from '../src/modules/actuators/actuators.controller';
 import { ActuatorsService } from '../src/modules/actuators/actuators.service';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { ModuleAccessGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
 
 describe('Actuators (e2e)', () => {
   let app: INestApplication;
@@ -87,6 +88,11 @@ describe('Actuators (e2e)', () => {
           return Promise.resolve(rows);
         }),
       },
+      clientModule: {
+        findUnique: jest.fn(() =>
+          Promise.resolve({ enabled: true }),
+        ),
+      },
     };
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -95,7 +101,28 @@ describe('Actuators (e2e)', () => {
         ActuatorsService,
         { provide: PrismaService, useValue: fakePrisma },
       ],
-    }).compile();
+    })
+      .overrideGuard(SessionAuthGuard)
+      .useValue({
+        canActivate: (context: any) => {
+          context.switchToHttp().getRequest().authUser = {
+            id: 'user_admin',
+            clientId: 'client_a',
+            name: 'Admin Client A',
+            email: 'admin@clienta.com.br',
+            role: 'admin',
+            phone: null,
+            isActive: true,
+            lastLoginAt: null,
+            createdAt: new Date('2026-03-13T00:00:00.000Z'),
+            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+          };
+          return true;
+        },
+      })
+      .overrideGuard(ModuleAccessGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(

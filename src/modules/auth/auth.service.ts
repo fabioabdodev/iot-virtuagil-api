@@ -1,11 +1,9 @@
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
+import { SessionUser } from './auth.types';
 
 type AuthTokenPayload = {
   sub: string;
@@ -58,16 +56,7 @@ export class AuthService {
   }
 
   async me(authorization?: string) {
-    const payload = this.verifyAuthorizationHeader(authorization);
-    const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub },
-    } as any);
-
-    if (!user) {
-      throw new UnauthorizedException('Session user not found');
-    }
-
-    return this.sanitizeUser(user);
+    return this.authenticateFromAuthorization(authorization);
   }
 
   hashPassword(password: string) {
@@ -88,16 +77,25 @@ export class AuthService {
       lastLoginAt: user.lastLoginAt ?? null,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-    };
+    } satisfies SessionUser;
   }
 
-  private verifyAuthorizationHeader(authorization?: string) {
+  async authenticateFromAuthorization(authorization?: string) {
     if (!authorization?.startsWith('Bearer ')) {
       throw new UnauthorizedException('Missing bearer token');
     }
 
     const token = authorization.slice('Bearer '.length).trim();
-    return this.verifyToken(token);
+    const payload = this.verifyToken(token);
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    } as any);
+
+    if (!user || !(user as any).isActive) {
+      throw new UnauthorizedException('Session user not found');
+    }
+
+    return this.sanitizeUser(user);
   }
 
   private signToken(payload: AuthTokenPayload) {

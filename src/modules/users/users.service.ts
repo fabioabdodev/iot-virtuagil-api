@@ -40,17 +40,20 @@ export class UsersService {
     } as any);
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, clientId?: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: this.userSelect(),
     } as any);
     if (!user) throw new NotFoundException('User not found');
+    if (clientId && (user as any).clientId !== clientId) {
+      throw new NotFoundException('User not found for client');
+    }
     return user;
   }
 
-  async update(id: string, dto: UpdateUserDto) {
-    await this.findOne(id);
+  async update(id: string, dto: UpdateUserDto, clientId?: string) {
+    await this.findOne(id, clientId);
     await this.ensureClientExists(dto.clientId);
 
     return this.prisma.user.update({
@@ -70,8 +73,8 @@ export class UsersService {
     } as any);
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, clientId?: string) {
+    await this.findOne(id, clientId);
     return this.prisma.user.delete({
       where: { id },
       select: this.userSelect(),

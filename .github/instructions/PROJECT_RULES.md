@@ -32,9 +32,10 @@ Funcionalidades ja implementadas:
    - actuators
    - actuation commands
    - auth de usuarios
+   - autorizacao por sessao, role e modulo contratado
    - modulos habilitados por cliente
 6. Multi-tenant basico
-   - isolamento por `clientId`
+   - isolamento por `clientId` no backend e no dashboard
 
 ## Estado atual do modulo temperatura
 
@@ -65,9 +66,9 @@ Pendencias principais restantes:
 
 ## O que ainda nao entrou por completo
 
-- autenticacao de usuarios
+- recuperacao de senha
 - billing / assinaturas
-- dashboards por perfil de usuario
+- refinamento de dashboards por perfil de usuario
 - multiplos tipos reais de sensor no mesmo fluxo de ingestao
 - app mobile
 - integracao com hardware fisico de acionamento
@@ -171,6 +172,22 @@ Enquanto nao houver hardware fisico:
 - tratar `currentState` como estado operacional registrado pela plataforma
 - integracao com rele, ESP32 ou retorno fisico fica para fase posterior
 
+### Autenticacao e autorizacao
+
+O acesso administrativo e operacional agora depende de sessao autenticada.
+
+Regras atuais:
+
+- `POST /auth/login` emite token para usuarios ativos
+- `GET /auth/me` restaura a sessao do frontend
+- rotas administrativas usam sessao autenticada
+- rotas de `users`, `clients` e `client-modules` exigem role `admin`
+- rotas de `devices`, `readings`, `alert-rules` exigem modulo `temperature` habilitado
+- rotas de `actuators` exigem modulo `actuation` habilitado
+- o backend faz scoping por `clientId` do usuario autenticado
+- admin de cliente atua apenas dentro do proprio tenant
+- admin de plataforma e representado por usuario com `clientId = null`
+
 ## Seguranca
 
 - `x-device-key` e obrigatorio no endpoint do device
@@ -226,11 +243,12 @@ Estado em 13/03/2026:
 - auth atual:
   - backend ja possui `POST /auth/login` e `GET /auth/me`
   - usuarios demo sao criados pelo seed
-  - protecao obrigatoria das rotas administrativas ainda e proxima etapa
   - frontend ja consome login real e restaura sessao via `GET /auth/me`
   - usuarios agora possuem `phone`, `isActive` e `lastLoginAt`
   - backend ja possui CRUD basico em `/users`
   - dashboard ja possui painel inicial de gestao de usuarios por cliente
+  - backend agora protege rotas por sessao autenticada, role e modulo contratado
+  - `clientId` do usuario autenticado agora limita consultas e mutacoes sensiveis
 - modulos por cliente:
   - backend ja possui `/client-modules`
   - seed define modulos habilitados por cliente demo
@@ -242,11 +260,14 @@ Estado em 13/03/2026:
   - teste e2e de atuadores passando
   - teste e2e de usuarios passando
   - teste e2e de client-modules passando
+  - teste e2e de devices passando
+  - teste e2e de clients passando
 - pendencia imediata:
   - aplicar `npx prisma migrate deploy` no banco conectado ao ambiente desejado
   - confirmar no banco real se as tabelas `Actuator` e `ActuationCommand` foram criadas
   - usar `npm run db:verify-actuation` como verificacao rapida apos a migration
   - usar o checklist do README para validar criacao, comando e historico no ambiente integrado
+  - refletir no frontend, com mais rigor visual, mensagens quando o modulo nao estiver contratado ou o usuario nao tiver permissao
 - restricao importante:
   - ainda nao existem hardwares fisicos disponiveis
   - continuidade deve priorizar simulacao, contratos de API, dashboard e operacao manual
