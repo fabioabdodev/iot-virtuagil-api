@@ -81,6 +81,20 @@ export class ActuatorsService {
     } as any);
   }
 
+  async listRecentCommands(limit = 20, clientId?: string) {
+    const safeLimit = Math.max(1, Math.min(Number.isFinite(limit) ? limit : 20, 100));
+    const where = clientId ? ({ clientId } as any) : undefined;
+
+    return this.prisma.actuationCommand.findMany({
+      where,
+      orderBy: { executedAt: 'desc' },
+      take: safeLimit,
+      include: {
+        actuator: true,
+      },
+    } as any);
+  }
+
   async createCommand(
     actuatorId: string,
     dto: CreateActuationCommandDto,

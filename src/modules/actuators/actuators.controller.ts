@@ -34,6 +34,19 @@ export class ActuatorsController {
     });
   }
 
+  @Get('commands/recent')
+  async listRecentCommands(
+    @Query('clientId') clientId?: string,
+    @Query('limit') limit?: string,
+    @CurrentUser() authUser?: SessionUser,
+  ) {
+    const parsedLimit = limit ? Number(limit) : undefined;
+    return this.actuatorsService.listRecentCommands(
+      parsedLimit,
+      authUser ? resolveScopedClientId(authUser, clientId) : clientId,
+    );
+  }
+
   @Get(':id')
   async findOne(
     @Param('id') id: string,

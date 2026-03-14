@@ -82,9 +82,17 @@ describe('Actuators (e2e)', () => {
           return Promise.resolve(row);
         }),
         findMany: jest.fn(({ where, take }: any) => {
-          const rows = commands
-            .filter((row) => row.actuatorId === where.actuatorId)
-            .slice(0, take);
+          let rows = commands;
+          if (where?.actuatorId) {
+            rows = rows.filter((row) => row.actuatorId === where.actuatorId);
+          }
+          if (where?.clientId) {
+            rows = rows.filter((row) => row.clientId === where.clientId);
+          }
+          rows = rows.slice(0, take).map((row) => ({
+            ...row,
+            actuator: actuators.get(row.actuatorId) ?? null,
+          }));
           return Promise.resolve(rows);
         }),
       },
@@ -232,6 +240,43 @@ describe('Actuators (e2e)', () => {
             id: 'sauna_main',
             name: 'Sauna premium',
             location: 'Spa interno',
+          }),
+        );
+      });
+  });
+
+  it('should list recent commands for the scoped client', async () => {
+    await request(app.getHttpServer())
+      .post('/actuators')
+      .send({
+        id: 'sauna_main',
+        clientId: 'client_a',
+        deviceId: 'device_a',
+        name: 'Sauna principal',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/actuators/sauna_main/commands')
+      .send({
+        desiredState: 'on',
+        source: 'dashboard',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .get('/actuators/commands/recent?limit=5')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toHaveLength(1);
+        expect(res.body[0]).toEqual(
+          expect.objectContaining({
+            actuatorId: 'sauna_main',
+            clientId: 'client_a',
+            desiredState: 'on',
+            actuator: expect.objectContaining({
+              id: 'sauna_main',
+            }),
           }),
         );
       });

@@ -28,6 +28,7 @@ import { ClientProfilePanel } from '@/components/client-profile-panel';
 import { SetupGuideCard } from '@/components/setup-guide-card';
 import { UsersPanel } from '@/components/users-panel';
 import { CommercialReadinessPanel } from '@/components/commercial-readiness-panel';
+import { OperationalActivityPanel } from '@/components/operational-activity-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
@@ -403,6 +404,13 @@ function DashboardContent() {
         clientId={scopedClientId}
         authToken={authToken}
         currentUser={user}
+        devices={devices}
+        clientModules={clientModules}
+      />
+
+      <OperationalActivityPanel
+        clientId={scopedClientId}
+        authToken={authToken}
         devices={devices}
         clientModules={clientModules}
       />

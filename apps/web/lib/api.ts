@@ -404,6 +404,35 @@ export async function fetchActuatorCommands(
   return response.json() as Promise<ActuationCommand[]>;
 }
 
+export async function fetchRecentActuationCommands(
+  clientId?: string,
+  limit = 8,
+  authToken?: string,
+): Promise<ActuationCommand[]> {
+  const query = new URLSearchParams();
+  query.set('limit', String(limit));
+  if (clientId) query.set('clientId', clientId);
+
+  const response = await fetch(
+    `${API_BASE_URL}/actuators/commands/recent?${query.toString()}`,
+    {
+      cache: 'no-store',
+      headers: buildAuthHeaders(authToken),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      await extractApiErrorMessage(
+        response,
+        'Falha ao carregar comandos recentes do acionamento',
+      ),
+    );
+  }
+
+  return response.json() as Promise<ActuationCommand[]>;
+}
+
 export async function loginUser(input: LoginInput): Promise<AuthSession> {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',

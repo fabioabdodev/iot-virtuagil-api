@@ -186,9 +186,23 @@ Resposta:
   "timestamp": "2026-03-07T23:00:00.000Z",
   "uptimeSeconds": 1234,
   "environment": "production",
-  "alertQueueDepth": 0
+  "release": "abc123def456",
+  "buildTime": "2026-03-14T03:00:00Z",
+  "alertQueueDepth": 0,
+  "features": {
+    "authLogin": true,
+    "authMe": true,
+    "clientCommercialProfile": true,
+    "actuationCommandsRecent": true,
+    "operationalActivityPanel": true
+  }
 }
 ```
+
+Uso pratico:
+
+- consulte `/health` em producao para saber qual release esta publicada
+- se `features.authLogin` ou `features.actuationCommandsRecent` ainda nao aparecerem, o deploy da API ainda nao levou essas capacidades para o ar
 
 ### Ingestão
 

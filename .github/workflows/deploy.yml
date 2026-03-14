@@ -114,6 +114,9 @@ jobs:
             . ./.env.prod
             set +a
 
+            export APP_RELEASE="${{ github.sha }}"
+            export APP_BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
             docker stack deploy -c deploy/swarm/stack.prod.yml iot-monitor --with-registry-auth
             docker service ls | grep iot-monitor

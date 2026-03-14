@@ -24,6 +24,7 @@ Funcionalidades ja implementadas:
    - deploy em Docker Swarm
    - banco no Supabase
    - rotina inicial de backup do banco
+   - health com release e features publicadas
    - integracao com n8n e Evolution
 5. Gestao
    - clients
@@ -231,6 +232,7 @@ Correcoes validadas em producao:
 - `N8N_OFFLINE_WEBHOOK_URL` foi corrigida para `https://webhookworkflow.virtuagil.com.br/webhook/device-offline`
 - `DATABASE_URL` da API em producao foi migrada da conexao direta IPv6 do Supabase para o `session pooler`
 - migrations e verificacoes administrativas agora devem preferir `DIRECT_DATABASE_URL` quando o ambiente usar pooler no `DATABASE_URL`
+- o endpoint `/health` agora deve expor `release`, `buildTime` e `features` para facilitar comparacao entre codigo atual e API realmente publicada
 - Cloudflare configurado no plano `Free`
 - `monitor.virtuagil.com.br` validado com proxy ativo no Cloudflare
 - `virtuagil.com.br` testado com proxy ativo, mas retornou erro `526 Invalid SSL certificate` por ainda nao existir origem HTTPS valida para esse host
@@ -340,3 +342,4 @@ Estado em 13/03/2026:
   - em 13/03/2026 os clientes `virtuagil` e `cliente_teste` foram confirmados no Supabase com `document`, `phone`, `billingEmail` e `status` populados
   - em 13/03/2026 foi revisado o GitHub Actions atual: `ci.yml` nao roda migrations e `deploy.yml` nao roda `prisma migrate deploy`, entao o advisory lock do Prisma nao parece vir do workflow atual por si so
   - em 13/03/2026 foi criada uma base inicial de backup com documentacao interna e script `npm run backup:db` usando `pg_dump`
+  - em 14/03/2026 o `/health` passou a expor release e features publicadas, e o deploy passou a exportar `APP_RELEASE` e `APP_BUILD_TIME` antes do `docker stack deploy`

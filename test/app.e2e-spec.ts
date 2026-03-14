@@ -14,7 +14,12 @@ describe('AppController (e2e)', () => {
 
   beforeEach(async () => {
     fakeConfigService = {
-      get: jest.fn((key: string) => (key === 'NODE_ENV' ? 'test' : undefined)),
+      get: jest.fn((key: string) => {
+        if (key === 'NODE_ENV') return 'test';
+        if (key === 'APP_RELEASE') return 'test-release';
+        if (key === 'APP_BUILD_TIME') return '2026-03-14T00:00:00.000Z';
+        return undefined;
+      }),
     };
     fakeAlertQueue = {
       getQueueDepth: jest.fn().mockReturnValue(0),
@@ -50,7 +55,16 @@ describe('AppController (e2e)', () => {
             status: 'ok',
             timestamp: expect.any(String),
             environment: 'test',
+            release: 'test-release',
+            buildTime: '2026-03-14T00:00:00.000Z',
             alertQueueDepth: 0,
+            features: expect.objectContaining({
+              authLogin: true,
+              authMe: true,
+              clientCommercialProfile: true,
+              actuationCommandsRecent: true,
+              operationalActivityPanel: true,
+            }),
           }),
         );
       });

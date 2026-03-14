@@ -14,12 +14,24 @@ export class AppService {
   }
 
   getHealth() {
+    const appRelease = this.configService.get<string>('APP_RELEASE') ?? 'local';
+    const appBuildTime = this.configService.get<string>('APP_BUILD_TIME') ?? null;
+
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptimeSeconds: Math.round(process.uptime()),
       environment: this.configService.get<string>('NODE_ENV') ?? 'development',
+      release: appRelease,
+      buildTime: appBuildTime,
       alertQueueDepth: this.alertQueue.getQueueDepth(),
+      features: {
+        authLogin: true,
+        authMe: true,
+        clientCommercialProfile: true,
+        actuationCommandsRecent: true,
+        operationalActivityPanel: true,
+      },
     };
   }
 }
