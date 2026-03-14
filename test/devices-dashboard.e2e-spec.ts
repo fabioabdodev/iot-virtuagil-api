@@ -7,6 +7,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { CacheService } from '../src/infra/cache/cache.service';
 import { ConfigService } from '@nestjs/config';
 import { ModuleAccessGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
+import { AuditTrailService } from '../src/infra/audit/audit-trail.service';
 
 describe('Devices Dashboard (e2e)', () => {
   let app: INestApplication;
@@ -104,6 +105,7 @@ describe('Devices Dashboard (e2e)', () => {
       providers: [
         DevicesService,
         { provide: PrismaService, useValue: fakePrisma },
+        { provide: AuditTrailService, useValue: { record: jest.fn() } },
         {
           provide: CacheService,
           useValue: { get: jest.fn().mockReturnValue(null), set: jest.fn() },

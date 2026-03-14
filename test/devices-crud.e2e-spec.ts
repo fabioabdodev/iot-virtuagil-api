@@ -7,6 +7,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { CacheService } from '../src/infra/cache/cache.service';
 import { ConfigService } from '@nestjs/config';
 import { ModuleAccessGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
+import { AuditTrailService } from '../src/infra/audit/audit-trail.service';
 
 describe('Devices CRUD (e2e)', () => {
   let app: INestApplication;
@@ -58,6 +59,12 @@ describe('Devices CRUD (e2e)', () => {
           devices.delete(where.id);
           return Promise.resolve(row);
         }),
+        update: jest.fn(({ where, data }: any) => {
+          const current = devices.get(where.id);
+          const updated = { ...current, ...data };
+          devices.set(where.id, updated);
+          return Promise.resolve(updated);
+        }),
       },
       temperatureLog: {
         findMany: jest.fn(({ where, orderBy, take }: any = {}) => {
@@ -99,6 +106,7 @@ describe('Devices CRUD (e2e)', () => {
       providers: [
         DevicesService,
         { provide: PrismaService, useValue: fakePrisma },
+        { provide: AuditTrailService, useValue: { record: jest.fn() } },
         {
           provide: CacheService,
           useValue: {
@@ -118,7 +126,7 @@ describe('Devices CRUD (e2e)', () => {
         canActivate: (context: any) => {
           context.switchToHttp().getRequest().authUser = {
             id: 'user_admin',
-            clientId: 'virtuagil',
+            clientId: null,
             name: 'Admin Virtuagil',
             email: 'admin@virtuagil.com.br',
             role: 'admin',

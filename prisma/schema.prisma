@@ -160,3 +160,22 @@ model ClientModule {
   @@unique([clientId, moduleKey])
   @@index([clientId])
 }
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  clientId     String?
+  entityType   String
+  entityId     String
+  action       String
+  fieldName    String?
+  previousValue Json?
+  nextValue    Json?
+  actorUserId  String?
+  actorEmail   String?
+  actorRole    String?
+  actorClientId String?
+  createdAt    DateTime @default(now())
+
+  @@index([clientId, createdAt])
+  @@index([entityType, entityId, createdAt])
+}

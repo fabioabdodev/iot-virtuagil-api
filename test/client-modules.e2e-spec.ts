@@ -8,8 +8,21 @@ import { RoleGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
 
 describe('Client Modules (e2e)', () => {
   let app: INestApplication;
+  let authUser: any;
 
   beforeEach(async () => {
+    authUser = {
+      id: 'user_admin',
+      clientId: 'virtuagil',
+      name: 'Admin Virtuagil',
+      email: 'admin@virtuagil.com.br',
+      role: 'admin',
+      phone: null,
+      isActive: true,
+      lastLoginAt: null,
+      createdAt: new Date('2026-03-13T00:00:00.000Z'),
+      updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+    };
     const clients = new Map<string, any>([['virtuagil', { id: 'virtuagil', name: 'Virtuagil' }]]);
     const modules = new Map<string, any>();
 
@@ -55,18 +68,7 @@ describe('Client Modules (e2e)', () => {
       .overrideGuard(SessionAuthGuard)
       .useValue({
         canActivate: (context: any) => {
-          context.switchToHttp().getRequest().authUser = {
-            id: 'user_admin',
-            clientId: 'virtuagil',
-            name: 'Admin Virtuagil',
-            email: 'admin@virtuagil.com.br',
-            role: 'admin',
-            phone: null,
-            isActive: true,
-            lastLoginAt: null,
-            createdAt: new Date('2026-03-13T00:00:00.000Z'),
-            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
-          };
+          context.switchToHttp().getRequest().authUser = authUser;
           return true;
         },
       })
@@ -90,6 +92,12 @@ describe('Client Modules (e2e)', () => {
   });
 
   it('should upsert and list client modules', async () => {
+    authUser = {
+      ...authUser,
+      clientId: null,
+      email: 'platform@virtuagil.com.br',
+    };
+
     await request(app.getHttpServer())
       .post('/client-modules')
       .send({
@@ -127,5 +135,26 @@ describe('Client Modules (e2e)', () => {
           ]),
         );
       });
+  });
+
+  it('should allow operator to list modules but not change them', async () => {
+    authUser = {
+      ...authUser,
+      role: 'operator',
+      email: 'operator@virtuagil.com.br',
+    };
+
+    await request(app.getHttpServer())
+      .get('/client-modules?clientId=virtuagil')
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .post('/client-modules')
+      .send({
+        clientId: 'virtuagil',
+        moduleKey: 'temperature',
+        enabled: true,
+      })
+      .expect(403);
   });
 });

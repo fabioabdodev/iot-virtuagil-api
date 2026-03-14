@@ -7,11 +7,25 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { CacheService } from '../src/infra/cache/cache.service';
 import { ConfigService } from '@nestjs/config';
 import { ModuleAccessGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
+import { AuditTrailService } from '../src/infra/audit/audit-trail.service';
 
 describe('Devices Tenant Isolation (e2e)', () => {
   let app: INestApplication;
+  let authUser: any;
 
   beforeEach(async () => {
+    authUser = {
+      id: 'user_admin',
+      clientId: null,
+      name: 'Admin Global',
+      email: 'admin@example.com',
+      role: 'admin',
+      phone: null,
+      isActive: true,
+      lastLoginAt: null,
+      createdAt: new Date('2026-03-13T00:00:00.000Z'),
+      updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+    };
     const devices = new Map<string, any>();
 
     const fakePrisma = {
@@ -30,22 +44,20 @@ describe('Devices Tenant Isolation (e2e)', () => {
           if (orderBy?.id === 'asc') rows.sort((a: any, b: any) => a.id.localeCompare(b.id));
           return Promise.resolve(rows);
         }),
-        upsert: jest.fn(({ where, update, create }: any) => {
+        update: jest.fn(({ where, data }: any) => {
           const current = devices.get(where.id);
-          if (current) {
-            const merged = { ...current, ...update };
-            devices.set(where.id, merged);
-            return Promise.resolve(merged);
-          }
-          const row = { ...create, isOffline: false, lastSeen: null, offlineSince: null };
-          devices.set(where.id, row);
-          return Promise.resolve(row);
+          const updated = { ...current, ...data };
+          devices.set(where.id, updated);
+          return Promise.resolve(updated);
         }),
         delete: jest.fn(({ where }: any) => {
           const row = devices.get(where.id);
           devices.delete(where.id);
           return Promise.resolve(row);
         }),
+      },
+      auditLog: {
+        create: jest.fn(({ data }: any) => Promise.resolve(data)),
       },
       temperatureLog: {
         findMany: jest.fn(() => Promise.resolve([])),
@@ -58,6 +70,7 @@ describe('Devices Tenant Isolation (e2e)', () => {
       providers: [
         DevicesService,
         { provide: PrismaService, useValue: fakePrisma },
+        { provide: AuditTrailService, useValue: { record: jest.fn() } },
         {
           provide: CacheService,
           useValue: {
@@ -75,18 +88,7 @@ describe('Devices Tenant Isolation (e2e)', () => {
       .overrideGuard(SessionAuthGuard)
       .useValue({
         canActivate: (context: any) => {
-          context.switchToHttp().getRequest().authUser = {
-            id: 'user_admin',
-            clientId: null,
-            name: 'Admin Global',
-            email: 'admin@example.com',
-            role: 'admin',
-            phone: null,
-            isActive: true,
-            lastLoginAt: null,
-            createdAt: new Date('2026-03-13T00:00:00.000Z'),
-            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
-          };
+          context.switchToHttp().getRequest().authUser = authUser;
           return true;
         },
       })
@@ -140,5 +142,42 @@ describe('Devices Tenant Isolation (e2e)', () => {
     await request(app.getHttpServer())
       .delete('/devices/freezer_01?clientId=client_a')
       .expect(200);
+  });
+
+  it('should allow tenant admin to update only temperature bounds', async () => {
+    const server = app.getHttpServer();
+
+    await request(server)
+      .post('/devices')
+      .send({ id: 'freezer_02', clientId: 'client_a', name: 'Freezer A' })
+      .expect(201);
+
+    authUser = {
+      ...authUser,
+      id: 'tenant_admin',
+      clientId: 'client_a',
+      email: 'admin@client-a.com',
+    };
+
+    await request(server)
+      .patch('/devices/freezer_02?clientId=client_a')
+      .send({ minTemperature: -25, maxTemperature: -15 })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          id: 'freezer_02',
+          minTemperature: -25,
+          maxTemperature: -15,
+        });
+      });
+
+    await request(server)
+      .patch('/devices/freezer_02?clientId=client_a')
+      .send({ name: 'Nome proibido' })
+      .expect(403);
+
+    await request(server)
+      .delete('/devices/freezer_02?clientId=client_a')
+      .expect(403);
   });
 });

@@ -2,6 +2,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AlertRulesService } from './alert-rules.service';
+import { AuditTrailService } from '../../infra/audit/audit-trail.service';
 
 describe('AlertRulesService', () => {
   let service: AlertRulesService;
@@ -28,6 +29,7 @@ describe('AlertRulesService', () => {
       providers: [
         AlertRulesService,
         { provide: PrismaService, useValue: fakePrisma },
+        { provide: AuditTrailService, useValue: { record: jest.fn() } },
       ],
     }).compile();
 

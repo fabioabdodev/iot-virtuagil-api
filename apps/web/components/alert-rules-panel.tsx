@@ -71,6 +71,8 @@ type AlertRulesPanelProps = {
   authToken?: string;
   devices: DeviceSummary[];
   onCreateDevice?: () => void;
+  canManageRules?: boolean;
+  blockedReason?: string;
 };
 
 export function AlertRulesPanel({
@@ -78,6 +80,8 @@ export function AlertRulesPanel({
   authToken,
   devices,
   onCreateDevice,
+  canManageRules = false,
+  blockedReason,
 }: AlertRulesPanelProps) {
   const { data, isLoading, isError, error } = useAlertRules(
     clientId,
@@ -142,7 +146,7 @@ export function AlertRulesPanel({
         ) : null}
       </div>
 
-      {clientId ? (
+      {clientId && canManageRules ? (
         <form
           onSubmit={handleSubmit(async (rawValues) => {
             const values = formSchema.parse(rawValues);
@@ -221,6 +225,12 @@ export function AlertRulesPanel({
           </Panel>
         </form>
       ) : null}
+      {clientId && !canManageRules ? (
+        <Feedback className="mb-3">
+          {blockedReason ??
+            'Seu perfil pode monitorar regras, mas nao pode altera-las.'}
+        </Feedback>
+      ) : null}
 
       {createMutation.isError ? (
         <Feedback variant="danger" className="mb-3">
@@ -273,19 +283,23 @@ export function AlertRulesPanel({
                   <td>{rule.cooldownMinutes} min</td>
                   <td>{rule.toleranceMinutes} min</td>
                   <td className="text-right">
-                    <Button
-                      onClick={() => {
-                        setPendingRuleId(rule.id);
-                      }}
-                      variant="danger"
-                      size="sm"
-                      loading={deletingRuleId === rule.id}
-                      disabled={
-                        deleteMutation.isPending && deletingRuleId !== rule.id
-                      }
-                    >
-                      {deletingRuleId === rule.id ? 'Excluindo...' : 'Excluir'}
-                    </Button>
+                    {canManageRules ? (
+                      <Button
+                        onClick={() => {
+                          setPendingRuleId(rule.id);
+                        }}
+                        variant="danger"
+                        size="sm"
+                        loading={deletingRuleId === rule.id}
+                        disabled={
+                          deleteMutation.isPending && deletingRuleId !== rule.id
+                        }
+                      >
+                        {deletingRuleId === rule.id ? 'Excluindo...' : 'Excluir'}
+                      </Button>
+                    ) : (
+                      <span className="text-xs text-muted">Somente leitura</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -293,7 +307,11 @@ export function AlertRulesPanel({
           </DataTable>
         </DataTableWrapper>
       ) : null}
-      {!isLoading && !isError && (data?.length ?? 0) === 0 && devices.length === 0 ? (
+      {!isLoading &&
+      !isError &&
+      canManageRules &&
+      (data?.length ?? 0) === 0 &&
+      devices.length === 0 ? (
         <SetupGuideCard
           eyebrow="Regras de alerta"
           title="Cadastre um device antes da primeira regra"

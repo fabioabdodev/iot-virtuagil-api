@@ -1,9 +1,22 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { CacheService } from '../../infra/cache/cache.service';
+import { AuditTrailService } from '../../infra/audit/audit-trail.service';
+import type { SessionUser } from '../auth/auth.types';
+
+type UpdateDeviceOptions = {
+  actor?: SessionUser;
+  allowCreateIfMissing?: boolean;
+  restrictToTemperatureBounds?: boolean;
+};
 
 @Injectable()
 export class DevicesService {
@@ -11,6 +24,7 @@ export class DevicesService {
     private readonly prisma: PrismaService,
     private readonly cache: CacheService,
     private readonly configService: ConfigService,
+    private readonly auditTrail: AuditTrailService,
   ) {}
 
   async create(dto: CreateDeviceDto) {
@@ -152,7 +166,12 @@ export class DevicesService {
     return deleted;
   }
 
-  async update(id: string, dto: UpdateDeviceDto, clientId?: string) {
+  async update(
+    id: string,
+    dto: UpdateDeviceDto,
+    clientId?: string,
+    options: UpdateDeviceOptions = {},
+  ) {
     if (
       dto.minTemperature != null &&
       dto.maxTemperature != null &&
@@ -176,6 +195,29 @@ export class DevicesService {
       }
     }
 
+    const existing = await this.prisma.device.findUnique({ where: { id } });
+
+    if (options.restrictToTemperatureBounds) {
+      const hasStructuralFields =
+        dto.clientId !== undefined ||
+        dto.name !== undefined ||
+        dto.location !== undefined;
+
+      if (hasStructuralFields) {
+        throw new ForbiddenException(
+          'Client admin can only update temperature bounds on devices',
+        );
+      }
+
+      if (!existing) {
+        throw new NotFoundException('Device not found');
+      }
+    }
+
+    if (options.allowCreateIfMissing === false && !existing) {
+      throw new NotFoundException('Device not found');
+    }
+
     const data: any = {
       clientId: clientId ?? dto.clientId,
       name: dto.name,
@@ -184,13 +226,52 @@ export class DevicesService {
       maxTemperature: dto.maxTemperature,
     };
 
-    const upserted = await this.prisma.device.upsert({
-      where: { id },
-      update: data,
-      create: { id, ...(clientId ? { clientId } : {}), ...data },
-    });
+    const upserted = existing
+      ? await this.prisma.device.update({
+          where: { id },
+          data,
+        })
+      : await this.prisma.device.create({
+          data: { id, ...(clientId ? { clientId } : {}), ...data, isOffline: false },
+        });
+
+    await this.recordTemperatureBoundsAudit(existing, upserted, options.actor);
     this.invalidateDeviceCaches();
     return upserted;
+  }
+
+  private async recordTemperatureBoundsAudit(
+    previous: any | null,
+    current: any,
+    actor?: SessionUser,
+  ) {
+    const trackedFields = [
+      {
+        fieldName: 'minTemperature',
+        previousValue: previous?.minTemperature ?? null,
+        nextValue: current?.minTemperature ?? null,
+      },
+      {
+        fieldName: 'maxTemperature',
+        previousValue: previous?.maxTemperature ?? null,
+        nextValue: current?.maxTemperature ?? null,
+      },
+    ];
+
+    for (const field of trackedFields) {
+      if (field.previousValue === field.nextValue) continue;
+
+      await this.auditTrail.record({
+        clientId: current?.clientId ?? previous?.clientId ?? null,
+        entityType: 'device',
+        entityId: current.id,
+        action: previous ? 'temperature_bounds_updated' : 'temperature_bounds_created',
+        fieldName: field.fieldName,
+        previousValue: field.previousValue,
+        nextValue: field.nextValue,
+        actor,
+      });
+    }
   }
 
   private async ensureDeviceBelongsToClient(id: string, clientId: string) {

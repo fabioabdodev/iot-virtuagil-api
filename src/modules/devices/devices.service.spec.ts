@@ -4,6 +4,7 @@ import { DevicesService } from './devices.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CacheService } from '../../infra/cache/cache.service';
 import { ConfigService } from '@nestjs/config';
+import { AuditTrailService } from '../../infra/audit/audit-trail.service';
 
 describe('DevicesService', () => {
   let service: DevicesService;
@@ -15,7 +16,7 @@ describe('DevicesService', () => {
     fakePrisma = {
       device: {
         findUnique: jest.fn(),
-        upsert: jest.fn(),
+        update: jest.fn(),
         findMany: jest.fn(),
         create: jest.fn(),
         delete: jest.fn(),
@@ -40,25 +41,26 @@ describe('DevicesService', () => {
         { provide: PrismaService, useValue: fakePrisma },
         { provide: CacheService, useValue: fakeCache },
         { provide: ConfigService, useValue: fakeConfigService },
+        { provide: AuditTrailService, useValue: { record: jest.fn() } },
       ],
     }).compile();
 
     service = module.get<DevicesService>(DevicesService);
   });
 
-  it('should update thresholds using upsert', async () => {
+  it('should update thresholds using update on existing device', async () => {
     const dto = { minTemperature: -10, maxTemperature: 5 };
-    fakePrisma.device.upsert.mockResolvedValue({ id: 'abc', ...dto });
+    fakePrisma.device.findUnique.mockResolvedValue({ id: 'abc', clientId: 'client_a' });
+    fakePrisma.device.update.mockResolvedValue({ id: 'abc', clientId: 'client_a', ...dto });
 
     const result = await service.update('abc', dto as any);
-    expect(fakePrisma.device.upsert).toHaveBeenCalledWith(
+    expect(fakePrisma.device.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 'abc' },
-        update: expect.objectContaining(dto),
-        create: expect.objectContaining({ id: 'abc', ...dto }),
+        data: expect.objectContaining(dto),
       }),
     );
-    expect(result).toEqual({ id: 'abc', ...dto });
+    expect(result).toEqual({ id: 'abc', clientId: 'client_a', ...dto });
   });
 
   it('should create device', async () => {
@@ -92,7 +94,7 @@ describe('DevicesService', () => {
       service.update('abc', { minTemperature: 10, maxTemperature: 5 } as any),
     ).rejects.toBeInstanceOf(BadRequestException);
 
-    expect(fakePrisma.device.upsert).not.toHaveBeenCalled();
+    expect(fakePrisma.device.update).not.toHaveBeenCalled();
   });
 
   it('should throw on create when minTemperature is greater than maxTemperature', async () => {
@@ -241,7 +243,7 @@ describe('DevicesService', () => {
       service.update('freezer_01', { name: 'x' } as any, 'client_b'),
     ).rejects.toBeInstanceOf(NotFoundException);
 
-    expect(fakePrisma.device.upsert).not.toHaveBeenCalled();
+    expect(fakePrisma.device.update).not.toHaveBeenCalled();
   });
 
   it('should throw when query clientId conflicts with body clientId', async () => {
@@ -253,6 +255,6 @@ describe('DevicesService', () => {
       ),
     ).rejects.toBeInstanceOf(BadRequestException);
 
-    expect(fakePrisma.device.upsert).not.toHaveBeenCalled();
+    expect(fakePrisma.device.update).not.toHaveBeenCalled();
   });
 });

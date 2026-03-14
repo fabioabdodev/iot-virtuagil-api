@@ -5,10 +5,10 @@ import { CurrentUser, RequireRole } from '../auth/auth.decorators';
 import { RoleGuard, SessionAuthGuard } from '../auth/auth.guards';
 import { resolveScopedClientId } from '../auth/auth.scope';
 import type { SessionUser } from '../auth/auth.types';
+import { assertPlatformAdmin } from '../auth/auth.permissions';
 
 @Controller('client-modules')
 @UseGuards(SessionAuthGuard, RoleGuard)
-@RequireRole('admin')
 export class ClientModulesController {
   constructor(private readonly clientModulesService: ClientModulesService) {}
 
@@ -20,7 +20,12 @@ export class ClientModulesController {
   }
 
   @Post()
+  @RequireRole('admin')
   async upsert(@Body() dto: UpsertClientModuleDto, @CurrentUser() authUser: SessionUser) {
+    assertPlatformAdmin(
+      authUser,
+      'Only platform admin can change contracted modules',
+    );
     dto.clientId = resolveScopedClientId(authUser, dto.clientId) ?? dto.clientId;
     return this.clientModulesService.upsert(dto);
   }

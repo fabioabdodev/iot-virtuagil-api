@@ -29,6 +29,11 @@ Identidade tecnica atual escolhida:
   - administrador da plataforma com acesso total e monitoramento completo
   - administrador do cliente com monitoramento do proprio tenant
   - direcao aprovada para cliente administrar regras operacionais com auditoria futura
+- politica de acesso parcialmente implementada no codigo:
+  - platform admin manteve acesso total
+  - client admin passou a editar apenas faixa de temperatura dos devices
+  - operator ficou em modo monitoramento para regras e modulos
+  - trilha inicial de auditoria foi criada para mudancas criticas
 
 ## Validacao feita
 
@@ -77,6 +82,10 @@ Resultado esperado no ponto atual:
 - alinhar qualquer evolucao de firmware em `iot-virtuagil-firmware/`, nao mais dentro deste repositorio
 - evoluir o produto para refletir a politica de acesso registrada em `.github/instructions/ACCESS_POLICY.md`
 - planejar trilha de auditoria para alteracoes de faixa de temperatura e regras de alerta antes de liberar mais autonomia operacional ao cliente
+- aplicar a migration `20260314183000_create_audit_logs` no banco real antes de usar a nova auditoria em producao
+- decidir se a proxima etapa de permissao vai incluir:
+  - client admin editando regras de alerta tambem no dashboard com update completo
+  - tela de consulta de auditoria no monitor web
 
 ## Escopo local ignorado
 
@@ -115,3 +124,35 @@ Direcao validada neste momento:
 - o administrador do cliente deve evoluir para poder alterar regras de temperatura e alerta do proprio tenant
 - o operador deve permanecer focado em monitoramento
 - qualquer ampliacao de autonomia operacional do cliente deve vir acompanhada de auditoria
+
+## Implementacao mais recente
+
+Estado aplicado em codigo nesta etapa:
+
+- `devices`:
+  - criacao e exclusao ficaram restritas ao admin da plataforma
+  - client admin pode editar apenas `minTemperature` e `maxTemperature`
+  - client admin nao pode mais alterar `name`, `location` ou `clientId`
+- `alert-rules`:
+  - leitura segue liberada para monitoramento
+  - escrita exige `admin`
+  - criacao, update e delete agora geram auditoria
+- `client-modules`:
+  - leitura liberada para o dashboard mesmo com operador
+  - escrita restrita ao admin da plataforma
+- `clients`:
+  - update e delete restritos ao admin da plataforma
+- `dashboard web`:
+  - escondeu acoes estruturais do client admin
+  - manteve monitoramento
+  - passou a exibir edicao operacional apenas onde faz sentido
+
+Validacao executada nesta etapa:
+
+```bash
+npx prisma generate
+npm run build
+npm test -- --runInBand src/modules/devices/devices.service.spec.ts src/modules/alert-rules/alert-rules.service.spec.ts
+npm run test:e2e -- --runInBand test/devices-tenant.e2e-spec.ts test/alert-rules.e2e-spec.ts test/client-modules.e2e-spec.ts test/devices-crud.e2e-spec.ts
+cd apps/web && npm run build
+```

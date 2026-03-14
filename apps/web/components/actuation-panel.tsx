@@ -47,6 +47,8 @@ type ActuationPanelProps = {
   authToken?: string;
   devices: DeviceSummary[];
   onCreateDevice?: () => void;
+  canManageCommands?: boolean;
+  canManageStructure?: boolean;
 };
 
 function actuatorStateBadge(state: 'on' | 'off') {
@@ -60,6 +62,8 @@ export function ActuationPanel({
   authToken,
   devices,
   onCreateDevice,
+  canManageCommands = false,
+  canManageStructure = false,
 }: ActuationPanelProps) {
   const { data, isLoading, isError, error } = useActuators(clientId, authToken);
   const {
@@ -214,37 +218,38 @@ export function ActuationPanel({
         <Feedback>Defina um `clientId` para gerenciar atuadores.</Feedback>
       ) : (
         <>
-          <form
-            onSubmit={handleSubmit(async (rawValues) => {
-              const values = formSchema.parse(rawValues);
-              if (formMode === 'edit' && editingActuator) {
-                await updateMutation.mutateAsync({
-                  id: editingActuator.id,
-                  payload: {
+          {canManageStructure ? (
+            <form
+              onSubmit={handleSubmit(async (rawValues) => {
+                const values = formSchema.parse(rawValues);
+                if (formMode === 'edit' && editingActuator) {
+                  await updateMutation.mutateAsync({
+                    id: editingActuator.id,
+                    payload: {
+                      clientId,
+                      deviceId: values.deviceId,
+                      name: values.name,
+                      location: values.location,
+                    },
+                  });
+                  setEditingActuatorId(null);
+                  setFormMode('create');
+                } else {
+                  await createMutation.mutateAsync({
+                    id: values.id,
                     clientId,
                     deviceId: values.deviceId,
                     name: values.name,
                     location: values.location,
-                  },
-                });
-                setEditingActuatorId(null);
-                setFormMode('create');
-              } else {
-                await createMutation.mutateAsync({
-                  id: values.id,
-                  clientId,
-                  deviceId: values.deviceId,
-                  name: values.name,
-                  location: values.location,
-                });
-              }
-              reset();
-            })}
-          >
-            <Panel
-              variant="strong"
-              className="mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4"
+                  });
+                }
+                reset();
+              })}
             >
+              <Panel
+                variant="strong"
+                className="mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4"
+              >
               <div>
                 <label className="mb-1 block text-xs text-muted">
                   Id do atuador
@@ -320,8 +325,14 @@ export function ActuationPanel({
                   ) : null}
                 </div>
               </div>
-            </Panel>
-          </form>
+              </Panel>
+            </form>
+          ) : (
+            <Feedback className="mb-4">
+              Seu perfil pode monitorar o acionamento. Cadastro estrutural de
+              atuadores permanece com o administrador da plataforma.
+            </Feedback>
+          )}
 
           {createMutation.isError || updateMutation.isError ? (
             <Feedback variant="danger" className="mb-3">
@@ -410,68 +421,76 @@ export function ActuationPanel({
                           )}
                         </td>
                         <td className="text-right">
-                          <div className="inline-flex items-center gap-2">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => {
-                                beginEditing(actuator);
-                              }}
-                            >
-                              Editar
-                            </Button>
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              loading={deletingActuatorId === actuator.id}
-                              disabled={
-                                deleteMutation.isPending &&
-                                deletingActuatorId !== actuator.id
-                              }
-                              onClick={() => {
-                                setPendingDeleteActuatorId(actuator.id);
-                              }}
-                            >
-                              {deletingActuatorId === actuator.id
-                                ? 'Excluindo...'
-                                : 'Excluir'}
-                            </Button>
-                          </div>
+                          {canManageStructure ? (
+                            <div className="inline-flex items-center gap-2">
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => {
+                                  beginEditing(actuator);
+                                }}
+                              >
+                                Editar
+                              </Button>
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                loading={deletingActuatorId === actuator.id}
+                                disabled={
+                                  deleteMutation.isPending &&
+                                  deletingActuatorId !== actuator.id
+                                }
+                                onClick={() => {
+                                  setPendingDeleteActuatorId(actuator.id);
+                                }}
+                              >
+                                {deletingActuatorId === actuator.id
+                                  ? 'Excluindo...'
+                                  : 'Excluir'}
+                              </Button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted">Estrutura fixa</span>
+                          )}
                         </td>
                         <td className="text-right">
-                          <div className="inline-flex items-center gap-2">
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              loading={
-                                commandingActuatorId === actuator.id &&
-                                commandMutation.isPending
-                              }
-                              disabled={
-                                commandMutation.isPending &&
-                                commandingActuatorId !== actuator.id
-                              }
-                              onClick={() => {
-                                void handleCommand(actuator.id, 'on');
-                              }}
-                            >
-                              <Zap className="h-3.5 w-3.5" />
-                              Ligar
-                            </Button>
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              disabled={
-                                commandMutation.isPending &&
-                                commandingActuatorId !== actuator.id
-                              }
-                              onClick={() => {
-                                void handleCommand(actuator.id, 'off');
-                              }}
-                            >
-                              Desligar
-                            </Button>
-                          </div>
+                          {canManageCommands ? (
+                            <div className="inline-flex items-center gap-2">
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                loading={
+                                  commandingActuatorId === actuator.id &&
+                                  commandMutation.isPending
+                                }
+                                disabled={
+                                  commandMutation.isPending &&
+                                  commandingActuatorId !== actuator.id
+                                }
+                                onClick={() => {
+                                  void handleCommand(actuator.id, 'on');
+                                }}
+                              >
+                                <Zap className="h-3.5 w-3.5" />
+                                Ligar
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                disabled={
+                                  commandMutation.isPending &&
+                                  commandingActuatorId !== actuator.id
+                                }
+                                onClick={() => {
+                                  void handleCommand(actuator.id, 'off');
+                                }}
+                              >
+                                Desligar
+                              </Button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted">Somente leitura</span>
+                          )}
                         </td>
                         <td className="text-right">
                           <Button
@@ -565,7 +584,7 @@ export function ActuationPanel({
             </div>
           ) : null}
 
-          {!isLoading && !isError && actuators.length === 0 ? (
+          {!isLoading && !isError && actuators.length === 0 && canManageStructure ? (
             <SetupGuideCard
               eyebrow="Acionamento"
               title="Configure o primeiro atuador deste cliente"

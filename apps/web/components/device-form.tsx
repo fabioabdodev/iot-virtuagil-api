@@ -71,6 +71,8 @@ type DeviceFormProps = {
   clientId?: string;
   device?: DeviceSummary | null;
   loading?: boolean;
+  allowStructureFields?: boolean;
+  allowTemperatureFields?: boolean;
   onSubmit: (values: DeviceFormOutput) => void | Promise<void>;
   onCancel?: () => void;
 };
@@ -80,6 +82,8 @@ export function DeviceForm({
   clientId,
   device,
   loading,
+  allowStructureFields = true,
+  allowTemperatureFields = true,
   onSubmit,
   onCancel,
 }: DeviceFormProps) {
@@ -128,7 +132,21 @@ export function DeviceForm({
   return (
     <form
       onSubmit={handleSubmit(async (values) => {
-        await onSubmit(formSchema.parse(values));
+        const parsed = formSchema.parse(values);
+        const nextValues = {
+          ...parsed,
+          clientId: allowStructureFields ? parsed.clientId : undefined,
+          name: allowStructureFields ? parsed.name : undefined,
+          location: allowStructureFields ? parsed.location : undefined,
+          minTemperature: allowTemperatureFields
+            ? parsed.minTemperature
+            : undefined,
+          maxTemperature: allowTemperatureFields
+            ? parsed.maxTemperature
+            : undefined,
+        };
+
+        await onSubmit(nextValues);
       })}
       className=""
     >
@@ -157,43 +175,53 @@ export function DeviceForm({
             ) : null}
           </div>
 
-          <div>
-            <label className="mb-1 block text-xs text-muted">clientId</label>
-            <Input {...register('clientId')} placeholder="cliente_a" />
-            {errors.clientId ? (
-              <p className="mt-1 text-xs text-bad">{errors.clientId.message}</p>
-            ) : null}
-          </div>
+          {allowStructureFields ? (
+            <div>
+              <label className="mb-1 block text-xs text-muted">clientId</label>
+              <Input {...register('clientId')} placeholder="cliente_a" />
+              {errors.clientId ? (
+                <p className="mt-1 text-xs text-bad">{errors.clientId.message}</p>
+              ) : null}
+            </div>
+          ) : null}
 
-          <div>
-            <label className="mb-1 block text-xs text-muted">Nome</label>
-            <Input {...register('name')} placeholder="Freezer Loja" />
-          </div>
+          {allowStructureFields ? (
+            <div>
+              <label className="mb-1 block text-xs text-muted">Nome</label>
+              <Input {...register('name')} placeholder="Freezer Loja" />
+            </div>
+          ) : null}
 
-          <div>
-            <label className="mb-1 block text-xs text-muted">Localizacao</label>
-            <Input {...register('location')} placeholder="Camara fria" />
-          </div>
+          {allowStructureFields ? (
+            <div>
+              <label className="mb-1 block text-xs text-muted">Localizacao</label>
+              <Input {...register('location')} placeholder="Camara fria" />
+            </div>
+          ) : null}
 
-          <div>
-            <label className="mb-1 block text-xs text-muted">Min temp (C)</label>
-            <Input {...register('minTemperature')} placeholder="-20" />
-            {errors.minTemperature ? (
-              <p className="mt-1 text-xs text-bad">
-                {errors.minTemperature.message}
-              </p>
-            ) : null}
-          </div>
+          {allowTemperatureFields ? (
+            <div>
+              <label className="mb-1 block text-xs text-muted">Min temp (C)</label>
+              <Input {...register('minTemperature')} placeholder="-20" />
+              {errors.minTemperature ? (
+                <p className="mt-1 text-xs text-bad">
+                  {errors.minTemperature.message}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
 
-          <div>
-            <label className="mb-1 block text-xs text-muted">Max temp (C)</label>
-            <Input {...register('maxTemperature')} placeholder="-10" />
-            {errors.maxTemperature ? (
-              <p className="mt-1 text-xs text-bad">
-                {errors.maxTemperature.message}
-              </p>
-            ) : null}
-          </div>
+          {allowTemperatureFields ? (
+            <div>
+              <label className="mb-1 block text-xs text-muted">Max temp (C)</label>
+              <Input {...register('maxTemperature')} placeholder="-10" />
+              {errors.maxTemperature ? (
+                <p className="mt-1 text-xs text-bad">
+                  {errors.maxTemperature.message}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-4 flex items-center gap-2">

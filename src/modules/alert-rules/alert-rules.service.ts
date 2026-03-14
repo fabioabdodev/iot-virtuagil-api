@@ -2,17 +2,22 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateAlertRuleDto } from './dto/create-alert-rule.dto';
 import { UpdateAlertRuleDto } from './dto/update-alert-rule.dto';
+import { AuditTrailService } from '../../infra/audit/audit-trail.service';
+import type { SessionUser } from '../auth/auth.types';
 
 @Injectable()
 export class AlertRulesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly auditTrail: AuditTrailService,
+  ) {}
 
-  async create(dto: CreateAlertRuleDto) {
+  async create(dto: CreateAlertRuleDto, actor?: SessionUser) {
     this.validateBounds(dto.minValue, dto.maxValue);
     await this.ensureClientExists(dto.clientId);
     await this.ensureDeviceBelongsToClient(dto.deviceId, dto.clientId);
 
-    return this.prisma.alertRule.create({
+    const created = await this.prisma.alertRule.create({
       data: {
         clientId: dto.clientId,
         deviceId: dto.deviceId,
@@ -24,6 +29,17 @@ export class AlertRulesService {
         enabled: dto.enabled ?? true,
       } as any,
     });
+
+    await this.auditTrail.record({
+      clientId: created.clientId,
+      entityType: 'alert_rule',
+      entityId: created.id,
+      action: 'alert_rule_created',
+      nextValue: created as any,
+      actor,
+    });
+
+    return created;
   }
 
   async list(filters: {
@@ -53,7 +69,12 @@ export class AlertRulesService {
     return rule;
   }
 
-  async update(id: string, dto: UpdateAlertRuleDto, clientId?: string) {
+  async update(
+    id: string,
+    dto: UpdateAlertRuleDto,
+    clientId?: string,
+    actor?: SessionUser,
+  ) {
     const existing = await this.findOne(id, clientId);
 
     const nextClientId = clientId ?? dto.clientId ?? (existing as any).clientId;
@@ -65,7 +86,7 @@ export class AlertRulesService {
     await this.ensureClientExists(nextClientId);
     await this.ensureDeviceBelongsToClient(nextDeviceId ?? undefined, nextClientId);
 
-    return this.prisma.alertRule.update({
+    const updated = await this.prisma.alertRule.update({
       where: { id },
       data: {
         clientId: nextClientId,
@@ -78,11 +99,34 @@ export class AlertRulesService {
         enabled: dto.enabled,
       } as any,
     });
+
+    await this.auditTrail.record({
+      clientId: updated.clientId,
+      entityType: 'alert_rule',
+      entityId: updated.id,
+      action: 'alert_rule_updated',
+      previousValue: existing as any,
+      nextValue: updated as any,
+      actor,
+    });
+
+    return updated;
   }
 
-  async remove(id: string, clientId?: string) {
-    await this.findOne(id, clientId);
-    return this.prisma.alertRule.delete({ where: { id } } as any);
+  async remove(id: string, clientId?: string, actor?: SessionUser) {
+    const existing = await this.findOne(id, clientId);
+    const deleted = await this.prisma.alertRule.delete({ where: { id } } as any);
+
+    await this.auditTrail.record({
+      clientId: existing.clientId,
+      entityType: 'alert_rule',
+      entityId: existing.id,
+      action: 'alert_rule_deleted',
+      previousValue: existing as any,
+      actor,
+    });
+
+    return deleted;
   }
 
   private validateBounds(minValue?: number, maxValue?: number) {

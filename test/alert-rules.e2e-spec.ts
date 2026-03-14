@@ -4,7 +4,12 @@ import request from 'supertest';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { AlertRulesController } from '../src/modules/alert-rules/alert-rules.controller';
 import { AlertRulesService } from '../src/modules/alert-rules/alert-rules.service';
-import { ModuleAccessGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
+import {
+  ModuleAccessGuard,
+  RoleGuard,
+  SessionAuthGuard,
+} from '../src/modules/auth/auth.guards';
+import { AuditTrailService } from '../src/infra/audit/audit-trail.service';
 
 describe('Alert Rules (e2e)', () => {
   let app: INestApplication;
@@ -59,6 +64,9 @@ describe('Alert Rules (e2e)', () => {
           return Promise.resolve(row);
         }),
       },
+      auditLog: {
+        create: jest.fn(({ data }: any) => Promise.resolve(data)),
+      },
     };
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -66,6 +74,7 @@ describe('Alert Rules (e2e)', () => {
       providers: [
         AlertRulesService,
         { provide: PrismaService, useValue: fakePrisma },
+        { provide: AuditTrailService, useValue: { record: jest.fn() } },
       ],
     })
       .overrideGuard(SessionAuthGuard)
@@ -87,6 +96,8 @@ describe('Alert Rules (e2e)', () => {
         },
       })
       .overrideGuard(ModuleAccessGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(RoleGuard)
       .useValue({ canActivate: () => true })
       .compile();
 
@@ -178,5 +189,65 @@ describe('Alert Rules (e2e)', () => {
         toleranceMinutes: -1,
       })
       .expect(400);
+  });
+
+  it('should reject operator when trying to create alert rule', async () => {
+    const operatorApp = await Test.createTestingModule({
+      controllers: [AlertRulesController],
+      providers: [
+        AlertRulesService,
+        {
+          provide: PrismaService,
+          useValue: {
+            client: { findUnique: jest.fn(() => Promise.resolve({ id: 'client_a' })) },
+            device: { findUnique: jest.fn(() => Promise.resolve({ id: 'freezer_01', clientId: 'client_a' })) },
+            alertRule: { create: jest.fn() },
+            auditLog: { create: jest.fn() },
+          },
+        },
+        { provide: AuditTrailService, useValue: { record: jest.fn() } },
+      ],
+    })
+      .overrideGuard(SessionAuthGuard)
+      .useValue({
+        canActivate: (context: any) => {
+          context.switchToHttp().getRequest().authUser = {
+            id: 'user_operator',
+            clientId: 'client_a',
+            name: 'Operador',
+            email: 'operator@client-a.com',
+            role: 'operator',
+            phone: null,
+            isActive: true,
+            lastLoginAt: null,
+            createdAt: new Date('2026-03-13T00:00:00.000Z'),
+            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+          };
+          return true;
+        },
+      })
+      .overrideGuard(ModuleAccessGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
+
+    const nestedApp = operatorApp.createNestApplication();
+    nestedApp.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
+    await nestedApp.init();
+
+    await request(nestedApp.getHttpServer())
+      .post('/alert-rules')
+      .send({
+        clientId: 'client_a',
+        sensorType: 'temperature',
+      })
+      .expect(403);
+
+    await nestedApp.close();
   });
 });

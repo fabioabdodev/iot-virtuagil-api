@@ -116,8 +116,16 @@ function DashboardContent() {
   );
   const scopedClientId = clientId ?? user?.clientId ?? undefined;
   const isAdmin = user?.role === 'admin';
-  const canManageUsers = Boolean(scopedClientId && isAdmin);
-  const canManageClientModules = Boolean(scopedClientId && isAdmin);
+  const isPlatformAdmin = Boolean(isAdmin && !user?.clientId);
+  const canManageUsers = Boolean(scopedClientId && isPlatformAdmin);
+  const canManageClientModules = Boolean(scopedClientId && isPlatformAdmin);
+  const canManageClientProfile = Boolean(scopedClientId && isPlatformAdmin);
+  const canCreateDevices = Boolean(scopedClientId && isPlatformAdmin);
+  const canEditDeviceTemperature = Boolean(scopedClientId && isAdmin);
+  const canEditDeviceStructure = Boolean(scopedClientId && isPlatformAdmin);
+  const canManageAlertRules = Boolean(scopedClientId && isAdmin);
+  const canManageActuatorStructure = Boolean(scopedClientId && isPlatformAdmin);
+  const canManageActuatorCommands = Boolean(scopedClientId && isAdmin);
   const {
     data: clientModulesData,
     isLoading: isLoadingClientModules,
@@ -440,28 +448,32 @@ function DashboardContent() {
               <RefreshCw className="mr-2 h-4 w-4" />
               Atualizar
             </Button>
-            <Button
-              onClick={() => {
-                setEditingDeviceId(null);
-                setFormMode((current) =>
-                  current === 'create' ? 'closed' : 'create',
-                );
-              }}
-              variant="primary"
-              className="px-4 py-2.5"
-            >
-              {formMode === 'create' ? 'Fechar cadastro' : 'Novo device'}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            {canCreateDevices ? (
+              <Button
+                onClick={() => {
+                  setEditingDeviceId(null);
+                  setFormMode((current) =>
+                    current === 'create' ? 'closed' : 'create',
+                  );
+                }}
+                variant="primary"
+                className="px-4 py-2.5"
+              >
+                {formMode === 'create' ? 'Fechar cadastro' : 'Novo device'}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            ) : null}
           </div>
         </div>
 
-        {formMode === 'create' && temperatureEnabled ? (
+        {formMode === 'create' && temperatureEnabled && canCreateDevices ? (
           <div className="mb-5">
             <DeviceForm
               mode="create"
               clientId={scopedClientId}
               loading={createMutation.isPending}
+              allowStructureFields
+              allowTemperatureFields
               onCancel={() => setFormMode('closed')}
               onSubmit={async (values) => {
                 await createMutation.mutateAsync({
@@ -474,13 +486,18 @@ function DashboardContent() {
           </div>
         ) : null}
 
-        {formMode === 'edit' && editingDevice && temperatureEnabled ? (
+        {formMode === 'edit' &&
+        editingDevice &&
+        temperatureEnabled &&
+        canEditDeviceTemperature ? (
           <div className="mb-5">
             <DeviceForm
               mode="edit"
               clientId={scopedClientId}
               device={editingDevice}
               loading={updateMutation.isPending}
+              allowStructureFields={canEditDeviceStructure}
+              allowTemperatureFields={canEditDeviceTemperature}
               onCancel={() => {
                 setEditingDeviceId(null);
                 setFormMode('closed');
@@ -616,32 +633,36 @@ function DashboardContent() {
                       </td>
                       <td className="text-right">
                         <div className="inline-flex items-center gap-2">
-                          <Button
-                            onClick={() => {
-                              setEditingDeviceId(device.id);
-                              setFormMode('edit');
-                            }}
-                            variant="secondary"
-                            size="sm"
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setPendingDeleteDeviceId(device.id);
-                            }}
-                            variant="danger"
-                            size="sm"
-                            loading={deletingDeviceId === device.id}
-                            disabled={
-                              deleteMutation.isPending &&
-                              deletingDeviceId !== device.id
-                            }
-                          >
-                            {deletingDeviceId === device.id
-                              ? 'Excluindo...'
-                              : 'Excluir'}
-                          </Button>
+                          {canEditDeviceTemperature ? (
+                            <Button
+                              onClick={() => {
+                                setEditingDeviceId(device.id);
+                                setFormMode('edit');
+                              }}
+                              variant="secondary"
+                              size="sm"
+                            >
+                              {canEditDeviceStructure ? 'Editar' : 'Faixa'}
+                            </Button>
+                          ) : null}
+                          {canCreateDevices ? (
+                            <Button
+                              onClick={() => {
+                                setPendingDeleteDeviceId(device.id);
+                              }}
+                              variant="danger"
+                              size="sm"
+                              loading={deletingDeviceId === device.id}
+                              disabled={
+                                deleteMutation.isPending &&
+                                deletingDeviceId !== device.id
+                              }
+                            >
+                              {deletingDeviceId === device.id
+                                ? 'Excluindo...'
+                                : 'Excluir'}
+                            </Button>
+                          ) : null}
                         </div>
                       </td>
                       <td className="text-right">
@@ -693,11 +714,15 @@ function DashboardContent() {
                 description: 'Depois do primeiro device, configure cooldown e tolerancia para operacao real.',
               },
             ]}
-            primaryActionLabel="Cadastrar primeiro device"
-            onPrimaryAction={() => {
-              setEditingDeviceId(null);
-              setFormMode('create');
-            }}
+            primaryActionLabel={canCreateDevices ? 'Cadastrar primeiro device' : undefined}
+            onPrimaryAction={
+              canCreateDevices
+                ? () => {
+                    setEditingDeviceId(null);
+                    setFormMode('create');
+                  }
+                : undefined
+            }
             secondaryHref="/lab"
             secondaryLabel="Abrir laboratorio"
           />
@@ -715,6 +740,8 @@ function DashboardContent() {
             clientId={scopedClientId}
             authToken={authToken}
             devices={devices}
+            canManageRules={canManageAlertRules}
+            blockedReason="Seu perfil pode monitorar as regras, mas a alteracao fica restrita a administradores."
             onCreateDevice={() => {
               setEditingDeviceId(null);
               setFormMode('create');
@@ -738,6 +765,8 @@ function DashboardContent() {
             clientId={scopedClientId}
             authToken={authToken}
             devices={devices}
+            canManageCommands={canManageActuatorCommands}
+            canManageStructure={canManageActuatorStructure}
             onCreateDevice={() => {
               setEditingDeviceId(null);
               setFormMode('create');
@@ -760,10 +789,10 @@ function DashboardContent() {
           clientId={scopedClientId}
           authToken={authToken}
           currentUser={user}
-          canManage={canManageClientModules}
+          canManage={canManageClientProfile}
           blockedReason={
             scopedClientId
-              ? 'Somente usuarios admin podem alterar o cadastro comercial do cliente.'
+              ? 'Somente o administrador da plataforma pode alterar o cadastro comercial do cliente.'
               : 'Defina um clientId para revisar o perfil comercial da conta.'
           }
         />
@@ -777,7 +806,7 @@ function DashboardContent() {
           canManage={canManageUsers}
           blockedReason={
             scopedClientId
-              ? 'Somente usuarios admin podem gerenciar acessos deste cliente.'
+              ? 'Somente o administrador da plataforma pode gerenciar acessos deste cliente nesta fase.'
               : 'Defina um clientId para administrar os usuarios de uma conta especifica.'
           }
         />
@@ -791,7 +820,7 @@ function DashboardContent() {
           canManage={canManageClientModules}
           blockedReason={
             scopedClientId
-              ? 'Somente usuarios admin podem alterar os modulos contratados deste cliente.'
+              ? 'Somente o administrador da plataforma pode alterar os modulos contratados deste cliente.'
               : 'Defina um clientId para revisar e ajustar a contratacao modular.'
           }
         />

@@ -3,19 +3,22 @@ import { ActuatorsService } from './actuators.service';
 import { CreateActuatorDto } from './dto/create-actuator.dto';
 import { UpdateActuatorDto } from './dto/update-actuator.dto';
 import { CreateActuationCommandDto } from './dto/create-actuation-command.dto';
-import { CurrentUser, RequireModule } from '../auth/auth.decorators';
-import { ModuleAccessGuard, SessionAuthGuard } from '../auth/auth.guards';
+import { CurrentUser, RequireModule, RequireRole } from '../auth/auth.decorators';
+import { ModuleAccessGuard, RoleGuard, SessionAuthGuard } from '../auth/auth.guards';
 import { resolveScopedClientId } from '../auth/auth.scope';
 import type { SessionUser } from '../auth/auth.types';
+import { assertPlatformAdmin } from '../auth/auth.permissions';
 
 @Controller('actuators')
-@UseGuards(SessionAuthGuard, ModuleAccessGuard)
+@UseGuards(SessionAuthGuard, RoleGuard, ModuleAccessGuard)
 @RequireModule('actuation')
 export class ActuatorsController {
   constructor(private readonly actuatorsService: ActuatorsService) {}
 
   @Post()
+  @RequireRole('admin')
   async create(@Body() dto: CreateActuatorDto, @CurrentUser() authUser: SessionUser) {
+    assertPlatformAdmin(authUser, 'Only platform admin can create actuators');
     dto.clientId = resolveScopedClientId(authUser, dto.clientId) ?? dto.clientId;
     return this.actuatorsService.create(dto);
   }
@@ -60,11 +63,13 @@ export class ActuatorsController {
   }
 
   @Patch(':id')
+  @RequireRole('admin')
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateActuatorDto,
     @CurrentUser() authUser?: SessionUser,
   ) {
+    assertPlatformAdmin(authUser, 'Only platform admin can edit actuators');
     const scopedClientId = authUser
       ? resolveScopedClientId(authUser, dto.clientId)
       : dto.clientId;
@@ -74,6 +79,7 @@ export class ActuatorsController {
 
   @Delete(':id')
   async remove(@Param('id') id: string, @CurrentUser() authUser?: SessionUser) {
+    assertPlatformAdmin(authUser, 'Only platform admin can delete actuators');
     return this.actuatorsService.remove(
       id,
       authUser ? resolveScopedClientId(authUser, undefined) : undefined,
@@ -95,6 +101,7 @@ export class ActuatorsController {
   }
 
   @Post(':id/commands')
+  @RequireRole('admin')
   async createCommand(
     @Param('id') id: string,
     @Body() dto: CreateActuationCommandDto,

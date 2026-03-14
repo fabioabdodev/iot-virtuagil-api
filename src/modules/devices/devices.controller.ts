@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { DevicesService } from './devices.service';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { CreateDeviceDto } from './dto/create-device.dto';
@@ -6,6 +17,12 @@ import { CurrentUser, RequireModule } from '../auth/auth.decorators';
 import { ModuleAccessGuard, SessionAuthGuard } from '../auth/auth.guards';
 import type { SessionUser } from '../auth/auth.types';
 import { resolveScopedClientId } from '../auth/auth.scope';
+import {
+  assertPlatformAdmin,
+  assertTenantOrPlatformAdmin,
+  isPlatformAdmin,
+  isTenantAdmin,
+} from '../auth/auth.permissions';
 
 @Controller('devices')
 @UseGuards(SessionAuthGuard, ModuleAccessGuard)
@@ -16,6 +33,7 @@ export class DevicesController {
   @Post()
   async createDevice(@Body() dto: CreateDeviceDto, @CurrentUser() authUser: SessionUser) {
     // Cria o cadastro base do device antes que ele comece a enviar leitura.
+    assertPlatformAdmin(authUser, 'Only platform admin can create devices');
     dto.clientId = resolveScopedClientId(authUser, dto.clientId);
     return this.service.create(dto);
   }
@@ -71,10 +89,33 @@ export class DevicesController {
     @Query('clientId') clientId?: string,
     @CurrentUser() authUser?: SessionUser,
   ) {
+    assertTenantOrPlatformAdmin(
+      authUser,
+      'Only admin can update device temperature settings',
+    );
+
     const scopedClientId = authUser
       ? resolveScopedClientId(authUser, clientId ?? dto.clientId)
       : clientId;
-    return this.service.update(id, dto, scopedClientId);
+
+    if (authUser && isTenantAdmin(authUser)) {
+      const hasStructuralFields =
+        dto.clientId !== undefined ||
+        dto.name !== undefined ||
+        dto.location !== undefined;
+
+      if (hasStructuralFields) {
+        throw new ForbiddenException(
+          'Client admin can only update temperature bounds on devices',
+        );
+      }
+    }
+
+    return this.service.update(id, dto, scopedClientId, {
+      actor: authUser,
+      allowCreateIfMissing: authUser ? isPlatformAdmin(authUser) : true,
+      restrictToTemperatureBounds: authUser ? isTenantAdmin(authUser) : false,
+    });
   }
 
   @Delete(':id')
@@ -84,6 +125,7 @@ export class DevicesController {
     @CurrentUser() authUser?: SessionUser,
   ) {
     // A exclusao passa pelo service para garantir validacao de tenant e limpeza de cache.
+    assertPlatformAdmin(authUser, 'Only platform admin can delete devices');
     return this.service.remove(
       id,
       authUser ? resolveScopedClientId(authUser, clientId) : clientId,
