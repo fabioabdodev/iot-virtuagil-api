@@ -5,6 +5,8 @@ import { ActuatorsController } from '../src/modules/actuators/actuators.controll
 import { ActuatorsService } from '../src/modules/actuators/actuators.service';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { ModuleAccessGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
+import { IotActuationController } from '../src/modules/actuators/iot-actuation.controller';
+import { ConfigService } from '@nestjs/config';
 
 describe('Actuators (e2e)', () => {
   let app: INestApplication;
@@ -104,10 +106,18 @@ describe('Actuators (e2e)', () => {
     };
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      controllers: [ActuatorsController],
+      controllers: [ActuatorsController, IotActuationController],
       providers: [
         ActuatorsService,
         { provide: PrismaService, useValue: fakePrisma },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) =>
+              key === 'DEVICE_API_KEY' ? 'expected-key' : undefined,
+            ),
+          },
+        },
       ],
     })
       .overrideGuard(SessionAuthGuard)
@@ -306,5 +316,46 @@ describe('Actuators (e2e)', () => {
     await request(app.getHttpServer())
       .get('/actuators/sauna_main')
       .expect(404);
+  });
+
+  it('should expose runtime actuator state for device polling with x-device-key', async () => {
+    await request(app.getHttpServer())
+      .post('/actuators')
+      .send({
+        id: 'relay_freezer',
+        clientId: 'client_a',
+        deviceId: 'device_a',
+        name: 'Rele freezer',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/actuators/relay_freezer/commands')
+      .send({
+        desiredState: 'on',
+        source: 'dashboard',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .get('/iot/actuators?deviceId=device_a')
+      .set('x-device-key', 'expected-key')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual([
+          expect.objectContaining({
+            id: 'relay_freezer',
+            deviceId: 'device_a',
+            currentState: 'on',
+            lastCommandBy: 'dashboard',
+          }),
+        ]);
+      });
+  });
+
+  it('should reject runtime actuator polling without valid x-device-key', async () => {
+    await request(app.getHttpServer())
+      .get('/iot/actuators?deviceId=device_a')
+      .expect(401);
   });
 });

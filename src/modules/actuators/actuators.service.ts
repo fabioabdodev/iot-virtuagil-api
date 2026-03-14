@@ -36,6 +36,22 @@ export class ActuatorsService {
     } as any);
   }
 
+  async listForRuntime(deviceId: string) {
+    const rows = await this.prisma.actuator.findMany({
+      where: { deviceId },
+      orderBy: { id: 'asc' },
+    } as any);
+
+    return rows.map((row: any) => ({
+      id: row.id,
+      deviceId: row.deviceId ?? null,
+      name: row.name,
+      currentState: row.currentState,
+      lastCommandAt: row.lastCommandAt ?? null,
+      lastCommandBy: row.lastCommandBy ?? null,
+    }));
+  }
+
   async findOne(id: string, clientId?: string) {
     const actuator = await this.prisma.actuator.findUnique({ where: { id } } as any);
     if (!actuator) throw new NotFoundException('Actuator not found');

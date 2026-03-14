@@ -22,6 +22,7 @@ Identidade tecnica atual escolhida:
 - rebranding tecnico iniciado no backend, frontend, deploy e documentacao principal
 - `.vscode/mcp.json` preparado para o projeto com `supabase`, `context7`, `filesystem`, `git` e `shell`
 - deploy swarm revisado para injetar variaveis obrigatorias de auth, cors e log na API
+- endpoint de runtime IoT para acionamento adicionado em `GET /iot/actuators?deviceId=...`
 
 ## Validacao feita
 
@@ -31,6 +32,7 @@ Comando executado com sucesso:
 npm run test:e2e -- --runInBand
 npm run build
 cd apps/web && npm run build
+npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
 ```
 
 Resultado esperado no ponto atual:
@@ -39,6 +41,7 @@ Resultado esperado no ponto atual:
 - `39/39` testes passando
 - build do backend concluido com sucesso
 - build do frontend concluido com sucesso
+- suite de `actuators.e2e` com `7/7` testes passando apos incluir polling de runtime IoT
 
 ## Arquivos alterados nesta etapa
 
@@ -65,6 +68,7 @@ Resultado esperado no ponto atual:
 - decidir se a pasta local do repositorio tambem sera renomeada
 - configurar no ambiente do projeto `SUPABASE_PROJECT_REF` e `CONTEXT7_API_KEY` quando o uso de MCP no VS Code for desejado
 - atualizar o `.env.prod` real da VPS com as chaves novas/obrigatorias que agora estao documentadas em `deploy/swarm/.env.prod.example`
+- decidir se o hardware vai apenas fazer polling de estado ou se tambem vamos registrar confirmacao/ack de comando executado
 
 ## Escopo local ignorado
 
