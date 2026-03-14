@@ -87,11 +87,15 @@ Estado atual:
 - migration validada no banco real
 - fluxo manual ponta a ponta validado no banco real
 - dashboard com refinamentos operacionais e blocos de prontidao/atividade
+- publicacao nova validada em producao:
+  - `/health` com `release`, `buildTime` e `features`
+  - `/auth/login` funcionando
+  - `/actuators/commands/recent` publicado e protegido por bearer token
 
 Proximo ponto de continuidade:
 
-- consolidar testes manuais e roteiro de demonstracao do modulo `acionamento`
-- manter refinamentos operacionais focados em UX e demonstracao comercial
+- consolidar testes manuais finais e roteiro de demonstracao comercial dos modulos `temperatura` e `acionamento`
+- manter refinamentos operacionais focados em UX, observabilidade e deploy
 - manter o modulo `temperatura` apenas em manutencao corretiva
 
 ## Proximos passos recomendados

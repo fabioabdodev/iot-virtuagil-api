@@ -63,6 +63,8 @@ Observacao:
 - a stack agora aceita `API_IMAGE` e `WEB_IMAGE`
 - o workflow exporta essas variaveis com a tag curta do commit antes do `docker stack deploy`
 - isso reduz o risco de pipeline verde com Swarm ainda reaproveitando uma imagem antiga marcada como `latest`
+- a stack salva no Portainer pode ficar desatualizada em relacao ao `stack.prod.yml`; quando houver divergencia entre Portainer, VPS e workflow, tratar a copia efetivamente usada no `docker stack deploy` como fonte principal
+- variaveis obrigatorias da API, como `AUTH_SECRET`, precisam existir em `.env.prod` e tambem ser repassadas no bloco `environment` do servico `api`
 
 ## Regras de seguranca
 
