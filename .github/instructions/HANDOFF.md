@@ -59,6 +59,11 @@ Identidade tecnica atual escolhida:
   - imagem da API passou a carregar `prisma` CLI no container final
   - workflow SSH roda `npx prisma migrate deploy` antes do `docker stack deploy`
   - passo manual para Portainer documentado em `.github/instructions/PRODUCTION_MIGRATIONS.md`
+- monitor web validado em producao com admin global criado manualmente no banco
+- painel de acesso do monitor web refinado:
+  - campos maiores
+  - login e filtro separados visualmente
+  - CTA mais legivel para autenticacao e selecao de tenant
 - regra-mae de produto consolidada:
   - a plataforma cria a estrutura inicial do cliente
   - o admin do cliente pode ajustar regras operacionais autorizadas
@@ -192,6 +197,9 @@ Estado aplicado em codigo nesta etapa:
 - `producao`:
   - deploy via SSH passou a executar `prisma migrate deploy` antes do rollout
   - cenarios com Portainer webhook exigem migration manual previa
+- `monitor web`:
+  - painel de acesso inicial ficou mais usavel para login real em producao
+  - ainda vale revisar UX geral depois dos estudos de caso
 
 Validacao executada nesta etapa:
 
