@@ -12,6 +12,7 @@
     "db:seed": "node ./scripts/db-seed.mjs",
     "db:verify-actuation": "node ./scripts/verify-actuation-schema.mjs",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "health:check:prod": "node ./scripts/check-production-health.mjs",
     "simulate:iot": "node ./scripts/iot-simulator.mjs",
     "start": "nest start",
     "start:dev": "nest start --watch",

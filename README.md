@@ -204,6 +204,24 @@ Uso pratico:
 - consulte `/health` em producao para saber qual release esta publicada
 - se `features.authLogin` ou `features.actuationCommandsRecent` ainda nao aparecerem, o deploy da API ainda nao levou essas capacidades para o ar
 
+Verificacao rapida por script:
+
+```bash
+npm run health:check:prod
+```
+
+Exemplo exigindo recursos especificos:
+
+```bash
+npm run health:check:prod -- --require-feature authLogin --require-feature actuationCommandsRecent
+```
+
+Exemplo validando a release esperada:
+
+```bash
+npm run health:check:prod -- --expect-release sha-abc1234
+```
+
 ### Ingestão
 
 - `POST /iot/temperature`
@@ -524,6 +542,7 @@ Observacao operacional importante:
 - o build continua publicando `latest`, mas o deploy agora deve usar a tag `sha-xxxxxxx` da release
 - isso reduz o risco de pipeline verde com a producao ainda servindo uma imagem antiga reaproveitada como `latest`
 - depois do deploy, consulte `GET /health` para confirmar `release`, `buildTime` e `features` publicados
+- se quiser automatizar essa checagem sem abrir o navegador, use `npm run health:check:prod`
 
 ## Variáveis de ambiente (resumo)
 
