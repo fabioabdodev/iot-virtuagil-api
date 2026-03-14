@@ -209,6 +209,7 @@ Regras atuais:
 - nunca logar `DATABASE_URL`, tokens ou webhooks sensiveis
 - segredos de pipeline devem ficar em GitHub Secrets
 - backup do banco deve ser guardado fora da VPS principal
+- artefatos locais de execucao como `tmp-*.log` devem ficar em `logs/`, nao soltos na raiz
 
 ## Direcao de evolucao
 
@@ -347,3 +348,4 @@ Estado em 13/03/2026:
   - em 14/03/2026 o `/health` passou a expor release e features publicadas, e o deploy passou a exportar `APP_RELEASE` e `APP_BUILD_TIME` antes do `docker stack deploy`
   - em 14/03/2026 o deploy em Swarm foi ajustado para consumir `API_IMAGE` e `WEB_IMAGE` com tag `sha-xxxxxxx`, porque o uso de `latest` era a causa mais provavel da diferenca entre codigo atual e API realmente publicada em producao
   - em 14/03/2026 foi adicionado `npm run health:check:prod` para consultar o `/health` publicado e validar `release` e `features` sem depender de conferencias manuais
+  - em 14/03/2026 os logs temporarios locais passaram a ter pasta dedicada em `logs/` para manter a raiz do projeto limpa
