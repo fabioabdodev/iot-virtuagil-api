@@ -24,7 +24,7 @@ Identidade tecnica atual escolhida:
 - deploy swarm revisado para injetar variaveis obrigatorias de auth, cors e log na API
 - endpoint de runtime IoT para acionamento adicionado em `GET /iot/actuators?deviceId=...`
 - endpoint de confirmacao do hardware adicionado em `POST /iot/actuators/:id/ack`
-- checklist de bancada criado em `.github/instructions/CHECKLIST_BANCADA_HARDWARE.md`
+- escopo de firmware/hardware separado em `iot-virtuagil-firmware/`
 
 ## Validacao feita
 
@@ -70,13 +70,15 @@ Resultado esperado no ponto atual:
 - decidir se a pasta local do repositorio tambem sera renomeada
 - configurar no ambiente do projeto `SUPABASE_PROJECT_REF` e `CONTEXT7_API_KEY` quando o uso de MCP no VS Code for desejado
 - atualizar o `.env.prod` real da VPS com as chaves novas/obrigatorias que agora estao documentadas em `deploy/swarm/.env.prod.example`
-- decidir futuramente se o `ack` atual ja basta ou se vamos evoluir para estado real mais detalhado, falha eletrica e telemetria de saida
+- alinhar qualquer evolucao de firmware em `iot-virtuagil-firmware/`, nao mais dentro deste repositorio
 
 ## Escopo local ignorado
 
 - `institucional-site/` e um escopo local do futuro site institucional da Virtuagil
 - essa pasta nao deve subir para este repositorio
 - a protecao agora existe em `.gitignore`, nao apenas em `.git/info/exclude`
+- `iot-virtuagil-firmware/` e um escopo local do futuro projeto separado de firmware
+- as regras de hardware, runtime e bancada foram movidas para essa pasta
 
 ## Supabase
 

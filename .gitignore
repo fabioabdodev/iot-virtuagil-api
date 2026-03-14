@@ -81,3 +81,6 @@ apps/web/.next/
 
 # escopo local do futuro site institucional
 institucional-site/
+
+# escopo local do futuro projeto de firmware/hardware
+iot-virtuagil-firmware/
