@@ -4,6 +4,7 @@ import request from 'supertest';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { AlertRulesController } from '../src/modules/alert-rules/alert-rules.controller';
 import { AlertRulesService } from '../src/modules/alert-rules/alert-rules.service';
+import { ModuleAccessGuard, SessionAuthGuard } from '../src/modules/auth/auth.guards';
 
 describe('Alert Rules (e2e)', () => {
   let app: INestApplication;
@@ -66,7 +67,28 @@ describe('Alert Rules (e2e)', () => {
         AlertRulesService,
         { provide: PrismaService, useValue: fakePrisma },
       ],
-    }).compile();
+    })
+      .overrideGuard(SessionAuthGuard)
+      .useValue({
+        canActivate: (context: any) => {
+          context.switchToHttp().getRequest().authUser = {
+            id: 'user_admin',
+            clientId: null,
+            name: 'Admin Global',
+            email: 'admin@example.com',
+            role: 'admin',
+            phone: null,
+            isActive: true,
+            lastLoginAt: null,
+            createdAt: new Date('2026-03-13T00:00:00.000Z'),
+            updatedAt: new Date('2026-03-13T00:00:00.000Z'),
+          };
+          return true;
+        },
+      })
+      .overrideGuard(ModuleAccessGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(
@@ -80,7 +102,7 @@ describe('Alert Rules (e2e)', () => {
   });
 
   afterEach(async () => {
-    await app.close();
+    if (app) await app.close();
   });
 
   it('should create and filter alert rules', async () => {

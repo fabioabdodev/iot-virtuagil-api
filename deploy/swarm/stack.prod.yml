@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   api:
-    image: ${API_IMAGE:-ghcr.io/fabioabdodev/iot-freezer-api/api:latest}
+    image: ${API_IMAGE:-ghcr.io/fabioabdodev/iot-virtuagil-api/api:latest}
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -42,7 +42,7 @@ services:
         - traefik.http.services.iot-api.loadbalancer.server.port=3000
 
   web:
-    image: ${WEB_IMAGE:-ghcr.io/fabioabdodev/iot-freezer-api/web:latest}
+    image: ${WEB_IMAGE:-ghcr.io/fabioabdodev/iot-virtuagil-api/web:latest}
     environment:
       NODE_ENV: production
       PORT: 3000

@@ -77,3 +77,6 @@ apps/web/.next/
 
 # misc local files
 *.local
+
+# escopo local do futuro site institucional
+institucional-site/

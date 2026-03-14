@@ -74,7 +74,6 @@ export class DevicesController {
     const scopedClientId = authUser
       ? resolveScopedClientId(authUser, clientId ?? dto.clientId)
       : clientId;
-    dto.clientId = scopedClientId;
     return this.service.update(id, dto, scopedClientId);
   }
 

@@ -1,0 +1,84 @@
+# Handoff Atual
+
+Data de referencia: 2026-03-14
+
+## Direcao do produto
+
+O projeto deixou de ser focado apenas em freezer e esta evoluindo para uma plataforma de automacao IoT da Virtuagil.
+
+Identidade tecnica atual escolhida:
+
+- API: `iot-virtuagil-api`
+- Web: `iot-virtuagil-web`
+- Namespace de imagens: `ghcr.io/fabioabdodev/iot-virtuagil-api`
+
+## O que foi concluido
+
+- modulo `temperatura` validado com cobertura e2e
+- modulo `acionamento` validado com cobertura e2e
+- regras de isolamento por tenant revisadas
+- correcao aplicada no `PATCH /devices/:id` para nao mascarar conflito de `clientId`
+- suites e2e antigas alinhadas ao fluxo atual de autenticacao por sessao
+- rebranding tecnico iniciado no backend, frontend, deploy e documentacao principal
+
+## Validacao feita
+
+Comando executado com sucesso:
+
+```bash
+npm run test:e2e -- --runInBand
+```
+
+Resultado esperado no ponto atual:
+
+- `13/13` suites passando
+- `39/39` testes passando
+
+## Arquivos alterados nesta etapa
+
+- `src/modules/devices/devices.controller.ts`
+- `test/alert-rules.e2e-spec.ts`
+- `test/devices-dashboard.e2e-spec.ts`
+- `test/devices-tenant.e2e-spec.ts`
+- `test/readings.e2e-spec.ts`
+- `package.json`
+- `package-lock.json`
+- `apps/web/package.json`
+- `apps/web/package-lock.json`
+- `.github/workflows/deploy.yml`
+- `deploy/swarm/stack.prod.yml`
+- `deploy/swarm/.env.prod.example`
+- `README.md`
+
+## Pendencias operacionais
+
+- revisar o workflow de deploy ponta a ponta apos o rename para `iot-virtuagil-api`
+- alinhar a VPS para usar `/opt/iot-virtuagil-api`
+- mover ou recriar `.env.prod` no novo caminho da VPS
+- confirmar publicacao das novas imagens no GHCR com o namespace novo
+- decidir se a pasta local do repositorio tambem sera renomeada
+
+## Escopo local ignorado
+
+- `institucional-site/` e um escopo local do futuro site institucional da Virtuagil
+- essa pasta nao deve subir para este repositorio
+- a protecao agora existe em `.gitignore`, nao apenas em `.git/info/exclude`
+
+## Supabase
+
+Objetivo desejado:
+
+- nome visual do projeto: `virtuagil-iot`
+
+Observacao importante:
+
+- o nome exibido do projeto pode ser ajustado no dashboard, mas o `project ref` e o subdominio padrao do Supabase nao devem ser tratados como algo que pode ser renomeado livremente
+- se branding publico for necessario, avaliar `custom domains` ou `vanity subdomains`
+
+## Combinado de continuidade
+
+Ao encerrar cada bloco relevante:
+
+1. atualizar este arquivo com o novo ponto de parada
+2. rodar a validacao minima pertinente
+3. criar commit com mensagem objetiva

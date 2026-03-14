@@ -11,9 +11,9 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAMESPACE: ghcr.io/fabioabdodev/iot-freezer-api
-  API_IMAGE_NAME: ghcr.io/fabioabdodev/iot-freezer-api/api
-  WEB_IMAGE_NAME: ghcr.io/fabioabdodev/iot-freezer-api/web
+  IMAGE_NAMESPACE: ghcr.io/fabioabdodev/iot-virtuagil-api
+  API_IMAGE_NAME: ghcr.io/fabioabdodev/iot-virtuagil-api/api
+  WEB_IMAGE_NAME: ghcr.io/fabioabdodev/iot-virtuagil-api/web
 
 jobs:
   build-and-push:
@@ -109,7 +109,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           source: deploy/swarm/stack.prod.yml
-          target: /opt/iot-freezer-api
+          target: /opt/iot-virtuagil-api
 
       - name: Deploy stack via SSH
         if: ${{ env.PORTAINER_WEBHOOK_URL == '' }}
@@ -121,10 +121,10 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             set -e
-            cd /opt/iot-freezer-api
+            cd /opt/iot-virtuagil-api
 
             if [ ! -f .env.prod ]; then
-              echo ".env.prod nao encontrado em /opt/iot-freezer-api"
+              echo ".env.prod nao encontrado em /opt/iot-virtuagil-api"
               exit 1
             fi
 
