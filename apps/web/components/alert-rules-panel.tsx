@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAlertRuleMutations } from '@/hooks/use-alert-rule-mutations';
@@ -87,12 +87,15 @@ export function AlertRulesPanel({
     clientId,
     authToken,
   );
-  const { createMutation, deleteMutation } = useAlertRuleMutations(
+  const { createMutation, updateMutation, deleteMutation } = useAlertRuleMutations(
     clientId,
     authToken,
   );
   const [deletingRuleId, setDeletingRuleId] = useState<string | null>(null);
   const [pendingRuleId, setPendingRuleId] = useState<string | null>(null);
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
+  const rules = data ?? [];
+  const editingRule = rules.find((rule) => rule.id === editingRuleId) ?? null;
 
   const {
     register,
@@ -111,6 +114,31 @@ export function AlertRulesPanel({
     },
   });
 
+  useEffect(() => {
+    if (!editingRule) {
+      reset({
+        sensorType: 'temperature',
+        deviceId: '',
+        minValue: '',
+        maxValue: '',
+        cooldownMinutes: '15',
+        toleranceMinutes: '0',
+      });
+      return;
+    }
+
+    reset({
+      sensorType: editingRule.sensorType,
+      deviceId: editingRule.deviceId ?? '',
+      minValue:
+        editingRule.minValue != null ? String(editingRule.minValue) : '',
+      maxValue:
+        editingRule.maxValue != null ? String(editingRule.maxValue) : '',
+      cooldownMinutes: String(editingRule.cooldownMinutes),
+      toleranceMinutes: String(editingRule.toleranceMinutes),
+    });
+  }, [editingRule, reset]);
+
   async function handleRemove(id: string) {
     setDeletingRuleId(id);
     try {
@@ -119,6 +147,13 @@ export function AlertRulesPanel({
       setDeletingRuleId(null);
       setPendingRuleId(null);
     }
+  }
+
+  async function handleToggleRule(ruleId: string, enabled: boolean) {
+    await updateMutation.mutateAsync({
+      id: ruleId,
+      payload: { enabled },
+    });
   }
 
   return (
@@ -150,16 +185,33 @@ export function AlertRulesPanel({
         <form
           onSubmit={handleSubmit(async (rawValues) => {
             const values = formSchema.parse(rawValues);
-            await createMutation.mutateAsync({
-              clientId,
-              deviceId: values.deviceId,
-              sensorType: values.sensorType,
-              minValue: values.minValue,
-              maxValue: values.maxValue,
-              cooldownMinutes: values.cooldownMinutes,
-              toleranceMinutes: values.toleranceMinutes,
-              enabled: true,
-            });
+            if (editingRule) {
+              await updateMutation.mutateAsync({
+                id: editingRule.id,
+                payload: {
+                  clientId,
+                  deviceId: values.deviceId,
+                  sensorType: values.sensorType,
+                  minValue: values.minValue,
+                  maxValue: values.maxValue,
+                  cooldownMinutes: values.cooldownMinutes,
+                  toleranceMinutes: values.toleranceMinutes,
+                  enabled: editingRule.enabled,
+                },
+              });
+              setEditingRuleId(null);
+            } else {
+              await createMutation.mutateAsync({
+                clientId,
+                deviceId: values.deviceId,
+                sensorType: values.sensorType,
+                minValue: values.minValue,
+                maxValue: values.maxValue,
+                cooldownMinutes: values.cooldownMinutes,
+                toleranceMinutes: values.toleranceMinutes,
+                enabled: true,
+              });
+            }
             reset();
           })}
           className=""
@@ -215,12 +267,28 @@ export function AlertRulesPanel({
               <Button
                 type="submit"
                 variant="primary"
-                disabled={createMutation.isPending}
-                loading={createMutation.isPending}
+                disabled={createMutation.isPending || updateMutation.isPending}
+                loading={createMutation.isPending || updateMutation.isPending}
                 className="min-w-[168px]"
               >
-                {createMutation.isPending ? 'Salvando...' : 'Criar regra'}
+                {createMutation.isPending || updateMutation.isPending
+                  ? 'Salvando...'
+                  : editingRule
+                    ? 'Salvar regra'
+                    : 'Criar regra'}
               </Button>
+              {editingRule ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    setEditingRuleId(null);
+                    reset();
+                  }}
+                >
+                  Cancelar
+                </Button>
+              ) : null}
             </div>
           </Panel>
         </form>
@@ -232,9 +300,11 @@ export function AlertRulesPanel({
         </Feedback>
       ) : null}
 
-      {createMutation.isError ? (
+      {createMutation.isError || updateMutation.isError ? (
         <Feedback variant="danger" className="mb-3">
-          {createMutation.error?.message ?? 'Falha ao criar regra de alerta.'}
+          {createMutation.error?.message ??
+            updateMutation.error?.message ??
+            'Falha ao salvar regra de alerta.'}
         </Feedback>
       ) : null}
       {deleteMutation.isError ? (
@@ -257,7 +327,7 @@ export function AlertRulesPanel({
         </Feedback>
       ) : null}
 
-      {!isLoading && (data?.length ?? 0) > 0 ? (
+      {!isLoading && rules.length > 0 ? (
         <DataTableWrapper className="rounded-[22px]">
           <DataTable>
             <thead>
@@ -267,11 +337,12 @@ export function AlertRulesPanel({
                 <th>Limites</th>
                 <th>Cooldown</th>
                 <th>Tolerancia</th>
+                <th>Status</th>
                 <th className="text-right">Acao</th>
               </tr>
             </thead>
             <tbody>
-              {(data ?? []).map((rule) => (
+              {rules.map((rule) => (
                 <tr key={rule.id}>
                   <td>{rule.sensorType}</td>
                   <td className="text-muted">
@@ -282,21 +353,46 @@ export function AlertRulesPanel({
                   </td>
                   <td>{rule.cooldownMinutes} min</td>
                   <td>{rule.toleranceMinutes} min</td>
+                  <td>
+                    <Badge variant={rule.enabled ? 'success' : 'neutral'}>
+                      {rule.enabled ? 'Ativa' : 'Pausada'}
+                    </Badge>
+                  </td>
                   <td className="text-right">
                     {canManageRules ? (
-                      <Button
-                        onClick={() => {
-                          setPendingRuleId(rule.id);
-                        }}
-                        variant="danger"
-                        size="sm"
-                        loading={deletingRuleId === rule.id}
-                        disabled={
-                          deleteMutation.isPending && deletingRuleId !== rule.id
-                        }
-                      >
-                        {deletingRuleId === rule.id ? 'Excluindo...' : 'Excluir'}
-                      </Button>
+                      <div className="inline-flex items-center gap-2">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setEditingRuleId(rule.id)}
+                        >
+                          Editar
+                        </Button>
+                        <Button
+                          variant={rule.enabled ? 'secondary' : 'primary'}
+                          size="sm"
+                          loading={updateMutation.isPending && editingRuleId !== rule.id}
+                          disabled={updateMutation.isPending}
+                          onClick={() => {
+                            void handleToggleRule(rule.id, !rule.enabled);
+                          }}
+                        >
+                          {rule.enabled ? 'Pausar' : 'Ativar'}
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setPendingRuleId(rule.id);
+                          }}
+                          variant="danger"
+                          size="sm"
+                          loading={deletingRuleId === rule.id}
+                          disabled={
+                            deleteMutation.isPending && deletingRuleId !== rule.id
+                          }
+                        >
+                          {deletingRuleId === rule.id ? 'Excluindo...' : 'Excluir'}
+                        </Button>
+                      </div>
                     ) : (
                       <span className="text-xs text-muted">Somente leitura</span>
                     )}

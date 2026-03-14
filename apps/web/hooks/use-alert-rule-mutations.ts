@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createAlertRule, deleteAlertRule } from '@/lib/api';
+import { createAlertRule, deleteAlertRule, updateAlertRule } from '@/lib/api';
 import { AlertRuleInput } from '@/types/alert-rule';
 
 export function useAlertRuleMutations(clientId?: string, authToken?: string) {
@@ -24,5 +24,16 @@ export function useAlertRuleMutations(clientId?: string, authToken?: string) {
     onSuccess: invalidate,
   });
 
-  return { createMutation, deleteMutation };
+  const updateMutation = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: Partial<AlertRuleInput>;
+    }) => updateAlertRule(id, payload, authToken),
+    onSuccess: invalidate,
+  });
+
+  return { createMutation, updateMutation, deleteMutation };
 }

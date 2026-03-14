@@ -45,6 +45,11 @@ Identidade tecnica atual escolhida:
   - endpoint `GET /audit-logs`
   - escopo automatico por tenant para admin de cliente
   - painel de auditoria visivel para administradores no dashboard
+- admin do cliente agora pode editar regras de alerta existentes no dashboard:
+  - alterar limites
+  - ajustar cooldown
+  - ajustar tolerancia
+  - ativar e pausar regras
 - regra-mae de produto consolidada:
   - a plataforma cria a estrutura inicial do cliente
   - o admin do cliente pode ajustar regras operacionais autorizadas
@@ -99,7 +104,6 @@ Resultado esperado no ponto atual:
 - planejar trilha de auditoria para alteracoes de faixa de temperatura e regras de alerta antes de liberar mais autonomia operacional ao cliente
 - aplicar a migration `20260314183000_create_audit_logs` no banco real antes de usar a nova auditoria em producao
 - decidir se a proxima etapa de permissao vai incluir:
-  - client admin editando regras de alerta tambem no dashboard com update completo
   - tela de consulta de auditoria no monitor web
 - alinhar o `README.md` quando o arquivo for normalizado para UTF-8, porque o patch seguro nao conseguiu editar esse arquivo na etapa anterior
 - decidir se a auditoria tera filtros mais completos no frontend:

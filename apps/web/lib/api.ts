@@ -258,6 +258,27 @@ export async function createAlertRule(
   }
 }
 
+export async function updateAlertRule(
+  id: string,
+  input: Partial<AlertRuleInput>,
+  authToken?: string,
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/alert-rules/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...buildAuthHeaders(authToken),
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await extractApiErrorMessage(response, 'Falha ao atualizar regra de alerta'),
+    );
+  }
+}
+
 export async function deleteAlertRule(
   id: string,
   authToken?: string,
