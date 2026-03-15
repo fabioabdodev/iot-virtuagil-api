@@ -71,6 +71,11 @@ Identidade tecnica atual escolhida:
   - backend ja aceitava `turnstileToken`
   - frontend passou a renderizar widget quando `NEXT_PUBLIC_TURNSTILE_SITE_KEY` estiver definido
   - deploy web agora aceita `NEXT_PUBLIC_TURNSTILE_SITE_KEY` no build
+- dashboard ganhou header fixo:
+  - identidade constante da Virtuagil
+  - avatar/sessao do usuario
+  - tenant atual
+  - links rapidos para secoes principais
 - regra-mae de produto consolidada:
   - a plataforma cria a estrutura inicial do cliente
   - o admin do cliente pode ajustar regras operacionais autorizadas
@@ -211,6 +216,7 @@ Estado aplicado em codigo nesta etapa:
   - painel de acesso inicial ficou mais usavel para login real em producao
   - ainda vale revisar UX geral depois dos estudos de caso
   - Turnstile foi ligado apenas no login publico; formularios internos autenticados nao usam captcha nesta fase
+  - header fixo passou a dar mais contexto de sessao e navegacao entre secoes
 
 Validacao executada nesta etapa:
 

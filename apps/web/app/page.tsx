@@ -20,6 +20,7 @@ import { ptBR } from 'date-fns/locale';
 import Image from 'next/image';
 import { DeviceForm } from '@/components/device-form';
 import { DeviceHistoryPanel } from '@/components/device-history-panel';
+import { DashboardHeader } from '@/components/dashboard-header';
 import { ActuationPanel } from '@/components/actuation-panel';
 import { AlertRulesPanel } from '@/components/alert-rules-panel';
 import { SimulationLabPanel } from '@/components/simulation-lab-panel';
@@ -244,7 +245,15 @@ function DashboardContent() {
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <main>
+      <DashboardHeader
+        currentUser={user}
+        scopedClientId={scopedClientId}
+        isAuthenticated={isAuthenticated}
+        onLogout={clearToken}
+      />
+
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <ConfirmDialog
         open={Boolean(pendingDeleteDeviceId)}
         title="Excluir device?"
@@ -450,7 +459,7 @@ function DashboardContent() {
         onSelectClient={focusClient}
       />
 
-      <section className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section id="resumo-operacional" className="mb-8 scroll-mt-28 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           className="animate-fade-up"
           title="Dispositivos"
@@ -488,13 +497,15 @@ function DashboardContent() {
         />
       </section>
 
-      <CommercialReadinessPanel
+      <div id="contas-modulos" className="scroll-mt-28">
+        <CommercialReadinessPanel
         clientId={scopedClientId}
         authToken={authToken}
         currentUser={user}
         devices={devices}
         clientModules={clientModules}
-      />
+        />
+      </div>
 
       <OperationalActivityPanel
         clientId={scopedClientId}
@@ -911,12 +922,15 @@ function DashboardContent() {
         <SimulationLabPanel clientId={scopedClientId} />
       </div>
 
-      <AuditLogPanel
+      <div id="auditoria" className="scroll-mt-28">
+        <AuditLogPanel
         clientId={scopedClientId}
         authToken={authToken}
         currentUser={user}
         canView={isAdmin}
-      />
+        />
+      </div>
+      </div>
     </main>
   );
 }
