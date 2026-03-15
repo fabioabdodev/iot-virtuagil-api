@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 declare global {
   interface Window {
@@ -33,7 +33,7 @@ export function TurnstileWidget({
   onTokenChange,
   resetKey = 0,
 }: TurnstileWidgetProps) {
-  const widgetElementId = useId().replace(/:/g, '_');
+  const widgetContainerRef = useRef<HTMLDivElement | null>(null);
   const [scriptReady, setScriptReady] = useState(
     typeof window !== 'undefined' && Boolean(window.turnstile),
   );
@@ -41,12 +41,20 @@ export function TurnstileWidget({
   const [hasWidgetError, setHasWidgetError] = useState(false);
 
   useEffect(() => {
-    if (!scriptReady || !siteKey || !window.turnstile || widgetId) return;
+    if (
+      !scriptReady ||
+      !siteKey ||
+      !window.turnstile ||
+      widgetId ||
+      !widgetContainerRef.current
+    ) {
+      return;
+    }
 
     let renderedWidgetId: string | null = null;
 
     try {
-      renderedWidgetId = window.turnstile.render(`#${widgetElementId}`, {
+      renderedWidgetId = window.turnstile.render(widgetContainerRef.current, {
         sitekey: siteKey,
         theme: 'dark',
         callback: (token) => onTokenChange(token),
@@ -70,7 +78,7 @@ export function TurnstileWidget({
         // Ignora erros de limpeza para evitar derrubar a pagina.
       }
     };
-  }, [onTokenChange, scriptReady, siteKey, widgetElementId, widgetId]);
+  }, [onTokenChange, scriptReady, siteKey, widgetId]);
 
   useEffect(() => {
     if (!widgetId || !window.turnstile) return;
@@ -96,7 +104,7 @@ export function TurnstileWidget({
         }}
       />
       <div
-        id={widgetElementId}
+        ref={widgetContainerRef}
         className="min-h-[66px] rounded-2xl border border-line/70 bg-bg/20 p-2"
       />
       <p className="text-xs text-muted">
