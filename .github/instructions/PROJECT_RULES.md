@@ -63,8 +63,8 @@ Ja foi validado:
 Pendencias principais restantes:
 
 - reduzir ruido operacional do deploy em Swarm
-- revisar a imagem da API para incluir OpenSSL e reduzir warnings do Prisma
 - manter o modulo `acionamento` em modo simulado ate a chegada do hardware
+- validar em producao o fluxo final de login com Cloudflare Turnstile apos os ajustes recentes do widget/web
 
 ## O que ainda nao entrou por completo
 
@@ -217,6 +217,7 @@ Regras atuais:
 - segredos de pipeline devem ficar em GitHub Secrets
 - backup do banco deve ser guardado fora da VPS principal
 - artefatos locais de execucao como `tmp-*.log` devem ficar em `logs/`, nao soltos na raiz
+- `TURNSTILE_SECRET_KEY` deve ficar apenas em segredo de ambiente; se for exposta em chat, screenshot ou ticket, girar no Cloudflare
 
 ## Direcao de evolucao
 
@@ -263,7 +264,7 @@ Observacao importante para continuidade:
 
 ## Registro de continuidade para proximos agentes
 
-Estado consolidado em 14/03/2026:
+Estado consolidado em 15/03/2026:
 
 - modulo `temperatura` segue encerrado no escopo funcional atual
 - modulo `acionamento` foi iniciado no backend e no dashboard
@@ -295,8 +296,10 @@ Estado consolidado em 14/03/2026:
   - backend agora protege rotas por sessao autenticada, role e modulo contratado
   - `clientId` do usuario autenticado agora limita consultas e mutacoes sensiveis
   - login agora usa rate limit e bloqueio temporario contra brute force
-  - backend ja esta preparado para `Cloudflare Turnstile` quando `TURNSTILE_SECRET_KEY` for configurada
-  - frontend ainda nao exibe o widget do Turnstile; a integracao visual fica para etapa posterior
+  - backend ja valida `turnstileToken` quando `TURNSTILE_SECRET_KEY` estiver configurada
+  - frontend ja tenta renderizar o widget do Turnstile quando `NEXT_PUBLIC_TURNSTILE_SITE_KEY` estiver definida
+  - houve ajuste recente no widget para evitar crash da tela e usar render mais estavel
+  - o comportamento final do captcha em producao ainda deve ser revalidado depois do deploy mais novo
   - banco real agora possui tabela `User` e o seed foi executado novamente com sucesso
 - modulos por cliente:
   - backend ja possui `/client-modules`
@@ -363,4 +366,21 @@ Estado consolidado em 14/03/2026:
   - em 14/03/2026 foi validado em producao:
     - `POST /auth/login` respondendo com token e usuario
     - `GET /actuators/commands/recent` deixando de retornar `404` e passando a exigir bearer token
-  - o warning operacional ainda conhecido em producao e o do Prisma/OpenSSL dentro da imagem da API; isso nao bloqueou a subida, mas continua como refinamento pendente
+  - em 15/03/2026 o deploy passou a usar com sucesso:
+    - pasta `/opt/iot-virtuagil-api` na VPS
+    - imagens `ghcr.io/fabioabdodev/iot-virtuagil-api/api:sha-...`
+    - imagens `ghcr.io/fabioabdodev/iot-virtuagil-api/web:sha-...`
+  - em 15/03/2026 o `.env.prod` da VPS foi alinhado com:
+    - `API_IMAGE=ghcr.io/fabioabdodev/iot-virtuagil-api/api:latest`
+    - `WEB_IMAGE=ghcr.io/fabioabdodev/iot-virtuagil-api/web:latest`
+    - `TURNSTILE_SECRET_KEY`
+    - `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
+  - em 15/03/2026 o monitor voltou a abrir em producao apos ajuste defensivo no widget do Turnstile
+
+## Limite de escopo para proximos chats
+
+Para evitar confusao de contexto:
+
+- `institucional-site/` tem regras e material de outro projeto, o futuro site institucional da Virtuagil
+- `iot-virtuagil-firmware/` tem README e handoff proprios de outro projeto, o futuro repositorio de firmware
+- quando a tarefa for sobre a API ou o dashboard, nao misturar decisoes desses dois escopos paralelos

@@ -32,13 +32,12 @@ O projeto usa GitHub Actions com dois workflows:
   - build e push das imagens `api` e `web` para GHCR
   - deploy da stack no Swarm
 
-Observacao importante validada em 13/03/2026:
+Observacao importante atualizada em 15/03/2026:
 
-- os workflows atuais nao executam `npx prisma migrate deploy`
-- `ci.yml` roda apenas `npx prisma generate --no-engine`, build e testes
-- `deploy.yml` faz apenas build/push de imagens e `docker stack deploy` via SSH
-- portanto, conflitos recentes de `pg_advisory_lock` do Prisma nao parecem nascer do workflow atual do GitHub Actions por si so
-- se migrations forem automatizadas no futuro, criar um passo dedicado e unico para isso
+- `ci.yml` roda `npx prisma generate --no-engine`, build e testes
+- `deploy.yml` faz build/push de imagens e deploy via SSH no Swarm
+- `deploy.yml` agora executa `docker run --rm --env-file .env.prod "${API_IMAGE}" npx prisma migrate deploy` antes do `docker stack deploy`
+- se houver erro de migration em producao, investigar primeiro conectividade/lock real do banco e nao assumir que o workflow deixou de rodar esse passo
 
 ## Deploy atual
 
@@ -54,7 +53,9 @@ Fluxo padrao:
 
 1. push para `main`
 2. GitHub Actions publica as imagens
-3. workflow faz `docker stack deploy` por SSH usando tags imutaveis por release (`sha-xxxxxxx`)
+3. workflow copia `deploy/swarm/stack.prod.yml` para `/opt/iot-virtuagil-api`
+4. workflow entra em `/opt/iot-virtuagil-api`, carrega `.env.prod`, roda `prisma migrate deploy` e faz `docker stack deploy`
+5. a stack `iot-monitor` passa a usar tags imutaveis por release (`sha-xxxxxxx`)
 
 Observacao:
 
@@ -65,6 +66,10 @@ Observacao:
 - isso reduz o risco de pipeline verde com Swarm ainda reaproveitando uma imagem antiga marcada como `latest`
 - a stack salva no Portainer pode ficar desatualizada em relacao ao `stack.prod.yml`; quando houver divergencia entre Portainer, VPS e workflow, tratar a copia efetivamente usada no `docker stack deploy` como fonte principal
 - variaveis obrigatorias da API, como `AUTH_SECRET`, precisam existir em `.env.prod` e tambem ser repassadas no bloco `environment` do servico `api`
+- a VPS atual esperada pelo workflow usa o caminho `/opt/iot-virtuagil-api`
+- o namespace de imagens atual e `ghcr.io/fabioabdodev/iot-virtuagil-api`
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` entra no build do web via GitHub Secrets
+- `TURNSTILE_SECRET_KEY` e `NEXT_PUBLIC_TURNSTILE_SITE_KEY` tambem devem existir em `/opt/iot-virtuagil-api/.env.prod`
 
 ## Regras de seguranca
 

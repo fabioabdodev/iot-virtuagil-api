@@ -5,8 +5,8 @@ description: regras globais para agentes de IA neste repositorio
 
 # AGENTS.md - Regras para agentes neste repositorio
 
-Este repositorio implementa um sistema de monitoramento IoT para equipamentos,
-com foco inicial em temperatura de freezers e geladeiras.
+Este repositorio implementa a API e o dashboard do produto IoT da Virtuagil,
+com foco inicial em monitoramento de temperatura e expansao para automacao.
 
 Stack atual:
 
@@ -16,6 +16,28 @@ Stack atual:
 - Next.js no frontend
 - Docker Swarm + Traefik em producao
 - GitHub Actions para CI/CD
+
+Identidade tecnica atual:
+
+- repositorio principal: `iot-virtuagil-api`
+- API: `iot-virtuagil-api`
+- web: `iot-virtuagil-web`
+- imagens: `ghcr.io/fabioabdodev/iot-virtuagil-api/...`
+
+## Escopo deste repositorio
+
+O escopo principal deste repositorio e:
+
+- backend NestJS
+- dashboard Next.js
+- deploy, observabilidade e documentacao operacional desse produto
+
+Importante para continuidade:
+
+- `institucional-site/` e um rascunho local de outro projeto, o futuro site institucional
+- `iot-virtuagil-firmware/` e a base local de outro projeto, o futuro repositorio de firmware/hardware
+- essas pastas nao devem guiar mudancas do backend/dashboard, a menos que o pedido do usuario seja explicitamente sobre elas
+- quando a tarefa for sobre um desses escopos, tratar as regras e documentos internos dessas pastas como fonte principal daquele contexto
 
 ## Regra principal de colaboracao
 
@@ -102,6 +124,7 @@ Arquivos mais importantes:
 - `CI_CD_RULES.md`
 - `FRONTEND_RULES.md`
 - `SIMULATED_DEVICE.md`
+- `HANDOFF.md`
 
 ## Testes e validacao
 

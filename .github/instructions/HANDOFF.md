@@ -1,6 +1,6 @@
 # Handoff Atual
 
-Data de referencia: 2026-03-14
+Data de referencia: 2026-03-15
 
 ## Direcao do produto
 
@@ -76,6 +76,10 @@ Identidade tecnica atual escolhida:
   - avatar/sessao do usuario
   - tenant atual
   - links rapidos para secoes principais
+- dashboard web passou a usar `app/loading.tsx` com loading nativo do App Router e spinner simples em Tailwind
+- widget do Turnstile no frontend recebeu endurecimento:
+  - evita crash da pagina quando o script/widget falha
+  - usa render por referencia de elemento em vez de seletor por `id`
 - regra-mae de produto consolidada:
   - a plataforma cria a estrutura inicial do cliente
   - o admin do cliente pode ajustar regras operacionais autorizadas
@@ -120,35 +124,27 @@ Resultado esperado no ponto atual:
 
 ## Pendencias operacionais
 
-- revisar o workflow de deploy ponta a ponta apos o rename para `iot-virtuagil-api`
-- alinhar a VPS para usar `/opt/iot-virtuagil-api`
-- mover ou recriar `.env.prod` no novo caminho da VPS
-- confirmar publicacao das novas imagens no GHCR com o namespace novo
-- decidir se a pasta local do repositorio tambem sera renomeada
+- revalidar em producao o fluxo completo de login com Cloudflare Turnstile depois dos commits de estabilizacao do widget e do deploy mais novo
+- girar a `TURNSTILE_SECRET_KEY` no Cloudflare, porque a chave atual foi exposta em conversa operacional
+- corrigir o `/health` de producao para refletir `release` e `buildTime` atualizados em vez de permanecer com valores antigos como `manual`
+- decidir quando remover com seguranca a pasta legada `/opt/iot-freezer-api` da VPS depois de confirmar que nenhum script manual ainda depende dela
 - configurar no ambiente do projeto `SUPABASE_PROJECT_REF` e `CONTEXT7_API_KEY` quando o uso de MCP no VS Code for desejado
-- atualizar o `.env.prod` real da VPS com as chaves novas/obrigatorias que agora estao documentadas em `deploy/swarm/.env.prod.example`
-- alinhar o handoff de deploy com o estado real do GHCR e do caminho atual da VPS (`iot-freezer-api`) ate concluir a troca definitiva do namespace
-- configurar `TURNSTILE_SECRET_KEY` na API e `NEXT_PUBLIC_TURNSTILE_SITE_KEY` no build do web antes de exigir captcha em producao
 - alinhar qualquer evolucao de firmware em `iot-virtuagil-firmware/`, nao mais dentro deste repositorio
 - evoluir o produto para refletir a politica de acesso registrada em `.github/instructions/ACCESS_POLICY.md`
 - planejar trilha de auditoria para alteracoes de faixa de temperatura e regras de alerta antes de liberar mais autonomia operacional ao cliente
 - aplicar a migration `20260314183000_create_audit_logs` no banco real antes de usar a nova auditoria em producao
-- aplicar as migrations em producao seguindo `.github/instructions/PRODUCTION_MIGRATIONS.md`
-- decidir se a proxima etapa de permissao vai incluir:
-  - tela de consulta de auditoria no monitor web
-- alinhar o `README.md` quando o arquivo for normalizado para UTF-8, porque o patch seguro nao conseguiu editar esse arquivo na etapa anterior
 - decidir se a auditoria tera filtros mais completos no frontend:
   - por `entityType`
   - por `entityId`
   - por periodo
-- aplicar a migration `20260314195000_create_actuation_schedules` no banco real antes de usar rotinas automaticas em producao
 
 ## Escopo local ignorado
 
 - `institucional-site/` e um escopo local do futuro site institucional da Virtuagil
-- essa pasta nao deve subir para este repositorio
-- a protecao agora existe em `.gitignore`, nao apenas em `.git/info/exclude`
+- essa pasta deve ser tratada como outro projeto e possui regras/material proprios em `institucional-site/README.md`
+- ela nao deve guiar tarefas deste backend/dashboard sem pedido explicito
 - `iot-virtuagil-firmware/` e um escopo local do futuro projeto separado de firmware
+- essa pasta deve ser tratada como outro projeto e possui material proprio em `iot-virtuagil-firmware/README.md` e `iot-virtuagil-firmware/handoff/HANDOFF.md`
 - as regras de hardware, runtime e bancada foram movidas para essa pasta
 
 ## Supabase
