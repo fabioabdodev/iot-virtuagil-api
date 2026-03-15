@@ -2,6 +2,13 @@
 
 Backend em NestJS para monitoramento de dispositivos IoT, com ingestão de temperatura, detecção de offline, regras de alerta configuráveis e integração por webhook.
 
+Identidade técnica atual:
+
+- repositório principal: `iot-virtuagil-api`
+- API: `iot-virtuagil-api`
+- web: `iot-virtuagil-web`
+- imagens: `ghcr.io/fabioabdodev/iot-virtuagil-api/...`
+
 ## Stack
 
 - Node.js + NestJS
@@ -45,6 +52,21 @@ Resumo da estrategia:
 - evoluir a plataforma reaproveitando a mesma base
 
 Mais detalhes em `.github/instructions/PRODUCT_RULES.md` e `.github/instructions/ROADMAP.md`.
+
+## Escopo deste repositório
+
+Este repositório cobre:
+
+- backend NestJS
+- dashboard web Next.js
+- deploy, operação e documentação do produto IoT
+
+Escopos paralelos locais:
+
+- `institucional-site/`: rascunho local do futuro site institucional da Virtuagil
+- `iot-virtuagil-firmware/`: base local do futuro projeto separado de firmware/hardware
+
+Essas duas pastas não devem orientar mudanças deste backend/dashboard, a menos que a tarefa seja explicitamente sobre elas.
 
 ## Arquitetura operacional atual
 
@@ -489,6 +511,7 @@ Configurar em `Settings > Secrets and variables > Actions`:
 - `VPS_SSH_KEY`
 - `GHCR_USERNAME`
 - `GHCR_TOKEN` (PAT com `read:packages`; se for publicar por outro usuário, incluir `write:packages`)
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (quando o login usar Cloudflare Turnstile)
 - `PORTAINER_WEBHOOK_URL` (opcional, quando o deploy for disparado pelo Portainer em vez de SSH)
 
 ### 3. DNS no Cloudflare
@@ -532,8 +555,8 @@ Push na branch `main` (ou `workflow_dispatch`) dispara:
    - `ghcr.io/fabioabdodev/iot-virtuagil-api/web:latest`
    - `ghcr.io/fabioabdodev/iot-virtuagil-api/api:sha-xxxxxxx`
    - `ghcr.io/fabioabdodev/iot-virtuagil-api/web:sha-xxxxxxx`
-2. Se `PORTAINER_WEBHOOK_URL` estiver vazio: cópia do `stack.prod.yml` para VPS e `docker stack deploy` no Swarm, com `API_IMAGE` e `WEB_IMAGE` apontando para a tag curta do commit.
-3. Se `PORTAINER_WEBHOOK_URL` estiver configurado: GitHub Actions chama o webhook do Portainer para atualizar a stack.
+2. Se `PORTAINER_WEBHOOK_URL` estiver vazio: cópia do `stack.prod.yml` para `/opt/iot-virtuagil-api` na VPS.
+3. O workflow entra em `/opt/iot-virtuagil-api`, carrega `.env.prod`, executa `npx prisma migrate deploy` dentro da imagem da API e só então roda `docker stack deploy` no Swarm com `API_IMAGE` e `WEB_IMAGE` apontando para a tag curta do commit.
 
 Observação: o frontend usa `NEXT_PUBLIC_API_BASE_URL` no build da imagem web. O workflow já publica a imagem com `https://api-monitor.virtuagil.com.br` embutido no bundle.
 
@@ -543,6 +566,7 @@ Observacao operacional importante:
 - isso reduz o risco de pipeline verde com a producao ainda servindo uma imagem antiga reaproveitada como `latest`
 - depois do deploy, consulte `GET /health` para confirmar `release`, `buildTime` e `features` publicados
 - se quiser automatizar essa checagem sem abrir o navegador, use `npm run health:check:prod`
+- a pasta esperada hoje na VPS é `/opt/iot-virtuagil-api`
 
 ## Variáveis de ambiente (resumo)
 
@@ -595,6 +619,12 @@ Quando for ativar o Turnstile:
 3. configure a chave publica no frontend como `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
 4. envie o token do Turnstile em `POST /auth/login` no campo `turnstileToken`
 
+Observações práticas:
+
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` entra no build do web via GitHub Actions
+- `TURNSTILE_SECRET_KEY` e `NEXT_PUBLIC_TURNSTILE_SITE_KEY` também devem existir em `/opt/iot-virtuagil-api/.env.prod`
+- se a `TURNSTILE_SECRET_KEY` for exposta em chat, screenshot ou ticket, gire a chave no Cloudflare e atualize a VPS
+
 ## Checklist de pós-deploy
 
 Depois de um deploy em produção, valide nesta ordem:
@@ -618,10 +648,11 @@ Se alguma credencial for exposta, troque nesta ordem:
 1. Senha do banco no provedor (`Supabase` ou equivalente)
 2. `DEVICE_API_KEY`
 3. `GHCR_TOKEN`
-4. Atualize os valores em:
+4. `TURNSTILE_SECRET_KEY`, quando o Turnstile estiver ativo
+5. Atualize os valores em:
    - `Settings > Secrets and variables > Actions` no GitHub
    - `/opt/iot-virtuagil-api/.env.prod` na VPS
-5. Rode o workflow `deploy` novamente
+6. Rode o workflow `deploy` novamente
 
 ## Comandos úteis na VPS
 
