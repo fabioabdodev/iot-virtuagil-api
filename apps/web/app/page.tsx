@@ -976,31 +976,6 @@ function DashboardContent() {
         />
       </div>
 
-      <footer className="mt-8 border-t border-line/60 pt-6">
-        <div className="flex flex-col gap-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>Virtuagil Monitor</p>
-          <nav className="flex flex-wrap items-center gap-2">
-            <Link
-              href="#resumo-operacional"
-              className="rounded-2xl border border-line/70 bg-card/50 px-3 py-2 text-xs font-medium transition hover:border-accent/40 hover:text-ink"
-            >
-              Resumo
-            </Link>
-            <Link
-              href="#contas-modulos"
-              className="rounded-2xl border border-line/70 bg-card/50 px-3 py-2 text-xs font-medium transition hover:border-accent/40 hover:text-ink"
-            >
-              Contas
-            </Link>
-            <Link
-              href="#auditoria"
-              className="rounded-2xl border border-line/70 bg-card/50 px-3 py-2 text-xs font-medium transition hover:border-accent/40 hover:text-ink"
-            >
-              Auditoria
-            </Link>
-          </nav>
-        </div>
-      </footer>
       </div>
     </main>
   );
