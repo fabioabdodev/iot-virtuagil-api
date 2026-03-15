@@ -80,6 +80,9 @@ Identidade tecnica atual escolhida:
 - widget do Turnstile no frontend recebeu endurecimento:
   - evita crash da pagina quando o script/widget falha
   - usa render por referencia de elemento em vez de seletor por `id`
+  - nao remove mais o widget logo apos o primeiro `render`
+  - nao faz mais `reset()` indevido no primeiro carregamento
+- login com Cloudflare Turnstile foi validado em producao em `15/03/2026`
 - regra-mae de produto consolidada:
   - a plataforma cria a estrutura inicial do cliente
   - o admin do cliente pode ajustar regras operacionais autorizadas
@@ -124,7 +127,6 @@ Resultado esperado no ponto atual:
 
 ## Pendencias operacionais
 
-- revalidar em producao o fluxo completo de login com Cloudflare Turnstile depois dos commits de estabilizacao do widget e do deploy mais novo
 - girar a `TURNSTILE_SECRET_KEY` no Cloudflare, porque a chave atual foi exposta em conversa operacional
 - corrigir o `/health` de producao para refletir `release` e `buildTime` atualizados em vez de permanecer com valores antigos como `manual`
 - decidir quando remover com seguranca a pasta legada `/opt/iot-freezer-api` da VPS depois de confirmar que nenhum script manual ainda depende dela
@@ -225,3 +227,14 @@ cd apps/web && npm run build
 npx prisma generate
 npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
 ```
+
+## Registro final desta rodada
+
+- em `15/03/2026` o login com Cloudflare Turnstile foi validado em producao
+- a causa principal no frontend estava no componente `apps/web/components/ui/turnstile-widget.tsx`
+- foram corrigidos dois comportamentos que impediam a geracao do token:
+  - `reset()` indevido no primeiro carregamento
+  - remocao acidental do widget logo apos o `render`
+- o deploy final validado para esse ajuste foi publicado apos os commits de estabilizacao do widget
+- pendencia operacional que ficou aberta para a proxima sessao:
+  - girar a `TURNSTILE_SECRET_KEY` no Cloudflare e atualizar a VPS, porque a chave atual foi exposta em conversa operacional

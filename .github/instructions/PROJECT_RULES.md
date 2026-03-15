@@ -64,7 +64,7 @@ Pendencias principais restantes:
 
 - reduzir ruido operacional do deploy em Swarm
 - manter o modulo `acionamento` em modo simulado ate a chegada do hardware
-- validar em producao o fluxo final de login com Cloudflare Turnstile apos os ajustes recentes do widget/web
+- girar a `TURNSTILE_SECRET_KEY` exposta e manter o Turnstile apenas com segredos de ambiente
 
 ## O que ainda nao entrou por completo
 
@@ -299,7 +299,7 @@ Estado consolidado em 15/03/2026:
   - backend ja valida `turnstileToken` quando `TURNSTILE_SECRET_KEY` estiver configurada
   - frontend ja tenta renderizar o widget do Turnstile quando `NEXT_PUBLIC_TURNSTILE_SITE_KEY` estiver definida
   - houve ajuste recente no widget para evitar crash da tela e usar render mais estavel
-  - o comportamento final do captcha em producao ainda deve ser revalidado depois do deploy mais novo
+  - o login com Turnstile ja foi validado em producao depois dos ajustes finais do widget
   - banco real agora possui tabela `User` e o seed foi executado novamente com sucesso
 - modulos por cliente:
   - backend ja possui `/client-modules`
@@ -376,6 +376,9 @@ Estado consolidado em 15/03/2026:
     - `TURNSTILE_SECRET_KEY`
     - `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
   - em 15/03/2026 o monitor voltou a abrir em producao apos ajuste defensivo no widget do Turnstile
+  - em 15/03/2026 o login com Turnstile foi validado em producao apos corrigir no widget:
+    - reset indevido no primeiro carregamento
+    - remocao acidental do widget apos o `render`
 
 ## Limite de escopo para proximos chats
 
