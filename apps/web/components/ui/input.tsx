@@ -2,7 +2,7 @@ import { InputHTMLAttributes, SelectHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 const fieldClassName =
-  'w-full rounded-2xl border border-line/70 bg-bg/40 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-muted focus:border-accent focus:bg-card/80 disabled:opacity-60';
+  'w-full rounded-2xl border border-line/70 bg-bg/40 px-4 py-3 text-sm text-ink outline-none transition placeholder:italic placeholder:text-muted/60 focus:border-accent focus:bg-card/80 disabled:opacity-60';
 
 export const Input = forwardRef<
   HTMLInputElement,

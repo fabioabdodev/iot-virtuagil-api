@@ -6,6 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import { IsClientDocument, IsClientPhone } from '../client-contact.validator';
 
 export class UpdateClientDto {
   @IsOptional()
@@ -16,12 +17,20 @@ export class UpdateClientDto {
   @IsOptional()
   @IsString()
   @MaxLength(40)
+  @IsClientDocument()
   document?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(30)
-  phone?: string;
+  @IsClientPhone()
+  adminPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  @IsClientPhone()
+  billingPhone?: string;
 
   @IsOptional()
   @IsEmail()

@@ -2,10 +2,18 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building2, Filter, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useClients } from '@/hooks/use-clients';
 import { useClientListMutations } from '@/hooks/use-client-list-mutations';
+import {
+  isValidClientId,
+  isValidCpfOrCnpj,
+  isValidEmail,
+  isValidPhone,
+  normalizeDigits,
+} from '@/lib/client-form';
 import { ClientStatus } from '@/types/client';
 import { AuthUser } from '@/types/auth';
 import { AccessNotice } from '@/components/ui/access-notice';
@@ -16,9 +24,6 @@ import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
 import { Feedback } from '@/components/ui/feedback';
 import { Input, Select } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
-import { useState } from 'react';
-
-const clientIdRegex = /^[a-zA-Z0-9_-]{3,50}$/;
 
 const formSchema = z.object({
   id: z
@@ -26,20 +31,40 @@ const formSchema = z.object({
     .trim()
     .min(3, 'ID obrigatorio')
     .max(50, 'ID muito longo')
-    .regex(clientIdRegex, 'Use apenas letras, numeros, _ e -'),
+    .refine((value) => isValidClientId(value), 'Use apenas letras, numeros, _ e -'),
   name: z.string().trim().min(2, 'Nome obrigatorio'),
-  document: z.string().trim().optional().transform((value) => value || undefined),
-  phone: z.string().trim().optional().transform((value) => value || undefined),
-  billingEmail: z
+  document: z
+    .string()
+    .trim()
+    .min(1, 'Documento obrigatorio')
+    .refine((value) => isValidCpfOrCnpj(value), 'Informe um CPF ou CNPJ valido'),
+  adminPhone: z
+    .string()
+    .trim()
+    .min(1, 'Contato do administrador obrigatorio')
+    .refine((value) => isValidPhone(value), 'Telefone do administrador invalido'),
+  billingPhone: z
     .string()
     .trim()
     .optional()
     .transform((value) => value || undefined)
-    .refine((value) => value == null || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), {
-      message: 'Email invalido',
-    }),
+    .refine((value) => value == null || isValidPhone(value), 'Telefone financeiro invalido'),
+  useSameBillingPhone: z.boolean().default(true),
+  billingEmail: z
+    .string()
+    .trim()
+    .min(1, 'Email financeiro obrigatorio')
+    .refine((value) => isValidEmail(value), { message: 'Email invalido' }),
   status: z.enum(['active', 'inactive', 'delinquent']).default('active'),
   notes: z.string().trim().optional().transform((value) => value || undefined),
+}).superRefine((values, context) => {
+  if (!values.useSameBillingPhone && !values.billingPhone) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Contato financeiro obrigatorio',
+      path: ['billingPhone'],
+    });
+  }
 });
 
 type FormValues = z.input<typeof formSchema>;
@@ -75,6 +100,7 @@ export function ClientsPanel({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -82,12 +108,21 @@ export function ClientsPanel({
       id: '',
       name: '',
       document: '',
-      phone: '',
+      adminPhone: '',
+      billingPhone: '',
+      useSameBillingPhone: true,
       billingEmail: '',
       status: 'active',
       notes: '',
     },
   });
+  const watchedUseSameBillingPhone = watch('useSameBillingPhone');
+  const duplicateClientIds = useMemo(() => new Set(clients.map((client) => client.id)), [clients]);
+  const duplicateDocuments = useMemo(
+    () => new Set(clients.map((client) => normalizeDigits(client.document ?? '')).filter(Boolean)),
+    [clients],
+  );
+  const [formError, setFormError] = useState<string | null>(null);
 
   async function handleDeleteClient(id: string) {
     setDeletingClientId(id);
@@ -152,28 +187,60 @@ export function ClientsPanel({
 
       <form
         onSubmit={handleSubmit(async (rawValues) => {
+          setFormError(null);
           const values = formSchema.parse(rawValues);
-          await createMutation.mutateAsync(values);
+          const normalizedDocument = normalizeDigits(values.document);
+          const billingPhone = values.useSameBillingPhone
+            ? values.adminPhone
+            : values.billingPhone;
+
+          if (duplicateClientIds.has(values.id)) {
+            setFormError('Ja existe um cliente com este identificador tecnico.');
+            return;
+          }
+
+          if (duplicateDocuments.has(normalizedDocument)) {
+            setFormError('Ja existe um cliente com este CPF ou CNPJ.');
+            return;
+          }
+
+          await createMutation.mutateAsync({
+            id: values.id,
+            name: values.name,
+            document: values.document,
+            adminPhone: values.adminPhone,
+            billingPhone: billingPhone ?? values.adminPhone,
+            billingEmail: values.billingEmail,
+            status: values.status,
+            notes: values.notes,
+          });
           reset();
           onSelectClient(values.id);
         })}
       >
         <Panel variant="strong" className="mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="sm:col-span-2 lg:col-span-4">
+            <p className="text-xs text-muted">Campos com <strong>*</strong> sao obrigatorios.</p>
+          </div>
           <div>
-            <label className="mb-1 block text-xs text-muted">clientId</label>
-            <Input {...register('id')} placeholder="restaurante_bom_sabor" />
+            <label className="mb-1 block text-xs text-muted">Identificador tecnico *</label>
+            <Input {...register('id')} placeholder="cuidare-vacinas" />
+            <p className="mt-1 text-xs text-muted">
+              Use um identificador unico, sem espacos. Ex.: `cuidare-vacinas`
+            </p>
             {errors.id ? <p className="mt-1 text-xs text-bad">{errors.id.message}</p> : null}
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-muted">Nome</label>
-            <Input {...register('name')} placeholder="Restaurante Bom Sabor" />
+            <label className="mb-1 block text-xs text-muted">Nome do cliente *</label>
+            <Input {...register('name')} placeholder="Clinica Cuidare" />
             {errors.name ? <p className="mt-1 text-xs text-bad">{errors.name.message}</p> : null}
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-muted">Documento</label>
-            <Input {...register('document')} placeholder="CNPJ ou CPF" />
+            <label className="mb-1 block text-xs text-muted">CPF ou CNPJ *</label>
+            <Input {...register('document')} placeholder="00.000.000/0000-00" />
+            {errors.document ? <p className="mt-1 text-xs text-bad">{errors.document.message}</p> : null}
           </div>
 
           <div>
@@ -186,21 +253,45 @@ export function ClientsPanel({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-muted">Telefone</label>
-            <Input {...register('phone')} placeholder="31999990000" />
+            <label className="mb-1 block text-xs text-muted">Contato do administrador *</label>
+            <Input {...register('adminPhone')} placeholder="(31) 99999-0000" />
+            {errors.adminPhone ? (
+              <p className="mt-1 text-xs text-bad">{errors.adminPhone.message}</p>
+            ) : null}
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-muted">Email financeiro</label>
-            <Input {...register('billingEmail')} placeholder="financeiro@cliente.com.br" />
+            <label className="mb-1 block text-xs text-muted">Email financeiro *</label>
+            <Input {...register('billingEmail')} placeholder="financeiro@cuidare.com.br" />
             {errors.billingEmail ? (
               <p className="mt-1 text-xs text-bad">{errors.billingEmail.message}</p>
             ) : null}
           </div>
 
           <div className="sm:col-span-2">
+            <label className="mb-2 flex items-center gap-2 text-xs text-muted">
+              <input type="checkbox" className="h-4 w-4 rounded border-line/70" {...register('useSameBillingPhone')} />
+              Usar o mesmo telefone para financeiro
+            </label>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">
+              Contato financeiro {watchedUseSameBillingPhone ? '' : '*'}
+            </label>
+            <Input
+              {...register('billingPhone')}
+              placeholder="(31) 3333-0000"
+              disabled={watchedUseSameBillingPhone}
+            />
+            {errors.billingPhone ? (
+              <p className="mt-1 text-xs text-bad">{errors.billingPhone.message}</p>
+            ) : null}
+          </div>
+
+          <div className="sm:col-span-2">
             <label className="mb-1 block text-xs text-muted">Observacoes</label>
-            <Input {...register('notes')} placeholder="Contexto comercial e observacoes iniciais" />
+            <Input {...register('notes')} placeholder="Contexto comercial, unidade e observacoes iniciais" />
           </div>
 
           <div className="sm:col-span-2 lg:col-span-4">
@@ -219,6 +310,11 @@ export function ClientsPanel({
       {createMutation.isError ? (
         <Feedback variant="danger" className="mb-3">
           {createMutation.error?.message ?? 'Falha ao criar cliente.'}
+        </Feedback>
+      ) : null}
+      {formError ? (
+        <Feedback variant="danger" className="mb-3">
+          {formError}
         </Feedback>
       ) : null}
       {deleteMutation.isError ? (
@@ -258,7 +354,12 @@ export function ClientsPanel({
                   <td className="text-muted">
                     <div className="flex flex-col">
                       <span>{client.billingEmail ?? 'Sem email financeiro'}</span>
-                      <span className="text-xs">{client.phone ?? 'Sem telefone'}</span>
+                      <span className="text-xs">
+                        admin: {client.adminPhone ?? client.phone ?? 'Sem telefone'}
+                      </span>
+                      <span className="text-xs">
+                        financeiro: {client.billingPhone ?? client.adminPhone ?? client.phone ?? 'Sem telefone'}
+                      </span>
                     </div>
                   </td>
                   <td>

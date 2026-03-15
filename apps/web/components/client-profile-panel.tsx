@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Save } from 'lucide-react';
+import { isValidCpfOrCnpj, isValidEmail, isValidPhone } from '@/lib/client-form';
 import { useClient } from '@/hooks/use-client';
 import { useClientMutations } from '@/hooks/use-client-mutations';
 import { AuthUser } from '@/types/auth';
@@ -51,16 +52,23 @@ export function ClientProfilePanel({
 
   const [name, setName] = useState('');
   const [document, setDocument] = useState('');
-  const [phone, setPhone] = useState('');
+  const [adminPhone, setAdminPhone] = useState('');
+  const [billingPhone, setBillingPhone] = useState('');
+  const [useSameBillingPhone, setUseSameBillingPhone] = useState(true);
   const [billingEmail, setBillingEmail] = useState('');
   const [status, setStatus] = useState<ClientStatus>('active');
   const [notes, setNotes] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!data) return;
     setName(data.name ?? '');
     setDocument(data.document ?? '');
-    setPhone(data.phone ?? '');
+    const nextAdminPhone = data.adminPhone ?? data.phone ?? '';
+    const nextBillingPhone = data.billingPhone ?? nextAdminPhone;
+    setAdminPhone(nextAdminPhone);
+    setBillingPhone(nextBillingPhone);
+    setUseSameBillingPhone(nextBillingPhone === nextAdminPhone);
     setBillingEmail(data.billingEmail ?? '');
     setStatus(data.status);
     setNotes(data.notes ?? '');
@@ -90,11 +98,34 @@ export function ClientProfilePanel({
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setFormError(null);
+
+    if (!document.trim() || !isValidCpfOrCnpj(document)) {
+      setFormError('Informe um CPF ou CNPJ valido.');
+      return;
+    }
+
+    if (!adminPhone.trim() || !isValidPhone(adminPhone)) {
+      setFormError('Informe um telefone valido para o administrador.');
+      return;
+    }
+
+    const nextBillingPhone = useSameBillingPhone ? adminPhone : billingPhone;
+    if (!nextBillingPhone.trim() || !isValidPhone(nextBillingPhone)) {
+      setFormError('Informe um telefone valido para o financeiro.');
+      return;
+    }
+
+    if (!billingEmail.trim() || !isValidEmail(billingEmail)) {
+      setFormError('Informe um e-mail financeiro valido.');
+      return;
+    }
 
     await updateMutation.mutateAsync({
       name: name.trim() || undefined,
       document: document.trim() || undefined,
-      phone: phone.trim() || undefined,
+      adminPhone: adminPhone.trim() || undefined,
+      billingPhone: nextBillingPhone.trim() || undefined,
       billingEmail: billingEmail.trim() || undefined,
       status,
       notes: notes.trim() || undefined,
@@ -131,6 +162,11 @@ export function ClientProfilePanel({
         <Feedback variant="danger" className="mb-3">
           {updateMutation.error?.message ??
             'Falha ao atualizar dados comerciais do cliente.'}
+        </Feedback>
+      ) : null}
+      {formError ? (
+        <Feedback variant="danger" className="mb-3">
+          {formError}
         </Feedback>
       ) : null}
       {updateMutation.isSuccess ? (
@@ -187,23 +223,45 @@ export function ClientProfilePanel({
                 </Select>
               </div>
               <div>
-                <label className="mb-1 block text-xs text-muted">Documento</label>
+                <label className="mb-1 block text-xs text-muted">CPF ou CNPJ *</label>
                 <Input
                   value={document}
                   onChange={(event) => setDocument(event.target.value)}
-                  placeholder="CPF ou CNPJ"
+                  placeholder="00.000.000/0000-00"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-muted">Celular / WhatsApp</label>
+                <label className="mb-1 block text-xs text-muted">Contato do administrador *</label>
                 <Input
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
+                  value={adminPhone}
+                  onChange={(event) => setAdminPhone(event.target.value)}
                   placeholder="(31) 99999-0000"
                 />
               </div>
+              <div>
+                <label className="mb-2 flex items-center gap-2 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-line/70"
+                    checked={useSameBillingPhone}
+                    onChange={(event) => setUseSameBillingPhone(event.target.checked)}
+                  />
+                  Usar o mesmo telefone para financeiro
+                </label>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-muted">
+                  Contato financeiro {useSameBillingPhone ? '' : '*'}
+                </label>
+                <Input
+                  value={useSameBillingPhone ? adminPhone : billingPhone}
+                  onChange={(event) => setBillingPhone(event.target.value)}
+                  disabled={useSameBillingPhone}
+                  placeholder="(31) 3333-0000"
+                />
+              </div>
               <div className="md:col-span-2">
-                <label className="mb-1 block text-xs text-muted">E-mail financeiro</label>
+                <label className="mb-1 block text-xs text-muted">E-mail financeiro *</label>
                 <Input
                   type="email"
                   value={billingEmail}
@@ -219,7 +277,7 @@ export function ClientProfilePanel({
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
                 rows={4}
-                className="w-full rounded-2xl border border-line/70 bg-bg/40 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-muted focus:border-accent focus:bg-card/80 disabled:opacity-60"
+                className="w-full rounded-2xl border border-line/70 bg-bg/40 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-muted/60 placeholder:italic focus:border-accent focus:bg-card/80 disabled:opacity-60"
                 placeholder="Ex.: mensalidade cobrada manualmente no dia 10, onboarding acompanhado por voce, cliente interessado em expandir para novos modulos."
               />
             </div>

@@ -7,6 +7,7 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
+import { IsClientDocument, IsClientPhone } from '../client-contact.validator';
 
 export class CreateClientDto {
   @IsString()
@@ -18,19 +19,26 @@ export class CreateClientDto {
   @IsNotEmpty()
   name: string;
 
-  @IsOptional()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(40)
-  document?: string;
+  @IsClientDocument()
+  document: string;
 
-  @IsOptional()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(30)
-  phone?: string;
+  @IsClientPhone()
+  adminPhone: string;
 
-  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(30)
+  @IsClientPhone()
+  billingPhone: string;
+
   @IsEmail()
-  billingEmail?: string;
+  billingEmail: string;
 
   @IsOptional()
   @IsString()

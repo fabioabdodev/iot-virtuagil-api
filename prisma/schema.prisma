@@ -45,6 +45,8 @@ model Client {
   name              String
   document          String?
   phone             String?
+  adminPhone        String?
+  billingPhone      String?
   billingEmail      String?
   status            String             @default("active")
   notes             String?

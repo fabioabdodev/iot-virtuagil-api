@@ -19,6 +19,8 @@ describe('Clients CRUD (e2e)', () => {
             status: 'active',
             document: null,
             phone: null,
+            adminPhone: null,
+            billingPhone: null,
             billingEmail: null,
             notes: null,
             ...data,
@@ -35,6 +37,17 @@ describe('Clients CRUD (e2e)', () => {
         ),
         findUnique: jest.fn(({ where }: any) =>
           Promise.resolve(clients.get(where.id) ?? null),
+        ),
+        findFirst: jest.fn(({ where }: any) =>
+          Promise.resolve(
+            Array.from(clients.values()).find((client) => {
+              if (where.document && where.id?.not) {
+                return client.document === where.document && client.id !== where.id.not;
+              }
+              if (where.document) return client.document === where.document;
+              return false;
+            }) ?? null,
+          ),
         ),
         update: jest.fn(({ where, data }: any) => {
           const current = clients.get(where.id);
@@ -100,6 +113,9 @@ describe('Clients CRUD (e2e)', () => {
       .send({
         id: 'client_a',
         name: 'Client A',
+        document: '19131243000197',
+        adminPhone: '31999998888',
+        billingPhone: '3133334444',
         billingEmail: 'financeiro@clientea.com',
         status: 'active',
       })
@@ -114,6 +130,9 @@ describe('Clients CRUD (e2e)', () => {
             expect.objectContaining({
               id: 'client_a',
               name: 'Client A',
+              document: '19131243000197',
+              adminPhone: '31999998888',
+              billingPhone: '3133334444',
               billingEmail: 'financeiro@clientea.com',
               status: 'active',
             }),
@@ -125,23 +144,53 @@ describe('Clients CRUD (e2e)', () => {
       .patch('/clients/client_a')
       .send({
         name: 'Client A Updated',
-        phone: '31988887777',
+        adminPhone: '31988887777',
+        billingPhone: '3132221111',
         status: 'delinquent',
       })
       .expect(200)
       .expect((res) => {
         expect(res.body).toEqual(
-          expect.objectContaining({
-            id: 'client_a',
-            name: 'Client A Updated',
-            phone: '31988887777',
-            status: 'delinquent',
-          }),
+            expect.objectContaining({
+              id: 'client_a',
+              name: 'Client A Updated',
+              adminPhone: '31988887777',
+              billingPhone: '3132221111',
+              status: 'delinquent',
+            }),
         );
       });
 
     await request(app.getHttpServer()).delete('/clients/client_a').expect(200);
 
     await request(app.getHttpServer()).get('/clients/client_a').expect(404);
+  });
+
+  it('should reject duplicated client document', async () => {
+    await request(app.getHttpServer())
+      .post('/clients')
+      .send({
+        id: 'client_a',
+        name: 'Client A',
+        document: '19.131.243/0001-97',
+        adminPhone: '31999998888',
+        billingPhone: '3133334444',
+        billingEmail: 'financeiro@clientea.com',
+        status: 'active',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/clients')
+      .send({
+        id: 'client_b',
+        name: 'Client B',
+        document: '19131243000197',
+        adminPhone: '31999990000',
+        billingPhone: '3133330000',
+        billingEmail: 'financeiro@clienteb.com',
+        status: 'active',
+      })
+      .expect(409);
   });
 });

@@ -4,6 +4,8 @@ export interface ClientSummary {
   id: string;
   name: string;
   document: string | null;
+  adminPhone: string | null;
+  billingPhone: string | null;
   phone: string | null;
   billingEmail: string | null;
   status: ClientStatus;
@@ -15,7 +17,8 @@ export interface ClientSummary {
 export interface ClientInput {
   name?: string;
   document?: string;
-  phone?: string;
+  adminPhone?: string;
+  billingPhone?: string;
   billingEmail?: string;
   status?: ClientStatus;
   notes?: string;
@@ -24,4 +27,8 @@ export interface ClientInput {
 export interface CreateClientInput extends ClientInput {
   id: string;
   name: string;
+  document: string;
+  adminPhone: string;
+  billingPhone: string;
+  billingEmail: string;
 }
