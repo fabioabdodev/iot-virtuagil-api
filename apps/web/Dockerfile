@@ -8,7 +8,9 @@ RUN npm ci
 FROM node:20-slim AS builder
 WORKDIR /app
 ARG NEXT_PUBLIC_API_BASE_URL=https://api-monitor.virtuagil.com.br
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
@@ -18,6 +20,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV NEXT_PUBLIC_API_BASE_URL=https://api-monitor.virtuagil.com.br
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./

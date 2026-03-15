@@ -67,6 +67,10 @@ Identidade tecnica atual escolhida:
 - imagem final da API endurecida para operacao:
   - `openssl` instalado no container
   - pasta `scripts/` copiada para permitir seed e utilitarios em runtime
+- login do monitor preparado para Cloudflare Turnstile:
+  - backend ja aceitava `turnstileToken`
+  - frontend passou a renderizar widget quando `NEXT_PUBLIC_TURNSTILE_SITE_KEY` estiver definido
+  - deploy web agora aceita `NEXT_PUBLIC_TURNSTILE_SITE_KEY` no build
 - regra-mae de produto consolidada:
   - a plataforma cria a estrutura inicial do cliente
   - o admin do cliente pode ajustar regras operacionais autorizadas
@@ -119,6 +123,7 @@ Resultado esperado no ponto atual:
 - configurar no ambiente do projeto `SUPABASE_PROJECT_REF` e `CONTEXT7_API_KEY` quando o uso de MCP no VS Code for desejado
 - atualizar o `.env.prod` real da VPS com as chaves novas/obrigatorias que agora estao documentadas em `deploy/swarm/.env.prod.example`
 - alinhar o handoff de deploy com o estado real do GHCR e do caminho atual da VPS (`iot-freezer-api`) ate concluir a troca definitiva do namespace
+- configurar `TURNSTILE_SECRET_KEY` na API e `NEXT_PUBLIC_TURNSTILE_SITE_KEY` no build do web antes de exigir captcha em producao
 - alinhar qualquer evolucao de firmware em `iot-virtuagil-firmware/`, nao mais dentro deste repositorio
 - evoluir o produto para refletir a politica de acesso registrada em `.github/instructions/ACCESS_POLICY.md`
 - planejar trilha de auditoria para alteracoes de faixa de temperatura e regras de alerta antes de liberar mais autonomia operacional ao cliente
@@ -205,6 +210,7 @@ Estado aplicado em codigo nesta etapa:
 - `monitor web`:
   - painel de acesso inicial ficou mais usavel para login real em producao
   - ainda vale revisar UX geral depois dos estudos de caso
+  - Turnstile foi ligado apenas no login publico; formularios internos autenticados nao usam captcha nesta fase
 
 Validacao executada nesta etapa:
 

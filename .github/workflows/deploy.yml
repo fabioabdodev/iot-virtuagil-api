@@ -84,6 +84,7 @@ jobs:
           file: ./apps/web/Dockerfile
           build-args: |
             NEXT_PUBLIC_API_BASE_URL=https://api-monitor.virtuagil.com.br
+            NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
           push: true
           tags: |
             ${{ env.WEB_IMAGE_NAME }}:latest

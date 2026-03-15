@@ -40,6 +40,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { AccessNotice } from '@/components/ui/access-notice';
 import { MetricCard } from '@/components/ui/metric-card';
 import { Panel } from '@/components/ui/panel';
+import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 import { useAuth } from '@/lib/auth-context';
 import { useDeviceMutations } from '@/hooks/use-device-mutations';
 import { useDevices } from '@/hooks/use-devices';
@@ -79,6 +80,8 @@ export default function DashboardPage() {
 function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '';
+  const isTurnstileEnabled = Boolean(turnstileSiteKey);
 
   // O filtro principal vive na URL para facilitar refresh e compartilhamento do estado atual.
   const queryClientId = searchParams.get('clientId') ?? '';
@@ -86,6 +89,8 @@ function DashboardContent() {
   const [clientIdDraft, setClientIdDraft] = useState(queryClientId);
   const [authEmailDraft, setAuthEmailDraft] = useState('plataforma@virtuagil.com.br');
   const [authPasswordDraft, setAuthPasswordDraft] = useState('plataforma123');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const {
@@ -185,12 +190,17 @@ function DashboardContent() {
 
   async function handleLogin() {
     setAuthError(null);
+    if (isTurnstileEnabled && !turnstileToken) {
+      setAuthError('Confirme a validacao anti-bot antes de entrar.');
+      return;
+    }
     setIsAuthenticating(true);
 
     try {
       await login({
         email: authEmailDraft.trim(),
         password: authPasswordDraft,
+        turnstileToken: turnstileToken ?? undefined,
       });
       void refetch();
     } catch (error) {
@@ -198,6 +208,9 @@ function DashboardContent() {
         error instanceof Error ? error.message : 'Falha ao autenticar usuario.',
       );
     } finally {
+      if (isTurnstileEnabled) {
+        setTurnstileResetKey((current) => current + 1);
+      }
       setIsAuthenticating(false);
     }
   }
@@ -205,6 +218,10 @@ function DashboardContent() {
   function clearToken() {
     logout();
     setAuthPasswordDraft('');
+    setTurnstileToken(null);
+    if (isTurnstileEnabled) {
+      setTurnstileResetKey((current) => current + 1);
+    }
     setAuthError(null);
     void refetch();
   }
@@ -381,6 +398,13 @@ function DashboardContent() {
                       Sair
                     </Button>
                   </div>
+                  {isTurnstileEnabled ? (
+                    <TurnstileWidget
+                      siteKey={turnstileSiteKey}
+                      onTokenChange={setTurnstileToken}
+                      resetKey={turnstileResetKey}
+                    />
+                  ) : null}
                 </div>
               </div>
 

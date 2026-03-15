@@ -19,7 +19,11 @@ type AuthContextValue = {
   isReady: boolean;
   isAuthenticated: boolean;
   user: AuthUser | null;
-  login: (input: { email: string; password: string }) => Promise<void>;
+  login: (input: {
+    email: string;
+    password: string;
+    turnstileToken?: string;
+  }) => Promise<void>;
   logout: () => void;
 };
 
@@ -73,8 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isReady,
       isAuthenticated: Boolean(authToken),
       user,
-      login: async ({ email, password }) => {
-        const session = await loginUser({ email, password });
+      login: async ({ email, password, turnstileToken }) => {
+        const session = await loginUser({ email, password, turnstileToken });
         window.localStorage.setItem(TOKEN_STORAGE_KEY, session.token);
         window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(session.user));
         setAuthToken(session.token);
