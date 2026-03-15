@@ -34,33 +34,54 @@ export function TurnstileWidget({
   resetKey = 0,
 }: TurnstileWidgetProps) {
   const widgetElementId = useId().replace(/:/g, '_');
-  const [scriptReady, setScriptReady] = useState(false);
+  const [scriptReady, setScriptReady] = useState(
+    typeof window !== 'undefined' && Boolean(window.turnstile),
+  );
   const [widgetId, setWidgetId] = useState<string | null>(null);
+  const [hasWidgetError, setHasWidgetError] = useState(false);
 
   useEffect(() => {
     if (!scriptReady || !siteKey || !window.turnstile || widgetId) return;
 
-    const renderedWidgetId = window.turnstile.render(`#${widgetElementId}`, {
-      sitekey: siteKey,
-      theme: 'dark',
-      callback: (token) => onTokenChange(token),
-      'expired-callback': () => onTokenChange(null),
-      'error-callback': () => onTokenChange(null),
-    });
+    let renderedWidgetId: string | null = null;
 
-    setWidgetId(renderedWidgetId);
+    try {
+      renderedWidgetId = window.turnstile.render(`#${widgetElementId}`, {
+        sitekey: siteKey,
+        theme: 'dark',
+        callback: (token) => onTokenChange(token),
+        'expired-callback': () => onTokenChange(null),
+        'error-callback': () => onTokenChange(null),
+      });
+
+      setWidgetId(renderedWidgetId);
+      setHasWidgetError(false);
+    } catch {
+      setHasWidgetError(true);
+      onTokenChange(null);
+    }
 
     return () => {
-      if (renderedWidgetId && window.turnstile) {
+      if (!renderedWidgetId || !window.turnstile) return;
+
+      try {
         window.turnstile.remove(renderedWidgetId);
+      } catch {
+        // Ignora erros de limpeza para evitar derrubar a pagina.
       }
     };
   }, [onTokenChange, scriptReady, siteKey, widgetElementId, widgetId]);
 
   useEffect(() => {
     if (!widgetId || !window.turnstile) return;
-    window.turnstile.reset(widgetId);
-    onTokenChange(null);
+
+    try {
+      window.turnstile.reset(widgetId);
+      onTokenChange(null);
+    } catch {
+      setHasWidgetError(true);
+      onTokenChange(null);
+    }
   }, [onTokenChange, resetKey, widgetId]);
 
   return (
@@ -69,6 +90,10 @@ export function TurnstileWidget({
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
         strategy="afterInteractive"
         onLoad={() => setScriptReady(true)}
+        onError={() => {
+          setHasWidgetError(true);
+          onTokenChange(null);
+        }}
       />
       <div
         id={widgetElementId}
@@ -77,6 +102,11 @@ export function TurnstileWidget({
       <p className="text-xs text-muted">
         Validacao anti-bot do Cloudflare Turnstile.
       </p>
+      {hasWidgetError ? (
+        <p className="text-xs text-bad">
+          Nao foi possivel carregar a validacao anti-bot agora.
+        </p>
+      ) : null}
     </div>
   );
 }
