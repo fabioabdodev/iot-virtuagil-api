@@ -1,6 +1,14 @@
 'use client';
 
-import { Boxes, CircleCheckBig, ClipboardList, RadioTower, Siren, ToggleRight } from 'lucide-react';
+import {
+  Boxes,
+  CircleCheckBig,
+  ClipboardList,
+  RadioTower,
+  Siren,
+  ToggleRight,
+  Wrench,
+} from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useActuators } from '@/hooks/use-actuators';
@@ -32,6 +40,76 @@ function scoreBadgeVariant(score: number) {
   if (score >= 85) return 'success' as const;
   if (score < 35) return 'danger' as const;
   return 'neutral' as const;
+}
+
+function determineJourneyStage(options: {
+  devicesCount: number;
+  alertRulesCount: number;
+  offlineDevices: number;
+  temperatureEnabled: boolean;
+}) {
+  if (!options.temperatureEnabled) {
+    return {
+      title: 'Contratacao e escopo',
+      description:
+        'Esta conta ainda precisa habilitar o modulo principal de temperatura antes de seguir para onboarding e simulacao.',
+      checklist: [
+        'Definir escopo inicial por equipamento critico',
+        'Confirmar modulo contratado e responsaveis',
+        'Liberar a conta para setup operacional',
+      ],
+    };
+  }
+
+  if (options.devicesCount === 0) {
+    return {
+      title: 'Preparacao da plataforma',
+      description:
+        'A conta ja pode ser preparada sem hardware. O foco agora e estruturar o tenant, o primeiro device e os dados operacionais basicos.',
+      checklist: [
+        'Cadastrar o equipamento principal no tenant',
+        'Revisar nome, local e responsavel da conta',
+        'Deixar o tenant pronto para demonstracao guiada',
+      ],
+    };
+  }
+
+  if (options.alertRulesCount === 0) {
+    return {
+      title: 'Simulacao e alinhamento operacional',
+      description:
+        'A estrutura principal ja existe. O proximo passo e criar a regra de alerta e simular eventos para alinhar a resposta do cliente.',
+      checklist: [
+        'Configurar a primeira regra de temperatura',
+        'Simular leitura normal e fora da faixa',
+        'Validar quem recebe alerta e como reage',
+      ],
+    };
+  }
+
+  if (options.offlineDevices > 0) {
+    return {
+      title: 'Estabilizacao pre-demo',
+      description:
+        'A conta ja demonstra valor, mas ainda precisa regularizar devices offline antes de ser usada como referencia comercial ou operacional.',
+      checklist: [
+        'Regularizar devices offline',
+        'Refazer a simulacao de online/offline',
+        'Confirmar que o dashboard voltou a refletir operacao estavel',
+      ],
+    };
+  }
+
+  return {
+    title: 'Instalacao tecnica e aceite',
+    description:
+      'A conta ja tem base suficiente para demonstracao. Quando o hardware chegar, o foco passa a ser instalacao, teste controlado e aceite do cliente.',
+    checklist: [
+      'Conectar o hardware e validar leituras reais',
+      'Executar alerta controlado em ambiente assistido',
+      'Treinar o responsavel e fechar aceite operacional',
+    ],
+  };
 }
 
 export function CommercialReadinessPanel({
@@ -81,6 +159,12 @@ export function CommercialReadinessPanel({
   const actuators = actuatorsData ?? [];
   const offlineDevices = devices.filter((device) => device.isOffline).length;
   const enabledModules = clientModules.filter((module) => module.enabled).length;
+  const journeyStage = determineJourneyStage({
+    devicesCount: devices.length,
+    alertRulesCount: alertRules.length,
+    offlineDevices,
+    temperatureEnabled,
+  });
 
   const readinessScore = Math.max(
     0,
@@ -210,6 +294,24 @@ export function CommercialReadinessPanel({
           <div className="mb-4 flex items-center gap-2">
             <RadioTower className="h-4 w-4 text-accent" />
             <p className="text-sm font-semibold text-ink">Proximos passos sugeridos</p>
+          </div>
+
+          <div className="mb-4 rounded-2xl border border-line/70 bg-bg/25 p-4">
+            <div className="flex items-center gap-2">
+              <Wrench className="h-4 w-4 text-[hsl(var(--accent-2))]" />
+              <p className="text-sm font-semibold text-ink">{journeyStage.title}</p>
+            </div>
+            <p className="mt-2 text-sm text-muted">{journeyStage.description}</p>
+            <div className="mt-3 space-y-2">
+              {journeyStage.checklist.map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-line/70 bg-card/20 p-3 text-sm text-muted"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
           </div>
 
           {nextSteps.length > 0 ? (

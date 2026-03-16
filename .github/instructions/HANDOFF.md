@@ -271,6 +271,11 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - mensagem de sucesso apos criar cliente
 - o painel de auditoria do dashboard agora aceita filtros por `entityType`, `entityId` e periodo recente
   - isso facilita investigar alteracoes operacionais sem depender apenas da lista mais recente
+- o painel de prontidao comercial agora traduz a implantacao em fases operacionais mais concretas
+  - contratacao e escopo
+  - preparacao da plataforma
+  - simulacao e alinhamento operacional
+  - instalacao tecnica e aceite
 - proximo passo recomendado:
   - executar os estudos de caso em conjunto e registrar bugs, riscos operacionais e ajustes de UX
 
