@@ -194,7 +194,10 @@ export function ClientProfilePanel({
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
                 Cliente
               </p>
-              <p className="mt-2 text-sm font-medium text-ink">{data.id}</p>
+              <p className="mt-2 text-sm font-medium text-ink">
+                {data.name}
+              </p>
+              <p className="mt-1 text-xs text-muted">Codigo interno: {data.id}</p>
             </div>
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
               <p className="text-xs uppercase tracking-[0.16em] text-muted">

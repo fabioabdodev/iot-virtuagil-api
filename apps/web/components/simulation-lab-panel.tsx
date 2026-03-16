@@ -14,9 +14,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Feedback } from '@/components/ui/feedback';
 import { Panel } from '@/components/ui/panel';
+import { ClientSummary } from '@/types/client';
 
 type SimulationLabPanelProps = {
   clientId?: string;
+  client?: ClientSummary;
 };
 
 type Scenario = {
@@ -32,11 +34,11 @@ type DemoStep = {
   icon: typeof MapPinned;
 };
 
-export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
+export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps) {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
 
   const suffix = clientId ? ` --client-id ${clientId}` : '';
-  const demoTenant = clientId ?? 'conta-demo';
+  const demoTenant = client?.name ?? clientId ?? 'conta-demo';
 
   const demoSteps: DemoStep[] = [
     {
@@ -166,6 +168,11 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
             Estes comandos ajudam a ensaiar a operacao antes da chegada dos
             sensores e placas, como se o cliente ja estivesse em implantacao.
           </p>
+          {client?.name ? (
+            <p className="mt-2 text-xs text-muted">
+              Conta atual no roteiro: {client.name} ({client.id}).
+            </p>
+          ) : null}
         </div>
 
         <Badge>
@@ -226,6 +233,11 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
                 faz sentido para um cliente novo e se os alertas ficam claros sem
                 depender de explicacao tecnica.
               </p>
+              {client?.notes ? (
+                <p className="mt-2 text-xs text-muted">
+                  Contexto da conta: {client.notes}
+                </p>
+              ) : null}
             </div>
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
@@ -236,6 +248,11 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
                 parece tecnico demais e quais passos do onboarding ainda pedem
                 apoio manual.
               </p>
+              {client?.adminName ? (
+                <p className="mt-2 text-xs text-muted">
+                  Responsavel previsto na conta: {client.adminName}.
+                </p>
+              ) : null}
             </div>
           </div>
         </Panel>

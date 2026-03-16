@@ -537,10 +537,10 @@ export function ClientsPanel({
                     <div className="flex flex-col">
                       <span>{client.billingEmail ?? 'Sem email financeiro'}</span>
                       <span className="text-xs">
-                        admin: {client.adminName ?? 'Sem nome'} · {client.adminPhone ?? client.phone ?? 'Sem telefone'}
+                        admin: {client.adminName ?? 'Sem nome'} | {client.adminPhone ?? client.phone ?? 'Sem telefone'}
                       </span>
                       <span className="text-xs">
-                        financeiro: {client.billingName ?? client.adminName ?? 'Sem nome'} · {client.billingPhone ?? client.adminPhone ?? client.phone ?? 'Sem telefone'}
+                        financeiro: {client.billingName ?? client.adminName ?? 'Sem nome'} | {client.billingPhone ?? client.adminPhone ?? client.phone ?? 'Sem telefone'}
                       </span>
                     </div>
                   </td>

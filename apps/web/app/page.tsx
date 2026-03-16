@@ -43,6 +43,7 @@ import { MetricCard } from '@/components/ui/metric-card';
 import { Panel } from '@/components/ui/panel';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 import { useAuth } from '@/lib/auth-context';
+import { useClient } from '@/hooks/use-client';
 import { useDeviceMutations } from '@/hooks/use-device-mutations';
 import { useDevices } from '@/hooks/use-devices';
 import { useClientModules } from '@/hooks/use-client-modules';
@@ -131,6 +132,11 @@ function DashboardContent() {
   const canManageActuatorStructure = Boolean(scopedClientId && isPlatformAdmin);
   const canManageActuatorCommands = Boolean(scopedClientId && isAdmin);
   const canManageActuatorSchedules = Boolean(scopedClientId && isAdmin);
+  const { data: selectedClient } = useClient(
+    scopedClientId,
+    authToken,
+    Boolean(scopedClientId),
+  );
   const {
     data: clientModulesData,
     isLoading: isLoadingClientModules,
@@ -384,6 +390,7 @@ function DashboardContent() {
       <DashboardHeader
         currentUser={user}
         scopedClientId={scopedClientId}
+        scopedClientName={selectedClient?.name}
         isAuthenticated={isAuthenticated}
         clientIdDraft={clientIdDraft}
         onClientIdDraftChange={setClientIdDraft}
@@ -515,6 +522,7 @@ function DashboardContent() {
         clientId={scopedClientId}
         authToken={authToken}
         currentUser={user}
+        client={selectedClient}
         devices={devices}
         clientModules={clientModules}
         />
@@ -522,6 +530,7 @@ function DashboardContent() {
 
       <OperationalActivityPanel
         clientId={scopedClientId}
+        client={selectedClient}
         authToken={authToken}
         devices={devices}
         clientModules={clientModules}
@@ -802,8 +811,16 @@ function DashboardContent() {
         {!isLoading && !isError && temperatureEnabled && devices.length === 0 ? (
           <SetupGuideCard
             eyebrow="Primeiros passos"
-            title="Este cliente ainda nao tem o primeiro equipamento monitorado"
-            description="Para iniciar a simulacao de implantacao, cadastre o equipamento principal, defina a faixa de temperatura e depois movimente leituras para mostrar historico, online/offline e alertas."
+            title={
+              selectedClient?.name
+                ? `${selectedClient.name} ainda nao tem o primeiro equipamento monitorado`
+                : 'Este cliente ainda nao tem o primeiro equipamento monitorado'
+            }
+            description={
+              selectedClient?.name
+                ? `Para iniciar a implantacao da conta ${selectedClient.name}, cadastre o equipamento principal, defina a faixa de temperatura e depois movimente leituras para mostrar historico, online/offline e alertas.`
+                : 'Para iniciar a simulacao de implantacao, cadastre o equipamento principal, defina a faixa de temperatura e depois movimente leituras para mostrar historico, online/offline e alertas.'
+            }
             steps={[
               {
                 title: 'Cadastrar o equipamento principal',
@@ -842,6 +859,7 @@ function DashboardContent() {
         <div className="mt-6">
           <AlertRulesPanel
             clientId={scopedClientId}
+            client={selectedClient}
             authToken={authToken}
             devices={devices}
             canManageRules={canManageAlertRules}
@@ -867,6 +885,7 @@ function DashboardContent() {
         <div className="mt-6">
           <ActuationPanel
             clientId={scopedClientId}
+            client={selectedClient}
             authToken={authToken}
             devices={devices}
             canManageCommands={canManageActuatorCommands}
@@ -932,12 +951,13 @@ function DashboardContent() {
       </div>
 
       <div className="mt-6">
-        <SimulationLabPanel clientId={scopedClientId} />
+        <SimulationLabPanel clientId={scopedClientId} client={selectedClient} />
       </div>
 
       <div id="auditoria" className="scroll-mt-28">
         <AuditLogPanel
         clientId={scopedClientId}
+        client={selectedClient}
         authToken={authToken}
         currentUser={user}
         canView={isAdmin}

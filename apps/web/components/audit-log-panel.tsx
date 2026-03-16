@@ -6,6 +6,7 @@ import { ptBR } from 'date-fns/locale';
 import { FileSearch, ShieldCheck } from 'lucide-react';
 import { useAuditLogs } from '@/hooks/use-audit-logs';
 import { AuthUser } from '@/types/auth';
+import { ClientSummary } from '@/types/client';
 import { AccessNotice } from '@/components/ui/access-notice';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { Panel } from '@/components/ui/panel';
 
 type AuditLogPanelProps = {
   clientId?: string;
+  client?: ClientSummary;
   authToken?: string;
   currentUser: AuthUser | null;
   canView: boolean;
@@ -34,6 +36,7 @@ function formatValue(value: unknown) {
 
 export function AuditLogPanel({
   clientId,
+  client,
   authToken,
   currentUser,
   canView,
@@ -99,6 +102,11 @@ export function AuditLogPanel({
           <p className="mt-2 max-w-3xl text-sm text-muted">
             Mostra quem alterou parametros criticos para reforcar responsabilidade operacional.
           </p>
+          {client?.name ? (
+            <p className="mt-2 text-xs text-muted">
+              Historico de alteracoes da conta {client.name} ({client.id}).
+            </p>
+          ) : null}
         </div>
         <Badge>
           <ShieldCheck className="h-3.5 w-3.5 text-accent" />
@@ -195,6 +203,11 @@ export function AuditLogPanel({
                 Alterado por {entry.actorEmail ?? 'usuario nao identificado'}
                 {entry.actorRole ? ` (${entry.actorRole})` : ''}.
               </p>
+              {client?.adminName ? (
+                <p className="mt-1 text-xs text-muted">
+                  Responsavel principal registrado na conta: {client.adminName}.
+                </p>
+              ) : null}
             </div>
           ))}
         </div>

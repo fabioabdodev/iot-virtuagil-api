@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useRecentActuationCommands } from '@/hooks/use-recent-actuation-commands';
 import { ActuationCommand } from '@/types/actuator';
+import { ClientSummary } from '@/types/client';
 import { ClientModule } from '@/types/client-module';
 import { DeviceSummary } from '@/types/device';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,7 @@ import { Panel } from '@/components/ui/panel';
 
 interface OperationalActivityPanelProps {
   clientId?: string;
+  client?: ClientSummary;
   authToken?: string;
   devices: DeviceSummary[];
   clientModules: ClientModule[];
@@ -41,6 +43,7 @@ function commandLabel(command: ActuationCommand) {
 
 export function OperationalActivityPanel({
   clientId,
+  client,
   authToken,
   devices,
   clientModules,
@@ -87,7 +90,11 @@ export function OperationalActivityPanel({
         </div>
         <Badge>
           <RadioTower className="h-3.5 w-3.5 text-accent" />
-          {clientId ? `cliente ${clientId}` : 'visao geral'}
+          {client?.name
+            ? `${client.name} em foco`
+            : clientId
+              ? `codigo interno ${clientId}`
+              : 'visao geral'}
         </Badge>
       </div>
 
@@ -117,6 +124,11 @@ export function OperationalActivityPanel({
               ? 'Existem ocorrencias de temperatura ou conectividade para revisar.'
               : 'Nenhum ponto critico visivel neste recorte operacional.'}
           </p>
+          {client?.name ? (
+            <p className="mt-2 text-xs text-muted">
+              Leitura atual da conta {client.name}.
+            </p>
+          ) : null}
         </div>
 
         <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
@@ -138,6 +150,11 @@ export function OperationalActivityPanel({
             para demonstracao ou se ainda existe pendencia visivel antes da
             apresentacao ao cliente.
           </p>
+          {client?.adminName ? (
+            <p className="mt-2 text-xs text-muted">
+              Responsavel mapeado na conta: {client.adminName}.
+            </p>
+          ) : null}
         </div>
       </div>
 

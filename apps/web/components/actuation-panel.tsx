@@ -11,6 +11,7 @@ import { useActuatorCommands } from '@/hooks/use-actuator-commands';
 import { useActuatorMutations } from '@/hooks/use-actuator-mutations';
 import { useActuators } from '@/hooks/use-actuators';
 import { ActuatorSummary } from '@/types/actuator';
+import { ClientSummary } from '@/types/client';
 import { DeviceSummary } from '@/types/device';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,7 @@ type FormValues = z.input<typeof formSchema>;
 
 type ActuationPanelProps = {
   clientId?: string;
+  client?: ClientSummary;
   authToken?: string;
   devices: DeviceSummary[];
   onCreateDevice?: () => void;
@@ -61,6 +63,7 @@ function actuatorStateBadge(state: 'on' | 'off') {
 
 export function ActuationPanel({
   clientId,
+  client,
   authToken,
   devices,
   onCreateDevice,
@@ -209,6 +212,11 @@ export function ActuationPanel({
             Cadastre pontos de acionamento como sauna, exaustor ou rele de
             potencia e controle o estado manualmente pelo painel.
           </p>
+          {client?.name ? (
+            <p className="mt-2 text-xs text-muted">
+              Conta em foco: {client.name} ({client.id}).
+            </p>
+          ) : null}
         </div>
 
         <Badge>

@@ -9,6 +9,7 @@ import type { AuthUser } from '@/types/auth';
 type DashboardHeaderProps = {
   currentUser: AuthUser | null;
   scopedClientId?: string;
+  scopedClientName?: string;
   isAuthenticated: boolean;
   clientIdDraft: string;
   onClientIdDraftChange: (value: string) => void;
@@ -19,6 +20,7 @@ type DashboardHeaderProps = {
 export function DashboardHeader({
   currentUser,
   scopedClientId,
+  scopedClientName,
   isAuthenticated,
   clientIdDraft,
   onClientIdDraftChange,
@@ -46,7 +48,8 @@ export function DashboardHeader({
               <Badge variant={isAuthenticated ? 'success' : 'neutral'}>
                 {isAuthenticated ? 'Sessao ativa' : 'Acesso local'}
               </Badge>
-              {scopedClientId ? <Badge>cliente: {scopedClientId}</Badge> : null}
+              {scopedClientName ? <Badge>cliente: {scopedClientName}</Badge> : null}
+              {scopedClientId ? <Badge>codigo interno: {scopedClientId}</Badge> : null}
             </div>
           </div>
         </div>
@@ -56,7 +59,7 @@ export function DashboardHeader({
             <Input
               value={clientIdDraft}
               onChange={(event) => onClientIdDraftChange(event.target.value)}
-              placeholder="Buscar cliente pelo codigo interno"
+              placeholder="Buscar conta pelo codigo interno"
               className="min-h-[42px]"
             />
             <Button

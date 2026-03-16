@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAlertRuleMutations } from '@/hooks/use-alert-rule-mutations';
 import { useAlertRules } from '@/hooks/use-alert-rules';
+import { ClientSummary } from '@/types/client';
 import { DeviceSummary } from '@/types/device';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -69,6 +70,7 @@ type FormValues = z.input<typeof formSchema>;
 
 type AlertRulesPanelProps = {
   clientId?: string;
+  client?: ClientSummary;
   authToken?: string;
   devices: DeviceSummary[];
   onCreateDevice?: () => void;
@@ -78,6 +80,7 @@ type AlertRulesPanelProps = {
 
 export function AlertRulesPanel({
   clientId,
+  client,
   authToken,
   devices,
   onCreateDevice,
@@ -174,11 +177,20 @@ export function AlertRulesPanel({
       />
 
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Regras de alerta</h2>
+        <div>
+          <h2 className="text-lg font-semibold">Regras de alerta</h2>
+          {client?.name ? (
+            <p className="mt-1 text-sm text-muted">
+              Parametros operacionais da conta {client.name}.
+            </p>
+          ) : null}
+        </div>
         {!clientId ? (
           <Badge>
             Escolha um cliente para gerenciar regras
           </Badge>
+        ) : client?.id ? (
+          <Badge>codigo interno: {client.id}</Badge>
         ) : null}
       </div>
 
@@ -227,10 +239,15 @@ export function AlertRulesPanel({
                   </p>
                 </div>
                 <p className="mt-2 text-xs leading-6 text-muted">
-                  Para um cliente em onboarding, comece com uma regra simples por
+                  Para uma conta em onboarding, comece com uma regra simples por
                   equipamento critico. Assim a demonstracao fica clara: leitura
                   normal, desvio de faixa e resposta operacional.
                 </p>
+                {client?.adminName ? (
+                  <p className="mt-2 text-xs text-muted">
+                    Responsavel mapeado na conta: {client.adminName}.
+                  </p>
+                ) : null}
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3">

@@ -13,11 +13,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useActuators } from '@/hooks/use-actuators';
 import { useAlertRules } from '@/hooks/use-alert-rules';
-import { useClient } from '@/hooks/use-client';
 import { Badge } from '@/components/ui/badge';
 import { Feedback } from '@/components/ui/feedback';
 import { Panel } from '@/components/ui/panel';
 import { AuthUser } from '@/types/auth';
+import { ClientSummary } from '@/types/client';
 import { ClientModule } from '@/types/client-module';
 import { DeviceSummary } from '@/types/device';
 
@@ -25,6 +25,7 @@ interface CommercialReadinessPanelProps {
   clientId?: string;
   authToken?: string;
   currentUser?: AuthUser | null;
+  client?: ClientSummary;
   devices: DeviceSummary[];
   clientModules: ClientModule[];
 }
@@ -116,11 +117,10 @@ export function CommercialReadinessPanel({
   clientId,
   authToken,
   currentUser,
+  client,
   devices,
   clientModules,
 }: CommercialReadinessPanelProps) {
-  const { data: client } = useClient(clientId, authToken, Boolean(clientId));
-
   const temperatureEnabled =
     clientId == null
       ? true
@@ -195,7 +195,9 @@ export function CommercialReadinessPanel({
           <p className="text-xs uppercase tracking-[0.18em] text-muted">
             Prontidao comercial
           </p>
-          <h2 className="mt-1 text-xl font-semibold">Conta pronta para demonstracao</h2>
+          <h2 className="mt-1 text-xl font-semibold">
+            {client?.name ? `${client.name} pronta para demonstracao` : 'Conta pronta para demonstracao'}
+          </h2>
           <p className="mt-2 max-w-3xl text-sm text-muted">
             Este bloco traduz o estado da conta em narrativa comercial:
             contratacao, prontidao e o que ainda falta para vender ou implantar com seguranca.
@@ -238,20 +240,29 @@ export function CommercialReadinessPanel({
           <div className="rounded-[24px] border border-line/70 bg-bg/30 p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
-                Responsavel atual
+                Conta em foco
               </p>
               <ClipboardList className="h-4 w-4 text-[hsl(var(--accent-2))]" />
             </div>
             <p className="mt-3 text-base font-semibold text-ink">
-              {currentUser?.name ?? 'Sem sessao ativa'}
+              {client?.name ?? clientId}
             </p>
             <p className="mt-2 text-sm text-muted">
+              {client?.adminName
+                ? `${client.adminName} responde por esta conta nesta fase de implantacao.`
+                : null}
+              {client?.adminName && client?.updatedAt ? ' ' : null}
               {client?.updatedAt
                 ? `Cadastro revisado ${formatDistanceToNow(new Date(client.updatedAt), {
                     addSuffix: true,
                     locale: ptBR,
                   })}.`
                 : 'Use este bloco para consolidar o estado comercial da conta.'}
+            </p>
+            <p className="mt-2 text-xs text-muted">
+              {currentUser?.name
+                ? `Painel aberto por ${currentUser.name}.`
+                : 'Sem sessao ativa no momento.'}
             </p>
           </div>
 
@@ -335,6 +346,12 @@ export function CommercialReadinessPanel({
           {client?.billingEmail ? (
             <div className="mt-4 rounded-2xl border border-line/70 bg-bg/25 p-3 text-sm text-muted">
               Contato financeiro atual: <strong className="text-ink">{client.billingEmail}</strong>
+            </div>
+          ) : null}
+
+          {client?.notes ? (
+            <div className="mt-4 rounded-2xl border border-line/70 bg-bg/25 p-3 text-sm text-muted">
+              Contexto registrado para a conta: <strong className="text-ink">{client.notes}</strong>
             </div>
           ) : null}
         </div>
