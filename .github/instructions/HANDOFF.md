@@ -286,6 +286,9 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - dashboard web para monitoramento e historico
   - `WhatsApp` como canal principal de alerta ao cliente
   - fluxo ponta a ponta esperado: `API -> n8n -> Evolution -> WhatsApp`
+- o painel de clientes agora ajuda no onboarding guiado de estudo de caso
+  - mostra padrao de `name`, `clientId` e `deviceId`
+  - resume o primeiro fluxo sugerido: criar tenant, abrir dashboard e estruturar o primeiro device
 - proximo passo recomendado:
   - executar os estudos de caso em conjunto e registrar bugs, riscos operacionais e ajustes de UX
 

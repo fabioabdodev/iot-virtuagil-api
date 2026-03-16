@@ -1,7 +1,15 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Building2, ChevronDown, Filter, Trash2 } from 'lucide-react';
+import {
+  Building2,
+  ChevronDown,
+  Filter,
+  Lightbulb,
+  MapPinned,
+  Tags,
+  Trash2,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -190,6 +198,80 @@ export function ClientsPanel({
           <Building2 className="h-3.5 w-3.5 text-accent" />
           admin global
         </Badge>
+      </div>
+
+      <div className="mb-4 grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
+        <Panel variant="strong" className="p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <Tags className="h-4 w-4 text-accent" />
+            <h3 className="text-base font-semibold">Padrao de identificacao</h3>
+          </div>
+          <p className="text-sm text-muted">
+            Use este bloco quando estiver simulando a chegada a um cliente real e
+            quiser padronizar o onboarding sem inventar nomes no improviso.
+          </p>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">Name</p>
+              <p className="mt-2 text-sm font-medium text-ink">Cuidare</p>
+              <p className="mt-1 text-xs text-muted">
+                Nome comercial exibido ao cliente.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">clientId</p>
+              <p className="mt-2 text-sm font-medium text-ink">cuidare-vacinas</p>
+              <p className="mt-1 text-xs text-muted">
+                Identificador tecnico unico e estavel.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">deviceId</p>
+              <p className="mt-2 text-sm font-medium text-ink">freezer_vacinas_01</p>
+              <p className="mt-1 text-xs text-muted">
+                Nome objetivo para o primeiro equipamento.
+              </p>
+            </div>
+          </div>
+        </Panel>
+
+        <Panel className="p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <Lightbulb className="h-4 w-4 text-[hsl(var(--accent-2))]" />
+            <h3 className="text-base font-semibold">Primeiro fluxo sugerido</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <div className="flex items-center gap-2">
+                <MapPinned className="h-4 w-4 text-accent" />
+                <p className="text-sm font-medium text-ink">1. Criar o tenant</p>
+              </div>
+              <p className="mt-2 text-xs leading-6 text-muted">
+                Cadastre o cliente com identificador tecnico consistente e dados
+                minimos do responsavel.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-sm font-medium text-ink">2. Abrir o dashboard do tenant</p>
+              <p className="mt-2 text-xs leading-6 text-muted">
+                Use o botao de selecao para entrar na conta logo apos o cadastro
+                e revisar a narrativa comercial da tela principal.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-sm font-medium text-ink">3. Estruturar o primeiro device</p>
+              <p className="mt-2 text-xs leading-6 text-muted">
+                Depois do tenant criado, avance para cadastro do equipamento,
+                regra de alerta e simulacao do fluxo real.
+              </p>
+            </div>
+          </div>
+        </Panel>
       </div>
 
       <Panel variant="strong" className="mb-4 overflow-hidden p-0">
