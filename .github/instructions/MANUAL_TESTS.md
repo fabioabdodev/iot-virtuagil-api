@@ -294,6 +294,33 @@ Enquanto nao houver hardware:
 - tratar `currentState` como estado operacional registrado na plataforma
 - nao prometer confirmacao eletrica real da carga
 
+## 5.1 Fluxo ponta a ponta com WhatsApp
+
+Direcao atual do produto:
+
+- o dashboard web serve para monitoramento, historico e operacao assistida
+- a notificacao principal ao cliente deve sair por `WhatsApp`
+- o fluxo esperado de entrega e `API -> n8n -> Evolution -> WhatsApp`
+
+Roteiro sugerido de validacao sem hardware:
+
+1. entrar no dashboard do tenant e revisar a conta
+2. simular leitura normal para mostrar operacao saudavel
+3. simular temperatura fora da faixa ou offline
+4. confirmar que o evento aparece no dashboard
+5. confirmar que a API disparou o webhook correto
+6. confirmar que o `n8n` recebeu e processou a execucao
+7. confirmar que o `Evolution` enviou a mensagem
+8. confirmar que o alerta chegou no `WhatsApp` do responsavel
+
+Considerar aprovado quando:
+
+- o evento aparece no dashboard
+- o webhook chega ao `n8n`
+- a mensagem sai pelo `Evolution`
+- o responsavel recebe o `WhatsApp`
+- a equipe consegue entender o que aconteceu sem depender de explicacao tecnica extra
+
 ## 6. Checklist rapido de pos-deploy em producao
 
 Use este bloco quando o deploy ja subiu, mas voce quer confirmar rapidamente se o ambiente ficou certo.

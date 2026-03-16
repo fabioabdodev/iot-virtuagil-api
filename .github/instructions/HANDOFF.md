@@ -282,6 +282,10 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - mostrar operacao normal
   - simular evento real
   - fechar com proximo passo de implantacao
+- a direcao operacional atual de notificacao ficou consolidada:
+  - dashboard web para monitoramento e historico
+  - `WhatsApp` como canal principal de alerta ao cliente
+  - fluxo ponta a ponta esperado: `API -> n8n -> Evolution -> WhatsApp`
 - proximo passo recomendado:
   - executar os estudos de caso em conjunto e registrar bugs, riscos operacionais e ajustes de UX
 

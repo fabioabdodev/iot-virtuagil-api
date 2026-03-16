@@ -165,6 +165,24 @@ Quando existir regra habilitada:
 - respeitar tolerancia configurada
 - respeitar cooldown para nao spammar
 
+### Canal principal de notificacao
+
+Direcao operacional atual:
+
+- o dashboard web e a camada de monitoramento e historico
+- o canal principal de notificacao ao cliente deve ser `WhatsApp`
+- `n8n` e `Evolution` formam a trilha principal de entrega dessas notificacoes
+- outros canais podem existir no futuro, mas nao devem competir com o foco atual
+
+Fluxo ponta a ponta esperado nesta fase:
+
+1. a API recebe a leitura ou detecta offline
+2. a regra de negocio identifica o evento critico
+3. a API envia webhook para o `n8n`
+4. o `n8n` monta o fluxo de notificacao
+5. o `Evolution` entrega a mensagem no `WhatsApp`
+6. o cliente recebe o alerta fora do dashboard
+
 ### Acionamento sem hardware
 
 Enquanto nao houver hardware fisico:
