@@ -2,6 +2,7 @@
 
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Activity, AlertTriangle } from 'lucide-react';
 import {
   Line,
   LineChart,
@@ -46,6 +47,10 @@ export function DeviceHistoryPanel({
       locale: ptBR,
     }),
   }));
+  const pointsOutOfRange = points.filter((point) => point.isOutOfRange).length;
+  const latestPoint = points[points.length - 1];
+  const historyStatusLabel =
+    pointsOutOfRange > 0 ? 'Com desvios recentes' : 'Operacao estavel';
 
   return (
     <Panel className="mt-6 p-5">
@@ -62,6 +67,59 @@ export function DeviceHistoryPanel({
           <Badge>Ultimos 48 pontos</Badge>
         </div>
       </div>
+
+      {!isLoading && !isError && points.length > 0 ? (
+        <div className="mb-4 grid gap-3 lg:grid-cols-3">
+          <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+            <p className="text-xs uppercase tracking-[0.16em] text-muted">
+              Leitura atual
+            </p>
+            <p className="mt-2 text-lg font-semibold text-ink">
+              {latestPoint?.temperature.toFixed(1)} C
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              Ultimo ponto registrado no historico visivel.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+            <p className="text-xs uppercase tracking-[0.16em] text-muted">
+              Leitura da visita
+            </p>
+            <div className="mt-2 flex items-center gap-2">
+              {pointsOutOfRange > 0 ? (
+                <AlertTriangle className="h-4 w-4 text-bad" />
+              ) : (
+                <Activity className="h-4 w-4 text-ok" />
+              )}
+              <p
+                className={
+                  pointsOutOfRange > 0
+                    ? 'text-sm font-semibold text-bad'
+                    : 'text-sm font-semibold text-ok'
+                }
+              >
+                {historyStatusLabel}
+              </p>
+            </div>
+            <p className="mt-1 text-xs text-muted">
+              {pointsOutOfRange > 0
+                ? `${pointsOutOfRange} ponto(s) fora da faixa nesta janela.`
+                : 'Sem desvios aparentes na janela atual.'}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+            <p className="text-xs uppercase tracking-[0.16em] text-muted">
+              Como apresentar
+            </p>
+            <p className="mt-2 text-xs leading-6 text-muted">
+              Use este bloco para mostrar tendencia, estabilidade e resposta a
+              desvio sem depender de explicacao tecnica sobre a API.
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       {isLoading ? <Feedback>Carregando historico...</Feedback> : null}
       {isError && points.length === 0 ? (
