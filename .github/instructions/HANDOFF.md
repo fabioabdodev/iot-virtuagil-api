@@ -156,6 +156,10 @@ Resultado esperado no ponto atual:
   - o arquivo especifico do cliente, por exemplo `estudos de caso/cuidare.md`
 - o objetivo dessa pasta e permitir simulacoes de chegada ao cliente no contexto real de implantacao, ajudando a conhecer as telas atuais do sistema e a sugerir melhorias de UI/UX com base nessa experiencia guiada
 - esse material deve orientar analise de UX e operacao, mas nao substitui a documentacao tecnica versionada em `.github/instructions/`
+- direcao adicional consolidada a partir dos estudos de caso:
+  - novos modulos do dashboard devem nascer com linguagem orientada ao cliente
+  - evitar expor `tenant`, `clientId` e outros termos internos como copy principal da interface
+  - preferir `cliente`, `conta`, `equipamento`, `codigo interno` e `painel` quando houver equivalente claro para negocio
 
 ## Supabase
 

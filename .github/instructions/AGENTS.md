@@ -42,6 +42,9 @@ Importante para continuidade:
 - essa pasta e local, pode nao estar no Git e nao deve ser tratada como documentacao versionada do produto
 - o objetivo pratico dessa pasta e simular a chegada a um cliente real, percorrer o sistema como se a implantacao estivesse acontecendo e usar isso para conhecer as telas e sugerir melhorias de UI/UX
 - quando a tarefa for sobre um desses escopos, tratar as regras e documentos internos dessas pastas como fonte principal daquele contexto
+- ao criar ou evoluir modulos novos no frontend, preferir linguagem orientada ao cliente e a operacao real
+- evitar expor na UI termos internos como `tenant`, `clientId`, `device` ou nomes de arquitetura quando houver equivalente mais claro para negocio
+- usar termos como `cliente`, `conta`, `equipamento`, `codigo interno` e `painel` quando isso nao esconder uma necessidade tecnica real
 
 ## Regra principal de colaboracao
 

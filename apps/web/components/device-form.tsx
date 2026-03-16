@@ -154,7 +154,7 @@ export function DeviceForm({
       <Panel variant="strong" className="p-5">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-sm font-semibold tracking-wide text-ink">
-            {mode === 'create' ? 'Novo device' : `Editar ${device?.id ?? ''}`}
+            {mode === 'create' ? 'Novo equipamento' : `Editar ${device?.id ?? ''}`}
           </h3>
           {onCancel ? (
             <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
@@ -179,7 +179,7 @@ export function DeviceForm({
 
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
-                <p className="text-xs uppercase tracking-[0.16em] text-muted">deviceId</p>
+                <p className="text-xs uppercase tracking-[0.16em] text-muted">Codigo do equipamento</p>
                 <p className="mt-2 text-sm font-medium text-ink">freezer_vacinas_01</p>
               </div>
               <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
@@ -222,7 +222,7 @@ export function DeviceForm({
               <label className="mb-1 block text-xs text-muted">Nome</label>
               <Input {...register('name')} placeholder="Freezer Loja" />
               <p className="mt-1 text-xs text-muted">
-                Use um nome claro para quem vai olhar o dashboard no dia a dia.
+                Use um nome claro para quem vai acompanhar a operacao no dia a dia.
               </p>
             </div>
           ) : null}
@@ -281,7 +281,7 @@ export function DeviceForm({
             {loading
               ? 'Salvando...'
               : mode === 'create'
-                ? 'Criar device'
+                ? 'Criar equipamento'
                 : 'Salvar alteracoes'}
           </Button>
         </div>

@@ -257,7 +257,7 @@ export function ClientsPanel({
             </div>
 
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
-              <p className="text-sm font-medium text-ink">2. Abrir o dashboard do cliente</p>
+              <p className="text-sm font-medium text-ink">2. Abrir o painel do cliente</p>
               <p className="mt-2 text-xs leading-6 text-muted">
                 Use o botao de selecao para entrar na conta logo apos o cadastro
                 e revisar a narrativa comercial da tela principal.
@@ -265,7 +265,7 @@ export function ClientsPanel({
             </div>
 
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
-              <p className="text-sm font-medium text-ink">3. Estruturar o primeiro device</p>
+              <p className="text-sm font-medium text-ink">3. Estruturar o primeiro equipamento</p>
               <p className="mt-2 text-xs leading-6 text-muted">
                 Depois do cliente criado, avance para cadastro do equipamento,
                 regra de alerta e simulacao do fluxo real.

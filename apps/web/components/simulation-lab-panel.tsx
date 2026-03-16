@@ -48,13 +48,13 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
     {
       title: '2. Mostrar operacao normal',
       description:
-        'Use o cenario baseline para preencher historico, deixar devices online e apresentar a operacao em estado saudavel.',
+        'Use o cenario baseline para preencher historico, deixar equipamentos online e apresentar a operacao em estado saudavel.',
       icon: Eye,
     },
     {
       title: '3. Simular evento real',
       description:
-        'Rode um pre-alerta ou um cenario critico para mostrar como o dashboard evidencia risco e como a equipe reagiria.',
+        'Rode um pre-alerta ou um cenario critico para mostrar como o painel evidencia risco e como a equipe reagiria.',
       icon: ShieldAlert,
     },
     {
@@ -69,7 +69,7 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
     {
       title: 'Carga normal',
       description:
-        'Mantem freezers operando dentro da faixa esperada para validar dashboard e historico.',
+        'Mantem freezers operando dentro da faixa esperada para validar painel e historico.',
       command: `npm run simulate:iot -- --devices freezer_01,freezer_02 --preset normal --ensure-devices${suffix} --api-key SUA_CHAVE`,
       badge: 'baseline',
     },
@@ -111,7 +111,7 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
     {
       title: 'Enviar comando ON',
       description:
-        'Liga ou desliga a carga pela API para testar dashboard e historico do atuador.',
+        'Liga ou desliga a carga pela API para testar painel e historico do atuador.',
       command:
         'curl -X POST http://localhost:3000/actuators/sauna_main/commands -H "Content-Type: application/json" -d "{\\"desiredState\\":\\"on\\",\\"source\\":\\"lab\\"}"',
       badge: 'manual',

@@ -251,6 +251,17 @@ Quando a validacao for manual:
 - usar `.github/instructions/MANUAL_TESTS.md` como roteiro base
 - evitar complicar a validacao com processos pesados quando a API puder ser verificada diretamente
 
+## Direcao de linguagem para frontend
+
+Ao criar telas novas ou expandir modulos existentes:
+
+- preferir linguagem de produto e operacao real em vez de termos internos de arquitetura
+- usar `cliente` em vez de `tenant` na UI
+- usar `codigo interno` quando `clientId` precisar aparecer para orientar operacao
+- usar `equipamento` quando a interface estiver falando com usuario final ou em contexto comercial
+- manter nomes tecnicos como `clientId` e payloads apenas onde forem realmente necessarios para cadastro, suporte ou simulacao
+- novos modulos devem nascer alinhados a essa direcao, sem exigir uma rodada posterior de traducao da interface
+
 ## Registro operacional recente
 
 Correcoes validadas em producao:

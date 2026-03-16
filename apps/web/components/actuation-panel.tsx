@@ -591,26 +591,26 @@ export function ActuationPanel({
             <SetupGuideCard
               eyebrow="Acionamento"
               title="Configure o primeiro atuador deste cliente"
-              description="Mesmo sem hardware fisico, voce ja pode cadastrar a carga, emitir comandos on/off e validar o historico operacional pelo dashboard."
+              description="Mesmo sem hardware fisico, voce ja pode cadastrar a carga, emitir comandos on/off e validar o historico operacional pelo painel."
               steps={[
                 {
                   title: 'Cadastrar o atuador',
                   description: 'Use um identificador como `sauna_main` ou `exaustor_01`.',
                 },
                 {
-                  title: devices.length > 0 ? 'Vincular a um device' : 'Opcionalmente vincular a um device',
+                  title: devices.length > 0 ? 'Vincular a um equipamento' : 'Opcionalmente vincular a um equipamento',
                   description: devices.length > 0
                     ? 'Escolha um equipamento da lista para contextualizar a carga dentro do cliente.'
-                    : 'Quando houver devices cadastrados, voce podera relacionar o atuador ao equipamento monitorado.',
+                    : 'Quando houver equipamentos cadastrados, voce podera relacionar o atuador ao item monitorado.',
                 },
                 {
-                  title: 'Emitir comandos pelo dashboard',
+                  title: 'Emitir comandos pelo painel',
                   description: 'Teste ligar, desligar e acompanhe o log recente sem depender de rele fisico.',
                 },
               ]}
               secondaryHref="/lab"
               secondaryLabel="Abrir laboratorio"
-              primaryActionLabel={!devices.length && onCreateDevice ? 'Cadastrar device primeiro' : undefined}
+              primaryActionLabel={!devices.length && onCreateDevice ? 'Cadastrar equipamento primeiro' : undefined}
               onPrimaryAction={!devices.length ? onCreateDevice : undefined}
             />
           ) : null}

@@ -91,11 +91,11 @@ function determineJourneyStage(options: {
     return {
       title: 'Estabilizacao pre-demo',
       description:
-        'A conta ja demonstra valor, mas ainda precisa regularizar devices offline antes de ser usada como referencia comercial ou operacional.',
+        'A conta ja demonstra valor, mas ainda precisa regularizar equipamentos offline antes de ser usada como referencia comercial ou operacional.',
       checklist: [
-        'Regularizar devices offline',
+        'Regularizar equipamentos offline',
         'Refazer a simulacao de online/offline',
-        'Confirmar que o dashboard voltou a refletir operacao estavel',
+        'Confirmar que o painel voltou a refletir operacao estavel',
       ],
     };
   }
