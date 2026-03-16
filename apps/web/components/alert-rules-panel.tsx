@@ -177,7 +177,7 @@ export function AlertRulesPanel({
         <h2 className="text-lg font-semibold">Regras de alerta</h2>
         {!clientId ? (
           <Badge>
-            Defina clientId para gerenciar regras
+            Escolha um cliente para gerenciar regras
           </Badge>
         ) : null}
       </div>

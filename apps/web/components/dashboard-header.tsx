@@ -56,7 +56,7 @@ export function DashboardHeader({
             <Input
               value={clientIdDraft}
               onChange={(event) => onClientIdDraftChange(event.target.value)}
-              placeholder="Filtrar por clientId"
+              placeholder="Buscar cliente pelo codigo interno"
               className="min-h-[42px]"
             />
             <Button

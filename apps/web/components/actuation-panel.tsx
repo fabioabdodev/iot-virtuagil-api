@@ -218,7 +218,7 @@ export function ActuationPanel({
       </div>
 
       {!clientId ? (
-        <Feedback>Defina um `clientId` para gerenciar atuadores.</Feedback>
+        <Feedback>Escolha um cliente para gerenciar atuadores.</Feedback>
       ) : (
         <>
           {canManageStructure ? (

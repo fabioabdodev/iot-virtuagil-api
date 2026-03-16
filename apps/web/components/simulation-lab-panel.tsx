@@ -36,13 +36,13 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
 
   const suffix = clientId ? ` --client-id ${clientId}` : '';
-  const demoTenant = clientId ?? 'tenant-demo';
+  const demoTenant = clientId ?? 'cliente-demo';
 
   const demoSteps: DemoStep[] = [
     {
-      title: '1. Entrar no tenant certo',
+      title: '1. Entrar no cliente certo',
       description:
-        `Comece filtrando o dashboard para o tenant atual (${demoTenant}) e revise o estado comercial da conta.`,
+        `Comece filtrando o dashboard para o cliente atual (${demoTenant}) e revise o estado comercial da conta.`,
       icon: MapPinned,
     },
     {
@@ -127,7 +127,7 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
     {
       title: 'Listar atuadores',
       description:
-        'Consulta os atuadores do tenant atual para conferir seed, cadastro e estado operacional.',
+        'Consulta os atuadores do cliente atual para conferir seed, cadastro e estado operacional.',
       command: `curl "http://localhost:3000/actuators?clientId=${clientId ?? 'virtuagil'}"`,
       badge: 'consulta',
     },

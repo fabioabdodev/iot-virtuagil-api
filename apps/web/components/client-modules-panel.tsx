@@ -33,7 +33,7 @@ export function ClientModulesPanel({
   const mutation = useClientModuleMutations(clientId, authToken);
 
   if (!clientId) {
-    return <AccessNotice title="Modulos contratados" description="Selecione um cliente para consultar e ajustar os modulos habilitados na conta." badge="clientId obrigatorio" hint="A contratacao e gerenciada cliente a cliente, por isso esse painel precisa de um tenant definido." />;
+    return <AccessNotice title="Modulos contratados" description="Selecione um cliente para consultar e ajustar os modulos habilitados na conta." badge="cliente obrigatorio" hint="A contratacao e gerenciada cliente a cliente, por isso esse painel precisa de uma conta em foco." />;
   }
 
   if (!canManage) {

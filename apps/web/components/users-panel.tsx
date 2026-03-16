@@ -124,7 +124,7 @@ export function UsersPanel({
   }
 
   if (!clientId) {
-    return <AccessNotice title="Gestao de usuarios" description="Selecione um cliente para liberar o cadastro e a manutencao de usuarios." badge="clientId obrigatorio" hint="Esse bloco trabalha por tenant. Defina o `clientId` no topo do dashboard para continuar." />;
+    return <AccessNotice title="Gestao de usuarios" description="Selecione um cliente para liberar o cadastro e a manutencao de usuarios." badge="cliente obrigatorio" hint="Esse bloco trabalha por conta. Escolha o cliente no topo do dashboard para continuar." />;
   }
 
   if (!canManage) {

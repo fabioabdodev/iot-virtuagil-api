@@ -439,9 +439,9 @@ function DashboardContent() {
               operacional em uma unica camada.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-muted sm:text-base">
-              Use o simulador para movimentar os dados, filtre por tenant e
-              acompanhe rapidamente leituras fora de faixa e devices sem
-              comunicacao.
+              Use o simulador para movimentar os dados, filtre pelo cliente em
+              foco e acompanhe rapidamente leituras fora de faixa e
+              equipamentos sem comunicacao.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -541,7 +541,7 @@ function DashboardContent() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Badge>clientId: {scopedClientId ?? 'todos'}</Badge>
+            <Badge>cliente em foco: {scopedClientId ?? 'visao geral'}</Badge>
             <Button
               onClick={() => {
                 void refetch();
@@ -898,7 +898,7 @@ function DashboardContent() {
           blockedReason={
             scopedClientId
               ? 'Somente o administrador da plataforma pode alterar o cadastro comercial do cliente.'
-              : 'Defina um clientId para revisar o perfil comercial da conta.'
+              : 'Escolha um cliente para revisar o perfil comercial da conta.'
           }
         />
       </div>
@@ -912,7 +912,7 @@ function DashboardContent() {
           blockedReason={
             scopedClientId
               ? 'Somente o administrador da plataforma pode gerenciar acessos deste cliente nesta fase.'
-              : 'Defina um clientId para administrar os usuarios de uma conta especifica.'
+              : 'Escolha um cliente para administrar os usuarios desta conta.'
           }
         />
       </div>
@@ -926,7 +926,7 @@ function DashboardContent() {
           blockedReason={
             scopedClientId
               ? 'Somente o administrador da plataforma pode alterar os modulos contratados deste cliente.'
-              : 'Defina um clientId para revisar e ajustar a contratacao modular.'
+              : 'Escolha um cliente para revisar e ajustar a contratacao de modulos.'
           }
         />
       </div>

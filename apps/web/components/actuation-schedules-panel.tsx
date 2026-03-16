@@ -160,7 +160,7 @@ export function ActuationSchedulesPanel({
         <Badge>rotinas</Badge>
       </div>
 
-      {!clientId ? <Feedback>Defina um `clientId` para gerenciar rotinas.</Feedback> : null}
+      {!clientId ? <Feedback>Escolha um cliente para gerenciar rotinas.</Feedback> : null}
 
       {clientId && canManage ? (
         <form

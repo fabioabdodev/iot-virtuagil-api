@@ -84,7 +84,7 @@ export function ClientProfilePanel({
       <AccessNotice
         title="Perfil comercial do cliente"
         description="Selecione um cliente para revisar o cadastro comercial minimo da conta."
-        badge="clientId obrigatorio"
+        badge="cliente obrigatorio"
         hint="Esse painel ajuda a preparar onboarding, status da conta e contato financeiro sem virar um modulo de cobranca ainda."
       />
     );

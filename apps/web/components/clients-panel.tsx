@@ -160,7 +160,7 @@ export function ClientsPanel({
         title="Clientes da plataforma"
         description="A gestao de clientes fica disponivel apenas para o administrador global da plataforma."
         badge={currentUser?.role ?? 'sem sessao'}
-        hint="Use o login global para criar clientes e trocar rapidamente o tenant em foco."
+        hint="Use o login global para criar clientes e trocar rapidamente a conta em foco."
       />
     );
   }
@@ -192,7 +192,7 @@ export function ClientsPanel({
           </p>
           <h2 className="mt-1 text-xl font-semibold">Clientes</h2>
           <p className="mt-2 max-w-2xl text-sm text-muted">
-            Crie novos tenants e troque o foco operacional do dashboard sem sair da tela principal.
+            Crie novos clientes e troque o foco operacional do dashboard sem sair da tela principal.
           </p>
         </div>
         <Badge>
@@ -222,7 +222,7 @@ export function ClientsPanel({
             </div>
 
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
-              <p className="text-xs uppercase tracking-[0.16em] text-muted">clientId</p>
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">Codigo interno</p>
               <p className="mt-2 text-sm font-medium text-ink">cuidare-vacinas</p>
               <p className="mt-1 text-xs text-muted">
                 Identificador tecnico unico e estavel.
@@ -248,16 +248,16 @@ export function ClientsPanel({
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
               <div className="flex items-center gap-2">
                 <MapPinned className="h-4 w-4 text-accent" />
-                <p className="text-sm font-medium text-ink">1. Criar o tenant</p>
+                <p className="text-sm font-medium text-ink">1. Criar o cliente</p>
               </div>
               <p className="mt-2 text-xs leading-6 text-muted">
-                Cadastre o cliente com identificador tecnico consistente e dados
+                Cadastre o cliente com codigo interno consistente e dados
                 minimos do responsavel.
               </p>
             </div>
 
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
-              <p className="text-sm font-medium text-ink">2. Abrir o dashboard do tenant</p>
+              <p className="text-sm font-medium text-ink">2. Abrir o dashboard do cliente</p>
               <p className="mt-2 text-xs leading-6 text-muted">
                 Use o botao de selecao para entrar na conta logo apos o cadastro
                 e revisar a narrativa comercial da tela principal.
@@ -267,7 +267,7 @@ export function ClientsPanel({
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
               <p className="text-sm font-medium text-ink">3. Estruturar o primeiro device</p>
               <p className="mt-2 text-xs leading-6 text-muted">
-                Depois do tenant criado, avance para cadastro do equipamento,
+                Depois do cliente criado, avance para cadastro do equipamento,
                 regra de alerta e simulacao do fluxo real.
               </p>
             </div>
