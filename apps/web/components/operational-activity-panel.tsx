@@ -2,7 +2,13 @@
 
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { AlertTriangle, BellRing, RadioTower, ToggleRight } from 'lucide-react';
+import {
+  Activity,
+  AlertTriangle,
+  BellRing,
+  RadioTower,
+  ToggleRight,
+} from 'lucide-react';
 import { useRecentActuationCommands } from '@/hooks/use-recent-actuation-commands';
 import { ActuationCommand } from '@/types/actuator';
 import { ClientModule } from '@/types/client-module';
@@ -63,6 +69,8 @@ export function OperationalActivityPanel({
     )
     .slice(0, 6);
   const commands = data ?? [];
+  const healthyDevicesCount = Math.max(0, devices.length - devicesWithIssues.length);
+  const hasCriticalIssues = devicesWithIssues.length > 0;
 
   return (
     <Panel className="mt-6 p-4 sm:p-5">
@@ -79,8 +87,58 @@ export function OperationalActivityPanel({
         </div>
         <Badge>
           <RadioTower className="h-3.5 w-3.5 text-accent" />
-          {clientId ? `tenant ${clientId}` : 'visao geral'}
+          {clientId ? `cliente ${clientId}` : 'visao geral'}
         </Badge>
+      </div>
+
+      <div className="mb-4 grid gap-3 lg:grid-cols-3">
+        <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+          <p className="text-xs uppercase tracking-[0.16em] text-muted">
+            Estado geral
+          </p>
+          <div className="mt-2 flex items-center gap-2">
+            {hasCriticalIssues ? (
+              <AlertTriangle className="h-4 w-4 text-bad" />
+            ) : (
+              <Activity className="h-4 w-4 text-ok" />
+            )}
+            <p
+              className={
+                hasCriticalIssues
+                  ? 'text-sm font-semibold text-bad'
+                  : 'text-sm font-semibold text-ok'
+              }
+            >
+              {hasCriticalIssues ? 'Exige atencao' : 'Operacao estavel'}
+            </p>
+          </div>
+          <p className="mt-1 text-xs text-muted">
+            {hasCriticalIssues
+              ? 'Existem ocorrencias de temperatura ou conectividade para revisar.'
+              : 'Nenhum ponto critico visivel neste recorte operacional.'}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+          <p className="text-xs uppercase tracking-[0.16em] text-muted">
+            Equipamentos saudaveis
+          </p>
+          <p className="mt-2 text-lg font-semibold text-ink">{healthyDevicesCount}</p>
+          <p className="mt-1 text-xs text-muted">
+            Device(s) sem alerta visual no resumo atual.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+          <p className="text-xs uppercase tracking-[0.16em] text-muted">
+            Leitura da visita
+          </p>
+          <p className="mt-2 text-xs leading-6 text-muted">
+            Use este bloco para responder rapidamente se a conta parece pronta
+            para demonstracao ou se ainda existe pendencia visivel antes da
+            apresentacao ao cliente.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
@@ -137,8 +195,8 @@ export function OperationalActivityPanel({
             </div>
           ) : (
             <Feedback>
-              Nenhuma ocorrencia critica visivel agora. Isso ajuda bastante em
-              demonstracao e onboarding do modulo de temperatura.
+              Nenhuma ocorrencia critica visivel agora. Este e o melhor cenario
+              para apresentar uma operacao estavel antes de simular um evento.
             </Feedback>
           )}
         </div>
