@@ -277,6 +277,11 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - preparacao da plataforma
   - simulacao e alinhamento operacional
   - instalacao tecnica e aceite
+- o laboratorio do dashboard agora tambem orienta demonstracao guiada por fases
+  - entrar no tenant
+  - mostrar operacao normal
+  - simular evento real
+  - fechar com proximo passo de implantacao
 - proximo passo recomendado:
   - executar os estudos de caso em conjunto e registrar bugs, riscos operacionais e ajustes de UX
 

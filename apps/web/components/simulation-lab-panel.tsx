@@ -1,7 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, TerminalSquare, WandSparkles } from 'lucide-react';
+import {
+  Copy,
+  Eye,
+  MapPinned,
+  PlayCircle,
+  ShieldAlert,
+  TerminalSquare,
+  WandSparkles,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Feedback } from '@/components/ui/feedback';
@@ -18,10 +26,44 @@ type Scenario = {
   badge?: string;
 };
 
+type DemoStep = {
+  title: string;
+  description: string;
+  icon: typeof MapPinned;
+};
+
 export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
 
   const suffix = clientId ? ` --client-id ${clientId}` : '';
+  const demoTenant = clientId ?? 'tenant-demo';
+
+  const demoSteps: DemoStep[] = [
+    {
+      title: '1. Entrar no tenant certo',
+      description:
+        `Comece filtrando o dashboard para o tenant atual (${demoTenant}) e revise o estado comercial da conta.`,
+      icon: MapPinned,
+    },
+    {
+      title: '2. Mostrar operacao normal',
+      description:
+        'Use o cenario baseline para preencher historico, deixar devices online e apresentar a operacao em estado saudavel.',
+      icon: Eye,
+    },
+    {
+      title: '3. Simular evento real',
+      description:
+        'Rode um pre-alerta ou um cenario critico para mostrar como o dashboard evidencia risco e como a equipe reagiria.',
+      icon: ShieldAlert,
+    },
+    {
+      title: '4. Fechar com proximo passo',
+      description:
+        'Depois da simulacao, alinhe o que ja esta pronto na plataforma e o que fica para a instalacao fisica quando o hardware chegar.',
+      icon: PlayCircle,
+    },
+  ];
 
   const scenarios: Scenario[] = [
     {
@@ -130,6 +172,73 @@ export function SimulationLabPanel({ clientId }: SimulationLabPanelProps) {
           <WandSparkles className="h-3.5 w-3.5 text-[hsl(var(--accent-2))]" />
           Pronto para terminal
         </Badge>
+      </div>
+
+      <div className="mb-5 grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+        <Panel variant="strong" className="p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <PlayCircle className="h-4 w-4 text-accent" />
+            <h3 className="text-base font-semibold">Roteiro de demonstracao</h3>
+          </div>
+          <p className="max-w-2xl text-sm text-muted">
+            Use este fluxo quando quiser simular a chegada a um cliente real,
+            navegar pelas telas e observar onde a UI ainda precisa evoluir.
+          </p>
+
+          <div className="mt-4 space-y-3">
+            {demoSteps.map((step) => {
+              const Icon = step.icon;
+
+              return (
+                <div
+                  key={step.title}
+                  className="rounded-2xl border border-line/70 bg-bg/30 p-3"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-2xl border border-line/70 bg-card/40 p-2">
+                      <Icon className="h-4 w-4 text-[hsl(var(--accent-2))]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-ink">{step.title}</p>
+                      <p className="mt-1 text-xs leading-6 text-muted">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Panel>
+
+        <Panel className="p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <WandSparkles className="h-4 w-4 text-[hsl(var(--accent-2))]" />
+            <h3 className="text-base font-semibold">Leitura esperada da visita</h3>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">
+                O que observar
+              </p>
+              <p className="mt-2 text-sm text-muted">
+                Se a tela explica rapidamente o estado da conta, se o historico
+                faz sentido para um cliente novo e se os alertas ficam claros sem
+                depender de explicacao tecnica.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">
+                O que anotar
+              </p>
+              <p className="mt-2 text-sm text-muted">
+                Onde a copy confunde, quais blocos ajudam na demonstracao, o que
+                parece tecnico demais e quais passos do onboarding ainda pedem
+                apoio manual.
+              </p>
+            </div>
+          </div>
+        </Panel>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
