@@ -394,14 +394,14 @@ function DashboardContent() {
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <ConfirmDialog
         open={Boolean(pendingDeleteDeviceId)}
-        title="Excluir device?"
+        title="Excluir equipamento?"
         description={
           <>
-            O device <strong>{pendingDeleteDeviceId}</strong> sera removido do
+            O equipamento <strong>{pendingDeleteDeviceId}</strong> sera removido do
             dashboard e do historico.
           </>
         }
-        confirmLabel="Excluir device"
+        confirmLabel="Excluir equipamento"
         loading={deleteMutation.isPending}
         onCancel={() => setPendingDeleteDeviceId(null)}
         onConfirm={() => {
@@ -435,7 +435,7 @@ function DashboardContent() {
               Plataforma de monitoramento
             </p>
             <h1 className="max-w-2xl font-[var(--font-display)] text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-              Dashboard de dispositivos com telemetria, alertas e historico
+              Painel de monitoramento com telemetria, alertas e historico
               operacional em uma unica camada.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-muted sm:text-base">
@@ -447,7 +447,7 @@ function DashboardContent() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Badge>
                 <Boxes className="h-3.5 w-3.5 text-accent" />
-                {devices.length} devices rastreados
+                {devices.length} equipamentos rastreados
               </Badge>
               <Badge>
                 <ChartNoAxesCombined className="h-3.5 w-3.5 text-[hsl(var(--accent-2))]" />
@@ -535,7 +535,7 @@ function DashboardContent() {
             </p>
             <h2 className="mt-1 text-xl font-semibold">Resumo operacional</h2>
             <p className="mt-2 max-w-2xl text-sm text-muted">
-              Visualize o estado atual da frota, ajuste configuracoes do device e
+              Visualize o estado atual da operacao, ajuste configuracoes do equipamento e
               abra o historico sem sair da tela principal.
             </p>
           </div>
@@ -563,7 +563,7 @@ function DashboardContent() {
                 variant="primary"
                 className="px-4 py-2.5"
               >
-                {formMode === 'create' ? 'Fechar cadastro' : 'Novo device'}
+                {formMode === 'create' ? 'Fechar cadastro' : 'Novo equipamento'}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             ) : null}
@@ -631,7 +631,7 @@ function DashboardContent() {
             {createMutation.error?.message ??
               updateMutation.error?.message ??
               deleteMutation.error?.message ??
-              'Erro ao salvar alteracoes do device. Verifique os dados e tente novamente.'}
+              'Erro ao salvar alteracoes do equipamento. Verifique os dados e tente novamente.'}
           </Feedback>
         ) : null}
 
@@ -654,7 +654,7 @@ function DashboardContent() {
               <DataTable>
                 <thead>
                   <tr>
-                    <th>Device</th>
+                    <th>Equipamento</th>
                     <th>Status</th>
                     <th>Temperatura</th>
                     <th>Faixa</th>
@@ -815,7 +815,7 @@ function DashboardContent() {
               },
               {
                 title: 'Mostrar alerta e resposta operacional',
-                description: 'Depois do primeiro device, configure a regra de alerta e simule um evento para validar a resposta da conta.',
+                description: 'Depois do primeiro equipamento, configure a regra de alerta e simule um evento para validar a resposta da conta.',
               },
             ]}
             primaryActionLabel={canCreateDevices ? 'Cadastrar primeiro equipamento' : undefined}
@@ -856,9 +856,9 @@ function DashboardContent() {
         <div className="mt-6">
           <AccessNotice
             title="Modulo temperatura indisponivel"
-            description="Este cliente nao contratou o modulo de temperatura, por isso devices, leituras e regras ficam bloqueados nesta conta."
+            description="Este cliente nao contratou o modulo de temperatura, por isso equipamentos, leituras e regras ficam bloqueados nesta conta."
             badge="nao contratado"
-            hint="Habilite o modulo no painel de contratacao para liberar devices, historico e alertas."
+            hint="Habilite o modulo no painel de contratacao para liberar equipamentos, historico e alertas."
           />
         </div>
       ) : null}

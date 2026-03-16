@@ -124,7 +124,7 @@ export function DeviceHistoryPanel({
       {isLoading ? <Feedback>Carregando historico...</Feedback> : null}
       {isError && points.length === 0 ? (
         <Feedback variant="danger">
-          Erro ao carregar historico do device.
+          Erro ao carregar historico do equipamento.
         </Feedback>
       ) : null}
       {isError && points.length > 0 ? (
@@ -136,7 +136,7 @@ export function DeviceHistoryPanel({
 
       {!isLoading && !isError && points.length === 0 ? (
         <Feedback>
-          Sem dados de temperatura para este device.
+          Sem dados de temperatura para este equipamento.
         </Feedback>
       ) : null}
 

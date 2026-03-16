@@ -263,10 +263,10 @@ export function AlertRulesPanel({
 
             <div>
               <label className="mb-1 block text-xs text-muted">
-                Device (opcional)
+                Equipamento (opcional)
               </label>
               <Select {...register('deviceId')}>
-                <option value="">Todos os devices do cliente</option>
+                <option value="">Todos os equipamentos do cliente</option>
                 {devices.map((device) => (
                   <option key={device.id} value={device.id}>
                     {device.name ?? device.id}
@@ -381,7 +381,7 @@ export function AlertRulesPanel({
             <thead>
               <tr>
                 <th>Sensor</th>
-                <th>Device</th>
+                <th>Equipamento</th>
                 <th>Limites</th>
                 <th>Cooldown</th>
                 <th>Tolerancia</th>
@@ -458,11 +458,11 @@ export function AlertRulesPanel({
       devices.length === 0 ? (
         <SetupGuideCard
           eyebrow="Regras de alerta"
-          title="Cadastre um device antes da primeira regra"
+          title="Cadastre um equipamento antes da primeira regra"
           description="As regras ficam mais claras quando voce ja tem pelo menos um equipamento monitorado para vincular limites e historico."
           steps={[
             {
-              title: 'Cadastrar o primeiro device',
+              title: 'Cadastrar o primeiro equipamento',
               description: 'Crie um equipamento com faixa minima e maxima para habilitar monitoramento.',
             },
             {
@@ -474,7 +474,7 @@ export function AlertRulesPanel({
               description: 'Depois disso, configure cooldown e tolerancia do alerta.',
             },
           ]}
-          primaryActionLabel={onCreateDevice ? 'Cadastrar primeiro device' : undefined}
+          primaryActionLabel={onCreateDevice ? 'Cadastrar primeiro equipamento' : undefined}
           onPrimaryAction={onCreateDevice}
           secondaryHref="/lab"
           secondaryLabel="Abrir laboratorio"

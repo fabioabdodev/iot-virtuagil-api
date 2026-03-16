@@ -182,10 +182,10 @@ export function CommercialReadinessPanel({
 
   const nextSteps = [
     !temperatureEnabled && 'Habilitar o modulo temperatura para abrir a oferta principal de monitoramento.',
-    temperatureEnabled && devices.length === 0 && 'Cadastrar o primeiro device para liberar historico, online/offline e leitura atual.',
+    temperatureEnabled && devices.length === 0 && 'Cadastrar o primeiro equipamento para liberar historico, online/offline e leitura atual.',
     temperatureEnabled && devices.length > 0 && alertRules.length === 0 && 'Criar ao menos uma regra de alerta para demonstrar valor operacional logo no onboarding.',
     actuationEnabled && actuators.length === 0 && 'Cadastrar o primeiro atuador para provar o fluxo de comando e historico do modulo de acionamento.',
-    offlineDevices > 0 && 'Regularizar devices offline antes de usar esta conta como demonstracao comercial.',
+    offlineDevices > 0 && 'Regularizar equipamentos offline antes de usar esta conta como demonstracao comercial.',
   ].filter(Boolean) as string[];
 
   return (
@@ -197,7 +197,7 @@ export function CommercialReadinessPanel({
           </p>
           <h2 className="mt-1 text-xl font-semibold">Conta pronta para demonstracao</h2>
           <p className="mt-2 max-w-3xl text-sm text-muted">
-            Este bloco traduz o estado tecnico da conta em narrativa comercial:
+            Este bloco traduz o estado da conta em narrativa comercial:
             contratacao, readiness e o que ainda falta para vender ou implantar com seguranca.
           </p>
         </div>
@@ -229,7 +229,7 @@ export function CommercialReadinessPanel({
             </div>
             <p className="mt-3 text-3xl font-semibold text-ink">{readinessScore}%</p>
             <p className="mt-2 text-sm text-muted">
-              {enabledModules} modulo(s) habilitado(s), {devices.length} device(s),
+              {enabledModules} modulo(s) habilitado(s), {devices.length} equipamento(s),
               {' '}
               {alertRules.length} regra(s) e {actuators.length} atuador(es).
             </p>
@@ -267,7 +267,7 @@ export function CommercialReadinessPanel({
             </p>
             <p className="mt-2 text-sm text-muted">
               {temperatureEnabled
-                ? `${devices.length} device(s) e ${alertRules.length} regra(s) configurada(s).`
+                ? `${devices.length} equipamento(s) e ${alertRules.length} regra(s) configurada(s).`
                 : 'Habilite para oferecer monitoramento, historico e alertas.'}
             </p>
           </div>

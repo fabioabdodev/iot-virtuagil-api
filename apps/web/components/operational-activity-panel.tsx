@@ -125,7 +125,7 @@ export function OperationalActivityPanel({
           </p>
           <p className="mt-2 text-lg font-semibold text-ink">{healthyDevicesCount}</p>
           <p className="mt-1 text-xs text-muted">
-            Device(s) sem alerta visual no resumo atual.
+            Equipamento(s) sem alerta visual no resumo atual.
           </p>
         </div>
 
