@@ -1,6 +1,6 @@
 # Handoff Atual
 
-Data de referencia: 2026-03-15
+Data de referencia: 2026-03-16
 
 ## Direcao do produto
 
@@ -272,6 +272,31 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - `docker image prune -a` reduziu o uso total do disco de `103G` para `26G`
   - proximas investigacoes de disco devem comecar por imagens Docker antigas de deploy
   - `ghcr.io/fabioabdodev/iot-virtuagil-api/*`
+- em `16/03/2026` a producao foi revalidada apos ajustes operacionais no Portainer:
+  - `update_config.order` ficou em `stop-first` para `api` e `web`
+  - `/health` confirmou `status: ok`
+  - `release` foi alinhado para `latest`
+  - `buildTime` foi alinhado manualmente no deploy para refletir a publicacao atual
+- em `16/03/2026` a direcao de UX guiada por estudo de caso foi consolidada no dashboard:
+  - linguagem da UI ficou menos tecnica e mais orientada a cliente
+  - `tenant` deixou de aparecer como copy principal
+  - `clientId` passou a aparecer como `codigo interno` quando necessario
+  - `device/devices` foram traduzidos para `equipamento/equipamentos` nos principais fluxos visiveis
+  - partes de `acionamento` passaram a usar copy mais proxima de operacao real, como `ponto de acionamento` e `recurso`
+- em `16/03/2026` essa direcao tambem foi registrada para proximos agentes:
+  - novos modulos devem nascer com linguagem orientada ao cliente
+  - evitar copiar termos internos de arquitetura para a interface
+  - em VPS com muitos deploys, investigar primeiro imagens Docker antigas antes de suspeitar de Git ou banco
+- em `16/03/2026` foram publicados no `main` os blocos locais desta rodada:
+  - refinamento do painel de atividade operacional
+  - limpeza de linguagem tecnica no dashboard
+  - onboarding guiado de cliente, equipamento e regra
+  - melhoria de copy no laboratorio, auditoria, historico, acionamento e estados vazios
+  - registro operacional sobre limpeza de imagens Docker na VPS
+- ponto de retomada recomendado para o proximo chat:
+  - continuar os estudos de caso em `estudos de caso/`
+  - percorrer a UI como se o time tivesse chegado a um cliente real
+  - registrar bugs, ajustes de copy, friccoes de onboarding e possiveis melhorias visuais por tela
 - a API nova tambem falhou ao subir com:
   - `PrismaClientInitializationError: Prisma Client could not locate the Query Engine for runtime "debian-openssl-3.0.x"`
 - em `16/03/2026` o `stack.prod.yml` foi ajustado para usar `update_config.order = stop-first` em `api` e `web`
