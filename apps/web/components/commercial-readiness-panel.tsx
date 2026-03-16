@@ -52,10 +52,10 @@ function determineJourneyStage(options: {
     return {
       title: 'Contratacao e escopo',
       description:
-        'Esta conta ainda precisa habilitar o modulo principal de temperatura antes de seguir para onboarding e simulacao.',
+        'Esta conta ainda precisa habilitar o recurso principal de temperatura antes de seguir para onboarding e simulacao.',
       checklist: [
         'Definir escopo inicial por equipamento critico',
-        'Confirmar modulo contratado e responsaveis',
+        'Confirmar recurso contratado e responsaveis',
         'Liberar a conta para setup operacional',
       ],
     };
@@ -146,10 +146,10 @@ export function CommercialReadinessPanel({
         <p className="text-xs uppercase tracking-[0.18em] text-muted">
           Prontidao comercial
         </p>
-        <h2 className="mt-1 text-xl font-semibold">Conta e modulos</h2>
+        <h2 className="mt-1 text-xl font-semibold">Conta e recursos</h2>
         <p className="mt-2 max-w-2xl text-sm text-muted">
           Escolha um cliente para transformar o painel em narrativa comercial:
-          status da conta, modulos contratados e nivel de implantacao.
+          status da conta, recursos contratados e nivel de implantacao.
         </p>
       </Panel>
     );
@@ -181,10 +181,10 @@ export function CommercialReadinessPanel({
   );
 
   const nextSteps = [
-    !temperatureEnabled && 'Habilitar o modulo temperatura para abrir a oferta principal de monitoramento.',
+    !temperatureEnabled && 'Habilitar o recurso de temperatura para abrir a oferta principal de monitoramento.',
     temperatureEnabled && devices.length === 0 && 'Cadastrar o primeiro equipamento para liberar historico, online/offline e leitura atual.',
     temperatureEnabled && devices.length > 0 && alertRules.length === 0 && 'Criar ao menos uma regra de alerta para demonstrar valor operacional logo no onboarding.',
-    actuationEnabled && actuators.length === 0 && 'Cadastrar o primeiro atuador para provar o fluxo de comando e historico do modulo de acionamento.',
+    actuationEnabled && actuators.length === 0 && 'Cadastrar o primeiro ponto de acionamento para provar o fluxo de comando e historico do recurso de acionamento.',
     offlineDevices > 0 && 'Regularizar equipamentos offline antes de usar esta conta como demonstracao comercial.',
   ].filter(Boolean) as string[];
 
@@ -198,7 +198,7 @@ export function CommercialReadinessPanel({
           <h2 className="mt-1 text-xl font-semibold">Conta pronta para demonstracao</h2>
           <p className="mt-2 max-w-3xl text-sm text-muted">
             Este bloco traduz o estado da conta em narrativa comercial:
-            contratacao, readiness e o que ainda falta para vender ou implantar com seguranca.
+            contratacao, prontidao e o que ainda falta para vender ou implantar com seguranca.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -229,9 +229,9 @@ export function CommercialReadinessPanel({
             </div>
             <p className="mt-3 text-3xl font-semibold text-ink">{readinessScore}%</p>
             <p className="mt-2 text-sm text-muted">
-              {enabledModules} modulo(s) habilitado(s), {devices.length} equipamento(s),
+              {enabledModules} recurso(s) habilitado(s), {devices.length} equipamento(s),
               {' '}
-              {alertRules.length} regra(s) e {actuators.length} atuador(es).
+              {alertRules.length} regra(s) e {actuators.length} ponto(s) de acionamento.
             </p>
           </div>
 
@@ -258,7 +258,7 @@ export function CommercialReadinessPanel({
           <div className="rounded-[24px] border border-line/70 bg-bg/30 p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
-                Modulo temperatura
+                Recurso temperatura
               </p>
               <Siren className="h-4 w-4 text-ok" />
             </div>
@@ -275,7 +275,7 @@ export function CommercialReadinessPanel({
           <div className="rounded-[24px] border border-line/70 bg-bg/30 p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
-                Modulo acionamento
+                Recurso acionamento
               </p>
               <ToggleRight className="h-4 w-4 text-[hsl(var(--accent-2))]" />
             </div>
@@ -284,7 +284,7 @@ export function CommercialReadinessPanel({
             </p>
             <p className="mt-2 text-sm text-muted">
               {actuationEnabled
-                ? `${actuators.length} atuador(es) pronto(s) para comando e historico.`
+                ? `${actuators.length} ponto(s) de acionamento pronto(s) para comando e historico.`
                 : 'Habilite para vender controle manual assistido pela plataforma.'}
             </p>
           </div>

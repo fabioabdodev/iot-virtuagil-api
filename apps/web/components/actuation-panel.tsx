@@ -180,14 +180,14 @@ export function ActuationPanel({
     <Panel className="animate-fade-up p-5 [animation-delay:300ms]">
       <ConfirmDialog
         open={Boolean(pendingDeleteActuatorId)}
-        title="Excluir atuador?"
+        title="Excluir ponto de acionamento?"
         description={
           <>
-            O atuador <strong>{pendingDeleteActuatorId}</strong> sera removido do
-            modulo de acionamento.
+            O ponto de acionamento <strong>{pendingDeleteActuatorId}</strong> sera removido do
+            recurso de acionamento.
           </>
         }
-        confirmLabel="Excluir atuador"
+        confirmLabel="Excluir ponto"
         loading={deleteMutation.isPending}
         onCancel={() => setPendingDeleteActuatorId(null)}
         onConfirm={() => {
@@ -213,12 +213,12 @@ export function ActuationPanel({
 
         <Badge>
           <Power className="h-3.5 w-3.5 text-[hsl(var(--accent-2))]" />
-          Modulo inicial
+          Recurso inicial
         </Badge>
       </div>
 
       {!clientId ? (
-        <Feedback>Escolha um cliente para gerenciar atuadores.</Feedback>
+        <Feedback>Escolha um cliente para gerenciar pontos de acionamento.</Feedback>
       ) : (
         <>
           {canManageStructure ? (
@@ -255,7 +255,7 @@ export function ActuationPanel({
               >
               <div>
                 <label className="mb-1 block text-xs text-muted">
-                  Id do atuador
+                  Codigo do acionamento
                 </label>
                 <Input
                   {...register('id')}
@@ -277,7 +277,7 @@ export function ActuationPanel({
 
               <div>
                 <label className="mb-1 block text-xs text-muted">
-                  Device (opcional)
+                  Equipamento (opcional)
                 </label>
                 <Select {...register('deviceId')}>
                   <option value="">Sem equipamento vinculado</option>
@@ -312,7 +312,7 @@ export function ActuationPanel({
                         : 'Salvar alteracoes'
                       : createMutation.isPending
                         ? 'Criando...'
-                        : 'Cadastrar atuador'}
+                        : 'Cadastrar ponto'}
                   </Button>
                   {formMode === 'edit' ? (
                     <Button
@@ -341,7 +341,7 @@ export function ActuationPanel({
             <Feedback variant="danger" className="mb-3">
               {createMutation.error?.message ??
                 updateMutation.error?.message ??
-                'Falha ao salvar atuador.'}
+                'Falha ao salvar ponto de acionamento.'}
             </Feedback>
           ) : null}
           {commandMutation.isError ? (
@@ -351,14 +351,14 @@ export function ActuationPanel({
           ) : null}
           {deleteMutation.isError ? (
             <Feedback variant="danger" className="mb-3">
-              {deleteMutation.error?.message ?? 'Falha ao remover atuador.'}
+              {deleteMutation.error?.message ?? 'Falha ao remover ponto de acionamento.'}
             </Feedback>
           ) : null}
 
-          {isLoading ? <Feedback>Carregando atuadores...</Feedback> : null}
+          {isLoading ? <Feedback>Carregando pontos de acionamento...</Feedback> : null}
           {isError && actuators.length === 0 ? (
             <Feedback variant="danger">
-              {error?.message ?? 'Erro ao carregar atuadores.'}
+              {error?.message ?? 'Erro ao carregar pontos de acionamento.'}
             </Feedback>
           ) : null}
 
@@ -368,7 +368,7 @@ export function ActuationPanel({
                 <DataTable>
                   <thead>
                     <tr>
-                      <th>Atuador</th>
+                      <th>Acionamento</th>
                       <th>Estado</th>
                       <th>Vinculo</th>
                       <th>Ultimo comando</th>
@@ -590,18 +590,18 @@ export function ActuationPanel({
           {!isLoading && !isError && actuators.length === 0 && canManageStructure ? (
             <SetupGuideCard
               eyebrow="Acionamento"
-              title="Configure o primeiro atuador deste cliente"
+              title="Configure o primeiro ponto de acionamento deste cliente"
               description="Mesmo sem hardware fisico, voce ja pode cadastrar a carga, emitir comandos on/off e validar o historico operacional pelo painel."
               steps={[
                 {
-                  title: 'Cadastrar o atuador',
+                  title: 'Cadastrar o ponto de acionamento',
                   description: 'Use um identificador como `sauna_main` ou `exaustor_01`.',
                 },
                 {
                   title: devices.length > 0 ? 'Vincular a um equipamento' : 'Opcionalmente vincular a um equipamento',
                   description: devices.length > 0
                     ? 'Escolha um equipamento da lista para contextualizar a carga dentro do cliente.'
-                    : 'Quando houver equipamentos cadastrados, voce podera relacionar o atuador ao item monitorado.',
+                    : 'Quando houver equipamentos cadastrados, voce podera relacionar o ponto ao item monitorado.',
                 },
                 {
                   title: 'Emitir comandos pelo painel',

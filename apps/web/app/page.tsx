@@ -833,7 +833,7 @@ function DashboardContent() {
         ) : null}
         {!isLoadingClientModules && !temperatureEnabled ? (
           <Feedback>
-            O modulo `temperatura` nao esta habilitado para este cliente.
+            O recurso de `temperatura` nao esta habilitado para este cliente.
           </Feedback>
         ) : null}
       </Panel>
@@ -855,10 +855,10 @@ function DashboardContent() {
       ) : scopedClientId ? (
         <div className="mt-6">
           <AccessNotice
-            title="Modulo temperatura indisponivel"
-            description="Este cliente nao contratou o modulo de temperatura, por isso equipamentos, leituras e regras ficam bloqueados nesta conta."
+            title="Temperatura indisponivel"
+            description="Este cliente nao contratou o recurso de temperatura, por isso equipamentos, leituras e regras ficam bloqueados nesta conta."
             badge="nao contratado"
-            hint="Habilite o modulo no painel de contratacao para liberar equipamentos, historico e alertas."
+            hint="Habilite o recurso no painel de contratacao para liberar equipamentos, historico e alertas."
           />
         </div>
       ) : null}
@@ -881,10 +881,10 @@ function DashboardContent() {
       ) : (
         <div className="mt-6">
           <AccessNotice
-            title="Modulo acionamento indisponivel"
-            description="O cliente atual ainda nao contratou o modulo de acionamento, entao o controle manual de cargas permanece bloqueado."
+            title="Acionamento indisponivel"
+            description="O cliente atual ainda nao contratou o recurso de acionamento, entao o controle manual de cargas permanece bloqueado."
             badge="nao contratado"
-            hint="Quando o modulo for habilitado, este bloco libera cadastro de atuadores, comandos e historico operacional."
+            hint="Quando o recurso for habilitado, este bloco libera cadastro de pontos de acionamento, comandos e historico operacional."
           />
         </div>
       )}

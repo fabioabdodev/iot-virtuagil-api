@@ -33,14 +33,14 @@ export function ClientModulesPanel({
   const mutation = useClientModuleMutations(clientId, authToken);
 
   if (!clientId) {
-    return <AccessNotice title="Modulos contratados" description="Selecione um cliente para consultar e ajustar os modulos habilitados na conta." badge="cliente obrigatorio" hint="A contratacao e gerenciada cliente a cliente, por isso esse painel precisa de uma conta em foco." />;
+    return <AccessNotice title="Recursos contratados" description="Selecione um cliente para consultar e ajustar os recursos habilitados na conta." badge="cliente obrigatorio" hint="A contratacao e gerenciada cliente a cliente, por isso esse painel precisa de uma conta em foco." />;
   }
 
   if (!canManage) {
     return (
       <AccessNotice
-        title="Modulos contratados"
-        description="A habilitacao de modulos contratados e uma acao administrativa, usada para controlar o que cada cliente pode operar."
+        title="Recursos contratados"
+        description="A habilitacao de recursos contratados e uma acao administrativa, usada para controlar o que cada cliente pode operar."
         badge={currentUser?.role ?? 'sem permissao'}
         tone="warning"
         hint={blockedReason ?? 'Entre com um usuario admin para alterar contratacao de temperatura e acionamento.'}
@@ -52,7 +52,7 @@ export function ClientModulesPanel({
     <Panel className="animate-fade-up p-5 [animation-delay:360ms]">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">Modulos do cliente</h2>
+          <h2 className="text-lg font-semibold">Recursos do cliente</h2>
           <p className="mt-1 text-sm text-muted">
             Habilite apenas o que foi contratado em cada operacao.
           </p>
@@ -65,14 +65,14 @@ export function ClientModulesPanel({
 
       {mutation.isError ? (
         <Feedback variant="danger" className="mb-3">
-          {mutation.error?.message ?? 'Falha ao atualizar modulos do cliente.'}
+          {mutation.error?.message ?? 'Falha ao atualizar recursos do cliente.'}
         </Feedback>
       ) : null}
 
-      {isLoading ? <Feedback>Carregando modulos...</Feedback> : null}
+      {isLoading ? <Feedback>Carregando recursos...</Feedback> : null}
       {isError ? (
         <Feedback variant="danger">
-          {error?.message ?? 'Erro ao carregar modulos do cliente.'}
+          {error?.message ?? 'Erro ao carregar recursos do cliente.'}
         </Feedback>
       ) : null}
 
