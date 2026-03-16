@@ -802,23 +802,23 @@ function DashboardContent() {
         {!isLoading && !isError && temperatureEnabled && devices.length === 0 ? (
           <SetupGuideCard
             eyebrow="Primeiros passos"
-            title="Seu modulo de temperatura ainda nao tem devices"
-            description="Este cliente ja pode comecar a operar. O proximo passo e cadastrar pelo menos um equipamento e movimentar leituras para validar historico, offline e alertas."
+            title="Este cliente ainda nao tem o primeiro equipamento monitorado"
+            description="Para iniciar a simulacao de implantacao, cadastre o equipamento principal, defina a faixa de temperatura e depois movimente leituras para mostrar historico, online/offline e alertas."
             steps={[
               {
-                title: 'Cadastrar o primeiro device',
-                description: 'Informe um ID unico, um nome amigavel e a faixa minima e maxima de temperatura.',
+                title: 'Cadastrar o equipamento principal',
+                description: 'Use um ID tecnico simples, um nome legivel e um local claro para a equipe do cliente.',
               },
               {
-                title: 'Enviar leituras ou usar o laboratorio',
-                description: 'Movimente dados com simulacao para ver online, offline, historico e destaque visual no dashboard.',
+                title: 'Simular operacao normal',
+                description: 'Movimente leituras pelo laboratorio para encher historico e mostrar o equipamento online em estado saudavel.',
               },
               {
-                title: 'Criar regra de alerta',
-                description: 'Depois do primeiro device, configure cooldown e tolerancia para operacao real.',
+                title: 'Mostrar alerta e resposta operacional',
+                description: 'Depois do primeiro device, configure a regra de alerta e simule um evento para validar a resposta da conta.',
               },
             ]}
-            primaryActionLabel={canCreateDevices ? 'Cadastrar primeiro device' : undefined}
+            primaryActionLabel={canCreateDevices ? 'Cadastrar primeiro equipamento' : undefined}
             onPrimaryAction={
               canCreateDevices
                 ? () => {
