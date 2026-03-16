@@ -350,7 +350,7 @@ export function UsersPanel({
       ) : null}
 
       {!isLoading && !isError && users.length === 0 ? (
-        <Feedback>Sem usuarios cadastrados para este clientId.</Feedback>
+        <Feedback>Sem usuarios cadastrados para este cliente.</Feedback>
       ) : null}
     </Panel>
   );

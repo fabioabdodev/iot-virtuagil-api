@@ -65,11 +65,11 @@ function determineJourneyStage(options: {
     return {
       title: 'Preparacao da plataforma',
       description:
-        'A conta ja pode ser preparada sem hardware. O foco agora e estruturar o tenant, o primeiro device e os dados operacionais basicos.',
+        'A conta ja pode ser preparada sem hardware. O foco agora e estruturar o cliente, o primeiro equipamento e os dados operacionais basicos.',
       checklist: [
-        'Cadastrar o equipamento principal no tenant',
+        'Cadastrar o equipamento principal no cliente',
         'Revisar nome, local e responsavel da conta',
-        'Deixar o tenant pronto para demonstracao guiada',
+        'Deixar o cliente pronto para demonstracao guiada',
       ],
     };
   }

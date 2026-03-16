@@ -209,7 +209,7 @@ export function DeviceForm({
 
           {allowStructureFields ? (
             <div>
-              <label className="mb-1 block text-xs text-muted">clientId</label>
+              <label className="mb-1 block text-xs text-muted">Codigo interno do cliente</label>
               <Input {...register('clientId')} placeholder="cliente_a" />
               {errors.clientId ? (
                 <p className="mt-1 text-xs text-bad">{errors.clientId.message}</p>
