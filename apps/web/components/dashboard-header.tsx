@@ -46,7 +46,7 @@ export function DashboardHeader({
               <Badge variant={isAuthenticated ? 'success' : 'neutral'}>
                 {isAuthenticated ? 'Sessao ativa' : 'Acesso local'}
               </Badge>
-              {scopedClientId ? <Badge>tenant: {scopedClientId}</Badge> : null}
+              {scopedClientId ? <Badge>cliente: {scopedClientId}</Badge> : null}
             </div>
           </div>
         </div>

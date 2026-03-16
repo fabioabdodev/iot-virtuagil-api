@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Building2,
+  CircleCheckBig,
   ChevronDown,
   Filter,
   Lightbulb,
@@ -514,11 +515,20 @@ export function ClientsPanel({
               </tr>
             </thead>
             <tbody>
-              {clients.map((client) => (
-                <tr key={client.id}>
+              {clients.map((client) => {
+                const isSelected = selectedClientId === client.id;
+
+                return (
+                <tr
+                  key={client.id}
+                  className={isSelected ? 'bg-ok/5' : undefined}
+                >
                   <td className="font-medium">
                     <div className="flex flex-col">
-                      <span>{client.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span>{client.name}</span>
+                        {isSelected ? <Badge variant="success">ativo</Badge> : null}
+                      </div>
                       <span className="text-xs text-muted">{client.id}</span>
                     </div>
                   </td>
@@ -535,8 +545,11 @@ export function ClientsPanel({
                     </div>
                   </td>
                   <td>
-                    {selectedClientId === client.id ? (
-                      <Badge>ativo no dashboard</Badge>
+                    {isSelected ? (
+                      <Badge variant="success">
+                        <CircleCheckBig className="h-3.5 w-3.5" />
+                        ativo no dashboard
+                      </Badge>
                     ) : (
                       <Button
                         variant="secondary"
@@ -561,7 +574,7 @@ export function ClientsPanel({
                     </Button>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </DataTable>
         </DataTableWrapper>
