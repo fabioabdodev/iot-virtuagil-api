@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { Bell, Building2, LayoutDashboard, LogOut, ShieldCheck, UserCircle2 } from 'lucide-react';
+import { LogOut, ShieldCheck, UserCircle2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { AuthUser } from '@/types/auth';
@@ -12,12 +11,6 @@ type DashboardHeaderProps = {
   isAuthenticated: boolean;
   onLogout: () => void;
 };
-
-const navItems = [
-  { href: '#resumo-operacional', label: 'Resumo', icon: LayoutDashboard },
-  { href: '#contas-modulos', label: 'Contas', icon: Building2 },
-  { href: '#auditoria', label: 'Auditoria', icon: Bell },
-] as const;
 
 export function DashboardHeader({
   currentUser,
@@ -52,22 +45,6 @@ export function DashboardHeader({
         </div>
 
         <div className="flex flex-col gap-3 lg:items-end">
-          <nav className="flex flex-wrap items-center gap-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-line/70 bg-card/50 px-3 py-2 text-xs font-medium text-muted transition hover:border-accent/40 hover:text-ink"
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-3 rounded-[20px] border border-line/70 bg-card/45 px-3 py-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,hsl(var(--accent))_0%,hsl(var(--accent-2))_100%)] text-sm font-bold text-slate-950">
