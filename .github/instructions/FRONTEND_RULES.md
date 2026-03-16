@@ -53,10 +53,30 @@ Entregar um dashboard moderno e util para operacao:
 
 - preferir componentes reutilizaveis
 - centralizar chamadas HTTP em `lib/`
-- formularios devem usar React Hook Form + Zod
+- preferir `React Hook Form + Zod` como padrao para formularios novos ou que estejam ficando mais complexos
+- evitar refatoracao ampla de todos os formularios de uma vez sem necessidade clara
+- priorizar migracao para `React Hook Form + Zod` em fluxos com:
+  - validacao mais rica
+  - regras condicionais
+  - mensagens de erro importantes para operacao
+  - risco maior de regressao por uso de muitos `useState`
 - graficos devem usar Recharts
 - feedback visual deve ser consistente
 - a UI deve ser responsiva em desktop e mobile
+
+## Direcao atual para formularios
+
+Direcao combinada neste momento:
+
+- manter formulários simples como estao quando nao houver ganho claro na troca
+- usar `React Hook Form + Zod` nos formularios novos
+- evoluir gradualmente os formularios mais importantes do dashboard para esse padrao
+
+Prioridade inicial sugerida:
+
+- `clients-panel.tsx`
+- `client-profile-panel.tsx`
+- formularios administrativos que ganharem mais campos, validacoes e regras condicionais
 
 ## Direcao visual
 

@@ -244,5 +244,9 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - `npm test -- --runInBand` ok com `12/12` suites e `42/42` testes
   - `npm run test:e2e -- --runInBand` ok com `14/14` suites e `50/50` testes
 - os testes de configuracao de ambiente foram alinhados ao requisito atual de `AUTH_SECRET`
+- direcao de frontend registrada para formularios:
+  - adotar `React Hook Form + Zod` como padrao progressivo
+  - evitar refatoracao geral sem necessidade
+  - priorizar esse padrao primeiro nos formularios de cliente e em fluxos com validacao mais rica
 - proximo passo recomendado:
   - executar os estudos de caso em conjunto e registrar bugs, riscos operacionais e ajustes de UX
