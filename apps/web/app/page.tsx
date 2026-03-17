@@ -40,6 +40,7 @@ import { Feedback } from '@/components/ui/feedback';
 import { Input } from '@/components/ui/input';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { AccessNotice } from '@/components/ui/access-notice';
+import { AccordionPanel } from '@/components/ui/accordion-panel';
 import { MetricCard } from '@/components/ui/metric-card';
 import { Panel } from '@/components/ui/panel';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
@@ -485,15 +486,25 @@ function DashboardContent() {
         </div>
       </Panel>
 
-      <ClientsPanel
-        authToken={authToken}
-        currentUser={user}
-        canManage={isPlatformAdmin}
-        selectedClientId={scopedClientId}
-        onSelectClient={focusClient}
-      />
+      <AccordionPanel
+        title="Clientes"
+        description="Escolha a conta em foco e cadastre novos clientes quando necessario."
+        className="mb-6"
+      >
+        <ClientsPanel
+          authToken={authToken}
+          currentUser={user}
+          canManage={isPlatformAdmin}
+          selectedClientId={scopedClientId}
+          onSelectClient={focusClient}
+        />
+      </AccordionPanel>
 
-      <div className="mt-6">
+      <AccordionPanel
+        title="Modulos do cliente"
+        description="Confira o que esta contratado antes de seguir para equipamentos e regras."
+        className="mb-6"
+      >
         <ClientModulesPanel
           clientId={scopedClientId}
           authToken={authToken}
@@ -505,7 +516,7 @@ function DashboardContent() {
               : 'Escolha um cliente para revisar e ajustar a contratacao de modulos.'
           }
         />
-      </div>
+      </AccordionPanel>
 
       <section id="resumo-operacional" className="mb-8 scroll-mt-28 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
@@ -545,15 +556,26 @@ function DashboardContent() {
         />
       </section>
 
-      <OperationalActivityPanel
-        clientId={scopedClientId}
-        client={selectedClient}
-        authToken={authToken}
-        devices={devices}
-        clientModules={clientModules}
-      />
+      <AccordionPanel
+        title="Atividade operacional"
+        description="Veja rapidamente o estado dos equipamentos e as ocorrencias recentes."
+        className="mt-6"
+      >
+        <OperationalActivityPanel
+          clientId={scopedClientId}
+          client={selectedClient}
+          authToken={authToken}
+          devices={devices}
+          clientModules={clientModules}
+        />
+      </AccordionPanel>
 
-      <Panel className="animate-fade-up p-4 [animation-delay:220ms] sm:p-5">
+      <AccordionPanel
+        title="Equipamentos"
+        description="Cadastre, revise e acompanhe os equipamentos da conta."
+        className="mt-6 animate-fade-up [animation-delay:220ms]"
+      >
+      <Panel className="p-4 sm:p-5 border-0 bg-transparent shadow-none">
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.18em] text-muted">
@@ -871,21 +893,27 @@ function DashboardContent() {
           </Feedback>
         ) : null}
       </Panel>
+      </AccordionPanel>
 
       {temperatureEnabled ? (
         <div id="regras-alerta" className="mt-6 scroll-mt-28">
-          <AlertRulesPanel
-            clientId={scopedClientId}
-            client={selectedClient}
-            authToken={authToken}
-            devices={devices}
-            canManageRules={canManageAlertRules}
-            blockedReason="Seu perfil pode monitorar as regras, mas a alteracao fica restrita a administradores."
-            onCreateDevice={() => {
-              setEditingDeviceId(null);
-              setFormMode('create');
-            }}
-          />
+          <AccordionPanel
+            title="Regras de alerta"
+            description="Defina como a conta reage a temperatura fora da faixa e outros eventos."
+          >
+            <AlertRulesPanel
+              clientId={scopedClientId}
+              client={selectedClient}
+              authToken={authToken}
+              devices={devices}
+              canManageRules={canManageAlertRules}
+              blockedReason="Seu perfil pode monitorar as regras, mas a alteracao fica restrita a administradores."
+              onCreateDevice={() => {
+                setEditingDeviceId(null);
+                setFormMode('create');
+              }}
+            />
+          </AccordionPanel>
         </div>
       ) : scopedClientId ? (
         <div className="mt-6">
@@ -898,35 +926,55 @@ function DashboardContent() {
         </div>
       ) : null}
 
-      <div id="contas-modulos" className="scroll-mt-28">
-        <CommercialReadinessPanel
-        clientId={scopedClientId}
-        authToken={authToken}
-        currentUser={user}
-        client={selectedClient}
-        devices={devices}
-        clientModules={clientModules}
-        />
-      </div>
+      <AccordionPanel
+        title="Prontidao comercial"
+        description="Veja o quadro geral da conta, contratacao e nivel de implantacao."
+        className="mt-6"
+        defaultOpen={false}
+      >
+        <div id="contas-modulos" className="scroll-mt-28">
+          <CommercialReadinessPanel
+          clientId={scopedClientId}
+          authToken={authToken}
+          currentUser={user}
+          client={selectedClient}
+          devices={devices}
+          clientModules={clientModules}
+          />
+        </div>
+      </AccordionPanel>
 
-      <CaseStudyGuidePanel
-        clientId={scopedClientId}
-        client={selectedClient}
-        devices={devices}
-        alertRules={alertRules}
-        clientModules={clientModules}
-        onCreateDevice={
-          canCreateDevices
-            ? () => {
-                setEditingDeviceId(null);
-                setFormMode('create');
-              }
-            : undefined
-        }
-      />
+      <AccordionPanel
+        title="Estudo de caso"
+        description="Use o caso real como roteiro de implantacao e demonstracao."
+        className="mt-6"
+        defaultOpen={false}
+      >
+        <CaseStudyGuidePanel
+          clientId={scopedClientId}
+          client={selectedClient}
+          devices={devices}
+          alertRules={alertRules}
+          clientModules={clientModules}
+          onCreateDevice={
+            canCreateDevices
+              ? () => {
+                  setEditingDeviceId(null);
+                  setFormMode('create');
+                }
+              : undefined
+          }
+        />
+      </AccordionPanel>
 
       {scopedClientId ? (
-        <Panel className="mt-6 p-4 sm:p-5">
+        <AccordionPanel
+          title="Jornada da conta"
+          description="Veja a etapa atual e pule para a proxima acao recomendada."
+          className="mt-6"
+          defaultOpen={false}
+        >
+        <Panel className="p-4 sm:p-5 border-0 bg-transparent shadow-none">
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-muted">
@@ -1012,23 +1060,30 @@ function DashboardContent() {
             </Link>
           </div>
         </Panel>
+        </AccordionPanel>
       ) : null}
 
       {actuationEnabled ? (
         <div id="acionamento" className="mt-6 scroll-mt-28">
-          <ActuationPanel
-            clientId={scopedClientId}
-            client={selectedClient}
-            authToken={authToken}
-            devices={devices}
-            canManageCommands={canManageActuatorCommands}
-            canManageStructure={canManageActuatorStructure}
-            canManageSchedules={canManageActuatorSchedules}
-            onCreateDevice={() => {
-              setEditingDeviceId(null);
-              setFormMode('create');
-            }}
-          />
+          <AccordionPanel
+            title="Acionamento"
+            description="Cadastre pontos, comandos e rotinas quando esse recurso fizer parte da conta."
+            defaultOpen={false}
+          >
+            <ActuationPanel
+              clientId={scopedClientId}
+              client={selectedClient}
+              authToken={authToken}
+              devices={devices}
+              canManageCommands={canManageActuatorCommands}
+              canManageStructure={canManageActuatorStructure}
+              canManageSchedules={canManageActuatorSchedules}
+              onCreateDevice={() => {
+                setEditingDeviceId(null);
+                setFormMode('create');
+              }}
+            />
+          </AccordionPanel>
         </div>
       ) : (
         <div className="mt-6">
@@ -1041,7 +1096,12 @@ function DashboardContent() {
         </div>
       )}
 
-      <div className="mt-6">
+      <AccordionPanel
+        title="Perfil do cliente"
+        description="Revise os dados comerciais e operacionais minimos da conta."
+        className="mt-6"
+        defaultOpen={false}
+      >
         <ClientProfilePanel
           clientId={scopedClientId}
           authToken={authToken}
@@ -1053,9 +1113,14 @@ function DashboardContent() {
               : 'Escolha um cliente para revisar o perfil comercial da conta.'
           }
         />
-      </div>
+      </AccordionPanel>
 
-      <div className="mt-6">
+      <AccordionPanel
+        title="Usuarios"
+        description="Gerencie os acessos da conta quando necessario."
+        className="mt-6"
+        defaultOpen={false}
+      >
         <UsersPanel
           clientId={scopedClientId}
           authToken={authToken}
@@ -1067,20 +1132,33 @@ function DashboardContent() {
               : 'Escolha um cliente para administrar os usuarios desta conta.'
           }
         />
-      </div>
+      </AccordionPanel>
 
       <div id="laboratorio" className="mt-6 scroll-mt-28">
-        <SimulationLabPanel clientId={scopedClientId} client={selectedClient} />
+        <AccordionPanel
+          title="Laboratorio"
+          description="Ensaie a demonstracao e simule a operacao sem depender do hardware."
+          defaultOpen={false}
+        >
+          <SimulationLabPanel clientId={scopedClientId} client={selectedClient} />
+        </AccordionPanel>
       </div>
 
       <div id="auditoria" className="scroll-mt-28">
-        <AuditLogPanel
-        clientId={scopedClientId}
-        client={selectedClient}
-        authToken={authToken}
-        currentUser={user}
-        canView={isAdmin}
-        />
+        <AccordionPanel
+          title="Auditoria"
+          description="Acompanhe alteracoes criticas e rastreabilidade da conta."
+          className="mt-6"
+          defaultOpen={false}
+        >
+          <AuditLogPanel
+          clientId={scopedClientId}
+          client={selectedClient}
+          authToken={authToken}
+          currentUser={user}
+          canView={isAdmin}
+          />
+        </AccordionPanel>
       </div>
 
       <footer className="mt-8 border-t border-line/60 pt-6">
