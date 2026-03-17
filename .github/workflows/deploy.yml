@@ -101,27 +101,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy stack file to server
+      - name: Encode stack file
         if: ${{ env.PORTAINER_WEBHOOK_URL == '' }}
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: ${{ secrets.VPS_PORT }}
-          source: deploy/swarm/stack.prod.yml
-          target: /opt/iot-virtuagil-api
+        id: stack_payload
+        run: |
+          {
+            echo 'stack_b64<<EOF'
+            base64 -w 0 deploy/swarm/stack.prod.yml
+            echo
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
 
       - name: Deploy stack via SSH
         if: ${{ env.PORTAINER_WEBHOOK_URL == '' }}
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          STACK_PROD_YML_BASE64: ${{ steps.stack_payload.outputs.stack_b64 }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
+          envs: STACK_PROD_YML_BASE64
           script: |
             set -e
+            mkdir -p /opt/iot-virtuagil-api/deploy/swarm
+            printf '%s' "$STACK_PROD_YML_BASE64" | base64 -d > /opt/iot-virtuagil-api/deploy/swarm/stack.prod.yml
             cd /opt/iot-virtuagil-api
 
             if [ ! -f .env.prod ]; then
