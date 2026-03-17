@@ -1,5 +1,5 @@
 import { HTMLAttributes } from 'react';
-import { AlertTriangle, CheckCircle2, Info } from 'lucide-react';
+import { Check, Info, X } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
@@ -22,9 +22,9 @@ type FeedbackProps = HTMLAttributes<HTMLDivElement> &
 export function Feedback({ className, variant, children, ...props }: FeedbackProps) {
   const Icon =
     variant === 'success'
-      ? CheckCircle2
+      ? Check
       : variant === 'danger'
-        ? AlertTriangle
+        ? X
         : Info;
 
   return (
