@@ -17,7 +17,6 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Feedback } from '@/components/ui/feedback';
 import { Input, Select } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
-import { SetupGuideCard } from '@/components/setup-guide-card';
 
 const formSchema = z
   .object({
@@ -600,56 +599,6 @@ export function AlertRulesPanel({
             </tbody>
           </DataTable>
         </DataTableWrapper>
-      ) : null}
-      {!isLoading &&
-      !isError &&
-      canManageRules &&
-      (data?.length ?? 0) === 0 &&
-      devices.length === 0 ? (
-        <SetupGuideCard
-          eyebrow="Regras de alerta"
-          title="Cadastre um equipamento antes de criar regras"
-          description="Sem equipamento, a regra nao tem onde ser aplicada."
-          steps={[
-            {
-              title: '1. Cadastrar equipamento',
-              description: 'Crie o primeiro equipamento da conta.',
-            },
-            {
-              title: '2. Ajustar faixa',
-              description: 'Preencha temperatura minima e maxima.',
-            },
-            {
-              title: '3. Criar regra',
-              description: 'Depois volte aqui para configurar o alerta.',
-            },
-          ]}
-          primaryActionLabel={onCreateDevice ? 'Cadastrar primeiro equipamento' : undefined}
-          onPrimaryAction={onCreateDevice}
-          secondaryHref="/lab"
-          secondaryLabel="Abrir laboratorio"
-        />
-      ) : null}
-      {!isLoading && !isError && (data?.length ?? 0) === 0 && devices.length > 0 ? (
-        <SetupGuideCard
-          eyebrow="Primeira regra"
-          title="Crie a primeira regra de alerta"
-          description="Defina o alerta principal do equipamento."
-          steps={[
-            {
-              title: '1. Escolher equipamento',
-              description: 'Selecione o equipamento principal.',
-            },
-            {
-              title: '2. Definir limites',
-              description: 'Preencha faixa, cooldown e tolerancia.',
-            },
-            {
-              title: '3. Testar depois',
-              description: 'Depois use o laboratorio para validar a regra.',
-            },
-          ]}
-        />
       ) : null}
     </Panel>
   );
