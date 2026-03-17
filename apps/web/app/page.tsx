@@ -112,6 +112,9 @@ function DashboardContent() {
   const [pendingDeleteDeviceId, setPendingDeleteDeviceId] = useState<
     string | null
   >(null);
+  const [deviceSuccessMessage, setDeviceSuccessMessage] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     // Mantem o campo de filtro sincronizado quando a URL muda por navegacao ou refresh.
@@ -247,8 +250,11 @@ function DashboardContent() {
   async function handleDeleteDevice(id: string) {
     // A remocao afeta selecao e formulario; por isso limpamos os estados relacionados.
     setDeletingDeviceId(id);
+    setDeviceSuccessMessage(null);
     try {
       await deleteMutation.mutateAsync(id);
+      await refetch();
+      setDeviceSuccessMessage(`Equipamento ${id} removido com sucesso.`);
     } finally {
       setDeletingDeviceId(null);
       setPendingDeleteDeviceId(null);
@@ -628,10 +634,15 @@ function DashboardContent() {
               allowTemperatureFields
               onCancel={() => setFormMode('closed')}
               onSubmit={async (values) => {
+                setDeviceSuccessMessage(null);
                 await createMutation.mutateAsync({
                   ...values,
                   clientId: values.clientId ?? scopedClientId,
                 });
+                await refetch();
+                setDeviceSuccessMessage(
+                  `Equipamento ${values.name ?? values.id} criado com sucesso.`,
+                );
                 setFormMode('closed');
               }}
             />
@@ -655,6 +666,7 @@ function DashboardContent() {
                 setFormMode('closed');
               }}
               onSubmit={async (values) => {
+                setDeviceSuccessMessage(null);
                 await updateMutation.mutateAsync({
                   id: editingDevice.id,
                   payload: {
@@ -665,6 +677,10 @@ function DashboardContent() {
                     maxTemperature: values.maxTemperature,
                   },
                 });
+                await refetch();
+                setDeviceSuccessMessage(
+                  `Equipamento ${values.name ?? editingDevice.id} atualizado com sucesso.`,
+                );
                 setEditingDeviceId(null);
                 setFormMode('closed');
               }}
@@ -680,6 +696,11 @@ function DashboardContent() {
               updateMutation.error?.message ??
               deleteMutation.error?.message ??
               'Erro ao salvar alteracoes do equipamento. Verifique os dados e tente novamente.'}
+          </Feedback>
+        ) : null}
+        {deviceSuccessMessage ? (
+          <Feedback variant="success" className="mb-3">
+            {deviceSuccessMessage}
           </Feedback>
         ) : null}
 
