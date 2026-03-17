@@ -493,6 +493,20 @@ function DashboardContent() {
         onSelectClient={focusClient}
       />
 
+      <div className="mt-6">
+        <ClientModulesPanel
+          clientId={scopedClientId}
+          authToken={authToken}
+          currentUser={user}
+          canManage={canManageClientModules}
+          blockedReason={
+            scopedClientId
+              ? 'Somente o administrador da plataforma pode alterar os modulos contratados deste cliente.'
+              : 'Escolha um cliente para revisar e ajustar a contratacao de modulos.'
+          }
+        />
+      </div>
+
       <section id="resumo-operacional" className="mb-8 scroll-mt-28 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           className="animate-fade-up"
@@ -1051,20 +1065,6 @@ function DashboardContent() {
             scopedClientId
               ? 'Somente o administrador da plataforma pode gerenciar acessos deste cliente nesta fase.'
               : 'Escolha um cliente para administrar os usuarios desta conta.'
-          }
-        />
-      </div>
-
-      <div className="mt-6">
-        <ClientModulesPanel
-          clientId={scopedClientId}
-          authToken={authToken}
-          currentUser={user}
-          canManage={canManageClientModules}
-          blockedReason={
-            scopedClientId
-              ? 'Somente o administrador da plataforma pode alterar os modulos contratados deste cliente.'
-              : 'Escolha um cliente para revisar e ajustar a contratacao de modulos.'
           }
         />
       </div>
