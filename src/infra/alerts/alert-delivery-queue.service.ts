@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../../prisma/prisma.service';
 
 type TemperatureAlertPayload = {
   type: 'temperature_out_of_range';
@@ -35,7 +36,10 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
   private timer: NodeJS.Timeout | null = null;
   private processing = false;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {
     this.startWorker();
   }
 
@@ -98,7 +102,7 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
       await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(this.mapPayloadToWebhookBody(job.payload)),
+        body: JSON.stringify(await this.mapPayloadToWebhookBody(job.payload)),
       });
       this.logger.log(
         `Delivered alert device=${job.payload.deviceId} attempts=${job.attempts + 1}`,
@@ -140,7 +144,9 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
     return this.configService.get<string>('N8N_TEMPERATURE_ALERT_WEBHOOK_URL');
   }
 
-  private mapPayloadToWebhookBody(payload: AlertPayload) {
+  private async mapPayloadToWebhookBody(payload: AlertPayload) {
+    const recipient = await this.resolveRecipient(payload.clientId);
+
     if (payload.type === 'device_offline') {
       return {
         type: payload.type,
@@ -148,6 +154,8 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
         device_id: payload.deviceId,
         last_seen_at: payload.lastSeenAt,
         offline_since: payload.offlineSince,
+        recipient_phone: recipient?.phone ?? null,
+        recipient_source: recipient?.source ?? null,
       };
     }
 
@@ -160,6 +168,37 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
       min_temperature: payload.minTemperature,
       max_temperature: payload.maxTemperature,
       occurred_at: payload.occurredAt,
+      recipient_phone: recipient?.phone ?? null,
+      recipient_source: recipient?.source ?? null,
     };
+  }
+
+  private async resolveRecipient(clientId: string | null) {
+    if (!clientId) return null;
+
+    const client = await this.prisma.client.findUnique({
+      where: { id: clientId },
+      select: {
+        alertPhone: true,
+        adminPhone: true,
+        phone: true,
+      },
+    } as any);
+
+    if (!client) return null;
+
+    if (client.alertPhone) {
+      return { phone: client.alertPhone, source: 'alert_phone' as const };
+    }
+
+    if (client.adminPhone) {
+      return { phone: client.adminPhone, source: 'admin_phone' as const };
+    }
+
+    if (client.phone) {
+      return { phone: client.phone, source: 'client_phone' as const };
+    }
+
+    return null;
   }
 }

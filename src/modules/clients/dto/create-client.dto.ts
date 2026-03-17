@@ -36,6 +36,12 @@ export class CreateClientDto {
   @IsClientPhone()
   adminPhone: string;
 
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  @IsClientPhone()
+  alertPhone?: string;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(30)

@@ -36,6 +36,12 @@ export class UpdateClientDto {
   @IsString()
   @MaxLength(30)
   @IsClientPhone()
+  alertPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  @IsClientPhone()
   billingPhone?: string;
 
   @IsOptional()

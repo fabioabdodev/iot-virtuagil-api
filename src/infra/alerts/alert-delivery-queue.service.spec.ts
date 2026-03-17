@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { AlertDeliveryQueueService } from './alert-delivery-queue.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 describe('AlertDeliveryQueueService', () => {
   let service: AlertDeliveryQueueService;
   let fakeConfigService: any;
+  let fakePrismaService: any;
   let fetchMock: jest.Mock;
 
   beforeEach(async () => {
@@ -25,10 +27,21 @@ describe('AlertDeliveryQueueService', () => {
       }),
     };
 
+    fakePrismaService = {
+      client: {
+        findUnique: jest.fn().mockResolvedValue({
+          alertPhone: '5531999999999',
+          adminPhone: '5531888888888',
+          phone: '5531777777777',
+        }),
+      },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AlertDeliveryQueueService,
         { provide: ConfigService, useValue: fakeConfigService },
+        { provide: PrismaService, useValue: fakePrismaService },
       ],
     }).compile();
 
@@ -52,11 +65,15 @@ describe('AlertDeliveryQueueService', () => {
       occurredAt: new Date().toISOString(),
     });
 
-    jest.advanceTimersByTime(1100);
-    await Promise.resolve();
-    await Promise.resolve();
+    await jest.advanceTimersByTimeAsync(1100);
 
     expect(fetchMock).toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.com/webhook',
+      expect.objectContaining({
+        body: expect.stringContaining('"recipient_phone":"5531999999999"'),
+      }),
+    );
   });
 
   it('should enqueue and deliver offline alert payload', async () => {
@@ -68,14 +85,13 @@ describe('AlertDeliveryQueueService', () => {
       offlineSince: new Date('2026-03-12T10:06:00.000Z').toISOString(),
     });
 
-    jest.advanceTimersByTime(1100);
-    await Promise.resolve();
-    await Promise.resolve();
+    await jest.advanceTimersByTimeAsync(1100);
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://example.com/offline-webhook',
       expect.objectContaining({
         method: 'POST',
+        body: expect.stringContaining('"recipient_phone":"5531999999999"'),
       }),
     );
   });

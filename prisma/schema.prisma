@@ -48,6 +48,7 @@ model Client {
   adminName         String?
   phone             String?
   adminPhone        String?
+  alertPhone        String?
   billingName       String?
   billingPhone      String?
   billingEmail      String?

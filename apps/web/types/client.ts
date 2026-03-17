@@ -6,6 +6,7 @@ export interface ClientSummary {
   document: string | null;
   adminName: string | null;
   adminPhone: string | null;
+  alertPhone: string | null;
   billingName: string | null;
   billingPhone: string | null;
   phone: string | null;
@@ -21,6 +22,7 @@ export interface ClientInput {
   adminName?: string;
   document?: string;
   adminPhone?: string;
+  alertPhone?: string;
   billingName?: string;
   billingPhone?: string;
   billingEmail?: string;
@@ -34,6 +36,7 @@ export interface CreateClientInput extends ClientInput {
   adminName: string;
   document: string;
   adminPhone: string;
+  alertPhone?: string;
   billingName?: string;
   billingPhone: string;
   billingEmail: string;

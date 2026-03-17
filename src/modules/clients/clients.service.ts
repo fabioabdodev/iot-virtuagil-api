@@ -14,6 +14,10 @@ export class ClientsService {
   async create(dto: CreateClientDto) {
     const document = normalizeClientDocument(dto.document);
     const adminPhone = normalizeClientPhone(dto.adminPhone);
+    const alertPhone =
+      dto.alertPhone != null
+        ? normalizeClientPhone(dto.alertPhone)
+        : adminPhone;
     const billingPhone = normalizeClientPhone(dto.billingPhone);
     const duplicatedId = await this.prisma.client.findUnique({
       where: { id: dto.id },
@@ -35,6 +39,7 @@ export class ClientsService {
 
     await this.ensurePhonesAreUnique({
       adminPhone,
+      alertPhone,
       billingPhone,
     });
 
@@ -46,6 +51,7 @@ export class ClientsService {
         document,
         phone: adminPhone,
         adminPhone,
+        alertPhone,
         billingName: dto.billingName?.trim() ?? dto.adminName.trim(),
         billingPhone,
         billingEmail: dto.billingEmail.trim(),
@@ -88,6 +94,10 @@ export class ClientsService {
       dto.adminPhone != null
         ? normalizeClientPhone(dto.adminPhone)
         : existing.adminPhone ?? existing.phone ?? undefined;
+    const alertPhone =
+      dto.alertPhone != null
+        ? normalizeClientPhone(dto.alertPhone)
+        : existing.alertPhone ?? adminPhone ?? existing.adminPhone ?? existing.phone ?? undefined;
     const billingPhone =
       dto.billingPhone != null
         ? normalizeClientPhone(dto.billingPhone)
@@ -96,6 +106,7 @@ export class ClientsService {
     await this.ensurePhonesAreUnique(
       {
         adminPhone,
+        alertPhone,
         billingPhone,
       },
       id,
@@ -109,6 +120,7 @@ export class ClientsService {
         document,
         phone: dto.adminPhone != null ? adminPhone : undefined,
         adminPhone: dto.adminPhone != null ? adminPhone : undefined,
+        alertPhone: dto.alertPhone != null ? alertPhone : undefined,
         billingName: dto.billingName?.trim(),
         billingPhone: dto.billingPhone != null ? billingPhone : undefined,
         billingEmail: dto.billingEmail?.trim(),
@@ -126,17 +138,25 @@ export class ClientsService {
   private async ensurePhonesAreUnique(
     phones: {
       adminPhone?: string;
+      alertPhone?: string;
       billingPhone?: string;
     },
     ignoredClientId?: string,
   ) {
-    const candidates = [...new Set([phones.adminPhone, phones.billingPhone].filter(Boolean))];
+    const candidates = [
+      ...new Set([phones.adminPhone, phones.alertPhone, phones.billingPhone].filter(Boolean)),
+    ];
 
     for (const phone of candidates) {
       const duplicatedPhone = await this.prisma.client.findFirst({
         where: {
           id: ignoredClientId ? { not: ignoredClientId } : undefined,
-          OR: [{ phone }, { adminPhone: phone }, { billingPhone: phone }],
+          OR: [
+            { phone },
+            { adminPhone: phone },
+            { alertPhone: phone },
+            { billingPhone: phone },
+          ],
         },
       });
 

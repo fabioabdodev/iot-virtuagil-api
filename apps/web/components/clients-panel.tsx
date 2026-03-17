@@ -53,6 +53,12 @@ const formSchema = z.object({
     .trim()
     .min(1, 'Contato do administrador obrigatorio')
     .refine((value) => isValidPhone(value), 'Telefone do administrador invalido'),
+  alertPhone: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => value || undefined)
+    .refine((value) => value == null || isValidPhone(value), 'WhatsApp de alerta invalido'),
   billingPhone: z
     .string()
     .trim()
@@ -61,6 +67,7 @@ const formSchema = z.object({
     .refine((value) => value == null || isValidPhone(value), 'Telefone financeiro invalido'),
   billingName: z.string().trim().optional().transform((value) => value || undefined),
   useSameBillingPhone: z.boolean().default(true),
+  useSameAlertPhone: z.boolean().default(true),
   billingEmail: z
     .string()
     .trim()
@@ -69,6 +76,14 @@ const formSchema = z.object({
   status: z.enum(['active', 'inactive', 'delinquent']).default('active'),
   notes: z.string().trim().optional().transform((value) => value || undefined),
 }).superRefine((values, context) => {
+  if (!values.useSameAlertPhone && !values.alertPhone) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'WhatsApp de alertas obrigatorio',
+      path: ['alertPhone'],
+    });
+  }
+
   if (!values.useSameBillingPhone && !values.billingPhone) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
@@ -122,15 +137,18 @@ export function ClientsPanel({
       adminName: '',
       document: '',
       adminPhone: '',
+      alertPhone: '',
       billingName: '',
       billingPhone: '',
       useSameBillingPhone: true,
+      useSameAlertPhone: true,
       billingEmail: '',
       status: 'active',
       notes: '',
     },
   });
   const watchedUseSameBillingPhone = watch('useSameBillingPhone');
+  const watchedUseSameAlertPhone = watch('useSameAlertPhone');
   const duplicateClientIds = useMemo(() => new Set(clients.map((client) => client.id)), [clients]);
   const duplicateDocuments = useMemo(
     () => new Set(clients.map((client) => normalizeDigits(client.document ?? '')).filter(Boolean)),
@@ -307,6 +325,9 @@ export function ClientsPanel({
               const billingPhone = values.useSameBillingPhone
                 ? values.adminPhone
                 : values.billingPhone;
+              const alertPhone = values.useSameAlertPhone
+                ? values.adminPhone
+                : values.alertPhone;
 
               if (duplicateClientIds.has(values.id)) {
                 setFormError('Ja existe um cliente com este identificador tecnico.');
@@ -326,6 +347,7 @@ export function ClientsPanel({
                 adminName: values.adminName,
                 document: values.document,
                 adminPhone: values.adminPhone,
+                alertPhone: alertPhone ?? values.adminPhone,
                 billingName: values.useSameBillingPhone
                   ? values.adminName
                   : values.billingName,
@@ -400,6 +422,31 @@ export function ClientsPanel({
                     <Input {...register('adminPhone')} placeholder="(31) 99999-0000" />
                     {errors.adminPhone ? (
                       <p className="mt-1 text-xs text-bad">{errors.adminPhone.message}</p>
+                    ) : null}
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="mb-2 flex items-center gap-2 text-xs text-muted">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-line/70"
+                        {...register('useSameAlertPhone')}
+                      />
+                      Usar o mesmo WhatsApp para alertas
+                    </label>
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-xs text-muted">
+                      WhatsApp de alertas {watchedUseSameAlertPhone ? '' : '*'}
+                    </label>
+                    <Input
+                      {...register('alertPhone')}
+                      placeholder="(31) 99999-0001"
+                      disabled={watchedUseSameAlertPhone}
+                    />
+                    {errors.alertPhone ? (
+                      <p className="mt-1 text-xs text-bad">{errors.alertPhone.message}</p>
                     ) : null}
                   </div>
 
@@ -541,6 +588,9 @@ export function ClientsPanel({
                       </span>
                       <span className="text-xs">
                         financeiro: {client.billingName ?? client.adminName ?? 'Sem nome'} | {client.billingPhone ?? client.adminPhone ?? client.phone ?? 'Sem telefone'}
+                      </span>
+                      <span className="text-xs">
+                        alertas: {client.alertPhone ?? client.adminPhone ?? client.phone ?? 'Sem WhatsApp'}
                       </span>
                     </div>
                   </td>

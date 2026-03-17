@@ -54,8 +54,10 @@ export function ClientProfilePanel({
   const [adminName, setAdminName] = useState('');
   const [document, setDocument] = useState('');
   const [adminPhone, setAdminPhone] = useState('');
+  const [alertPhone, setAlertPhone] = useState('');
   const [billingName, setBillingName] = useState('');
   const [billingPhone, setBillingPhone] = useState('');
+  const [useSameAlertPhone, setUseSameAlertPhone] = useState(true);
   const [useSameBillingPhone, setUseSameBillingPhone] = useState(true);
   const [billingEmail, setBillingEmail] = useState('');
   const [status, setStatus] = useState<ClientStatus>('active');
@@ -68,11 +70,14 @@ export function ClientProfilePanel({
     setAdminName(data.adminName ?? '');
     setDocument(data.document ?? '');
     const nextAdminPhone = data.adminPhone ?? data.phone ?? '';
+    const nextAlertPhone = data.alertPhone ?? nextAdminPhone;
     const nextBillingName = data.billingName ?? data.adminName ?? '';
     const nextBillingPhone = data.billingPhone ?? nextAdminPhone;
     setAdminPhone(nextAdminPhone);
+    setAlertPhone(nextAlertPhone);
     setBillingName(nextBillingName);
     setBillingPhone(nextBillingPhone);
+    setUseSameAlertPhone(nextAlertPhone === nextAdminPhone);
     setUseSameBillingPhone(nextBillingPhone === nextAdminPhone);
     setBillingEmail(data.billingEmail ?? '');
     setStatus(data.status);
@@ -120,6 +125,12 @@ export function ClientProfilePanel({
       return;
     }
 
+    const nextAlertPhone = useSameAlertPhone ? adminPhone : alertPhone;
+    if (!nextAlertPhone.trim() || !isValidPhone(nextAlertPhone)) {
+      setFormError('Informe um WhatsApp valido para alertas.');
+      return;
+    }
+
     const nextBillingPhone = useSameBillingPhone ? adminPhone : billingPhone;
     if (!nextBillingPhone.trim() || !isValidPhone(nextBillingPhone)) {
       setFormError('Informe um telefone valido para o financeiro.');
@@ -136,6 +147,7 @@ export function ClientProfilePanel({
       adminName: adminName.trim() || undefined,
       document: document.trim() || undefined,
       adminPhone: adminPhone.trim() || undefined,
+      alertPhone: nextAlertPhone.trim() || undefined,
       billingName: (useSameBillingPhone ? adminName : billingName).trim() || undefined,
       billingPhone: nextBillingPhone.trim() || undefined,
       billingEmail: billingEmail.trim() || undefined,
@@ -259,6 +271,28 @@ export function ClientProfilePanel({
                   value={adminPhone}
                   onChange={(event) => setAdminPhone(event.target.value)}
                   placeholder="(31) 99999-0000"
+                />
+              </div>
+              <div>
+                <label className="mb-2 flex items-center gap-2 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-line/70"
+                    checked={useSameAlertPhone}
+                    onChange={(event) => setUseSameAlertPhone(event.target.checked)}
+                  />
+                  Usar o mesmo WhatsApp para alertas
+                </label>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-muted">
+                  WhatsApp principal para alertas {useSameAlertPhone ? '' : '*'}
+                </label>
+                <Input
+                  value={useSameAlertPhone ? adminPhone : alertPhone}
+                  onChange={(event) => setAlertPhone(event.target.value)}
+                  disabled={useSameAlertPhone}
+                  placeholder="(31) 99999-0001"
                 />
               </div>
               <div>
