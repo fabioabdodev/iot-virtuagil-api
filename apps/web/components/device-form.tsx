@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { DeviceSummary } from '@/types/device';
-import { Button } from '@/components/ui/button';
 import { Feedback } from '@/components/ui/feedback';
 import { Input } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
@@ -91,6 +90,7 @@ export function DeviceForm({
 }: DeviceFormProps) {
   const hasScopedClient = Boolean(clientId);
   const [submitHint, setSubmitHint] = useState<string | null>(null);
+  const [submitStateLabel, setSubmitStateLabel] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -136,6 +136,7 @@ export function DeviceForm({
   const submitDeviceForm = handleSubmit(
     async (values) => {
       setSubmitHint(null);
+      setSubmitStateLabel('Enviando equipamento...');
       const parsed = formSchema.parse(values);
       const nextValues = {
         ...parsed,
@@ -153,8 +154,10 @@ export function DeviceForm({
       };
 
       await onSubmit(nextValues);
+      setSubmitStateLabel(null);
     },
     () => {
+      setSubmitStateLabel(null);
       setSubmitHint('Revise os campos destacados antes de continuar.');
     },
   );
@@ -173,12 +176,19 @@ export function DeviceForm({
             {mode === 'create' ? 'Novo equipamento' : `Editar ${device?.id ?? ''}`}
           </h3>
           {onCancel ? (
-            <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-2xl border border-line/70 bg-card/70 px-3 py-2 text-xs font-semibold text-ink transition hover:border-accent/40 hover:bg-card"
+              onClick={onCancel}
+            >
               Fechar
-            </Button>
+            </button>
           ) : null}
         </div>
 
+        {submitStateLabel ? (
+          <Feedback className="mb-4">{submitStateLabel}</Feedback>
+        ) : null}
         {submitHint ? (
           <Feedback variant="danger" className="mb-4">
             {submitHint}
@@ -275,22 +285,13 @@ export function DeviceForm({
         </div>
 
         <div className="mt-4 flex items-center gap-2">
-          <Button
-            type="button"
-            variant="primary"
+          <button
+            type="submit"
             disabled={loading}
-            loading={loading}
-            className="min-w-[168px]"
-            onClick={() => {
-              void submitDeviceForm();
-            }}
+            className="inline-flex min-w-[168px] items-center justify-center rounded-2xl bg-[linear-gradient(135deg,hsl(var(--accent))_0%,hsl(var(--accent-2))_100%)] px-4 py-3 text-sm font-semibold text-slate-950 transition duration-150 active:scale-[0.98] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading
-              ? 'Salvando...'
-              : mode === 'create'
-                ? 'Criar equipamento'
-                : 'Salvar alteracoes'}
-          </Button>
+            {loading ? 'Salvando...' : mode === 'create' ? 'Criar equipamento' : 'Salvar alteracoes'}
+          </button>
         </div>
       </Panel>
     </form>
