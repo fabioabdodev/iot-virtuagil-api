@@ -194,7 +194,7 @@ export function ClientProfilePanel({
         </Feedback>
       ) : null}
       {updateMutation.isSuccess ? (
-        <Feedback className="mb-3">
+        <Feedback variant="success" className="mb-3">
           Dados comerciais atualizados com sucesso.
         </Feedback>
       ) : null}
