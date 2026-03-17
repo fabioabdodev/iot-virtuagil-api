@@ -88,6 +88,7 @@ export function DeviceForm({
   onSubmit,
   onCancel,
 }: DeviceFormProps) {
+  const hasScopedClient = Boolean(clientId);
   const {
     register,
     handleSubmit,
@@ -196,12 +197,15 @@ export function DeviceForm({
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-xs text-muted">ID</label>
+            <label className="mb-1 block text-xs text-muted">ID unico</label>
             <Input
               {...register('id')}
               disabled={mode === 'edit'}
-              placeholder="freezer_01"
+              placeholder="freezer_vacinas_01"
             />
+            <p className="mt-1 text-xs text-muted">
+              Identificador tecnico unico do equipamento.
+            </p>
             {errors.id ? (
               <p className="mt-1 text-xs text-bad">{errors.id.message}</p>
             ) : null}
@@ -210,7 +214,16 @@ export function DeviceForm({
           {allowStructureFields ? (
             <div>
               <label className="mb-1 block text-xs text-muted">Codigo interno do cliente</label>
-              <Input {...register('clientId')} placeholder="cliente_a" />
+              <Input
+                {...register('clientId')}
+                placeholder="cuidare-vacinas"
+                disabled={hasScopedClient}
+              />
+              {hasScopedClient ? (
+                <p className="mt-1 text-xs text-muted">
+                  Definido pela conta selecionada no painel.
+                </p>
+              ) : null}
               {errors.clientId ? (
                 <p className="mt-1 text-xs text-bad">{errors.clientId.message}</p>
               ) : null}
@@ -220,7 +233,7 @@ export function DeviceForm({
           {allowStructureFields ? (
             <div>
               <label className="mb-1 block text-xs text-muted">Nome</label>
-              <Input {...register('name')} placeholder="Freezer Loja" />
+              <Input {...register('name')} placeholder="Freezer Vacinas 01" />
               <p className="mt-1 text-xs text-muted">
                 Use um nome claro para quem vai acompanhar a operacao no dia a dia.
               </p>
