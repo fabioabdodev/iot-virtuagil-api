@@ -45,7 +45,7 @@ import { MetricCard } from '@/components/ui/metric-card';
 import { Panel } from '@/components/ui/panel';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 import { useAuth } from '@/lib/auth-context';
-import { createDevice, deleteDevice } from '@/lib/api';
+import { createDevice } from '@/lib/api';
 import { useClient } from '@/hooks/use-client';
 import { useActuators } from '@/hooks/use-actuators';
 import { useAlertRules } from '@/hooks/use-alert-rules';
@@ -121,7 +121,6 @@ function DashboardContent() {
     null,
   );
   const [deviceLocalError, setDeviceLocalError] = useState<string | null>(null);
-  const [isRunningDeviceDiagnostic, setIsRunningDeviceDiagnostic] = useState(false);
   const [isCreatingDevice, setIsCreatingDevice] = useState(false);
   const [isRefreshingDevices, setIsRefreshingDevices] = useState(false);
 
@@ -297,46 +296,6 @@ function DashboardContent() {
     } finally {
       setIsRefreshingDevices(false);
       setDeviceProgressMessage(null);
-    }
-  }
-
-  async function handleDiagnoseDeviceCreate() {
-    if (!scopedClientId || !authToken) return;
-
-    const diagnosticId = `diag_${Date.now()}`;
-
-    setDeviceSuccessMessage(null);
-    setRefreshMessage(null);
-    setDeviceLocalError(null);
-    setIsRunningDeviceDiagnostic(true);
-    setDeviceProgressMessage('Testando cadastro de equipamento na API...');
-
-    try {
-      await createDevice(
-        {
-          id: diagnosticId,
-          clientId: scopedClientId,
-          name: 'Diagnostico temporario',
-          location: 'Teste interno',
-          minTemperature: -20,
-          maxTemperature: -10,
-        },
-        authToken,
-      );
-
-      setDeviceProgressMessage('Cadastro respondeu. Removendo equipamento temporario...');
-      await deleteDevice(diagnosticId, scopedClientId, authToken);
-      await refetch();
-      setDeviceSuccessMessage('Diagnostico concluido: a API criou e removeu um equipamento temporario.');
-    } catch (error) {
-      setDeviceLocalError(
-        error instanceof Error
-          ? error.message
-          : 'Falha ao diagnosticar o cadastro de equipamento.',
-      );
-    } finally {
-      setDeviceProgressMessage(null);
-      setIsRunningDeviceDiagnostic(false);
     }
   }
 
@@ -681,23 +640,13 @@ function DashboardContent() {
               }}
               variant="secondary"
               className="px-3 py-2.5"
-              loading={isRefreshingDevices}
+              disabled={isRefreshingDevices}
             >
-              <RefreshCw className="mr-2 h-4 w-4" />
+              <RefreshCw
+                className={`mr-2 h-4 w-4 ${isRefreshingDevices ? 'animate-spin' : ''}`}
+              />
               {isRefreshingDevices ? 'Atualizando...' : 'Atualizar'}
             </Button>
-            {canCreateDevices ? (
-              <Button
-                onClick={() => {
-                  void handleDiagnoseDeviceCreate();
-                }}
-                variant="secondary"
-                className="px-3 py-2.5"
-                loading={isRunningDeviceDiagnostic}
-              >
-                {isRunningDeviceDiagnostic ? 'Diagnosticando...' : 'Diagnosticar cadastro'}
-              </Button>
-            ) : null}
             {canCreateDevices ? (
               <Button
                 onClick={() => {
