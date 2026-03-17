@@ -345,4 +345,42 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - resume o primeiro fluxo sugerido: criar tenant, abrir dashboard e estruturar o primeiro device
 - proximo passo recomendado:
   - executar os estudos de caso em conjunto e transformar o dashboard em um playbook progressivo de implantacao por cliente
+- em `17/03/2026` foi feita uma rodada longa de diagnostico no cadastro de equipamento do dashboard:
+  - em producao, o formulario de `Novo equipamento` ficava preso em `Enviando equipamento...`
+  - o backend de `POST /devices` foi validado por diagnostico interno no monitor
+  - a API tambem recebeu timeout e logs explicitos para `create`, para evitar travamento silencioso
+  - foi confirmado que o gargalo nao estava na API em si, mas no fluxo do formulario do dashboard
+- em `17/03/2026` o fluxo de criacao de equipamento foi estabilizado no frontend:
+  - o cadastro deixou de depender da mutacao anterior que estava causando comportamento inconsistente
+  - a criacao passou a usar chamada direta de API no fluxo do formulario
+  - o formulario foi simplificado para validar com `zod` via leitura direta dos campos e submit por botao
+  - o feedback de erro do formulario passou a aparecer de forma explicita
+  - o botao `Atualizar` foi separado do `isFetching` automatico da query, evitando loading enganoso
+- em `17/03/2026` o monitor voltou a criar equipamento com sucesso em producao:
+  - mensagem validada: `Equipamento Freezer Vacinas 01 criado com sucesso.`
+  - o diagnostico interno tambem respondeu com sucesso:
+    - `Diagnostico concluido: a API criou e removeu um equipamento temporario.`
+- conclusao registrada para proximos agentes:
+  - o problema nao era `useEffect`
+  - o problema tambem nao era ausencia de `zod`
+  - o ponto critico estava no fluxo de submissao do formulario no frontend
+  - a validacao segue existindo em duas camadas:
+    - frontend com `zod`
+    - backend com `class-validator` + `ValidationPipe`
+- commits relevantes desta rodada:
+  - `42486a2` - `stabilize device creation feedback flow`
+  - `9d217e3` - `add device create timeout diagnostics`
+  - `bbde8ce` - `add in-app device creation diagnostic`
+  - `8b061eb` - `show device form submit errors`
+  - `8cc3e91` - `use direct api call for device creation`
+  - `76bba3d` - `simplify device form submission flow`
+  - `09accea` - `separate manual device refresh state`
+- ponto exato de retomada recomendado para a proxima sessao:
+  - caso `Cuidare`
+  - status atual:
+    - cliente selecionado
+    - modulo `temperature` habilitado
+    - primeiro equipamento criado
+  - proximo passo operacional:
+    - criar a primeira regra de alerta do `Freezer Vacinas 01`
 

@@ -305,6 +305,33 @@ Direcao de produto consolidada para proximos agentes:
   - melhorias de layout e navegacao
   - registro de continuidade no handoff
 
+## Registro adicional de frontend em 17/03/2026
+
+Aprendizado importante desta rodada:
+
+- quando o dashboard aparentar travar em `Enviando equipamento...`, nao assumir de imediato problema de API
+- neste projeto, houve um caso real em que:
+  - o diagnostico interno criou e removeu equipamento com sucesso
+  - o cadastro por formulario permanecia preso
+  - a causa estava no fluxo de submissao do frontend, nao no endpoint `POST /devices`
+
+Direcao pratica para proximos agentes:
+
+- validar primeiro se o problema aparece tambem no diagnostico interno da tela
+- se o diagnostico passar e o formulario falhar, tratar como bug de fluxo do frontend
+- priorizar feedback explicito no proprio painel antes de partir para ferramentas externas
+- evitar estados de loading acoplados a `isFetching` automatico quando a tela tambem faz refetch em background
+
+Direcao atual do formulario de equipamentos:
+
+- validacao de UX continua com `zod`
+- validacao de seguranca continua no backend com `class-validator` e `ValidationPipe`
+- o fluxo que se mostrou confiavel nesta rodada foi:
+  - leitura direta dos campos
+  - validacao com `safeParse`
+  - envio por chamada direta de API
+  - feedback visual claro de sucesso, erro e refresh
+
 ## Registro operacional recente
 
 Correcoes validadas em producao:
