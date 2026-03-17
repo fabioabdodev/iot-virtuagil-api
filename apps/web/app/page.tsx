@@ -944,30 +944,32 @@ function DashboardContent() {
         </div>
       </AccordionPanel>
 
-      <AccordionPanel
-        title="Estudo de caso"
-        description="Use o caso real como roteiro de implantacao e demonstracao."
-        className="mt-6"
-        defaultOpen={false}
-      >
-        <CaseStudyGuidePanel
-          clientId={scopedClientId}
-          client={selectedClient}
-          devices={devices}
-          alertRules={alertRules}
-          clientModules={clientModules}
-          onCreateDevice={
-            canCreateDevices
-              ? () => {
-                  setEditingDeviceId(null);
-                  setFormMode('create');
-                }
-              : undefined
-          }
-        />
-      </AccordionPanel>
+      {!isPlatformAdmin ? (
+        <AccordionPanel
+          title="Estudo de caso"
+          description="Use o caso real como roteiro de implantacao e demonstracao."
+          className="mt-6"
+          defaultOpen={false}
+        >
+          <CaseStudyGuidePanel
+            clientId={scopedClientId}
+            client={selectedClient}
+            devices={devices}
+            alertRules={alertRules}
+            clientModules={clientModules}
+            onCreateDevice={
+              canCreateDevices
+                ? () => {
+                    setEditingDeviceId(null);
+                    setFormMode('create');
+                  }
+                : undefined
+            }
+          />
+        </AccordionPanel>
+      ) : null}
 
-      {scopedClientId ? (
+      {scopedClientId && !isPlatformAdmin ? (
         <AccordionPanel
           title="Jornada da conta"
           description="Veja a etapa atual e pule para a proxima acao recomendada."
