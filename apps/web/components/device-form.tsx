@@ -2,11 +2,12 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lightbulb, MapPinned, Thermometer } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { DeviceSummary } from '@/types/device';
 import { Button } from '@/components/ui/button';
+import { Feedback } from '@/components/ui/feedback';
 import { Input } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
 
@@ -89,6 +90,8 @@ export function DeviceForm({
   onCancel,
 }: DeviceFormProps) {
   const hasScopedClient = Boolean(clientId);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const [submitHint, setSubmitHint] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -133,25 +136,32 @@ export function DeviceForm({
 
   return (
     <form
-      onSubmit={handleSubmit(async (values) => {
-        const parsed = formSchema.parse(values);
-        const nextValues = {
-          ...parsed,
-          clientId: allowStructureFields
-            ? parsed.clientId ?? clientId
-            : undefined,
-          name: allowStructureFields ? parsed.name : undefined,
-          location: allowStructureFields ? parsed.location : undefined,
-          minTemperature: allowTemperatureFields
-            ? parsed.minTemperature
-            : undefined,
-          maxTemperature: allowTemperatureFields
-            ? parsed.maxTemperature
-            : undefined,
-        };
+      ref={formRef}
+      onSubmit={handleSubmit(
+        async (values) => {
+          setSubmitHint(null);
+          const parsed = formSchema.parse(values);
+          const nextValues = {
+            ...parsed,
+            clientId: allowStructureFields
+              ? parsed.clientId ?? clientId
+              : undefined,
+            name: allowStructureFields ? parsed.name : undefined,
+            location: allowStructureFields ? parsed.location : undefined,
+            minTemperature: allowTemperatureFields
+              ? parsed.minTemperature
+              : undefined,
+            maxTemperature: allowTemperatureFields
+              ? parsed.maxTemperature
+              : undefined,
+          };
 
-        await onSubmit(nextValues);
-      })}
+          await onSubmit(nextValues);
+        },
+        () => {
+          setSubmitHint('Revise os campos destacados antes de continuar.');
+        },
+      )}
       className=""
     >
       <Panel variant="strong" className="p-5">
@@ -165,6 +175,12 @@ export function DeviceForm({
             </Button>
           ) : null}
         </div>
+
+        {submitHint ? (
+          <Feedback variant="danger" className="mb-4">
+            {submitHint}
+          </Feedback>
+        ) : null}
 
         {mode === 'create' && allowStructureFields ? (
           <div className="mb-4 grid gap-3 lg:grid-cols-[1.05fr_0.95fr]">
@@ -288,11 +304,14 @@ export function DeviceForm({
 
         <div className="mt-4 flex items-center gap-2">
           <Button
-            type="submit"
+            type="button"
             variant="primary"
             disabled={loading}
             loading={loading}
             className="min-w-[168px]"
+            onClick={() => {
+              formRef.current?.requestSubmit();
+            }}
           >
             {loading
               ? 'Salvando...'
