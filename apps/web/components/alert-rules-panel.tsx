@@ -88,11 +88,11 @@ export function AlertRulesPanel({
   canManageRules = false,
   blockedReason,
 }: AlertRulesPanelProps) {
-  const { data, isLoading, isError, error } = useAlertRules(
+  const { data, isLoading, isError, error, refetch } = useAlertRules(
     clientId,
     authToken,
   );
-  const { createMutation, updateMutation, deleteMutation } = useAlertRuleMutations(
+  const { updateMutation, deleteMutation } = useAlertRuleMutations(
     clientId,
     authToken,
   );
@@ -210,10 +210,12 @@ export function AlertRulesPanel({
 
       if (editingRule) {
         await updateAlertRule(editingRule.id, payload, authToken);
+        await refetch();
         setSuccessMessage('Regra atualizada com sucesso.');
         setEditingRuleId(null);
       } else {
         await createAlertRule(payload, authToken);
+        await refetch();
         setSuccessMessage('Regra criada com sucesso.');
       }
 
@@ -353,7 +355,11 @@ export function AlertRulesPanel({
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <label className="mb-1 block text-xs text-muted">Sensor</label>
-              <Input {...register('sensorType')} placeholder="temperature" />
+              <Input
+                {...register('sensorType')}
+                placeholder="temperature"
+                className="bg-card/80"
+              />
               {errors.sensorType ? (
                 <p className="mt-1 text-xs text-bad">{errors.sensorType.message}</p>
               ) : null}
@@ -363,7 +369,7 @@ export function AlertRulesPanel({
               <label className="mb-1 block text-xs text-muted">
                 Equipamento (opcional)
               </label>
-              <Select {...register('deviceId')}>
+              <Select {...register('deviceId')} className="bg-card/80">
                 <option value="">Todos os equipamentos do cliente</option>
                 {devices.map((device) => (
                   <option key={device.id} value={device.id}>
@@ -375,7 +381,11 @@ export function AlertRulesPanel({
 
             <div>
               <label className="mb-1 block text-xs text-muted">Min</label>
-              <Input {...register('minValue')} placeholder="-20" />
+              <Input
+                {...register('minValue')}
+                placeholder="-20"
+                className="bg-card/80"
+              />
               <div className="mt-1 flex items-center gap-1 text-xs text-muted">
                 <Thermometer className="h-3.5 w-3.5" />
                 Limite minimo esperado para o equipamento.
@@ -387,7 +397,11 @@ export function AlertRulesPanel({
 
             <div>
               <label className="mb-1 block text-xs text-muted">Max</label>
-              <Input {...register('maxValue')} placeholder="-10" />
+              <Input
+                {...register('maxValue')}
+                placeholder="-10"
+                className="bg-card/80"
+              />
               <div className="mt-1 flex items-center gap-1 text-xs text-muted">
                 <TriangleAlert className="h-3.5 w-3.5" />
                 Acima deste valor o alerta pode ser disparado.
@@ -401,7 +415,11 @@ export function AlertRulesPanel({
               <label className="mb-1 block text-xs text-muted">
                 Cooldown (min)
               </label>
-              <Input {...register('cooldownMinutes')} placeholder="15" />
+              <Input
+                {...register('cooldownMinutes')}
+                placeholder="15"
+                className="bg-card/80"
+              />
               {errors.cooldownMinutes ? (
                 <p className="mt-1 text-xs text-bad">{errors.cooldownMinutes.message}</p>
               ) : null}
@@ -411,7 +429,11 @@ export function AlertRulesPanel({
               <label className="mb-1 block text-xs text-muted">
                 Tolerancia (min)
               </label>
-              <Input {...register('toleranceMinutes')} placeholder="0" />
+              <Input
+                {...register('toleranceMinutes')}
+                placeholder="0"
+                className="bg-card/80"
+              />
               {errors.toleranceMinutes ? (
                 <p className="mt-1 text-xs text-bad">{errors.toleranceMinutes.message}</p>
               ) : null}
@@ -479,7 +501,6 @@ export function AlertRulesPanel({
           {successMessage}
         </Feedback>
       ) : null}
-      {createMutation.isError || updateMutation.isError ? null : null}
       {deleteMutation.isError ? (
         <Feedback variant="danger" className="mb-3">
           {deleteMutation.error?.message ??
