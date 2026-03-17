@@ -209,8 +209,7 @@ export function ActuationPanel({
             Controle manual e historico rapido
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-muted">
-            Cadastre pontos de acionamento como sauna, exaustor ou rele de
-            potencia e controle o estado manualmente pelo painel.
+            Cadastre pontos e emita comandos pelo painel.
           </p>
           {client?.name ? (
             <p className="mt-2 text-xs text-muted">
@@ -221,7 +220,7 @@ export function ActuationPanel({
 
         <Badge>
           <Power className="h-3.5 w-3.5 text-[hsl(var(--accent-2))]" />
-          Recurso inicial
+          manual
         </Badge>
       </div>
 
@@ -340,8 +339,7 @@ export function ActuationPanel({
             </form>
           ) : (
             <Feedback className="mb-4">
-              Seu perfil pode acompanhar o acionamento, mas o cadastro dos
-              pontos de controle permanece com o administrador da plataforma.
+              Seu perfil pode acompanhar o acionamento, mas nao pode alterar os pontos.
             </Feedback>
           )}
 
@@ -598,22 +596,22 @@ export function ActuationPanel({
           {!isLoading && !isError && actuators.length === 0 && canManageStructure ? (
             <SetupGuideCard
               eyebrow="Acionamento"
-              title="Configure o primeiro ponto de acionamento deste cliente"
-              description="Mesmo sem hardware fisico, voce ja pode cadastrar a carga, emitir comandos on/off e validar o historico operacional pelo painel."
+              title="Cadastre o primeiro ponto de acionamento"
+              description="Depois disso, voce pode emitir comandos e acompanhar o historico."
               steps={[
                 {
-                  title: 'Cadastrar o ponto de acionamento',
-                  description: 'Use um identificador como `sauna_main` ou `exaustor_01`.',
+                  title: '1. Cadastrar ponto',
+                  description: 'Use um identificador simples.',
                 },
                 {
-                  title: devices.length > 0 ? 'Vincular a um equipamento' : 'Opcionalmente vincular a um equipamento',
+                  title: devices.length > 0 ? '2. Vincular equipamento' : '2. Vincular equipamento',
                   description: devices.length > 0
-                    ? 'Escolha um equipamento da lista para contextualizar a carga dentro do cliente.'
-                    : 'Quando houver equipamentos cadastrados, voce podera relacionar o ponto ao item monitorado.',
+                    ? 'Escolha um equipamento da lista.'
+                    : 'Quando houver equipamentos, voce podera relacionar o ponto.',
                 },
                 {
-                  title: 'Emitir comandos pelo painel',
-                  description: 'Teste ligar, desligar e acompanhe o log recente sem depender de rele fisico.',
+                  title: '3. Testar comandos',
+                  description: 'Ligue, desligue e revise o historico.',
                 },
               ]}
               secondaryHref="/lab"

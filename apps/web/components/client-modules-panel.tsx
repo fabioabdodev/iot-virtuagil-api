@@ -35,14 +35,14 @@ export function ClientModulesPanel({
   const mutation = useClientModuleMutations(clientId, authToken);
 
   if (!clientId) {
-    return <AccessNotice title="Recursos contratados" description="Selecione um cliente para consultar e ajustar os recursos habilitados na conta." badge="cliente obrigatorio" hint="A contratacao e gerenciada cliente a cliente, por isso esse painel precisa de uma conta em foco." />;
+    return <AccessNotice title="Recursos contratados" description="Selecione um cliente para ver os modulos da conta." badge="cliente obrigatorio" hint="Esse painel precisa de uma conta em foco." />;
   }
 
   if (!canManage) {
     return (
       <AccessNotice
         title="Recursos contratados"
-        description="A habilitacao de recursos contratados e uma acao administrativa, usada para controlar o que cada cliente pode operar."
+        description="A alteracao de modulos fica restrita ao administrador da plataforma."
         badge={currentUser?.role ?? 'sem permissao'}
         tone="warning"
         hint={blockedReason ?? 'Entre com um usuario admin para alterar contratacao de temperatura e acionamento.'}
@@ -56,7 +56,7 @@ export function ClientModulesPanel({
         <div>
           <h2 className="text-lg font-semibold">Recursos do cliente</h2>
           <p className="mt-1 text-sm text-muted">
-            Habilite apenas o que foi contratado em cada operacao.
+            Habilite apenas o que foi contratado.
           </p>
         </div>
         <Badge>

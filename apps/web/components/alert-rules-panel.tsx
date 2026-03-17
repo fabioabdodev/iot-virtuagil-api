@@ -235,13 +235,11 @@ export function AlertRulesPanel({
                 <div className="flex items-center gap-2">
                   <BellRing className="h-4 w-4 text-accent" />
                   <p className="text-sm font-medium text-ink">
-                    Primeira regra recomendada
+                    Regra inicial
                   </p>
                 </div>
                 <p className="mt-2 text-xs leading-6 text-muted">
-                  Para uma conta em onboarding, comece com uma regra simples por
-                  equipamento critico. Assim a demonstracao fica clara: leitura
-                  normal, desvio de faixa e resposta operacional.
+                  Comece com uma regra simples para o equipamento principal.
                 </p>
                 {client?.adminName ? (
                   <p className="mt-2 text-xs text-muted">
@@ -475,20 +473,20 @@ export function AlertRulesPanel({
       devices.length === 0 ? (
         <SetupGuideCard
           eyebrow="Regras de alerta"
-          title="Cadastre um equipamento antes da primeira regra"
-          description="As regras ficam mais claras quando voce ja tem pelo menos um equipamento monitorado para vincular limites e historico."
+          title="Cadastre um equipamento antes de criar regras"
+          description="Sem equipamento, a regra nao tem onde ser aplicada."
           steps={[
             {
-              title: 'Cadastrar o primeiro equipamento',
-              description: 'Crie um equipamento com faixa minima e maxima para habilitar monitoramento.',
+              title: '1. Cadastrar equipamento',
+              description: 'Crie o primeiro equipamento da conta.',
             },
             {
-              title: 'Simular ou enviar leituras',
-              description: 'Movimente o historico para validar online, offline e temperatura fora da faixa.',
+              title: '2. Ajustar faixa',
+              description: 'Preencha temperatura minima e maxima.',
             },
             {
-              title: 'Voltar aqui para criar a regra',
-              description: 'Depois disso, configure cooldown e tolerancia do alerta.',
+              title: '3. Criar regra',
+              description: 'Depois volte aqui para configurar o alerta.',
             },
           ]}
           primaryActionLabel={onCreateDevice ? 'Cadastrar primeiro equipamento' : undefined}
@@ -500,20 +498,20 @@ export function AlertRulesPanel({
       {!isLoading && !isError && (data?.length ?? 0) === 0 && devices.length > 0 ? (
         <SetupGuideCard
           eyebrow="Primeira regra"
-          title="Seu equipamento ja pode ganhar a primeira regra de alerta"
-          description="Agora que o cliente ja tem ao menos um equipamento, o proximo passo e configurar uma regra simples para demonstrar valor operacional e resposta a incidente."
+          title="Crie a primeira regra de alerta"
+          description="Defina o alerta principal do equipamento."
           steps={[
             {
-              title: 'Escolher o equipamento principal',
-              description: 'Comece pelo equipamento mais critico da conta para deixar a demonstracao mais concreta.',
+              title: '1. Escolher equipamento',
+              description: 'Selecione o equipamento principal.',
             },
             {
-              title: 'Definir limites e tempo de resposta',
-              description: 'Preencha faixa, cooldown e tolerancia de forma conservadora para evitar ruido inicial.',
+              title: '2. Definir limites',
+              description: 'Preencha faixa, cooldown e tolerancia.',
             },
             {
-              title: 'Simular um evento e acompanhar o fluxo',
-              description: 'Depois da regra criada, rode um cenario de alerta para revisar painel, webhook e notificacao.',
+              title: '3. Testar depois',
+              description: 'Depois use o laboratorio para validar a regra.',
             },
           ]}
         />
