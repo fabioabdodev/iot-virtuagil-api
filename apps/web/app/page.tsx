@@ -122,6 +122,7 @@ function DashboardContent() {
   );
   const [deviceLocalError, setDeviceLocalError] = useState<string | null>(null);
   const [isRunningDeviceDiagnostic, setIsRunningDeviceDiagnostic] = useState(false);
+  const [isCreatingDevice, setIsCreatingDevice] = useState(false);
 
   useEffect(() => {
     // Mantem o campo de filtro sincronizado quando a URL muda por navegacao ou refresh.
@@ -717,7 +718,7 @@ function DashboardContent() {
             <DeviceForm
               mode="create"
               clientId={scopedClientId}
-              loading={createMutation.isPending}
+              loading={isCreatingDevice}
               allowStructureFields
               allowTemperatureFields
               onCancel={() => setFormMode('closed')}
@@ -725,12 +726,16 @@ function DashboardContent() {
                 setDeviceSuccessMessage(null);
                 setRefreshMessage(null);
                 setDeviceLocalError(null);
+                setIsCreatingDevice(true);
                 setDeviceProgressMessage('Enviando equipamento para a API...');
                 try {
-                  await createMutation.mutateAsync({
+                  await createDevice(
+                    {
                     ...values,
-                    clientId: values.clientId ?? scopedClientId,
-                  });
+                      clientId: values.clientId ?? scopedClientId,
+                    },
+                    authToken,
+                  );
                   setDeviceProgressMessage('Atualizando lista...');
                   await refetch();
                   setDeviceSuccessMessage(
@@ -738,6 +743,7 @@ function DashboardContent() {
                   );
                   setFormMode('closed');
                 } finally {
+                  setIsCreatingDevice(false);
                   setDeviceProgressMessage(null);
                 }
               }}
