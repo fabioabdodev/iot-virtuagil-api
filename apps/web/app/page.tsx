@@ -116,6 +116,9 @@ function DashboardContent() {
     null,
   );
   const [refreshMessage, setRefreshMessage] = useState<string | null>(null);
+  const [deviceProgressMessage, setDeviceProgressMessage] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     // Mantem o campo de filtro sincronizado quando a URL muda por navegacao ou refresh.
@@ -185,6 +188,12 @@ function DashboardContent() {
     authToken,
   );
 
+  useEffect(() => {
+    if (createMutation.isError || updateMutation.isError || deleteMutation.isError) {
+      setDeviceProgressMessage(null);
+    }
+  }, [createMutation.isError, updateMutation.isError, deleteMutation.isError]);
+
   // Os cards superiores sao derivados localmente para evitar roundtrip extra na API.
   const online = devices.filter((d) => !d.isOffline).length;
   const offline = devices.filter((d) => d.isOffline).length;
@@ -252,11 +261,14 @@ function DashboardContent() {
     // A remocao afeta selecao e formulario; por isso limpamos os estados relacionados.
     setDeletingDeviceId(id);
     setDeviceSuccessMessage(null);
+    setDeviceProgressMessage('Removendo equipamento...');
     try {
       await deleteMutation.mutateAsync(id);
+      setDeviceProgressMessage('Atualizando lista...');
       await refetch();
       setDeviceSuccessMessage(`Equipamento ${id} removido com sucesso.`);
     } finally {
+      setDeviceProgressMessage(null);
       setDeletingDeviceId(null);
       setPendingDeleteDeviceId(null);
     }
@@ -270,8 +282,13 @@ function DashboardContent() {
 
   async function handleRefreshDevices() {
     setRefreshMessage(null);
-    await refetch();
-    setRefreshMessage('Lista de equipamentos atualizada.');
+    setDeviceProgressMessage('Atualizando lista...');
+    try {
+      await refetch();
+      setRefreshMessage('Lista de equipamentos atualizada.');
+    } finally {
+      setDeviceProgressMessage(null);
+    }
   }
 
   if (!isReady) {
@@ -649,15 +666,22 @@ function DashboardContent() {
               onCancel={() => setFormMode('closed')}
               onSubmit={async (values) => {
                 setDeviceSuccessMessage(null);
-                await createMutation.mutateAsync({
-                  ...values,
-                  clientId: values.clientId ?? scopedClientId,
-                });
-                await refetch();
-                setDeviceSuccessMessage(
-                  `Equipamento ${values.name ?? values.id} criado com sucesso.`,
-                );
-                setFormMode('closed');
+                setRefreshMessage(null);
+                setDeviceProgressMessage('Enviando equipamento para a API...');
+                try {
+                  await createMutation.mutateAsync({
+                    ...values,
+                    clientId: values.clientId ?? scopedClientId,
+                  });
+                  setDeviceProgressMessage('Atualizando lista...');
+                  await refetch();
+                  setDeviceSuccessMessage(
+                    `Equipamento ${values.name ?? values.id} criado com sucesso.`,
+                  );
+                  setFormMode('closed');
+                } finally {
+                  setDeviceProgressMessage(null);
+                }
               }}
             />
           </div>
@@ -681,22 +705,29 @@ function DashboardContent() {
               }}
               onSubmit={async (values) => {
                 setDeviceSuccessMessage(null);
-                await updateMutation.mutateAsync({
-                  id: editingDevice.id,
-                  payload: {
-                    clientId: values.clientId,
-                    name: values.name,
-                    location: values.location,
-                    minTemperature: values.minTemperature,
-                    maxTemperature: values.maxTemperature,
-                  },
-                });
-                await refetch();
-                setDeviceSuccessMessage(
-                  `Equipamento ${values.name ?? editingDevice.id} atualizado com sucesso.`,
-                );
-                setEditingDeviceId(null);
-                setFormMode('closed');
+                setRefreshMessage(null);
+                setDeviceProgressMessage('Salvando alteracoes do equipamento...');
+                try {
+                  await updateMutation.mutateAsync({
+                    id: editingDevice.id,
+                    payload: {
+                      clientId: values.clientId,
+                      name: values.name,
+                      location: values.location,
+                      minTemperature: values.minTemperature,
+                      maxTemperature: values.maxTemperature,
+                    },
+                  });
+                  setDeviceProgressMessage('Atualizando lista...');
+                  await refetch();
+                  setDeviceSuccessMessage(
+                    `Equipamento ${values.name ?? editingDevice.id} atualizado com sucesso.`,
+                  );
+                  setEditingDeviceId(null);
+                  setFormMode('closed');
+                } finally {
+                  setDeviceProgressMessage(null);
+                }
               }}
             />
           </div>
@@ -710,6 +741,11 @@ function DashboardContent() {
               updateMutation.error?.message ??
               deleteMutation.error?.message ??
               'Erro ao salvar alteracoes do equipamento. Verifique os dados e tente novamente.'}
+          </Feedback>
+        ) : null}
+        {deviceProgressMessage ? (
+          <Feedback className="mb-3">
+            {deviceProgressMessage}
           </Feedback>
         ) : null}
         {deviceSuccessMessage ? (

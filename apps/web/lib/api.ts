@@ -16,6 +16,7 @@ import { AuditLogEntry } from '@/types/audit-log';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000';
+const DEVICE_REQUEST_TIMEOUT_MS = 15000;
 
 async function extractApiErrorMessage(
   response: Response,
@@ -47,6 +48,29 @@ function buildAuthHeaders(authToken?: string) {
     headers.Authorization = `Bearer ${authToken}`;
   }
   return headers;
+}
+
+async function fetchWithTimeout(
+  input: string,
+  init: RequestInit,
+  timeoutMs = DEVICE_REQUEST_TIMEOUT_MS,
+) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error('A API demorou para responder. Tente novamente.');
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
 }
 
 function normalizeDeviceReadings(rows: unknown): DeviceReading[] {
@@ -92,7 +116,7 @@ export async function fetchDevices(
   query.set('limit', String(limit));
   if (clientId) query.set('clientId', clientId);
 
-  const response = await fetch(`${API_BASE_URL}/devices?${query.toString()}`, {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/devices?${query.toString()}`, {
     cache: 'no-store',
     headers: buildAuthHeaders(authToken),
   });
@@ -140,7 +164,7 @@ export async function createDevice(
   input: DeviceInput,
   authToken?: string,
 ): Promise<DeviceSummary> {
-  const response = await fetch(`${API_BASE_URL}/devices`, {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/devices`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -167,7 +191,7 @@ export async function updateDevice(
   const query = new URLSearchParams();
   if (clientId) query.set('clientId', clientId);
 
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `${API_BASE_URL}/devices/${id}?${query.toString()}`,
     {
       method: 'PATCH',
@@ -196,7 +220,7 @@ export async function deleteDevice(
   const query = new URLSearchParams();
   if (clientId) query.set('clientId', clientId);
 
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `${API_BASE_URL}/devices/${id}?${query.toString()}`,
     {
       method: 'DELETE',

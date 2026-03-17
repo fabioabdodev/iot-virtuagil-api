@@ -7,12 +7,15 @@ import { DeviceInput, DeviceSummary } from '@/types/device';
 export function useDeviceMutations(clientId?: string, authToken?: string) {
   const queryClient = useQueryClient();
 
-  const invalidateDevices = async () => {
-    await queryClient.invalidateQueries({
+  const invalidateDevices = () => {
+    void queryClient.invalidateQueries({
       queryKey: ['devices'],
-      refetchType: 'active',
+      refetchType: 'none',
     });
-    await queryClient.invalidateQueries({ queryKey: ['device-readings'] });
+    void queryClient.invalidateQueries({
+      queryKey: ['device-readings'],
+      refetchType: 'none',
+    });
   };
 
   const upsertDeviceInCaches = (device: DeviceSummary) => {
@@ -22,7 +25,9 @@ export function useDeviceMutations(clientId?: string, authToken?: string) {
         if (!current) return current;
 
         const existingIndex = current.findIndex((row) => row.id === device.id);
-        if (existingIndex === -1) return current;
+        if (existingIndex === -1) {
+          return [device, ...current];
+        }
 
         const next = current.slice();
         next[existingIndex] = {
@@ -44,9 +49,9 @@ export function useDeviceMutations(clientId?: string, authToken?: string) {
 
   const createMutation = useMutation({
     mutationFn: (payload: DeviceInput) => createDevice(payload, authToken),
-    onSuccess: async (device) => {
+    onSuccess: (device) => {
       upsertDeviceInCaches(device);
-      await invalidateDevices();
+      invalidateDevices();
     },
   });
 
@@ -54,21 +59,21 @@ export function useDeviceMutations(clientId?: string, authToken?: string) {
     mutationFn: ({
       id,
       payload,
-      }: {
+    }: {
       id: string;
       payload: Omit<DeviceInput, 'id'>;
     }) => updateDevice(id, payload, clientId, authToken),
-    onSuccess: async (device) => {
+    onSuccess: (device) => {
       upsertDeviceInCaches(device);
-      await invalidateDevices();
+      invalidateDevices();
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteDevice(id, clientId, authToken),
-    onSuccess: async (device) => {
+    onSuccess: (device) => {
       removeDeviceFromCaches(device.id);
-      await invalidateDevices();
+      invalidateDevices();
     },
   });
 
