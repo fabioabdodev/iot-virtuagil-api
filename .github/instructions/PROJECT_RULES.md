@@ -5,6 +5,28 @@ applyTo: '**'
 
 # PROJECT_RULES.md - Regras e estado atual do projeto
 
+## Atualizacao de referencia (2026-03-19)
+
+Direcao consolidada apos a refatoracao:
+
+- o modulo `temperatura` foi promovido para modulo-categoria `ambiental`
+- `ambiental` agora concentra itens expansivos como:
+  - `temperatura`
+  - `umidade`
+  - `gases`
+- `acionamento` segue como modulo-categoria com itens expansivos como:
+  - `rele`
+  - `status_abertura`
+  - `tempo_aberto`
+- `energia` foi introduzido como modulo-categoria para:
+  - `corrente`
+  - `tensao`
+  - `consumo`
+- contratacao por cliente passa a ser no nivel de item, mantendo leitura por modulo para UX
+- a API agora possui ingestao generica em `POST /iot/readings`
+- `POST /iot/temperature` permanece ativo como compatibilidade legada
+- o projeto de firmware continua separado em `iot-virtuagil-firmware/`
+
 ## Escopo atual do projeto
 
 Funcionalidades ja implementadas:

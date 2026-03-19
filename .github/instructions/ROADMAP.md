@@ -5,6 +5,16 @@ applyTo: '**'
 
 # ROADMAP.md - Evolucao do sistema
 
+## Atualizacao de referencia (2026-03-19)
+
+Direcao de continuidade apos refatoracao:
+
+- tratar `ambiental` como modulo-categoria principal para monitoramento
+- evoluir onboarding e contratacao por item (`temperatura`, `umidade`, `gases`)
+- manter `acionamento` e `energia` como modulos-categoria expansivos por item
+- migrar gradualmente fluxos operacionais para ingestao generica `POST /iot/readings`
+- preservar `POST /iot/temperature` enquanto houver clientes/simuladores legados
+
 ## Entregas ja concluidas
 
 ### Fase 1 - Base operacional

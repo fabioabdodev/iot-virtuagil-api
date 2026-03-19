@@ -218,3 +218,13 @@ O backend será responsável por:
 - detectar falhas
 - gerar alertas
 - integrar com sistemas externos (n8n / WhatsApp)
+---
+
+## Atualizacao de referencia (2026-03-19)
+
+Direcao atual do runtime IoT:
+
+- endpoint principal de ingestao: `POST /iot/readings`
+- payload recomendado: `device_id`, `sensor_type`, `value`, `unit` opcional
+- endpoint legado mantido: `POST /iot/temperature`
+- firmware permanece em repositorio/projeto separado: `iot-virtuagil-firmware/`

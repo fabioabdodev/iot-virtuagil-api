@@ -1,10 +1,10 @@
-# Plataforma Virtuagil IoT
+Ôªø# Plataforma Virtuagil IoT
 
-Backend em NestJS para monitoramento de dispositivos IoT, com ingest„o de temperatura, detecÁ„o de offline, regras de alerta configur·veis e integraÁ„o por webhook.
+Backend em NestJS para monitoramento de dispositivos IoT, com ingestao multi-sensor, deteccao de offline, regras de alerta configuraveis e integracao por webhook.
 
-Identidade tÈcnica atual:
+Identidade t√©cnica atual:
 
-- repositÛrio principal: `iot-virtuagil-api`
+- reposit√≥rio principal: `iot-virtuagil-api`
 - API: `iot-virtuagil-api`
 - web: `iot-virtuagil-web`
 - imagens: `ghcr.io/fabioabdodev/iot-virtuagil-api/...`
@@ -15,35 +15,40 @@ Identidade tÈcnica atual:
 - Prisma ORM
 - PostgreSQL (Supabase)
 - Scheduler (cron)
-- IntegraÁ„o de alertas via webhook (n8n)
+- Integra√ß√£o de alertas via webhook (n8n)
 
 ## Funcionalidades atuais
 
-- Ingest„o de temperatura via `POST /iot/temperature`
-- AutenticaÁ„o de device por `x-device-key`
+- Ingestao generica de sensores via `POST /iot/readings`
+- Compatibilidade legada de temperatura via `POST /iot/temperature`
+- Autentica√ß√£o de device por `x-device-key`
 - Rate limit por device
-- Gest„o de devices (`POST/GET/PATCH/DELETE`)
-- Gest„o de atuadores e comandos manuais (`/actuators`)
-- Dashboard backend (`GET /devices` e histÛrico)
-- Leitura normalizada e agregada por resoluÁ„o (`/readings`)
-- Gest„o de clientes (`/clients`)
+- Gest√£o de devices (`POST/GET/PATCH/DELETE`)
+- Gest√£o de atuadores e comandos manuais (`/actuators`)
+- Dashboard backend (`GET /devices` e hist√≥rico)
+- Leitura normalizada e agregada por resolu√ß√£o (`/readings`)
+- Gest√£o de clientes (`/clients`)
 - Autenticacao de usuarios (`/auth`)
 - Protecao de login por rate limit e bloqueio temporario
 - Regras de alerta (`/alert-rules`)
-- Monitoramento offline + alerta por temperatura
+- Monitoramento offline + alerta por sensor
 - Base multi-tenant (`clientId`)
 
 ## Direcao do produto
 
 O projeto esta evoluindo para uma plataforma modular de automacao e monitoramento.
 
-Modulo atual:
+Modulo base atual:
 
-- `temperatura`
+- `ambiental` (itens: `temperatura`, `umidade`, `gases`)
 
-Proximo modulo planejado:
+Modulo operacional atual:
 
-- `acionamento`
+- `acionamento` (itens: `rele`, `status_abertura`, `tempo_aberto`)
+
+Modulo preparado para oferta:
+
+- `energia` (itens: `corrente`, `tensao`, `consumo`)
 
 Resumo da estrategia:
 
@@ -53,20 +58,20 @@ Resumo da estrategia:
 
 Mais detalhes em `.github/instructions/PRODUCT_RULES.md` e `.github/instructions/ROADMAP.md`.
 
-## Escopo deste repositÛrio
+## Escopo deste reposit√≥rio
 
-Este repositÛrio cobre:
+Este reposit√≥rio cobre:
 
 - backend NestJS
 - dashboard web Next.js
-- deploy, operaÁ„o e documentaÁ„o do produto IoT
+- deploy, opera√ß√£o e documenta√ß√£o do produto IoT
 
 Escopos paralelos locais:
 
 - `institucional-site/`: rascunho local do futuro site institucional da Virtuagil
 - `iot-virtuagil-firmware/`: base local do futuro projeto separado de firmware/hardware
 
-Essas duas pastas n„o devem orientar mudanÁas deste backend/dashboard, a menos que a tarefa seja explicitamente sobre elas.
+Essas duas pastas n√£o devem orientar mudan√ßas deste backend/dashboard, a menos que a tarefa seja explicitamente sobre elas.
 
 ## Arquitetura operacional atual
 
@@ -81,7 +86,7 @@ Servicos em uso hoje:
 Fluxo esperado para alertas:
 
 1. device envia leitura para a API
-2. a API detecta evento de temperatura ou offline
+2. a API detecta evento de sensor ou offline
 3. a API envia webhook para o `n8n`
 4. o `n8n` pode orquestrar notificacoes e integracoes
 5. o `Evolution` pode ser usado para entrega de mensagens, como WhatsApp
@@ -96,11 +101,11 @@ Observacao de infraestrutura:
 
 - Node.js 20+
 - npm 10+
-- Banco PostgreSQL acessÌvel
+- Banco PostgreSQL acess√≠vel
 
-## ConfiguraÁ„o
+## Configura√ß√£o
 
-1. Instale dependÍncias:
+1. Instale depend√™ncias:
 
 ```bash
 npm ci
@@ -112,9 +117,9 @@ npm ci
 cp .env.example .env
 ```
 
-3. Ajuste vari·veis em `.env` (principalmente `DATABASE_URL`, `DIRECT_DATABASE_URL` e webhooks).
+3. Ajuste vari√°veis em `.env` (principalmente `DATABASE_URL`, `DIRECT_DATABASE_URL` e webhooks).
 
-ObservaÁ„o importante: se a senha do banco tiver caracteres especiais (`@`, `:`, `/`, etc.), faÁa URL encode.
+Observa√ß√£o importante: se a senha do banco tiver caracteres especiais (`@`, `:`, `/`, etc.), fa√ßa URL encode.
 Exemplo: `@` vira `%40`.
 
 4. Gere o Prisma Client:
@@ -244,12 +249,24 @@ Exemplo validando a release esperada:
 npm run health:check:prod -- --expect-release sha-abc1234
 ```
 
-### Ingest„o
+### Ingestao
 
-- `POST /iot/temperature`
-- Header obrigatÛrio: `x-device-key`
+- `POST /iot/readings`
+- `POST /iot/temperature` (compatibilidade com simuladores legados)
+- Header obrigat√≥rio: `x-device-key`
 
 Payload:
+
+```json
+{
+  "device_id": "freezer_01",
+  "sensor_type": "temperatura",
+  "value": -12.3,
+  "unit": "celsius"
+}
+```
+
+Payload legado (ainda aceito):
 
 ```json
 {
@@ -269,7 +286,7 @@ Payload:
 
 ### Readings
 
-- `GET /readings/:deviceId?clientId=...&sensor=temperature&limit=...&resolution=5m|15m|1h|1d`
+- `GET /readings/:deviceId?clientId=...&sensor=temperatura|umidade|gases|corrente|tensao|consumo&limit=...&resolution=5m|15m|1h|1d`
 
 ### Clients
 
@@ -294,7 +311,7 @@ Protecoes atuais do login:
 ### Alert Rules
 
 - `POST /alert-rules`
-- `GET /alert-rules?clientId=...&deviceId=...&sensorType=temperature&enabled=true|false`
+- `GET /alert-rules?clientId=...&deviceId=...&sensorType=...&enabled=true|false`
 - `GET /alert-rules/:id`
 - `PATCH /alert-rules/:id`
 - `DELETE /alert-rules/:id`
@@ -311,7 +328,7 @@ Protecoes atuais do login:
 
 ## Testes
 
-Unit·rios:
+Unit√°rios:
 
 ```bash
 npm test -- --runInBand
@@ -448,7 +465,7 @@ Build da imagem:
 docker build -t iot-virtuagil-api:latest .
 ```
 
-ExecuÁ„o:
+Execu√ß√£o:
 
 ```bash
 docker run --rm -p 3000:3000 --env-file .env iot-virtuagil-api:latest
@@ -463,7 +480,7 @@ Pipeline GitHub Actions em `.github/workflows/ci.yml`:
 - install (`npm ci`)
 - prisma generate
 - build
-- testes unit·rios
+- testes unit√°rios
 - testes e2e
 
 ## Deploy (Swarm + Traefik + Cloudflare)
@@ -510,7 +527,7 @@ Configurar em `Settings > Secrets and variables > Actions`:
 - `VPS_USER`
 - `VPS_SSH_KEY`
 - `GHCR_USERNAME`
-- `GHCR_TOKEN` (PAT com `read:packages`; se for publicar por outro usu·rio, incluir `write:packages`)
+- `GHCR_TOKEN` (PAT com `read:packages`; se for publicar por outro usu√°rio, incluir `write:packages`)
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (quando o login usar Cloudflare Turnstile)
 - `PORTAINER_WEBHOOK_URL` (opcional, quando o deploy for disparado pelo Portainer em vez de SSH)
 
@@ -524,7 +541,7 @@ Criar registros proxied:
 SSL/TLS recomendado:
 
 - Cloudflare: `Full (strict)`
-- Traefik com `certresolver=cloudflare` (j· definido nas labels do stack)
+- Traefik com `certresolver=cloudflare` (j√° definido nas labels do stack)
 
 Estado operacional validado em 13/03/2026:
 
@@ -555,10 +572,10 @@ Push na branch `main` (ou `workflow_dispatch`) dispara:
    - `ghcr.io/fabioabdodev/iot-virtuagil-api/web:latest`
    - `ghcr.io/fabioabdodev/iot-virtuagil-api/api:sha-xxxxxxx`
    - `ghcr.io/fabioabdodev/iot-virtuagil-api/web:sha-xxxxxxx`
-2. Se `PORTAINER_WEBHOOK_URL` estiver vazio: cÛpia do `stack.prod.yml` para `/opt/iot-virtuagil-api` na VPS.
-3. O workflow entra em `/opt/iot-virtuagil-api`, carrega `.env.prod`, executa `npx prisma migrate deploy` dentro da imagem da API e sÛ ent„o roda `docker stack deploy` no Swarm com `API_IMAGE` e `WEB_IMAGE` apontando para a tag curta do commit.
+2. Se `PORTAINER_WEBHOOK_URL` estiver vazio: c√≥pia do `stack.prod.yml` para `/opt/iot-virtuagil-api` na VPS.
+3. O workflow entra em `/opt/iot-virtuagil-api`, carrega `.env.prod`, executa `npx prisma migrate deploy` dentro da imagem da API e s√≥ ent√£o roda `docker stack deploy` no Swarm com `API_IMAGE` e `WEB_IMAGE` apontando para a tag curta do commit.
 
-ObservaÁ„o: o frontend usa `NEXT_PUBLIC_API_BASE_URL` no build da imagem web. O workflow j· publica a imagem com `https://api-monitor.virtuagil.com.br` embutido no bundle.
+Observa√ß√£o: o frontend usa `NEXT_PUBLIC_API_BASE_URL` no build da imagem web. O workflow j√° publica a imagem com `https://api-monitor.virtuagil.com.br` embutido no bundle.
 
 Observacao operacional importante:
 
@@ -569,9 +586,9 @@ Observacao operacional importante:
 - depois do deploy, consulte `GET /health` para confirmar `release`, `buildTime` e `features` publicados
 - se o deploy for manual no Portainer usando imagens `latest`, atualize tambem `APP_RELEASE=latest` e `APP_BUILD_TIME` com o horario atual para manter o `/health` coerente
 - se quiser automatizar essa checagem sem abrir o navegador, use `npm run health:check:prod`
-- a pasta esperada hoje na VPS È `/opt/iot-virtuagil-api`
+- a pasta esperada hoje na VPS √© `/opt/iot-virtuagil-api`
 
-## Vari·veis de ambiente (resumo)
+## Vari√°veis de ambiente (resumo)
 
 - `PORT`
 - `DATABASE_URL`
@@ -598,10 +615,10 @@ Observacao operacional importante:
 - `ALERT_QUEUE_RETRY_MAX`
 - `ALERT_QUEUE_RETRY_DELAY_MS`
 
-## ObservaÁıes de produÁ„o
+## Observa√ß√µes de produ√ß√£o
 
-- Backend e frontend devem rodar como serviÁos separados.
-- N„o versionar segredos (`.env` j· est· no `.gitignore`).
+- Backend e frontend devem rodar como servi√ßos separados.
+- N√£o versionar segredos (`.env` j√° est√° no `.gitignore`).
 - Preferir deploy containerizado (Docker/Swarm).
 - Se usar Cloudflare proxy, manter `SSL/TLS = Full (strict)`.
 - Se ativar `Cloudflare Turnstile`, configure a chave publica no frontend e a chave secreta na API.
@@ -622,29 +639,29 @@ Quando for ativar o Turnstile:
 3. configure a chave publica no frontend como `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
 4. envie o token do Turnstile em `POST /auth/login` no campo `turnstileToken`
 
-ObservaÁıes pr·ticas:
+Observa√ß√µes pr√°ticas:
 
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY` entra no build do web via GitHub Actions
-- `TURNSTILE_SECRET_KEY` e `NEXT_PUBLIC_TURNSTILE_SITE_KEY` tambÈm devem existir em `/opt/iot-virtuagil-api/.env.prod`
+- `TURNSTILE_SECRET_KEY` e `NEXT_PUBLIC_TURNSTILE_SITE_KEY` tamb√©m devem existir em `/opt/iot-virtuagil-api/.env.prod`
 - se a `TURNSTILE_SECRET_KEY` for exposta em chat, screenshot ou ticket, gire a chave no Cloudflare e atualize a VPS
 
-## Checklist de pÛs-deploy
+## Checklist de p√≥s-deploy
 
-Depois de um deploy em produÁ„o, valide nesta ordem:
+Depois de um deploy em produ√ß√£o, valide nesta ordem:
 
 1. GitHub Actions:
    - workflow `deploy` com `build-and-push` e `deploy-swarm` em verde
 2. Portainer:
    - stack `iot-monitor`
-   - serviÁos `iot-monitor_api` e `iot-monitor_web` em `1/1`
+   - servi√ßos `iot-monitor_api` e `iot-monitor_web` em `1/1`
 3. Health checks:
    - `https://monitor.virtuagil.com.br/api/health`
    - `https://api-monitor.virtuagil.com.br/health`
-4. AplicaÁ„o:
+4. Aplica√ß√£o:
    - abrir o dashboard web
    - validar carregamento de dispositivos
 
-## RotaÁ„o de segredos
+## Rota√ß√£o de segredos
 
 Se alguma credencial for exposta, troque nesta ordem:
 
@@ -658,7 +675,7 @@ Se alguma credencial for exposta, troque nesta ordem:
    - `/opt/iot-virtuagil-api/.env.prod` na VPS
 7. Rode o workflow `deploy` novamente
 
-Passo a passo pr·tico quando houver exposicao em print, chat ou ticket:
+Passo a passo pr√°tico quando houver exposicao em print, chat ou ticket:
 
 1. girar primeiro a senha/conexao do banco no provedor
 2. gerar um novo `AUTH_SECRET` longo e aleatorio
@@ -668,7 +685,7 @@ Passo a passo pr·tico quando houver exposicao em print, chat ou ticket:
 6. validar `https://api-monitor.virtuagil.com.br/health`
 7. confirmar login no dashboard e ingestao do device
 
-## Comandos ˙teis na VPS
+## Comandos √∫teis na VPS
 
 ```bash
 docker service ls
@@ -681,11 +698,12 @@ cat /opt/iot-virtuagil-api/.env.prod
 
 ## Nota sobre Portainer CE
 
-No `Portainer Community Edition`, `stack webhooks` n„o ficam disponÌveis. Neste projeto, o fluxo recomendado È:
+No `Portainer Community Edition`, `stack webhooks` n√£o ficam dispon√≠veis. Neste projeto, o fluxo recomendado √©:
 
 1. build e push da imagem no GitHub Actions
 2. deploy da stack por `SSH`
 
 O uso de `PORTAINER_WEBHOOK_URL` so faz sentido se a stack for gerenciada por uma edicao do Portainer que suporte webhook.
+
 
 

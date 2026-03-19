@@ -5,6 +5,16 @@ applyTo: '**'
 
 # ARCHITECTURE.md - Arquitetura tecnica
 
+## Atualizacao de referencia (2026-03-19)
+
+A arquitetura de dominio agora considera:
+
+- modulos-categoria (`ambiental`, `acionamento`, `energia`)
+- itens por modulo (capabilities contrataveis por cliente)
+- ingestao IoT generica por `POST /iot/readings`
+- compatibilidade legada mantida em `POST /iot/temperature`
+- historico de leitura preparado para sensor multi-tipo
+
 ## Stack principal
 
 - NestJS

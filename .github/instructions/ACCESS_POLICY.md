@@ -5,6 +5,15 @@ applyTo: '**'
 
 # ACCESS_POLICY.md - Politica de acesso e responsabilidade operacional
 
+## Atualizacao de referencia (2026-03-19)
+
+Aplicar a politica por modulo-categoria e por item contratado:
+
+- categorias atuais: `ambiental`, `acionamento`, `energia`
+- autorizacao operacional deve considerar itens habilitados por cliente
+- o admin da plataforma define categorias e itens disponiveis por cliente
+- o cliente administra apenas regras operacionais dos itens autorizados
+
 ## Objetivo
 
 Definir com clareza:

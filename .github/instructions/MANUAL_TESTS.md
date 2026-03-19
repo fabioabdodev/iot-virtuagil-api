@@ -5,6 +5,15 @@ applyTo: '**'
 
 # MANUAL_TESTS.md - Testes manuais no Insomnia
 
+## Atualizacao de referencia (2026-03-19)
+
+Para validacoes novas:
+
+- priorizar `POST /iot/readings` para ingestao generica
+- manter `POST /iot/temperature` apenas para compatibilidade
+- considerar `ambiental` como modulo-categoria (itens: `temperatura`, `umidade`, `gases`)
+- considerar `acionamento` como modulo-categoria por itens
+
 Este arquivo existe para dar praticidade.
 
 Objetivo:

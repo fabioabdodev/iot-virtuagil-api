@@ -5,6 +5,19 @@ applyTo: '**'
 
 # PRODUCT_RULES.md - Regras de produto
 
+## Atualizacao de referencia (2026-03-19)
+
+Refatoracao comercial consolidada:
+
+- o produto deixa de tratar `temperatura` como modulo isolado
+- `temperatura` passa a ser item do modulo-categoria `ambiental`
+- novos itens de `ambiental`: `umidade` e `gases`
+- `acionamento` evolui para modulo-categoria com itens como `rele`, `status_abertura` e `tempo_aberto`
+- `energia` entra como modulo-categoria para `corrente`, `tensao` e `consumo`
+- contratacao deve ser feita por item dentro de cada modulo-categoria
+- a ingestao IoT deve aceitar sensores genericos por `POST /iot/readings`
+- `POST /iot/temperature` permanece por compatibilidade durante a transicao
+
 Este projeto implementa uma plataforma modular de automacao e monitoramento
 usando IoT. O primeiro modulo e `temperatura`, com caso inicial focado em
 freezer, mas a base deve permitir evolucao para novos modulos.

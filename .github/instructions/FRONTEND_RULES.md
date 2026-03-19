@@ -5,6 +5,15 @@ applyTo: '**'
 
 # FRONTEND_RULES.md - Regras do frontend
 
+## Atualizacao de referencia (2026-03-19)
+
+Direcao para o dashboard:
+
+- tratar `ambiental`, `acionamento` e `energia` como modulos-categoria
+- exibir contratacao por itens dentro de cada modulo
+- evitar acoplamento da UI a lista fixa de modulos
+- manter compatibilidade visual com contas legadas durante transicao
+
 ## Stack atual do frontend
 
 - Next.js
