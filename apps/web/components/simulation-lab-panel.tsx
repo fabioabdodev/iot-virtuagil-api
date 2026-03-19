@@ -26,6 +26,7 @@ type Scenario = {
   description: string;
   command: string;
   badge?: string;
+  scope?: 'production' | 'local';
 };
 
 type DemoStep = {
@@ -85,6 +86,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         'Mantem freezers operando dentro da faixa esperada para validar painel e historico.',
       command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset normal --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKey}`,
       badge: 'baseline',
+      scope: 'production',
     },
     {
       title: 'Pre-alerta',
@@ -92,6 +94,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         'Aproxima as leituras do limite superior para conferir comportamento visual antes do disparo.',
       command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset alerta --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKey}`,
       badge: 'alerta',
+      scope: 'production',
     },
     {
       title: 'Cenario critico',
@@ -99,6 +102,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         'Gera valores fora da faixa para testar alerta de temperatura e resposta operacional.',
       command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset critico --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKey}`,
       badge: 'critico',
+      scope: 'production',
     },
     {
       title: 'Ensaio de offline',
@@ -106,6 +110,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         'Envia poucas leituras normais e depois para, para deixar o equipamento sem comunicar e validar o alerta de offline.',
       command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset normal --count 3 --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKey}`,
       badge: 'offline',
+      scope: 'production',
     },
     {
       title: 'Popular base demo',
@@ -113,6 +118,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         'Cria clientes, equipamentos, regras, atuadores demo e historicos iniciais sem hardware real.',
       command: 'npm run db:seed',
       badge: 'seed',
+      scope: 'local',
     },
     {
       title: 'Verificar migration',
@@ -120,43 +126,49 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         'Confirma se a migration do modulo de acionamento entrou no banco configurado.',
       command: 'npm run db:verify-actuation',
       badge: 'schema',
+      scope: 'local',
     },
     {
       title: 'Cadastrar atuador',
       description:
-        'Cria um ponto de acionamento manual para validar o modulo sem rele fisico.',
-      command: `curl -X POST http://localhost:3000/actuators -H "Content-Type: application/json" -d "{\\"id\\":\\"sauna_main\\",\\"clientId\\":\\"${clientId ?? 'virtuagil'}\\",\\"name\\":\\"Sauna principal\\"}"`,
+        'Cria um ponto de acionamento manual no ambiente de producao (requer token de sessao).',
+      command: `curl -X POST ${simulatorUrl}/actuators -H "Content-Type: application/json" -H "Authorization: Bearer SEU_TOKEN_ADMIN" -d "{\\"id\\":\\"sauna_main\\",\\"clientId\\":\\"${clientId ?? 'virtuagil'}\\",\\"name\\":\\"Sauna principal\\"}"`,
       badge: 'acionamento',
+      scope: 'production',
     },
     {
       title: 'Enviar comando ON',
       description:
-        'Liga ou desliga a carga pela API para testar painel e historico do atuador.',
+        'Liga a carga pela API em producao para testar painel e historico do atuador.',
       command:
-        'curl -X POST http://localhost:3000/actuators/sauna_main/commands -H "Content-Type: application/json" -d "{\\"desiredState\\":\\"on\\",\\"source\\":\\"lab\\"}"',
+        `curl -X POST ${simulatorUrl}/actuators/sauna_main/commands -H "Content-Type: application/json" -H "Authorization: Bearer SEU_TOKEN_ADMIN" -d "{\\"desiredState\\":\\"on\\",\\"source\\":\\"lab\\"}"`,
       badge: 'manual',
+      scope: 'production',
     },
     {
       title: 'Enviar comando OFF',
       description:
-        'Desliga a carga pela API para validar transicao de estado e novo item no historico.',
+        'Desliga a carga pela API em producao para validar transicao de estado e novo item no historico.',
       command:
-        'curl -X POST http://localhost:3000/actuators/sauna_main/commands -H "Content-Type: application/json" -d "{\\"desiredState\\":\\"off\\",\\"source\\":\\"lab\\"}"',
+        `curl -X POST ${simulatorUrl}/actuators/sauna_main/commands -H "Content-Type: application/json" -H "Authorization: Bearer SEU_TOKEN_ADMIN" -d "{\\"desiredState\\":\\"off\\",\\"source\\":\\"lab\\"}"`,
       badge: 'manual',
+      scope: 'production',
     },
     {
       title: 'Listar atuadores',
       description:
-        'Consulta os pontos de acionamento do cliente atual para conferir seed, cadastro e estado operacional.',
-      command: `curl "http://localhost:3000/actuators?clientId=${clientId ?? 'virtuagil'}"`,
+        'Consulta os pontos de acionamento do cliente atual em producao.',
+      command: `curl "${simulatorUrl}/actuators?clientId=${clientId ?? 'virtuagil'}" -H "Authorization: Bearer SEU_TOKEN_ADMIN"`,
       badge: 'consulta',
+      scope: 'production',
     },
     {
       title: 'Historico do acionamento',
       description:
-        'Busca os ultimos comandos emitidos para um ponto de acionamento especifico.',
-      command: 'curl http://localhost:3000/actuators/sauna_main/commands',
+        'Busca os ultimos comandos emitidos para um ponto de acionamento especifico em producao.',
+      command: `curl ${simulatorUrl}/actuators/sauna_main/commands -H "Authorization: Bearer SEU_TOKEN_ADMIN"`,
       badge: 'log',
+      scope: 'production',
     },
   ];
 
@@ -315,7 +327,13 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
                 <h3 className="text-base font-semibold">{scenario.title}</h3>
                 <p className="mt-1 text-sm text-muted">{scenario.description}</p>
               </div>
-              {scenario.badge ? <Badge>{scenario.badge}</Badge> : null}
+              <div className="flex items-center gap-2">
+                {scenario.scope === 'production' ? (
+                  <Badge variant="success">producao</Badge>
+                ) : null}
+                {scenario.scope === 'local' ? <Badge>local</Badge> : null}
+                {scenario.badge ? <Badge>{scenario.badge}</Badge> : null}
+              </div>
             </div>
 
             <div className="overflow-x-auto rounded-2xl border border-line/70 bg-bg/40 p-4 font-mono text-xs leading-6 text-ink">
@@ -335,9 +353,13 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
                 <span className="text-xs text-muted">
                   {scenario.command.includes('SUA_CHAVE')
                     ? 'Ajuste `SUA_CHAVE` antes de executar.'
+                    : scenario.command.includes('SEU_TOKEN_ADMIN')
+                      ? 'Use token de admin da conta antes de executar em producao.'
                     : scenario.badge === 'offline'
                       ? 'Depois do ultimo envio, aguarde o cutoff de offline para confirmar o alerta no painel e no WhatsApp.'
-                    : 'Pronto para testar no terminal local.'}
+                      : scenario.scope === 'local'
+                        ? 'Comando de manutencao local (nao usar durante visita comercial em producao).'
+                      : 'Pronto para testar no terminal local.'}
                 </span>
               )}
 
