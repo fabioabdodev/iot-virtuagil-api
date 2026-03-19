@@ -50,7 +50,8 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
   const demoTenant = client?.name ?? clientId ?? 'conta-demo';
   const simulatorUrl = 'https://api-monitor.virtuagil.com.br';
   const simulatorDevices = resolveSimulationDevices(clientId);
-  const simulatorApiKey = client?.deviceApiKey ?? 'SUA_CHAVE';
+  const simulatorApiKey = client?.deviceApiKey ?? null;
+  const simulatorApiKeyPlaceholder = 'SUA_CHAVE_DEVICE';
 
   const demoSteps: DemoStep[] = [
     {
@@ -84,7 +85,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       title: 'Carga normal',
       description:
         'Mantem freezers operando dentro da faixa esperada para validar painel e historico.',
-      command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset normal --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKey}`,
+      command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset normal --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKeyPlaceholder}`,
       badge: 'baseline',
       scope: 'production',
     },
@@ -92,7 +93,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       title: 'Pre-alerta',
       description:
         'Aproxima as leituras do limite superior para conferir comportamento visual antes do disparo.',
-      command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset alerta --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKey}`,
+      command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset alerta --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKeyPlaceholder}`,
       badge: 'alerta',
       scope: 'production',
     },
@@ -100,7 +101,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       title: 'Cenario critico',
       description:
         'Gera valores fora da faixa para testar alerta de temperatura e resposta operacional.',
-      command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset critico --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKey}`,
+      command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset critico --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKeyPlaceholder}`,
       badge: 'critico',
       scope: 'production',
     },
@@ -108,7 +109,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       title: 'Ensaio de offline',
       description:
         'Envia poucas leituras normais e depois para, para deixar o equipamento sem comunicar e validar o alerta de offline.',
-      command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset normal --count 3 --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKey}`,
+      command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset normal --count 3 --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKeyPlaceholder}`,
       badge: 'offline',
       scope: 'production',
     },
@@ -172,9 +173,16 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
     },
   ];
 
-  async function copyCommand(command: string) {
+  function resolveCommandForCopy(command: string, injectDeviceKey: boolean) {
+    if (!injectDeviceKey || !simulatorApiKey) return command;
+    return command.replaceAll(simulatorApiKeyPlaceholder, simulatorApiKey);
+  }
+
+  async function copyCommand(command: string, injectDeviceKey = false) {
+    const nextCommand = resolveCommandForCopy(command, injectDeviceKey);
+
     try {
-      await navigator.clipboard.writeText(command);
+      await navigator.clipboard.writeText(nextCommand);
       setCopiedCommand(command);
       window.setTimeout(() => {
         setCopiedCommand((current) => (current === command ? null : current));
@@ -352,7 +360,9 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
               ) : (
                 <span className="text-xs text-muted">
                   {scenario.command.includes('SUA_CHAVE')
-                    ? 'Ajuste `SUA_CHAVE` antes de executar.'
+                    ? simulatorApiKey
+                      ? 'A chave fica protegida na tela. Use "Copiar com chave" para enviar ao terminal.'
+                      : 'Ajuste `SUA_CHAVE_DEVICE` antes de executar.'
                     : scenario.command.includes('SEU_TOKEN_ADMIN')
                       ? 'Use token de admin da conta antes de executar em producao.'
                     : scenario.badge === 'offline'
@@ -363,16 +373,30 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
                 </span>
               )}
 
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  void copyCommand(scenario.command);
-                }}
-              >
-                <Copy className="mr-2 h-3.5 w-3.5" />
-                Copiar
-              </Button>
+              <div className="flex items-center gap-2">
+                {scenario.command.includes(simulatorApiKeyPlaceholder) && simulatorApiKey ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      void copyCommand(scenario.command, true);
+                    }}
+                  >
+                    <Copy className="mr-2 h-3.5 w-3.5" />
+                    Copiar com chave
+                  </Button>
+                ) : null}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    void copyCommand(scenario.command);
+                  }}
+                >
+                  <Copy className="mr-2 h-3.5 w-3.5" />
+                  Copiar
+                </Button>
+              </div>
             </div>
           </Panel>
         ))}
