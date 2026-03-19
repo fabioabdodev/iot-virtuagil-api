@@ -13,6 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Feedback } from '@/components/ui/feedback';
+import { Input } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
 import { ClientSummary } from '@/types/client';
 
@@ -45,6 +46,7 @@ function resolveSimulationDevices(clientId?: string) {
 
 export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps) {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
+  const [adminSessionToken, setAdminSessionToken] = useState('');
 
   const suffix = clientId ? ` --client-id ${clientId}` : '';
   const demoTenant = client?.name ?? clientId ?? 'conta-demo';
@@ -173,13 +175,34 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
     },
   ];
 
-  function resolveCommandForCopy(command: string, injectDeviceKey: boolean) {
-    if (!injectDeviceKey || !simulatorApiKey) return command;
-    return command.replaceAll(simulatorApiKeyPlaceholder, simulatorApiKey);
+  function resolveCommandForCopy(
+    command: string,
+    options?: {
+      injectDeviceKey?: boolean;
+      injectAdminToken?: boolean;
+    },
+  ) {
+    let nextCommand = command;
+
+    if (options?.injectDeviceKey && simulatorApiKey) {
+      nextCommand = nextCommand.replaceAll(simulatorApiKeyPlaceholder, simulatorApiKey);
+    }
+
+    if (options?.injectAdminToken && adminSessionToken.trim()) {
+      nextCommand = nextCommand.replaceAll('SEU_TOKEN_ADMIN', adminSessionToken.trim());
+    }
+
+    return nextCommand;
   }
 
-  async function copyCommand(command: string, injectDeviceKey = false) {
-    const nextCommand = resolveCommandForCopy(command, injectDeviceKey);
+  async function copyCommand(
+    command: string,
+    options?: {
+      injectDeviceKey?: boolean;
+      injectAdminToken?: boolean;
+    },
+  ) {
+    const nextCommand = resolveCommandForCopy(command, options);
 
     try {
       await navigator.clipboard.writeText(nextCommand);
@@ -218,6 +241,34 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
           Pronto para terminal
         </Badge>
       </div>
+
+      <Panel className="mb-5 p-4">
+        <p className="text-xs uppercase tracking-[0.16em] text-muted">
+          Token administrativo (opcional)
+        </p>
+        <p className="mt-2 text-xs text-muted">
+          Cole o token apenas para copiar comandos prontos. O valor fica mascarado na tela.
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]">
+          <Input
+            type="password"
+            value={adminSessionToken}
+            onChange={(event) => setAdminSessionToken(event.target.value)}
+            autoComplete="off"
+            spellCheck={false}
+            placeholder="Bearer eyJ..."
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => setAdminSessionToken('')}
+            disabled={!adminSessionToken}
+          >
+            Limpar token
+          </Button>
+        </div>
+      </Panel>
 
       <div className="mb-5 grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
         <Panel variant="strong" className="p-4">
@@ -364,8 +415,10 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
                       ? 'A chave fica protegida na tela. Use "Copiar com chave" para enviar ao terminal.'
                       : 'Ajuste `SUA_CHAVE_DEVICE` antes de executar.'
                     : scenario.command.includes('SEU_TOKEN_ADMIN')
-                      ? 'Use token de admin da conta antes de executar em producao.'
-                    : scenario.badge === 'offline'
+                      ? adminSessionToken.trim()
+                        ? 'Use "Copiar com token" para preencher sem expor o token na tela.'
+                        : 'Cole o token acima para habilitar "Copiar com token".'
+                      : scenario.badge === 'offline'
                       ? 'Depois do ultimo envio, aguarde o cutoff de offline para confirmar o alerta no painel e no WhatsApp.'
                       : scenario.scope === 'local'
                         ? 'Comando de manutencao local (nao usar durante visita comercial em producao).'
@@ -379,11 +432,23 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
                     variant="secondary"
                     size="sm"
                     onClick={() => {
-                      void copyCommand(scenario.command, true);
+                      void copyCommand(scenario.command, { injectDeviceKey: true });
                     }}
                   >
                     <Copy className="mr-2 h-3.5 w-3.5" />
                     Copiar com chave
+                  </Button>
+                ) : null}
+                {scenario.command.includes('SEU_TOKEN_ADMIN') && adminSessionToken.trim() ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      void copyCommand(scenario.command, { injectAdminToken: true });
+                    }}
+                  >
+                    <Copy className="mr-2 h-3.5 w-3.5" />
+                    Copiar com token
                   </Button>
                 ) : null}
                 <Button
