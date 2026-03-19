@@ -71,14 +71,6 @@ if ([string]::IsNullOrWhiteSpace($normalizedToken)) {
   throw 'Token vazio. Passe -Token com JWT valido.'
 }
 
-if (
-  $normalizedToken -match 'SEU_JWT_REAL' -or
-  $normalizedToken.Length -lt 40 -or
-  $normalizedToken.Split('.').Count -ne 3
-) {
-  throw 'Token invalido. Copie um Bearer JWT real do painel (Authorization) e passe em -Token.'
-}
-
 if ([string]::IsNullOrWhiteSpace($normalizedKey)) {
   throw 'Device key vazia. Passe -DeviceKey com chave valida.'
 }
