@@ -497,3 +497,112 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
     - `CONNECTIVITY_FLAP_THRESHOLD`
     - `CONNECTIVITY_INSTABILITY_ALERT_COOLDOWN_MINUTES`
 
+
+## Incidente de variaveis em producao (19/03/2026)
+
+Resumo do que aconteceu:
+
+- o monitor apresentou `Failed to fetch` no login porque a API ficou indisponivel em alguns rollouts
+- em ciclos anteriores, a API caiu no boot com:
+  - `N8N_ONLINE_WEBHOOK_URL: Invalid URL`
+  - `DATABASE_URL e obrigatoria`
+- o problema se repetia por combinacao de:
+  - conflito entre valores da stack no Portainer e `.env.prod` na VPS
+  - uso de `source .env.prod` com URL contendo `&` sem aspas, quebrando export no shell
+  - deploys com ambiente parcial durante rollout
+
+Sinais de diagnostico que confirmaram a causa:
+
+- `docker service inspect iot-monitor_api ...` mostrava env efetivo diferente do `.env.prod`
+- `N8N_ONLINE_WEBHOOK_URL` aparecia vazia no servico, mesmo definida no arquivo
+- `DATABASE_URL` com query string era truncada quando nao estava entre aspas no `.env.prod`
+
+Correcoes aplicadas no repositorio:
+
+- `998039a`:
+  - schema de ambiente passou a tratar webhook vazio/espacos como `undefined` para evitar queda no boot
+- `ea0420c`:
+  - workflow de deploy ganhou validacoes defensivas:
+    - bloqueia chaves duplicadas no `.env.prod`
+    - valida formato de URLs opcionais
+    - valida `DATABASE_URL` / `DIRECT_DATABASE_URL`
+    - garante `DIRECT_DATABASE_URL` quando `DATABASE_URL` for `prisma://`
+
+Padrao operacional que ficou validado:
+
+- fonte unica de verdade para variaveis: `/opt/iot-virtuagil-api/.env.prod`
+- evitar editar env diretamente no Portainer para nao divergir do fluxo SSH
+- antes do `docker stack deploy`, sempre:
+  - `set -a`
+  - `. ./.env.prod`
+  - `set +a`
+
+Formato estavel validado para banco no estado atual:
+
+- `DATABASE_URL` (pooler 6543) com parametros:
+  - `?pgbouncer=true&connection_limit=1`
+- `DIRECT_DATABASE_URL` (pooler 5432) como fallback estavel no ambiente atual
+- importante:
+  - quando `DATABASE_URL` tiver `&`, manter a linha entre aspas simples no `.env.prod`
+  - exemplo:
+    - `DATABASE_URL='postgresql://...:6543/postgres?pgbouncer=true&connection_limit=1'`
+
+Comando de deploy seguro (passo a passo para iniciante) validado em producao:
+
+```bash
+cd /opt/iot-virtuagil-api
+
+set -e
+
+echo "[1/6] Validando duplicidade de chaves..."
+DUP="$(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' .env.prod | cut -d= -f1 | sort | uniq -d || true)"
+if [ -n "$DUP" ]; then
+  echo "ERRO: chaves duplicadas no .env.prod:"
+  echo "$DUP"
+  exit 1
+fi
+
+echo "[2/6] Validando variaveis obrigatorias..."
+for K in DATABASE_URL DIRECT_DATABASE_URL N8N_ONLINE_WEBHOOK_URL N8N_OFFLINE_WEBHOOK_URL N8N_TEMPERATURE_ALERT_WEBHOOK_URL; do
+  V="$(grep -m1 "^$K=" .env.prod | cut -d= -f2- || true)"
+  if [ -z "$V" ]; then
+    echo "ERRO: $K vazio/ausente"
+    exit 1
+  fi
+done
+
+echo "[3/6] Carregando .env.prod..."
+set -a
+. ./.env.prod
+set +a
+
+echo "[4/6] Deploy da stack..."
+docker stack deploy -c deploy/swarm/stack.prod.yml iot-monitor --with-registry-auth
+
+echo "[5/6] Validando health..."
+sleep 8
+curl -fsS https://api-monitor.virtuagil.com.br/health
+echo
+
+echo "[6/6] Validando erros criticos (ultimos 2 min)..."
+docker service logs iot-monitor_api --since 2m | grep -E "DATABASE_URL e obrigatoria|Invalid URL|prepared statement|PrismaClientUnknownRequestError|status=500" || true
+```
+
+Status final deste incidente:
+
+- deploy executando com health `ok`
+- sem ocorrencias novas de:
+  - `DATABASE_URL e obrigatoria`
+  - `Invalid URL`
+  - `prepared statement does not exist`
+  - `PrismaClientUnknownRequestError`
+
+## Rodada comercial (19/03/2026)
+
+- fluxo de alerta `offline -> online` da conta `cuidare-vacinas` validado novamente em producao
+- simulacao aceita com `status=200` para `freezer_vacinas_01`
+- `WhatsApp` confirmou mensagem de recuperacao (`equipamento novamente online`)
+- direcionamento para proximo chat:
+  - manter foco em fechamento do modulo de acionamento (`on/off + historico`) para consolidar gate comercial
+- script util criado para proximas rodadas: `scripts/deploy-safe.sh`
+  - uso na VPS: `bash /opt/iot-virtuagil-api/scripts/deploy-safe.sh`
