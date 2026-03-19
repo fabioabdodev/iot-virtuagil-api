@@ -606,3 +606,117 @@ Status final deste incidente:
   - manter foco em fechamento do modulo de acionamento (`on/off + historico`) para consolidar gate comercial
 - script util criado para proximas rodadas: `scripts/deploy-safe.sh`
   - uso na VPS: `bash /opt/iot-virtuagil-api/scripts/deploy-safe.sh`
+
+## Registro consolidado para novo chat agent (19/03/2026 - fim do dia)
+
+### 1) Modelo de negocio e modulos
+
+- a plataforma migrou de modulos fixos para **categoria + itens dinamicos**
+- categorias atuais:
+  - `ambiental` (`temperatura`, `umidade`, `gases`)
+  - `acionamento` (`rele`, `status_abertura`, `tempo_aberto`)
+  - `energia` (`corrente`, `tensao`, `consumo`)
+- contratacao e acesso por item ja estão ativos no produto
+- historico do device no frontend foi atualizado para leitura por sensor dinamico (nao apenas temperatura)
+
+### 2) Seguranca de credenciais no frontend
+
+- `deviceApiKey` no perfil do cliente:
+  - mascarada por padrao
+  - botao de copiar
+  - botao olho para mostrar/ocultar
+- laboratorio:
+  - comandos nao exibem chave real por padrao (`SUA_CHAVE_DEVICE`)
+  - copia segura com chave no clipboard
+  - token admin mascarado com olho e copia segura
+
+### 3) Fluxo de usuarios, primeiro acesso e recuperacao de senha
+
+- admin nao precisa mais criar senha de terceiros
+- fluxo implementado:
+  - gerar link de primeiro acesso por usuario (`/users/:id/password-setup-link`)
+  - `POST /auth/password/forgot`
+  - `GET /auth/password/reset/validate`
+  - `POST /auth/password/reset`
+- token de reset:
+  - uso unico
+  - expira por TTL
+  - tabela dedicada `PasswordResetToken`
+- vale para qualquer perfil da conta (`admin` e `operator`)
+- tela de login recebeu:
+  - `esqueci minha senha`
+  - `definir nova senha`
+  - orientacao de spam/promotions
+  - fallback de link quando permitido por configuracao
+
+### 4) Variaveis novas e deploy de producao
+
+Variaveis adicionadas:
+
+- `AUTH_PASSWORD_RESET_TTL_MINUTES`
+- `AUTH_PASSWORD_RETURN_LINK_IN_RESPONSE`
+- `WEB_APP_URL`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+
+Importante:
+
+- houve incidente em que `.env.prod` estava correto, mas o container nao recebia as novas vars
+- causa: `deploy/swarm/stack.prod.yml` nao repassava as novas variaveis
+- correcao ja aplicada no repo (`e5a1c2f`)
+- na VPS atual `/opt/iot-virtuagil-api` **nao e clone git**
+  - `git pull` ali falha com `not a git repository`
+  - ajustes no `stack.prod.yml` local podem precisar ser manuais
+
+Validacao operacional ja confirmada em producao:
+
+- `docker service inspect iot-monitor_api ...` passou a mostrar:
+  - `AUTH_PASSWORD_RESET_TTL_MINUTES=60`
+  - `AUTH_PASSWORD_RETURN_LINK_IN_RESPONSE=false`
+  - `WEB_APP_URL=https://monitor.virtuagil.com.br`
+  - `RESEND_API_KEY=`
+  - `RESEND_FROM_EMAIL=no-reply@virtuagil.com.br`
+
+### 5) Estado de envio de e-mail (Resend)
+
+- modo atual recomendado e em uso: **manual/fallback**
+  - `RESEND_API_KEY` vazio
+  - link gerado/copiado pelo painel
+- quando quiser envio automatico:
+  - preencher `RESEND_API_KEY`
+  - manter `RESEND_FROM_EMAIL` valido no dominio configurado
+  - redeploy da stack
+
+### 6) Pastas locais fora de versionamento
+
+Pastas abaixo estao no `.gitignore` (escopo local, nao versionadas):
+
+- `estudos de caso/`
+- `institucional-site/`
+- `iot-virtuagil-firmware/`
+
+Conteudo novo criado localmente em `estudos de caso/`:
+
+- `restaurante-freezer-porta-luzes.md`
+- `clube-sauna-quadras.md`
+
+Esses casos sao para treino operacional (ficticio) e podem virar base de onboarding de cliente real.
+
+### 7) Alerta/n8n - utilitario de checagem
+
+- script adicionado no projeto principal:
+  - `scripts/check-n8n-alerts.mjs`
+- objetivo:
+  - verificar se webhooks `N8N_*` estao configurados
+  - opcionalmente enviar ping de teste por evento
+- estado no momento deste registro:
+  - script criado
+  - recomendado padronizar uso com script npm (`alerts:check:n8n`) e documentar no README
+
+### 8) Proximo passo recomendado para continuidade
+
+1. consolidar `alerts:check:n8n` no `package.json` e README (com modo `--strict`)
+2. executar rodada guiada de venda assistida com um dos estudos ficticios
+3. no primeiro cliente real:
+   - receber bloco de contexto (nome, clientId, modulos/itens, devices, regras, contatos, usuarios)
+   - abrir estudo de caso dedicado e conduzir onboarding no painel
