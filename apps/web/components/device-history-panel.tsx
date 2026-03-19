@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Activity, AlertTriangle } from 'lucide-react';
@@ -16,6 +17,7 @@ import { DeviceSummary } from '@/types/device';
 import { Badge } from '@/components/ui/badge';
 import { DataTable, DataTableWrapper } from '@/components/ui/data-table';
 import { Feedback } from '@/components/ui/feedback';
+import { Select } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
 import { formatHumanDateTime } from '@/lib/date';
 
@@ -23,26 +25,120 @@ type DeviceHistoryPanelProps = {
   device: DeviceSummary;
   clientId?: string;
   authToken?: string;
+  availableSensors?: string[];
+};
+
+type SensorOption = {
+  key: string;
+  querySensor: string;
+  label: string;
+  unitLabel: string | null;
+};
+
+const SENSOR_CATALOG: Record<string, SensorOption> = {
+  temperature: {
+    key: 'temperature',
+    querySensor: 'temperature',
+    label: 'Temperatura',
+    unitLabel: 'C',
+  },
+  temperatura: {
+    key: 'temperatura',
+    querySensor: 'temperature',
+    label: 'Temperatura',
+    unitLabel: 'C',
+  },
+  umidade: {
+    key: 'umidade',
+    querySensor: 'umidade',
+    label: 'Umidade',
+    unitLabel: '%',
+  },
+  gases: {
+    key: 'gases',
+    querySensor: 'gases',
+    label: 'Gases',
+    unitLabel: 'ppm',
+  },
+  corrente: {
+    key: 'corrente',
+    querySensor: 'corrente',
+    label: 'Corrente',
+    unitLabel: 'A',
+  },
+  tensao: {
+    key: 'tensao',
+    querySensor: 'tensao',
+    label: 'Tensao',
+    unitLabel: 'V',
+  },
+  consumo: {
+    key: 'consumo',
+    querySensor: 'consumo',
+    label: 'Consumo',
+    unitLabel: 'kWh',
+  },
 };
 
 export function DeviceHistoryPanel({
   device,
   clientId,
   authToken,
+  availableSensors,
 }: DeviceHistoryPanelProps) {
+  const sensorOptions = useMemo(() => {
+    const source = availableSensors?.length ? availableSensors : ['temperatura'];
+    const seen = new Set<string>();
+
+    return source
+      .map((rawKey) => rawKey.trim().toLowerCase())
+      .filter((key) => {
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .map((key) =>
+        SENSOR_CATALOG[key] ?? {
+          key,
+          querySensor: key,
+          label: key.charAt(0).toUpperCase() + key.slice(1),
+          unitLabel: null,
+        },
+      );
+  }, [availableSensors]);
+
+  const [activeSensorKey, setActiveSensorKey] = useState<string>(
+    sensorOptions[0]?.key ?? 'temperatura',
+  );
+
+  useEffect(() => {
+    if (!sensorOptions.some((sensor) => sensor.key === activeSensorKey)) {
+      setActiveSensorKey(sensorOptions[0]?.key ?? 'temperatura');
+    }
+  }, [activeSensorKey, sensorOptions]);
+
+  const activeSensor =
+    sensorOptions.find((sensor) => sensor.key === activeSensorKey) ?? sensorOptions[0];
+  const activeSensorLabel = activeSensor?.label ?? 'Leitura';
+  const activeSensorUnit = activeSensor?.unitLabel;
+  const isTemperatureSensor = activeSensor?.querySensor === 'temperature';
+
   const { data, isLoading, isError } = useDeviceReadings(
     device.id,
     clientId,
     48,
     authToken,
     true,
+    activeSensor?.querySensor ?? 'temperature',
   );
 
   const points = (data ?? []).map((item) => ({
-    temperature: item.temperature,
+    value: item.value,
+    unit: item.unit,
     isOutOfRange:
-      (device.minTemperature != null && item.temperature < device.minTemperature) ||
-      (device.maxTemperature != null && item.temperature > device.maxTemperature),
+      isTemperatureSensor &&
+      ((device.minTemperature != null && item.value < device.minTemperature) ||
+        (device.maxTemperature != null && item.value > device.maxTemperature)),
     label: format(new Date(item.createdAt), 'HH:mm'),
     fullLabel: formatHumanDateTime(item.createdAt),
   }));
@@ -55,10 +151,24 @@ export function DeviceHistoryPanel({
     <Panel className="mt-6 p-5">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold tracking-wide">
-          Historico - {device.name ?? device.id}
+          Historico - {device.name ?? device.id} ({activeSensorLabel})
         </h3>
         <div className="flex items-center gap-2">
-          {device.minTemperature != null || device.maxTemperature != null ? (
+          {sensorOptions.length > 1 ? (
+            <Select
+              value={activeSensorKey}
+              onChange={(event) => setActiveSensorKey(event.target.value)}
+              className="min-w-[150px] py-2 text-xs"
+            >
+              {sensorOptions.map((sensor) => (
+                <option key={sensor.key} value={sensor.key}>
+                  {sensor.label}
+                </option>
+              ))}
+            </Select>
+          ) : null}
+          {isTemperatureSensor &&
+          (device.minTemperature != null || device.maxTemperature != null) ? (
             <Badge>
               Faixa {device.minTemperature ?? '-'} / {device.maxTemperature ?? '-'}
             </Badge>
@@ -74,7 +184,8 @@ export function DeviceHistoryPanel({
               Leitura atual
             </p>
             <p className="mt-2 text-lg font-semibold text-ink">
-              {latestPoint?.temperature.toFixed(1)} C
+              {latestPoint?.value.toFixed(1)}{' '}
+              {latestPoint?.unit ?? activeSensorUnit ?? ''}
             </p>
             <p className="mt-1 text-xs text-muted">
               Ultimo ponto registrado nesta janela de acompanhamento.
@@ -86,7 +197,7 @@ export function DeviceHistoryPanel({
               Leitura da visita
             </p>
             <div className="mt-2 flex items-center gap-2">
-              {pointsOutOfRange > 0 ? (
+              {isTemperatureSensor && pointsOutOfRange > 0 ? (
                 <AlertTriangle className="h-4 w-4 text-bad" />
               ) : (
                 <Activity className="h-4 w-4 text-ok" />
@@ -98,13 +209,15 @@ export function DeviceHistoryPanel({
                     : 'text-sm font-semibold text-ok'
                 }
               >
-                {historyStatusLabel}
+                {isTemperatureSensor ? historyStatusLabel : 'Coleta em andamento'}
               </p>
             </div>
             <p className="mt-1 text-xs text-muted">
-              {pointsOutOfRange > 0
-                ? `${pointsOutOfRange} ponto(s) fora da faixa nesta janela.`
-                : 'Sem desvios aparentes na janela atual.'}
+              {isTemperatureSensor
+                ? pointsOutOfRange > 0
+                  ? `${pointsOutOfRange} ponto(s) fora da faixa nesta janela.`
+                  : 'Sem desvios aparentes na janela atual.'
+                : 'Sem faixa definida para este tipo de leitura.'}
             </p>
           </div>
 
@@ -135,7 +248,7 @@ export function DeviceHistoryPanel({
 
       {!isLoading && !isError && points.length === 0 ? (
         <Feedback>
-          Sem dados de temperatura para este equipamento.
+          Sem dados de {activeSensorLabel.toLowerCase()} para este equipamento.
         </Feedback>
       ) : null}
 
@@ -143,7 +256,7 @@ export function DeviceHistoryPanel({
         <div className="space-y-4">
           <div className="h-72 w-full rounded-[22px] border border-line/70 bg-bg/30 p-3">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={points}>
+                <LineChart data={points}>
                 <XAxis
                   dataKey="label"
                   minTickGap={28}
@@ -158,14 +271,14 @@ export function DeviceHistoryPanel({
                     color: '#f3f8ff',
                   }}
                   formatter={(value: number) => [
-                    `${value.toFixed(1)} C`,
-                    'Temperatura',
+                    `${value.toFixed(1)} ${activeSensorUnit ?? ''}`.trim(),
+                    activeSensorLabel,
                   ]}
                   labelFormatter={(label) => `Horario: ${label}`}
                 />
                 <Line
                   type="monotone"
-                  dataKey="temperature"
+                  dataKey="value"
                   stroke={
                     points.some((point) => point.isOutOfRange)
                       ? 'hsl(var(--bad))'
@@ -189,7 +302,7 @@ export function DeviceHistoryPanel({
               <thead>
                 <tr className="text-left text-muted">
                   <th className="px-3 py-2">Horario</th>
-                  <th className="px-3 py-2">Temperatura</th>
+                  <th className="px-3 py-2">{activeSensorLabel}</th>
                 </tr>
               </thead>
               <tbody>
@@ -214,8 +327,10 @@ export function DeviceHistoryPanel({
                         }
                       >
                         <div className="flex items-center gap-2">
-                          <span>{row.temperature.toFixed(1)} C</span>
-                          {row.isOutOfRange ? (
+                          <span>
+                            {row.value.toFixed(1)} {row.unit ?? activeSensorUnit ?? ''}
+                          </span>
+                          {isTemperatureSensor && row.isOutOfRange ? (
                             <Badge variant="danger">Fora da faixa</Badge>
                           ) : null}
                         </div>

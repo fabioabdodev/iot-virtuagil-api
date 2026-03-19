@@ -13,7 +13,9 @@ export type DeviceSummary = {
 };
 
 export type DeviceReading = {
-  temperature: number;
+  value: number;
+  sensorType: string;
+  unit: string | null;
   createdAt: string;
 };
 

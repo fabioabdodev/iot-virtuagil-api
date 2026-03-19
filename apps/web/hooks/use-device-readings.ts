@@ -9,11 +9,12 @@ export function useDeviceReadings(
   limit = 48,
   authToken?: string,
   live = false,
+  sensorType = 'temperature',
 ) {
   return useQuery({
-    queryKey: ['device-readings', deviceId, clientId, limit, authToken],
+    queryKey: ['device-readings', deviceId, clientId, limit, authToken, sensorType],
     queryFn: () =>
-      fetchDeviceReadings(deviceId as string, clientId, limit, authToken),
+      fetchDeviceReadings(deviceId as string, clientId, limit, authToken, sensorType),
     enabled: Boolean(deviceId),
     retry: 2,
     refetchOnWindowFocus: false,

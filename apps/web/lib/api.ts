@@ -84,10 +84,21 @@ function normalizeDeviceReadings(rows: unknown): DeviceReading[] {
 
     if (typeof createdAt !== 'string') return [];
 
+    const sensorType =
+      typeof record.sensorType === 'string' && record.sensorType.trim()
+        ? record.sensorType.trim().toLowerCase()
+        : 'temperature';
+    const unit =
+      typeof record.unit === 'string' && record.unit.trim()
+        ? record.unit.trim().toLowerCase()
+        : null;
+
     if (typeof record.temperature === 'number') {
       return [
         {
-          temperature: record.temperature,
+          value: record.temperature,
+          sensorType,
+          unit: unit ?? 'celsius',
           createdAt,
         },
       ];
@@ -96,7 +107,9 @@ function normalizeDeviceReadings(rows: unknown): DeviceReading[] {
     if (typeof record.value === 'number') {
       return [
         {
-          temperature: record.value,
+          value: record.value,
+          sensorType,
+          unit,
           createdAt,
         },
       ];
@@ -135,13 +148,15 @@ export async function fetchDeviceReadings(
   clientId?: string,
   limit = 48,
   authToken?: string,
+  sensorType = 'temperature',
 ): Promise<DeviceReading[]> {
   // Reaproveitamos o mesmo padrao de filtros para manter consistencia com a listagem principal.
   const query = new URLSearchParams();
   query.set('limit', String(limit));
   if (clientId) query.set('clientId', clientId);
   const headers = buildAuthHeaders(authToken);
-  const url = `${API_BASE_URL}/readings/${deviceId}?sensor=temperature&${query.toString()}`;
+  query.set('sensor', sensorType);
+  const url = `${API_BASE_URL}/readings/${deviceId}?${query.toString()}`;
 
   const response = await fetch(url, {
     cache: 'no-store',

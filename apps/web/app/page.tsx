@@ -156,10 +156,16 @@ function DashboardContent() {
     isLoading: isLoadingClientModules,
   } = useClientModules(scopedClientId, authToken);
   const clientModules = clientModulesData ?? [];
+  const ambientalModule = clientModules.find(
+    (module) => module.moduleKey === 'ambiental',
+  );
+  const enabledAmbientalItems = (ambientalModule?.items ?? [])
+    .filter((item) => item.enabled)
+    .map((item) => item.itemKey);
   const temperatureEnabled =
     scopedClientId == null
       ? true
-      : clientModules.find((module) => module.moduleKey === 'ambiental')?.enabled ?? false;
+      : ambientalModule?.enabled ?? false;
   const actuationEnabled =
     scopedClientId == null
       ? true
@@ -928,6 +934,7 @@ function DashboardContent() {
                 device={selectedDevice}
                 clientId={scopedClientId}
                 authToken={authToken}
+                availableSensors={enabledAmbientalItems}
               />
             ) : null}
           </div>
