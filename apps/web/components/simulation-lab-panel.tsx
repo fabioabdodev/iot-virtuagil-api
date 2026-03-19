@@ -282,6 +282,27 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         </Panel>
       </div>
 
+      <Panel className="mb-5 p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <ShieldAlert className="h-4 w-4 text-accent" />
+          <h3 className="text-base font-semibold">Evidencias para fechar venda</h3>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-2xl border border-line/70 bg-bg/30 p-3 text-sm text-muted">
+            <p className="font-medium text-ink">Temperatura</p>
+            <p className="mt-2">1. Print do painel com regra ativa e equipamento online.</p>
+            <p>2. Execucao do workflow no n8n com sucesso.</p>
+            <p>3. Mensagem no WhatsApp com horario anotado.</p>
+          </div>
+          <div className="rounded-2xl border border-line/70 bg-bg/30 p-3 text-sm text-muted">
+            <p className="font-medium text-ink">Acionamento</p>
+            <p className="mt-2">1. Cadastro do ponto de acionamento.</p>
+            <p>2. Comando ON e OFF registrados no historico.</p>
+            <p>3. Leitura do estado no painel apos os comandos.</p>
+          </div>
+        </div>
+      </Panel>
+
       <div className="grid gap-4 xl:grid-cols-2">
         {scenarios.map((scenario) => (
           <Panel

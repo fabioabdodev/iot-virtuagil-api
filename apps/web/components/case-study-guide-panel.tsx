@@ -15,6 +15,8 @@ type CaseStudyGuidePanelProps = {
   devices: DeviceSummary[];
   alertRules: AlertRule[];
   clientModules: ClientModule[];
+  actuationEnabled: boolean;
+  actuatorsCount: number;
   onCreateDevice?: () => void;
 };
 
@@ -35,6 +37,8 @@ export function CaseStudyGuidePanel({
   devices,
   alertRules,
   clientModules,
+  actuationEnabled,
+  actuatorsCount,
   onCreateDevice,
 }: CaseStudyGuidePanelProps) {
   const temperatureEnabled =
@@ -48,6 +52,9 @@ export function CaseStudyGuidePanel({
     (rule) =>
       rule.sensorType === cuidareCase.sensorType &&
       (rule.deviceId === cuidareCase.deviceId || rule.deviceId == null),
+  );
+  const hasOnlineDevice = devices.some(
+    (device) => device.id === cuidareCase.deviceId && !device.isOffline,
   );
 
   const steps = [
@@ -74,7 +81,17 @@ export function CaseStudyGuidePanel({
     {
       title: '5. Ensaiar a visita no laboratorio',
       description: 'Depois da estrutura pronta, simule operacao normal, alerta e offline para mostrar o valor antes do hardware.',
-      done: false,
+      done: hasExpectedClient && hasDevice && hasRule && hasOnlineDevice,
+    },
+    {
+      title: '6. Preparar oferta de acionamento',
+      description: 'Depois da temperatura estavel, habilite acionamento e cadastre ao menos um ponto para vender comando assistido.',
+      done:
+        hasExpectedClient &&
+        hasDevice &&
+        hasRule &&
+        actuationEnabled &&
+        actuatorsCount > 0,
     },
   ];
 
@@ -188,6 +205,12 @@ export function CaseStudyGuidePanel({
         ) : null}
         {client && hasExpectedClient ? (
           <Badge variant="success">Conta atual alinhada ao estudo de caso</Badge>
+        ) : null}
+        {hasExpectedClient && hasDevice && hasRule && hasOnlineDevice ? (
+          <Badge variant="success">Temperatura pronta para venda assistida</Badge>
+        ) : null}
+        {hasExpectedClient && actuationEnabled && actuatorsCount > 0 ? (
+          <Badge variant="success">Acionamento pronto para demonstracao comercial</Badge>
         ) : null}
       </div>
     </Panel>

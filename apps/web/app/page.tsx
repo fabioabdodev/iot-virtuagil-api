@@ -1042,6 +1042,8 @@ function DashboardContent() {
             devices={devices}
             alertRules={alertRules}
             clientModules={clientModules}
+            actuationEnabled={actuationEnabled}
+            actuatorsCount={actuators.length}
             onCreateDevice={
               canCreateDevices
                 ? () => {

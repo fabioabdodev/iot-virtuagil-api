@@ -112,6 +112,17 @@ function determineJourneyStage(options: {
   };
 }
 
+function moduleReadinessGate(items: Array<boolean>) {
+  const done = items.filter(Boolean).length;
+  const total = items.length;
+  return {
+    done,
+    total,
+    percent: Math.round((done / total) * 100),
+    complete: done === total,
+  };
+}
+
 export function CommercialReadinessPanel({
   clientId,
   authToken,
@@ -186,6 +197,19 @@ export function CommercialReadinessPanel({
     actuationEnabled && actuators.length === 0 && 'Cadastrar o primeiro ponto de acionamento para provar o fluxo de comando e historico do recurso de acionamento.',
     offlineDevices > 0 && 'Regularizar equipamentos offline antes de usar esta conta como demonstracao comercial.',
   ].filter(Boolean) as string[];
+
+  const temperatureGate = moduleReadinessGate([
+    temperatureEnabled,
+    devices.length > 0,
+    alertRules.length > 0,
+    devices.length > 0 && offlineDevices === 0,
+  ]);
+  const actuationGate = moduleReadinessGate([
+    actuationEnabled,
+    devices.length > 0,
+    actuators.length > 0,
+    actuationEnabled ? temperatureGate.complete : true,
+  ]);
 
   return (
     <Panel variant="strong" className="mt-6 overflow-hidden p-4 sm:p-5">
@@ -350,6 +374,48 @@ export function CommercialReadinessPanel({
               Contexto registrado para a conta: <strong className="text-ink">{client.notes}</strong>
             </div>
           ) : null}
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl border border-line/70 bg-bg/30 p-4">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-ink">Gate de venda - Temperatura</p>
+            <Badge variant={temperatureGate.complete ? 'success' : 'neutral'}>
+              {temperatureGate.done}/{temperatureGate.total}
+            </Badge>
+          </div>
+          <p className="mt-2 text-sm text-muted">
+            {temperatureGate.complete
+              ? 'Modulo pronto para proposta comercial com demonstracao em producao.'
+              : 'Feche os itens abaixo para vender monitoramento de temperatura com seguranca.'}
+          </p>
+          <div className="mt-3 space-y-2 text-xs text-muted">
+            <p>{temperatureEnabled ? 'OK' : 'Pendente'} - modulo temperatura contratado</p>
+            <p>{devices.length > 0 ? 'OK' : 'Pendente'} - ao menos 1 equipamento cadastrado</p>
+            <p>{alertRules.length > 0 ? 'OK' : 'Pendente'} - ao menos 1 regra de alerta ativa</p>
+            <p>{devices.length > 0 && offlineDevices === 0 ? 'OK' : 'Pendente'} - equipamentos sem alerta offline no momento</p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-line/70 bg-bg/30 p-4">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-ink">Gate de venda - Acionamento</p>
+            <Badge variant={actuationGate.complete ? 'success' : 'neutral'}>
+              {actuationGate.done}/{actuationGate.total}
+            </Badge>
+          </div>
+          <p className="mt-2 text-sm text-muted">
+            {actuationGate.complete
+              ? 'Modulo pronto para oferta comercial de comando assistido e historico.'
+              : 'Finalize os itens para vender o modulo de acionamento com confianca.'}
+          </p>
+          <div className="mt-3 space-y-2 text-xs text-muted">
+            <p>{actuationEnabled ? 'OK' : 'Pendente'} - modulo acionamento contratado</p>
+            <p>{devices.length > 0 ? 'OK' : 'Pendente'} - cliente com equipamento associado</p>
+            <p>{actuators.length > 0 ? 'OK' : 'Pendente'} - ao menos 1 ponto de acionamento cadastrado</p>
+            <p>{actuationEnabled ? (temperatureGate.complete ? 'OK' : 'Pendente') : 'Nao aplicavel'} - base de temperatura estabilizada para narrativa integrada</p>
+          </div>
         </div>
       </div>
     </Panel>
