@@ -71,6 +71,14 @@ if ([string]::IsNullOrWhiteSpace($normalizedToken)) {
   throw 'Token vazio. Passe -Token com JWT valido.'
 }
 
+if (
+  $normalizedToken -match 'SEU_JWT_REAL' -or
+  $normalizedToken.Length -lt 40 -or
+  $normalizedToken.Split('.').Count -ne 3
+) {
+  throw 'Token invalido. Copie um Bearer JWT real do painel (Authorization) e passe em -Token.'
+}
+
 if ([string]::IsNullOrWhiteSpace($normalizedKey)) {
   throw 'Device key vazia. Passe -DeviceKey com chave valida.'
 }
@@ -104,9 +112,9 @@ if (-not $OnlyReadings) {
   }
 }
 
-Invoke-ApiGet -Uri "$ApiBaseUrl/readings/$DeviceId?sensor=temperature&limit=5&clientId=$ClientId" -Headers $authHeaders
-Invoke-ApiGet -Uri "$ApiBaseUrl/readings/$DeviceId?sensor=umidade&limit=5&clientId=$ClientId" -Headers $authHeaders
-Invoke-ApiGet -Uri "$ApiBaseUrl/readings/$DeviceId?sensor=gases&limit=5&clientId=$ClientId" -Headers $authHeaders
+Invoke-ApiGet -Uri "${ApiBaseUrl}/readings/${DeviceId}?sensor=temperature&limit=5&clientId=${ClientId}" -Headers $authHeaders
+Invoke-ApiGet -Uri "${ApiBaseUrl}/readings/${DeviceId}?sensor=umidade&limit=5&clientId=${ClientId}" -Headers $authHeaders
+Invoke-ApiGet -Uri "${ApiBaseUrl}/readings/${DeviceId}?sensor=gases&limit=5&clientId=${ClientId}" -Headers $authHeaders
 
 if ($TriggerCriticalGas) {
   $criticalPayload = @{
@@ -118,7 +126,7 @@ if ($TriggerCriticalGas) {
   } | ConvertTo-Json -Compress
 
   Invoke-ApiPost -Uri "$ApiBaseUrl/iot/readings" -Headers $deviceHeaders -Body $criticalPayload -Label 'gases-critico'
-  Invoke-ApiGet -Uri "$ApiBaseUrl/readings/$DeviceId?sensor=gases&limit=5&clientId=$ClientId" -Headers $authHeaders
+  Invoke-ApiGet -Uri "${ApiBaseUrl}/readings/${DeviceId}?sensor=gases&limit=5&clientId=${ClientId}" -Headers $authHeaders
 }
 
 Write-Host 'Fluxo finalizado com sucesso.'
