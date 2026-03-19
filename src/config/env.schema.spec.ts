@@ -36,4 +36,14 @@ describe('envSchema', () => {
 
     expect(result.success).toBe(false);
   });
+
+  it('accepts empty webhook URLs as undefined', () => {
+    const result = envSchema.parse({
+      DATABASE_URL: 'postgresql://user:pass@localhost:5432/app',
+      AUTH_SECRET: 'super-secret-key',
+      N8N_ONLINE_WEBHOOK_URL: '   ',
+    });
+
+    expect(result.N8N_ONLINE_WEBHOOK_URL).toBeUndefined();
+  });
 });
