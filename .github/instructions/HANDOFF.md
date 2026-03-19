@@ -2,6 +2,57 @@
 
 Data de referencia: 2026-03-16
 
+## Atualizacao rapida (2026-03-19)
+
+Resumo do ponto de parada para retomar no proximo chat/agente:
+
+- caso ativo atual: `sabor-serra-restaurante`
+- fluxo de validacao ambiental foi executado com sucesso em producao:
+  - ingestao em `POST /iot/readings` para `temperature`, `umidade`, `gases`
+  - leitura em `GET /readings/:deviceId?sensor=...` com retorno `200`
+  - teste critico de gases (`1500 ppm`) persistido no historico
+- evidencias de execucao com sucesso confirmadas em terminal PowerShell do usuario
+- script operacional criado para evitar repeticao manual:
+  - `scripts/lab-sabor-serra.ps1`
+  - envia leituras base, consulta historico dos 3 sensores e opcionalmente dispara cenario critico de gases
+  - aceita `-Token`, `-DeviceKey`, `-ClientId`, `-DeviceId`, `-TriggerCriticalGas`
+- ajuste importante no script:
+  - removido bloqueio local de formato de token para deixar a validacao com a propria API
+  - corrigida interpolacao de URL de readings no PowerShell
+
+Commits recentes desta etapa:
+
+- `5c596e5` fix(web): trava sensor em seletor e valida catalogo de sensores
+- `92e090d` docs(handoff): registrar uso de `;` no PowerShell em vez de `&&`
+- `9a14b5b` feat(lab): atualizar comandos de producao e incluir validacao n8n
+- `ea7cf63` feat(scripts): adicionar script PowerShell para validacao do caso Sabor Serra
+- `6f2ed00` fix(scripts): corrigir URL de readings e validar formato do token JWT
+- `056cd4a` fix(scripts): remover bloqueio local de formato de token no lab-sabor-serra
+
+Estado funcional atual do estudo de caso:
+
+- devices confirmados no cliente:
+  - `adega_vinhos_01`
+  - `camara_fria_01`
+  - `freezer_cozinha_01`
+- modulo ambiental e regras ja criados pelo usuario
+- ingestao e historico de sensores funcionando
+
+Pendencia imediata para fechar demonstracao comercial:
+
+1. validar disparo visual no painel para regra critica de gases
+2. validar fluxos n8n:
+   - `npm run alerts:check:n8n`
+   - `npm run alerts:check:n8n -- --ping --strict --timeout-ms=15000`
+3. confirmar entrega no WhatsApp (alerta correspondente)
+
+Observacoes operacionais que evitaram retrabalho:
+
+- no PowerShell local, variaveis de sessao (`$token`, `$key`) se perdem ao abrir novo terminal
+- sempre que reiniciar terminal, recarregar credenciais antes dos testes
+- usar `;` para encadear comandos (nao usar `&&` neste ambiente)
+- placeholders (`SEU_TOKEN...`, `SUA_DEVICE_KEY`) causaram falhas recorrentes; preferir copiar valor real do header `Authorization` no DevTools
+
 ## Direcao do produto
 
 O projeto deixou de ser focado apenas em freezer e esta evoluindo para uma plataforma de automacao IoT da Virtuagil.
