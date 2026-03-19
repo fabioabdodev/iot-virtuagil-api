@@ -64,6 +64,7 @@ model Client {
   actuationSchedules ActuationSchedule[]
   users             User[]
   modules           ClientModule[]
+  moduleItemAccesses ClientModuleItem[]
 }
 
 model AlertRule {
@@ -188,6 +189,43 @@ model ClientModule {
 
   @@unique([clientId, moduleKey])
   @@index([clientId])
+}
+
+model ModuleCatalog {
+  key         String   @id
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  items       ModuleCatalogItem[]
+}
+
+model ModuleCatalogItem {
+  key         String   @id
+  moduleKey   String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  module      ModuleCatalog @relation(fields: [moduleKey], references: [key], onDelete: Cascade)
+  clients     ClientModuleItem[]
+
+  @@index([moduleKey])
+}
+
+model ClientModuleItem {
+  id       String   @id @default(uuid())
+  clientId String
+  itemKey  String
+  enabled  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  item     ModuleCatalogItem @relation(fields: [itemKey], references: [key], onDelete: Cascade)
+
+  @@unique([clientId, itemKey])
+  @@index([clientId])
+  @@index([itemKey])
 }
 
 model AuditLog {

@@ -1,17 +1,89 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+﻿import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UpsertClientModuleDto } from './dto/upsert-client-module.dto';
 
-const SUPPORTED_MODULES = [
+const MODULE_ALIASES: Record<string, 'ambiental' | 'acionamento' | 'energia'> = {
+  ambiental: 'ambiental',
+  temperature: 'ambiental',
+  acionamento: 'acionamento',
+  actuation: 'acionamento',
+  energia: 'energia',
+};
+
+const LEGACY_MODULE_MAP: Partial<Record<'ambiental' | 'acionamento' | 'energia', 'temperature' | 'actuation'>> = {
+  ambiental: 'temperature',
+  acionamento: 'actuation',
+};
+
+const FALLBACK_MODULES = [
   {
-    key: 'temperature',
-    name: 'Temperatura',
-    description: 'Monitoramento, historico e alertas de temperatura.',
+    key: 'ambiental',
+    name: 'Ambiental',
+    description:
+      'Monitoramento ambiental com sensores como temperatura, umidade e gases.',
+    items: [
+      {
+        key: 'temperatura',
+        name: 'Temperatura',
+        description: 'Leitura e alertas de temperatura.',
+      },
+      {
+        key: 'umidade',
+        name: 'Umidade',
+        description: 'Leitura e alertas de umidade relativa do ar.',
+      },
+      {
+        key: 'gases',
+        name: 'Gases',
+        description: 'Leitura e alertas de gases ambientais.',
+      },
+    ],
   },
   {
-    key: 'actuation',
+    key: 'acionamento',
     name: 'Acionamento',
-    description: 'Controle manual de cargas e historico de comandos.',
+    description:
+      'Controle e telemetria operacional de saidas, estados e eventos de abertura.',
+    items: [
+      {
+        key: 'rele',
+        name: 'Rele',
+        description: 'Comando liga/desliga de cargas.',
+      },
+      {
+        key: 'status_abertura',
+        name: 'Status de abertura',
+        description: 'Estado aberto/fechado de portas e acessos.',
+      },
+      {
+        key: 'tempo_aberto',
+        name: 'Tempo aberto',
+        description: 'Medicao do tempo acumulado em estado aberto.',
+      },
+    ],
+  },
+  {
+    key: 'energia',
+    name: 'Energia',
+    description:
+      'Medicoes eletricas e consumo para gestao energetica de equipamentos.',
+    items: [
+      {
+        key: 'corrente',
+        name: 'Corrente',
+        description: 'Medicao de corrente eletrica.',
+      },
+      {
+        key: 'tensao',
+        name: 'Tensao',
+        description: 'Medicao de tensao eletrica.',
+      },
+      {
+        key: 'consumo',
+        name: 'Consumo',
+        description: 'Medicao de consumo energetico.',
+      },
+    ],
   },
 ] as const;
 
@@ -22,24 +94,68 @@ export class ClientModulesService {
   async list(clientId: string) {
     await this.ensureClientExists(clientId);
 
-    const rows = await this.prisma.clientModule.findMany({
-      where: { clientId },
-      orderBy: { moduleKey: 'asc' },
-    } as any);
+    const [catalogRows, accessRows, legacyRows] = await Promise.all([
+      this.prisma.moduleCatalog.findMany({
+        include: {
+          items: {
+            orderBy: { key: 'asc' },
+          },
+        },
+        orderBy: { key: 'asc' },
+      } as any),
+      this.prisma.clientModuleItem.findMany({
+        where: { clientId },
+        orderBy: { itemKey: 'asc' },
+      } as any),
+      this.prisma.clientModule.findMany({
+        where: { clientId },
+      } as any),
+    ]);
 
-    const byKey = new Map(rows.map((row: any) => [row.moduleKey, row]));
+    const modules = catalogRows.length > 0 ? catalogRows : FALLBACK_MODULES;
+    const accessByItemKey = new Map(accessRows.map((row: any) => [row.itemKey, row]));
+    const legacyByModule = new Map(
+      legacyRows.map((row: any) => [row.moduleKey, Boolean(row.enabled)]),
+    );
 
-    return SUPPORTED_MODULES.map((module) => {
-      const existing = byKey.get(module.key);
+    return modules.map((module: any) => {
+      const items = (module.items ?? []).map((item: any) => {
+        const access = accessByItemKey.get(item.key);
+        let enabled = access?.enabled ?? false;
+
+        if (!enabled && module.key === 'ambiental' && item.key === 'temperatura') {
+          enabled = legacyByModule.get('temperature') === true;
+        }
+
+        if (!enabled && module.key === 'acionamento' && item.key === 'rele') {
+          enabled = legacyByModule.get('actuation') === true;
+        }
+
+        return {
+          id: access?.id ?? `${clientId}:${item.key}`,
+          clientId,
+          itemKey: item.key,
+          moduleKey: module.key,
+          name: item.name,
+          description: item.description ?? '',
+          enabled,
+          createdAt: access?.createdAt ?? null,
+          updatedAt: access?.updatedAt ?? null,
+        };
+      });
+
+      const enabled = items.some((item: any) => item.enabled);
+
       return {
-        id: existing?.id ?? `${clientId}:${module.key}`,
+        id: `${clientId}:${module.key}`,
         clientId,
         moduleKey: module.key,
         name: module.name,
-        description: module.description,
-        enabled: existing?.enabled ?? false,
-        createdAt: existing?.createdAt ?? null,
-        updatedAt: existing?.updatedAt ?? null,
+        description: module.description ?? '',
+        enabled,
+        createdAt: module.createdAt ?? null,
+        updatedAt: module.updatedAt ?? null,
+        items,
       };
     });
   }
@@ -47,34 +163,77 @@ export class ClientModulesService {
   async upsert(dto: UpsertClientModuleDto) {
     await this.ensureClientExists(dto.clientId);
 
-    const row = await this.prisma.clientModule.upsert({
-      where: {
-        clientId_moduleKey: {
-          clientId: dto.clientId,
-          moduleKey: dto.moduleKey,
-        },
-      },
-      update: {
-        enabled: dto.enabled,
-      },
-      create: {
-        clientId: dto.clientId,
-        moduleKey: dto.moduleKey,
-        enabled: dto.enabled,
-      },
-    } as any);
+    const normalizedModuleKey = this.normalizeModuleKey(dto.moduleKey);
+    if (!normalizedModuleKey) {
+      throw new BadRequestException('moduleKey is not supported');
+    }
 
-    return {
-      id: row.id,
-      clientId: row.clientId,
-      moduleKey: row.moduleKey,
-      name: SUPPORTED_MODULES.find((module) => module.key === row.moduleKey)?.name ?? row.moduleKey,
-      description:
-        SUPPORTED_MODULES.find((module) => module.key === row.moduleKey)?.description ?? '',
-      enabled: row.enabled,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-    };
+    if (dto.itemKey) {
+      const item = await this.prisma.moduleCatalogItem.findUnique({
+        where: { key: dto.itemKey },
+      } as any);
+
+      if (!item) {
+        throw new BadRequestException('itemKey is not supported');
+      }
+
+      if ((item as any).moduleKey !== normalizedModuleKey) {
+        throw new BadRequestException('itemKey does not belong to moduleKey');
+      }
+
+      await this.prisma.clientModuleItem.upsert({
+        where: {
+          clientId_itemKey: {
+            clientId: dto.clientId,
+            itemKey: dto.itemKey,
+          },
+        },
+        update: {
+          enabled: dto.enabled,
+        },
+        create: {
+          clientId: dto.clientId,
+          itemKey: dto.itemKey,
+          enabled: dto.enabled,
+        },
+      } as any);
+    } else {
+      const moduleItems = await this.prisma.moduleCatalogItem.findMany({
+        where: { moduleKey: normalizedModuleKey },
+      } as any);
+
+      if (moduleItems.length === 0) {
+        throw new BadRequestException(
+          'moduleKey has no items in catalog. Seed module catalog first.',
+        );
+      }
+
+      await Promise.all(
+        moduleItems.map((item: any) =>
+          this.prisma.clientModuleItem.upsert({
+            where: {
+              clientId_itemKey: {
+                clientId: dto.clientId,
+                itemKey: item.key,
+              },
+            },
+            update: {
+              enabled: dto.enabled,
+            },
+            create: {
+              clientId: dto.clientId,
+              itemKey: item.key,
+              enabled: dto.enabled,
+            },
+          } as any),
+        ),
+      );
+    }
+
+    await this.syncLegacyModuleBridge(dto.clientId, normalizedModuleKey);
+
+    const modules = await this.list(dto.clientId);
+    return modules.find((module) => module.moduleKey === normalizedModuleKey);
   }
 
   private async ensureClientExists(clientId: string) {
@@ -83,4 +242,48 @@ export class ClientModulesService {
       throw new BadRequestException('clientId does not exist');
     }
   }
+
+  private normalizeModuleKey(moduleKey: string) {
+    return MODULE_ALIASES[moduleKey];
+  }
+
+  private async syncLegacyModuleBridge(
+    clientId: string,
+    moduleKey: 'ambiental' | 'acionamento' | 'energia',
+  ) {
+    const legacyModuleKey = LEGACY_MODULE_MAP[moduleKey];
+    if (!legacyModuleKey) return;
+
+    const catalogItems = await this.prisma.moduleCatalogItem.findMany({
+      where: { moduleKey },
+      select: { key: true },
+    } as any);
+    const itemKeys = catalogItems.map((row: any) => row.key);
+
+    const enabledCount = await this.prisma.clientModuleItem.count({
+      where: {
+        clientId,
+        itemKey: { in: itemKeys },
+        enabled: true,
+      },
+    } as any);
+
+    await this.prisma.clientModule.upsert({
+      where: {
+        clientId_moduleKey: {
+          clientId,
+          moduleKey: legacyModuleKey,
+        },
+      },
+      update: {
+        enabled: enabledCount > 0,
+      },
+      create: {
+        clientId,
+        moduleKey: legacyModuleKey,
+        enabled: enabledCount > 0,
+      },
+    } as any);
+  }
 }
+

@@ -9,7 +9,7 @@ import type { SessionUser } from '../auth/auth.types';
 
 @Controller('alert-rules')
 @UseGuards(SessionAuthGuard, RoleGuard, ModuleAccessGuard)
-@RequireModule('temperature')
+@RequireModule('ambiental')
 export class AlertRulesController {
   constructor(private readonly alertRulesService: AlertRulesService) {}
 

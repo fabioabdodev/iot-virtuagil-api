@@ -24,7 +24,40 @@ describe('Client Modules (e2e)', () => {
       updatedAt: new Date('2026-03-13T00:00:00.000Z'),
     };
     const clients = new Map<string, any>([['virtuagil', { id: 'virtuagil', name: 'Virtuagil' }]]);
-    const modules = new Map<string, any>();
+    const moduleItems = [
+      {
+        key: 'temperatura',
+        moduleKey: 'ambiental',
+        name: 'Temperatura',
+        description: 'Leitura e alertas de temperatura.',
+      },
+      {
+        key: 'umidade',
+        moduleKey: 'ambiental',
+        name: 'Umidade',
+        description: 'Leitura e alertas de umidade.',
+      },
+      {
+        key: 'rele',
+        moduleKey: 'acionamento',
+        name: 'Rele',
+        description: 'Comando liga/desliga.',
+      },
+    ];
+    const modules = [
+      {
+        key: 'ambiental',
+        name: 'Ambiental',
+        description: 'Monitoramento ambiental.',
+      },
+      {
+        key: 'acionamento',
+        name: 'Acionamento',
+        description: 'Controle de cargas.',
+      },
+    ];
+    const clientModuleItems = new Map<string, any>();
+    const legacyModules = new Map<string, any>();
 
     const fakePrisma = {
       client: {
@@ -32,9 +65,64 @@ describe('Client Modules (e2e)', () => {
           Promise.resolve(clients.get(where.id) ?? null),
         ),
       },
+      moduleCatalog: {
+        findMany: jest.fn(() =>
+          Promise.resolve(
+            modules.map((module) => ({
+              ...module,
+              items: moduleItems.filter((item) => item.moduleKey === module.key),
+            })),
+          ),
+        ),
+      },
+      moduleCatalogItem: {
+        findUnique: jest.fn(({ where }: any) =>
+          Promise.resolve(moduleItems.find((item) => item.key === where.key) ?? null),
+        ),
+        findMany: jest.fn(({ where }: any) =>
+          Promise.resolve(
+            moduleItems
+              .filter((item) => item.moduleKey === where.moduleKey)
+              .map((item) => ({ key: item.key })),
+          ),
+        ),
+      },
+      clientModuleItem: {
+        findMany: jest.fn(({ where }: any) => {
+          const rows = Array.from(clientModuleItems.values()).filter(
+            (row) => row.clientId === where.clientId,
+          );
+          rows.sort((a, b) => a.itemKey.localeCompare(b.itemKey));
+          return Promise.resolve(rows);
+        }),
+        upsert: jest.fn(({ where, update, create }: any) => {
+          const key = `${where.clientId_itemKey.clientId}:${where.clientId_itemKey.itemKey}`;
+          const current = clientModuleItems.get(key);
+          const row =
+            current != null
+              ? { ...current, ...update, updatedAt: new Date('2026-03-13T02:00:00.000Z') }
+              : {
+                  id: `item_${clientModuleItems.size + 1}`,
+                  createdAt: new Date('2026-03-13T01:00:00.000Z'),
+                  updatedAt: new Date('2026-03-13T01:00:00.000Z'),
+                  ...create,
+                };
+          clientModuleItems.set(key, row);
+          return Promise.resolve(row);
+        }),
+        count: jest.fn(({ where }: any) => {
+          const rows = Array.from(clientModuleItems.values()).filter((row) => {
+            if (row.clientId !== where.clientId) return false;
+            if (where.enabled != null && row.enabled !== where.enabled) return false;
+            if (where.itemKey?.in && !where.itemKey.in.includes(row.itemKey)) return false;
+            return true;
+          });
+          return Promise.resolve(rows.length);
+        }),
+      },
       clientModule: {
         findMany: jest.fn(({ where }: any) => {
-          const rows = Array.from(modules.values()).filter(
+          const rows = Array.from(legacyModules.values()).filter(
             (row) => row.clientId === where.clientId,
           );
           rows.sort((a, b) => a.moduleKey.localeCompare(b.moduleKey));
@@ -42,17 +130,17 @@ describe('Client Modules (e2e)', () => {
         }),
         upsert: jest.fn(({ where, update, create }: any) => {
           const key = `${where.clientId_moduleKey.clientId}:${where.clientId_moduleKey.moduleKey}`;
-          const current = modules.get(key);
+          const current = legacyModules.get(key);
           const row =
             current != null
               ? { ...current, ...update, updatedAt: new Date('2026-03-13T02:00:00.000Z') }
               : {
-                  id: `module_${modules.size + 1}`,
+                  id: `module_${legacyModules.size + 1}`,
                   createdAt: new Date('2026-03-13T01:00:00.000Z'),
                   updatedAt: new Date('2026-03-13T01:00:00.000Z'),
                   ...create,
                 };
-          modules.set(key, row);
+          legacyModules.set(key, row);
           return Promise.resolve(row);
         }),
       },
@@ -102,7 +190,7 @@ describe('Client Modules (e2e)', () => {
       .post('/client-modules')
       .send({
         clientId: 'virtuagil',
-        moduleKey: 'temperature',
+        moduleKey: 'ambiental',
         enabled: true,
       })
       .expect(201);
@@ -111,7 +199,7 @@ describe('Client Modules (e2e)', () => {
       .post('/client-modules')
       .send({
         clientId: 'virtuagil',
-        moduleKey: 'actuation',
+        moduleKey: 'acionamento',
         enabled: false,
       })
       .expect(201);
@@ -124,13 +212,15 @@ describe('Client Modules (e2e)', () => {
           expect.arrayContaining([
             expect.objectContaining({
               clientId: 'virtuagil',
-              moduleKey: 'temperature',
+              moduleKey: 'ambiental',
               enabled: true,
+              items: expect.any(Array),
             }),
             expect.objectContaining({
               clientId: 'virtuagil',
-              moduleKey: 'actuation',
+              moduleKey: 'acionamento',
               enabled: false,
+              items: expect.any(Array),
             }),
           ]),
         );
@@ -152,7 +242,7 @@ describe('Client Modules (e2e)', () => {
       .post('/client-modules')
       .send({
         clientId: 'virtuagil',
-        moduleKey: 'temperature',
+        moduleKey: 'ambiental',
         enabled: true,
       })
       .expect(403);

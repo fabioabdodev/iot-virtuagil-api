@@ -1,4 +1,10 @@
-import { IsBoolean, IsIn, IsString, Matches } from 'class-validator';
+import {
+  IsBoolean,
+  IsIn,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 
 export class UpsertClientModuleDto {
   @IsString()
@@ -6,8 +12,13 @@ export class UpsertClientModuleDto {
   clientId: string;
 
   @IsString()
-  @IsIn(['temperature', 'actuation'])
-  moduleKey: 'temperature' | 'actuation';
+  @IsIn(['ambiental', 'acionamento', 'energia', 'temperature', 'actuation'])
+  moduleKey: 'ambiental' | 'acionamento' | 'energia' | 'temperature' | 'actuation';
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^[a-z0-9_]{3,50}$/)
+  itemKey?: string;
 
   @IsBoolean()
   enabled: boolean;

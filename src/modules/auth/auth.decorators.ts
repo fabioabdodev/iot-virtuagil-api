@@ -14,5 +14,7 @@ export const REQUIRE_MODULE_KEY = 'require_module';
 export const RequireRole = (role: 'admin' | 'operator') =>
   SetMetadata(REQUIRE_ROLE_KEY, role);
 
-export const RequireModule = (moduleKey: 'temperature' | 'actuation') =>
+export const RequireModule = (
+  moduleKey: 'ambiental' | 'acionamento' | 'energia' | 'temperature' | 'actuation',
+) =>
   SetMetadata(REQUIRE_MODULE_KEY, moduleKey);

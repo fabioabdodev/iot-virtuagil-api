@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -159,11 +159,11 @@ function DashboardContent() {
   const temperatureEnabled =
     scopedClientId == null
       ? true
-      : clientModules.find((module) => module.moduleKey === 'temperature')?.enabled ?? false;
+      : clientModules.find((module) => module.moduleKey === 'ambiental')?.enabled ?? false;
   const actuationEnabled =
     scopedClientId == null
       ? true
-      : clientModules.find((module) => module.moduleKey === 'actuation')?.enabled ?? false;
+      : clientModules.find((module) => module.moduleKey === 'acionamento')?.enabled ?? false;
   const { data: alertRulesData } = useAlertRules(
     temperatureEnabled ? scopedClientId : undefined,
     authToken,
@@ -1004,7 +1004,7 @@ function DashboardContent() {
         <div className="mt-6">
           <AccessNotice
             title="Temperatura indisponivel"
-            description="Este cliente nao contratou o recurso de temperatura, por isso equipamentos, leituras e regras ficam bloqueados nesta conta."
+            description="Este cliente nao contratou o recurso ambiental, por isso equipamentos, leituras e regras ficam bloqueados nesta conta."
             badge="nao contratado"
             hint="Habilite o recurso no painel de contratacao para liberar equipamentos, historico e alertas."
           />
@@ -1280,3 +1280,5 @@ function DashboardContent() {
     </main>
   );
 }
+
+

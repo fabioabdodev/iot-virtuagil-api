@@ -14,7 +14,7 @@ import { ActuationSchedulesService } from './actuation-schedules.service';
 
 @Controller('actuators')
 @UseGuards(SessionAuthGuard, RoleGuard, ModuleAccessGuard)
-@RequireModule('actuation')
+@RequireModule('acionamento')
 export class ActuatorsController {
   constructor(
     private readonly actuatorsService: ActuatorsService,

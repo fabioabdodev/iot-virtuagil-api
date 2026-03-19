@@ -50,7 +50,7 @@ export function OperationalActivityPanel({
   const actuationEnabled =
     clientId == null
       ? true
-      : clientModules.find((module) => module.moduleKey === 'actuation')?.enabled ?? false;
+      : clientModules.find((module) => module.moduleKey === 'acionamento')?.enabled ?? false;
 
   const { data, isLoading, isError, error } = useRecentActuationCommands(
     actuationEnabled ? clientId : undefined,
@@ -279,3 +279,4 @@ export function OperationalActivityPanel({
     </Panel>
   );
 }
+

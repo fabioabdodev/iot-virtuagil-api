@@ -9,7 +9,8 @@ export function useClientModuleMutations(clientId?: string, authToken?: string) 
   return useMutation({
     mutationFn: (payload: {
       clientId: string;
-      moduleKey: 'temperature' | 'actuation';
+      moduleKey: 'ambiental' | 'acionamento' | 'energia';
+      itemKey?: string;
       enabled: boolean;
     }) => upsertClientModule(payload, authToken),
     onSuccess: async () => {

@@ -787,7 +787,8 @@ export async function fetchClientModules(
 export async function upsertClientModule(
   input: {
     clientId: string;
-    moduleKey: 'temperature' | 'actuation';
+    moduleKey: 'ambiental' | 'acionamento' | 'energia';
+    itemKey?: string;
     enabled: boolean;
   },
   authToken?: string,

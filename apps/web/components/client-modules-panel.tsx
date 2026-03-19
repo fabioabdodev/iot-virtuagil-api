@@ -45,7 +45,7 @@ export function ClientModulesPanel({
         description="A alteracao de modulos fica restrita ao administrador da plataforma."
         badge={currentUser?.role ?? 'sem permissao'}
         tone="warning"
-        hint={blockedReason ?? 'Entre com um usuario admin para alterar contratacao de temperatura e acionamento.'}
+        hint={blockedReason ?? 'Entre com um usuario admin para alterar contratacao de modulos e itens.'}
       />
     );
   }
@@ -121,6 +121,46 @@ export function ClientModulesPanel({
                 <LockOpen className="h-3.5 w-3.5" />
                 {module.enabled ? 'Desabilitar' : 'Habilitar'}
               </Button>
+
+              <div className="mt-4 space-y-2 border-t border-line/60 pt-4">
+                <p className="text-xs uppercase tracking-[0.16em] text-muted">
+                  Itens do modulo
+                </p>
+                {module.items.length === 0 ? (
+                  <Feedback>Nenhum item cadastrado neste modulo.</Feedback>
+                ) : (
+                  module.items.map((item) => (
+                    <div
+                      key={item.itemKey}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-line/60 bg-card/40 px-3 py-2"
+                    >
+                      <div>
+                        <p className="text-sm font-medium">{item.name}</p>
+                        <p className="text-xs text-muted">{item.description}</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant={item.enabled ? 'secondary' : 'primary'}
+                        loading={mutation.isPending}
+                        onClick={async () => {
+                          setSuccessMessage(null);
+                          await mutation.mutateAsync({
+                            clientId,
+                            moduleKey: module.moduleKey,
+                            itemKey: item.itemKey,
+                            enabled: !item.enabled,
+                          });
+                          setSuccessMessage(
+                            `Item ${item.name} ${item.enabled ? 'desabilitado' : 'habilitado'} com sucesso.`,
+                          );
+                        }}
+                      >
+                        {item.enabled ? 'Desabilitar' : 'Habilitar'}
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
             </Panel>
           ))}
         </div>

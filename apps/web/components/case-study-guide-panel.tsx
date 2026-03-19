@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { CheckCircle2, ClipboardList, FlaskConical, MapPinned, Snowflake, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +28,7 @@ const cuidareCase = {
   deviceName: 'Freezer Vacinas 01',
   location: 'Sala de armazenamento',
   sensorType: 'temperature',
-  expectedModule: 'temperature',
+  expectedModule: 'ambiental',
 };
 
 export function CaseStudyGuidePanel({
@@ -44,7 +44,7 @@ export function CaseStudyGuidePanel({
   const temperatureEnabled =
     clientId == null
       ? false
-      : clientModules.find((module) => module.moduleKey === 'temperature')?.enabled ?? false;
+      : clientModules.find((module) => module.moduleKey === 'ambiental')?.enabled ?? false;
 
   const hasExpectedClient = clientId === cuidareCase.clientId;
   const hasDevice = devices.some((device) => device.id === cuidareCase.deviceId);
@@ -149,7 +149,7 @@ export function CaseStudyGuidePanel({
               <p><strong className="text-ink">Cliente:</strong> {cuidareCase.clientName}</p>
               <p><strong className="text-ink">Codigo interno:</strong> {cuidareCase.clientId}</p>
               <p><strong className="text-ink">Admin inicial:</strong> {cuidareCase.adminEmail}</p>
-              <p><strong className="text-ink">Modulo inicial:</strong> temperature</p>
+              <p><strong className="text-ink">Modulo inicial:</strong> ambiental</p>
             </div>
           </div>
 
@@ -216,3 +216,5 @@ export function CaseStudyGuidePanel({
     </Panel>
   );
 }
+
+

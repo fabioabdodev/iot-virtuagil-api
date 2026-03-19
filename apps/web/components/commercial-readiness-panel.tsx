@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import {
   Boxes,
@@ -134,11 +134,11 @@ export function CommercialReadinessPanel({
   const temperatureEnabled =
     clientId == null
       ? true
-      : clientModules.find((module) => module.moduleKey === 'temperature')?.enabled ?? false;
+      : clientModules.find((module) => module.moduleKey === 'ambiental')?.enabled ?? false;
   const actuationEnabled =
     clientId == null
       ? true
-      : clientModules.find((module) => module.moduleKey === 'actuation')?.enabled ?? false;
+      : clientModules.find((module) => module.moduleKey === 'acionamento')?.enabled ?? false;
 
   const { data: alertRulesData } = useAlertRules(
     temperatureEnabled ? clientId : undefined,
@@ -191,7 +191,7 @@ export function CommercialReadinessPanel({
   );
 
   const nextSteps = [
-    !temperatureEnabled && 'Habilitar o recurso de temperatura para abrir a oferta principal de monitoramento.',
+    !temperatureEnabled && 'Habilitar o recurso ambiental para abrir a oferta principal de monitoramento.',
     temperatureEnabled && devices.length === 0 && 'Cadastrar o primeiro equipamento para liberar historico, online/offline e leitura atual.',
     temperatureEnabled && devices.length > 0 && alertRules.length === 0 && 'Criar ao menos uma regra de alerta para demonstrar valor operacional logo no onboarding.',
     actuationEnabled && actuators.length === 0 && 'Cadastrar o primeiro ponto de acionamento para provar o fluxo de comando e historico do recurso de acionamento.',
@@ -391,7 +391,7 @@ export function CommercialReadinessPanel({
               : 'Feche os itens abaixo para vender monitoramento de temperatura com seguranca.'}
           </p>
           <div className="mt-3 space-y-2 text-xs text-muted">
-            <p>{temperatureEnabled ? 'OK' : 'Pendente'} - modulo temperatura contratado</p>
+            <p>{temperatureEnabled ? 'OK' : 'Pendente'} - modulo ambiental contratado</p>
             <p>{devices.length > 0 ? 'OK' : 'Pendente'} - ao menos 1 equipamento cadastrado</p>
             <p>{alertRules.length > 0 ? 'OK' : 'Pendente'} - ao menos 1 regra de alerta ativa</p>
             <p>{devices.length > 0 && offlineDevices === 0 ? 'OK' : 'Pendente'} - equipamentos sem alerta offline no momento</p>
@@ -421,3 +421,5 @@ export function CommercialReadinessPanel({
     </Panel>
   );
 }
+
+

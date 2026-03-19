@@ -26,7 +26,7 @@ import {
 
 @Controller('devices')
 @UseGuards(SessionAuthGuard, ModuleAccessGuard)
-@RequireModule('temperature')
+@RequireModule('ambiental')
 export class DevicesController {
   constructor(private service: DevicesService) {}
 

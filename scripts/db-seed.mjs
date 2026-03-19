@@ -1,10 +1,82 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 import { PrismaClient } from '@prisma/client';
 import { randomBytes, scryptSync } from 'crypto';
 
 const prisma = new PrismaClient();
 const args = new Set(process.argv.slice(2));
+
+const MODULE_CATALOG = [
+  {
+    key: 'ambiental',
+    name: 'Ambiental',
+    description:
+      'Monitoramento ambiental com sensores como temperatura, umidade e gases.',
+    items: [
+      {
+        key: 'temperatura',
+        name: 'Temperatura',
+        description: 'Leitura e alertas de temperatura.',
+      },
+      {
+        key: 'umidade',
+        name: 'Umidade',
+        description: 'Leitura e alertas de umidade relativa do ar.',
+      },
+      {
+        key: 'gases',
+        name: 'Gases',
+        description: 'Leitura e alertas de gases ambientais.',
+      },
+    ],
+  },
+  {
+    key: 'acionamento',
+    name: 'Acionamento',
+    description:
+      'Controle e telemetria operacional de saidas, estados e eventos de abertura.',
+    items: [
+      {
+        key: 'rele',
+        name: 'Rele',
+        description: 'Comando liga/desliga de cargas.',
+      },
+      {
+        key: 'status_abertura',
+        name: 'Status de abertura',
+        description: 'Estado aberto/fechado de portas e acessos.',
+      },
+      {
+        key: 'tempo_aberto',
+        name: 'Tempo aberto',
+        description: 'Medicao do tempo acumulado em estado aberto.',
+      },
+    ],
+  },
+  {
+    key: 'energia',
+    name: 'Energia',
+    description:
+      'Medicoes eletricas e consumo para gestao energetica de equipamentos.',
+    items: [
+      {
+        key: 'corrente',
+        name: 'Corrente',
+        description: 'Medicao de corrente eletrica.',
+      },
+      {
+        key: 'tensao',
+        name: 'Tensao',
+        description: 'Medicao de tensao eletrica.',
+      },
+      {
+        key: 'consumo',
+        name: 'Consumo',
+        description: 'Medicao de consumo energetico.',
+      },
+    ],
+  },
+];
 
 function hashPassword(password) {
   const salt = randomBytes(16).toString('hex');
@@ -285,6 +357,106 @@ async function seedClientModules() {
   }
 }
 
+async function seedModuleCatalog() {
+  for (const module of MODULE_CATALOG) {
+    await prisma.moduleCatalog.upsert({
+      where: { key: module.key },
+      update: {
+        name: module.name,
+        description: module.description,
+      },
+      create: {
+        key: module.key,
+        name: module.name,
+        description: module.description,
+      },
+    });
+
+    for (const item of module.items) {
+      await prisma.moduleCatalogItem.upsert({
+        where: { key: item.key },
+        update: {
+          moduleKey: module.key,
+          name: item.name,
+          description: item.description,
+        },
+        create: {
+          key: item.key,
+          moduleKey: module.key,
+          name: item.name,
+          description: item.description,
+        },
+      });
+    }
+  }
+}
+
+async function seedClientModuleItems() {
+  const desiredByClient = [
+    {
+      clientId: 'virtuagil',
+      items: ['temperatura', 'rele'],
+    },
+    {
+      clientId: 'cliente_teste',
+      items: ['temperatura'],
+    },
+  ];
+
+  for (const contract of desiredByClient) {
+    for (const itemKey of contract.items) {
+      await prisma.clientModuleItem.upsert({
+        where: {
+          clientId_itemKey: {
+            clientId: contract.clientId,
+            itemKey,
+          },
+        },
+        update: {
+          enabled: true,
+        },
+        create: {
+          clientId: contract.clientId,
+          itemKey,
+          enabled: true,
+        },
+      });
+    }
+  }
+
+  // Ponte de compatibilidade para bases antigas: converte contratacao legado em itens.
+  const legacyRows = await prisma.clientModule.findMany();
+  for (const row of legacyRows) {
+    if (!row.enabled) continue;
+
+    const mappedItems =
+      row.moduleKey === 'temperature'
+        ? ['temperatura']
+        : row.moduleKey === 'actuation'
+          ? ['rele']
+          : [];
+
+    for (const itemKey of mappedItems) {
+      await prisma.clientModuleItem.upsert({
+        where: {
+          clientId_itemKey: {
+            clientId: row.clientId,
+            itemKey,
+          },
+        },
+        update: {
+          enabled: true,
+        },
+        create: {
+          clientId: row.clientId,
+          itemKey,
+          enabled: true,
+        },
+      });
+    }
+  }
+}
+
 async function seedActuators() {
   const actuators = [
     {
@@ -374,7 +546,7 @@ async function main() {
 
   if (args.has('--dry-run')) {
     console.log(
-      '[seed] dry-run: seriam criados/atualizados 2 clients com dados comerciais minimos, 3 devices, 3 alert-rules, 3 users, 2 actuators, 3 actuation-commands e 24 leituras por device sem historico.',
+      '[seed] dry-run: seriam criados/atualizados 2 clients, catalogo de modulos e itens dinamicos, contratacao por item, 3 devices, 3 alert-rules, 3 users, 2 actuators, 3 actuation-commands e 24 leituras por device sem historico.',
     );
     return;
   }
@@ -382,7 +554,9 @@ async function main() {
   console.log('[seed] iniciando carga de dados demo...');
 
   await seedClients();
+  await seedModuleCatalog();
   await seedClientModules();
+  await seedClientModuleItems();
   await seedDevices();
   await seedAlertRules();
   await seedUsers();
@@ -401,3 +575,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

@@ -7,7 +7,7 @@ import type { SessionUser } from '../auth/auth.types';
 
 @Controller('readings')
 @UseGuards(SessionAuthGuard, ModuleAccessGuard)
-@RequireModule('temperature')
+@RequireModule('ambiental')
 export class ReadingsController {
   constructor(private readonly readingsService: ReadingsService) {}
 
