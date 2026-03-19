@@ -1,4 +1,4 @@
-﻿CREATE TABLE "SensorReading" (
+CREATE TABLE "SensorReading" (
     "id" TEXT NOT NULL,
     "deviceId" TEXT NOT NULL,
     "sensorType" TEXT NOT NULL,
