@@ -21,3 +21,19 @@ export type LoginInput = {
   password: string;
   turnstileToken?: string;
 };
+
+export type RequestPasswordResetInput = {
+  email: string;
+  turnstileToken?: string;
+};
+
+export type ConfirmPasswordResetInput = {
+  token: string;
+  password: string;
+};
+
+export type PasswordResetValidation = {
+  valid: boolean;
+  emailHint: string;
+  expiresAt: string;
+};

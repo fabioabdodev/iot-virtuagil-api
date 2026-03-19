@@ -43,7 +43,12 @@ import { MetricCard } from '@/components/ui/metric-card';
 import { Panel } from '@/components/ui/panel';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 import { useAuth } from '@/lib/auth-context';
-import { createDevice } from '@/lib/api';
+import {
+  confirmPasswordReset,
+  createDevice,
+  requestPasswordReset,
+  validatePasswordResetToken,
+} from '@/lib/api';
 import { useClient } from '@/hooks/use-client';
 import { useActuators } from '@/hooks/use-actuators';
 import { useAlertRules } from '@/hooks/use-alert-rules';
@@ -87,10 +92,25 @@ function DashboardContent() {
 
   // O filtro principal vive na URL para facilitar refresh e compartilhamento do estado atual.
   const queryClientId = searchParams.get('clientId') ?? '';
+  const queryResetToken = searchParams.get('resetToken') ?? '';
 
   const [clientIdDraft, setClientIdDraft] = useState(queryClientId);
-  const [authEmailDraft, setAuthEmailDraft] = useState('plataforma@virtuagil.com.br');
-  const [authPasswordDraft, setAuthPasswordDraft] = useState('plataforma123');
+  const [authEmailDraft, setAuthEmailDraft] = useState('');
+  const [authPasswordDraft, setAuthPasswordDraft] = useState('');
+  const [authFlow, setAuthFlow] = useState<'login' | 'forgot' | 'reset'>(
+    queryResetToken ? 'reset' : 'login',
+  );
+  const [forgotEmailDraft, setForgotEmailDraft] = useState('');
+  const [forgotSuccessMessage, setForgotSuccessMessage] = useState<string | null>(null);
+  const [isRequestingReset, setIsRequestingReset] = useState(false);
+  const [resetTokenDraft, setResetTokenDraft] = useState(queryResetToken);
+  const [newPasswordDraft, setNewPasswordDraft] = useState('');
+  const [newPasswordConfirmDraft, setNewPasswordConfirmDraft] = useState('');
+  const [isSubmittingReset, setIsSubmittingReset] = useState(false);
+  const [resetValidationMessage, setResetValidationMessage] = useState<string | null>(
+    null,
+  );
+  const [resetSuccessMessage, setResetSuccessMessage] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -127,6 +147,24 @@ function DashboardContent() {
     // Mantem o campo de filtro sincronizado quando a URL muda por navegacao ou refresh.
     setClientIdDraft(queryClientId);
   }, [queryClientId]);
+
+  useEffect(() => {
+    const normalized = queryResetToken.trim();
+    if (!normalized) return;
+    setResetTokenDraft(normalized);
+    setAuthFlow('reset');
+    setResetValidationMessage(null);
+
+    void validatePasswordResetToken(normalized)
+      .then((result) => {
+        setResetValidationMessage(
+          `Token valido para ${result.emailHint}. Expira em ${formatRelativeDateTime(result.expiresAt)}.`,
+        );
+      })
+      .catch((error) => {
+        setAuthError(error instanceof Error ? error.message : 'Token invalido');
+      });
+  }, [queryResetToken]);
 
   // String vazia nao deve ser enviada para a API como clientId valido.
   const clientId = useMemo(
@@ -255,6 +293,78 @@ function DashboardContent() {
     }
   }
 
+  async function handleRequestPasswordReset() {
+    setAuthError(null);
+    setForgotSuccessMessage(null);
+    if (!forgotEmailDraft.trim()) {
+      setAuthError('Informe o e-mail para recuperar a senha.');
+      return;
+    }
+    if (isTurnstileEnabled && !turnstileToken) {
+      setAuthError('Confirme a validacao anti-bot antes de continuar.');
+      return;
+    }
+
+    setIsRequestingReset(true);
+    try {
+      const result = await requestPasswordReset({
+        email: forgotEmailDraft.trim(),
+        turnstileToken: turnstileToken ?? undefined,
+      });
+      setForgotSuccessMessage(
+        result.message ??
+          'Se o e-mail existir, voce recebera um link de recuperacao.',
+      );
+    } catch (error) {
+      setAuthError(
+        error instanceof Error ? error.message : 'Falha ao solicitar recuperacao.',
+      );
+    } finally {
+      if (isTurnstileEnabled) {
+        setTurnstileResetKey((current) => current + 1);
+      }
+      setTurnstileToken(null);
+      setIsRequestingReset(false);
+    }
+  }
+
+  async function handleResetPassword() {
+    setAuthError(null);
+    setResetSuccessMessage(null);
+    if (!resetTokenDraft.trim()) {
+      setAuthError('Token de recuperacao obrigatorio.');
+      return;
+    }
+    if (newPasswordDraft.trim().length < 6) {
+      setAuthError('A nova senha deve ter no minimo 6 caracteres.');
+      return;
+    }
+    if (newPasswordDraft !== newPasswordConfirmDraft) {
+      setAuthError('A confirmacao de senha nao confere.');
+      return;
+    }
+
+    setIsSubmittingReset(true);
+    try {
+      await confirmPasswordReset({
+        token: resetTokenDraft.trim(),
+        password: newPasswordDraft.trim(),
+      });
+      setResetSuccessMessage('Senha redefinida com sucesso. Faca login com a nova senha.');
+      setAuthFlow('login');
+      setNewPasswordDraft('');
+      setNewPasswordConfirmDraft('');
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('resetToken');
+      const query = params.toString();
+      router.replace(query ? `/?${query}` : '/');
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Falha ao redefinir senha.');
+    } finally {
+      setIsSubmittingReset(false);
+    }
+  }
+
   function clearToken() {
     logout();
     setAuthPasswordDraft('');
@@ -352,67 +462,222 @@ function DashboardContent() {
                     <p className="text-xs uppercase tracking-[0.18em] text-muted">
                       Acesso
                     </p>
-                    <h2 className="mt-1 text-xl font-semibold">Entrar na plataforma</h2>
+                    <h2 className="mt-1 text-xl font-semibold">
+                      {authFlow === 'login'
+                        ? 'Entrar na plataforma'
+                        : authFlow === 'forgot'
+                          ? 'Recuperar acesso'
+                          : 'Definir nova senha'}
+                    </h2>
                     <p className="mt-2 text-sm text-muted">
-                      Use um usuario autorizado para acessar o painel.
+                      {authFlow === 'login'
+                        ? 'Use um usuario autorizado para acessar o painel.'
+                        : authFlow === 'forgot'
+                          ? 'Informe o e-mail da conta para iniciar a recuperacao.'
+                          : 'Use o token recebido para cadastrar sua nova senha.'}
                     </p>
                   </div>
                   <Badge>
                     <KeyRound className="h-3.5 w-3.5 text-accent" />
-                    Login
+                    {authFlow === 'login'
+                      ? 'Login'
+                      : authFlow === 'forgot'
+                        ? 'Recuperacao'
+                        : 'Nova senha'}
                   </Badge>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-muted">
-                      E-mail
-                    </label>
-                    <Input
-                      type="email"
-                      value={authEmailDraft}
-                      onChange={(event) => setAuthEmailDraft(event.target.value)}
-                      placeholder="plataforma@virtuagil.com.br"
-                      className="min-h-[50px]"
-                    />
+                {authFlow === 'login' ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted">
+                        E-mail
+                      </label>
+                      <Input
+                        type="email"
+                        value={authEmailDraft}
+                        onChange={(event) => setAuthEmailDraft(event.target.value)}
+                        placeholder="plataforma@virtuagil.com.br"
+                        className="min-h-[50px]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted">
+                        Senha
+                      </label>
+                      <Input
+                        type="password"
+                        value={authPasswordDraft}
+                        onChange={(event) => setAuthPasswordDraft(event.target.value)}
+                        placeholder="Digite sua senha"
+                        className="min-h-[50px]"
+                      />
+                    </div>
+
+                    {isTurnstileEnabled ? (
+                      <TurnstileWidget
+                        siteKey={turnstileSiteKey}
+                        onTokenChange={setTurnstileToken}
+                        resetKey={turnstileResetKey}
+                      />
+                    ) : null}
+
+                    <Button
+                      onClick={() => {
+                        void handleLogin();
+                      }}
+                      variant="primary"
+                      className="min-h-[50px] w-full"
+                      loading={isAuthenticating}
+                    >
+                      Entrar
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="w-full"
+                      onClick={() => {
+                        setAuthError(null);
+                        setForgotSuccessMessage(null);
+                        setAuthFlow('forgot');
+                      }}
+                    >
+                      Esqueci minha senha
+                    </Button>
                   </div>
+                ) : null}
 
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-muted">
-                      Senha
-                    </label>
-                    <Input
-                      type="password"
-                      value={authPasswordDraft}
-                      onChange={(event) => setAuthPasswordDraft(event.target.value)}
-                      placeholder="Digite sua senha"
-                      className="min-h-[50px]"
-                    />
+                {authFlow === 'forgot' ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted">
+                        E-mail
+                      </label>
+                      <Input
+                        type="email"
+                        value={forgotEmailDraft}
+                        onChange={(event) => setForgotEmailDraft(event.target.value)}
+                        placeholder="usuario@empresa.com.br"
+                        className="min-h-[50px]"
+                      />
+                    </div>
+
+                    {isTurnstileEnabled ? (
+                      <TurnstileWidget
+                        siteKey={turnstileSiteKey}
+                        onTokenChange={setTurnstileToken}
+                        resetKey={turnstileResetKey}
+                      />
+                    ) : null}
+
+                    <Button
+                      onClick={() => {
+                        void handleRequestPasswordReset();
+                      }}
+                      variant="primary"
+                      className="min-h-[50px] w-full"
+                      loading={isRequestingReset}
+                    >
+                      Enviar link de recuperacao
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="w-full"
+                      onClick={() => {
+                        setAuthError(null);
+                        setAuthFlow('login');
+                      }}
+                    >
+                      Voltar para login
+                    </Button>
                   </div>
+                ) : null}
 
-                  {isTurnstileEnabled ? (
-                    <TurnstileWidget
-                      siteKey={turnstileSiteKey}
-                      onTokenChange={setTurnstileToken}
-                      resetKey={turnstileResetKey}
-                    />
-                  ) : null}
+                {authFlow === 'reset' ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted">
+                        Token de recuperacao
+                      </label>
+                      <Input
+                        value={resetTokenDraft}
+                        onChange={(event) => setResetTokenDraft(event.target.value)}
+                        placeholder="Cole o token recebido"
+                        className="min-h-[50px]"
+                      />
+                    </div>
 
-                  <Button
-                    onClick={() => {
-                      void handleLogin();
-                    }}
-                    variant="primary"
-                    className="min-h-[50px] w-full"
-                    loading={isAuthenticating}
-                  >
-                    Entrar
-                  </Button>
-                </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted">
+                        Nova senha
+                      </label>
+                      <Input
+                        type="password"
+                        value={newPasswordDraft}
+                        onChange={(event) => setNewPasswordDraft(event.target.value)}
+                        placeholder="Minimo 6 caracteres"
+                        className="min-h-[50px]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted">
+                        Confirmar nova senha
+                      </label>
+                      <Input
+                        type="password"
+                        value={newPasswordConfirmDraft}
+                        onChange={(event) => setNewPasswordConfirmDraft(event.target.value)}
+                        placeholder="Repita a nova senha"
+                        className="min-h-[50px]"
+                      />
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        void handleResetPassword();
+                      }}
+                      variant="primary"
+                      className="min-h-[50px] w-full"
+                      loading={isSubmittingReset}
+                    >
+                      Salvar nova senha
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="w-full"
+                      onClick={() => {
+                        setAuthError(null);
+                        setAuthFlow('login');
+                      }}
+                    >
+                      Voltar para login
+                    </Button>
+                  </div>
+                ) : null}
 
                 {authError ? (
                   <Feedback variant="danger" className="mt-4">
                     {authError}
+                  </Feedback>
+                ) : null}
+                {forgotSuccessMessage ? (
+                  <Feedback variant="success" className="mt-4">
+                    {forgotSuccessMessage}
+                  </Feedback>
+                ) : null}
+                {resetValidationMessage ? (
+                  <Feedback className="mt-4">{resetValidationMessage}</Feedback>
+                ) : null}
+                {resetSuccessMessage ? (
+                  <Feedback variant="success" className="mt-4">
+                    {resetSuccessMessage}
                   </Feedback>
                 ) : null}
               </Panel>

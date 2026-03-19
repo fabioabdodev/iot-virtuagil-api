@@ -8,7 +8,14 @@ import {
   ActuatorInput,
   ActuatorSummary,
 } from '@/types/actuator';
-import { AuthSession, AuthUser, LoginInput } from '@/types/auth';
+import {
+  AuthSession,
+  AuthUser,
+  ConfirmPasswordResetInput,
+  LoginInput,
+  PasswordResetValidation,
+  RequestPasswordResetInput,
+} from '@/types/auth';
 import { UserInput, UserSummary } from '@/types/user';
 import { ClientModule } from '@/types/client-module';
 import { ClientInput, ClientSummary, CreateClientInput } from '@/types/client';
@@ -601,6 +608,68 @@ export async function loginUser(input: LoginInput): Promise<AuthSession> {
   return response.json() as Promise<AuthSession>;
 }
 
+export async function requestPasswordReset(
+  input: RequestPasswordResetInput,
+): Promise<{ message: string }> {
+  const response = await fetch(`${API_BASE_URL}/auth/password/forgot`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await extractApiErrorMessage(response, 'Falha ao iniciar recuperacao de senha'),
+    );
+  }
+
+  return response.json() as Promise<{ message: string }>;
+}
+
+export async function validatePasswordResetToken(
+  token: string,
+): Promise<PasswordResetValidation> {
+  const query = new URLSearchParams();
+  query.set('token', token);
+
+  const response = await fetch(
+    `${API_BASE_URL}/auth/password/reset/validate?${query.toString()}`,
+    {
+      cache: 'no-store',
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      await extractApiErrorMessage(response, 'Token de recuperacao invalido'),
+    );
+  }
+
+  return response.json() as Promise<PasswordResetValidation>;
+}
+
+export async function confirmPasswordReset(
+  input: ConfirmPasswordResetInput,
+): Promise<{ message: string }> {
+  const response = await fetch(`${API_BASE_URL}/auth/password/reset`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await extractApiErrorMessage(response, 'Falha ao redefinir senha'),
+    );
+  }
+
+  return response.json() as Promise<{ message: string }>;
+}
+
 export async function fetchCurrentUser(authToken: string): Promise<AuthUser> {
   const response = await fetch(`${API_BASE_URL}/auth/me`, {
     cache: 'no-store',
@@ -760,6 +829,29 @@ export async function updateUser(
   }
 
   return response.json() as Promise<UserSummary>;
+}
+
+export async function createUserPasswordSetupLink(
+  id: string,
+  authToken?: string,
+): Promise<{ userId: string; email: string; setupUrl: string; expiresAt: string }> {
+  const response = await fetch(`${API_BASE_URL}/users/${id}/password-setup-link`, {
+    method: 'POST',
+    headers: buildAuthHeaders(authToken),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await extractApiErrorMessage(response, 'Falha ao gerar link de acesso'),
+    );
+  }
+
+  return response.json() as Promise<{
+    userId: string;
+    email: string;
+    setupUrl: string;
+    expiresAt: string;
+  }>;
 }
 
 export async function deleteUser(

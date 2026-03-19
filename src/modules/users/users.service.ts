@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { randomBytes } from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,12 +19,17 @@ export class UsersService {
   async create(dto: CreateUserDto) {
     await this.ensureClientExists(dto.clientId);
 
+    const normalizedPassword =
+      dto.password?.trim() && dto.password.trim().length >= 6
+        ? dto.password.trim()
+        : randomBytes(24).toString('hex');
+
     return this.prisma.user.create({
       data: {
         clientId: dto.clientId,
         name: dto.name,
         email: dto.email.toLowerCase().trim(),
-        passwordHash: this.authService.hashPassword(dto.password),
+        passwordHash: this.authService.hashPassword(normalizedPassword),
         role: dto.role ?? 'operator',
         phone: dto.phone,
         isActive: dto.isActive ?? true,
@@ -79,6 +85,11 @@ export class UsersService {
       where: { id },
       select: this.userSelect(),
     } as any);
+  }
+
+  async createPasswordSetupLink(id: string, clientId?: string) {
+    const user = await this.findOne(id, clientId);
+    return this.authService.issuePasswordSetupLinkForUserId(user.id);
   }
 
   private async ensureClientExists(clientId?: string) {

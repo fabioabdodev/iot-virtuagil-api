@@ -54,4 +54,15 @@ export class UsersController {
       authUser ? resolveScopedClientId(authUser, undefined) : undefined,
     );
   }
+
+  @Post(':id/password-setup-link')
+  async createPasswordSetupLink(
+    @Param('id') id: string,
+    @CurrentUser() authUser?: SessionUser,
+  ) {
+    return this.usersService.createPasswordSetupLink(
+      id,
+      authUser ? resolveScopedClientId(authUser, undefined) : undefined,
+    );
+  }
 }

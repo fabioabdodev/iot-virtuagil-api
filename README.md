@@ -300,6 +300,16 @@ Payload legado (ainda aceito):
 
 - `POST /auth/login`
 - `GET /auth/me`
+- `POST /auth/password/forgot`
+- `GET /auth/password/reset/validate?token=...`
+- `POST /auth/password/reset`
+
+Fluxo recomendado de senha (agil e padrao de mercado):
+
+1. admin cria usuario sem definir senha de terceiros
+2. admin gera `link de primeiro acesso` em `Usuarios > Gerar link`
+3. usuario abre o link, define a propria senha e entra normalmente
+4. se esquecer a senha, usa `Esqueci minha senha` na tela de login
 
 Protecoes atuais do login:
 
@@ -601,6 +611,11 @@ Observacao operacional importante:
 - `AUTH_LOGIN_LOCK_MINUTES`
 - `TURNSTILE_SECRET_KEY`
 - `TURNSTILE_VERIFY_URL`
+- `AUTH_PASSWORD_RESET_TTL_MINUTES`
+- `AUTH_PASSWORD_RETURN_LINK_IN_RESPONSE`
+- `WEB_APP_URL`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
 - `DEVICE_API_KEY`
 - `DEVICE_OFFLINE_MINUTES`
 - `MONITOR_INTERVAL_SECONDS`

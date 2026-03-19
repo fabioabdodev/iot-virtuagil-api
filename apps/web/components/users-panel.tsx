@@ -4,8 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Copy, KeyRound } from 'lucide-react';
 import { useUserMutations } from '@/hooks/use-user-mutations';
 import { useUsers } from '@/hooks/use-users';
+import { createUserPasswordSetupLink } from '@/lib/api';
 import { AuthUser } from '@/types/auth';
 import { UserSummary } from '@/types/user';
 import { Badge } from '@/components/ui/badge';
@@ -21,13 +23,6 @@ import { formatRelativeDateTime } from '@/lib/date';
 const formSchema = z.object({
   name: z.string().trim().min(2, 'Nome obrigatorio'),
   email: z.string().trim().email('Email invalido'),
-  password: z
-    .string()
-    .optional()
-    .transform((value) => (value?.trim() ? value : undefined))
-    .refine((value) => value == null || value.length >= 6, {
-      message: 'Senha minima: 6 caracteres',
-    }),
   phone: z
     .string()
     .optional()
@@ -67,6 +62,13 @@ export function UsersPanel({
     null,
   );
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
+  const [generatedSetupLink, setGeneratedSetupLink] = useState<{
+    email: string;
+    setupUrl: string;
+    expiresAt: string;
+  } | null>(null);
+  const [isCopyingSetupLink, setIsCopyingSetupLink] = useState(false);
+  const [linkActionUserId, setLinkActionUserId] = useState<string | null>(null);
 
   const users = data ?? [];
   const editingUser = users.find((row) => row.id === editingUserId) ?? null;
@@ -81,7 +83,6 @@ export function UsersPanel({
     defaultValues: {
       name: '',
       email: '',
-      password: '',
       phone: '',
       role: 'operator',
       isActive: 'true',
@@ -93,7 +94,6 @@ export function UsersPanel({
       reset({
         name: editingUser.name,
         email: editingUser.email,
-        password: '',
         phone: editingUser.phone ?? '',
         role: editingUser.role,
         isActive: editingUser.isActive ? 'true' : 'false',
@@ -104,7 +104,6 @@ export function UsersPanel({
     reset({
       name: '',
       email: '',
-      password: '',
       phone: '',
       role: 'operator',
       isActive: 'true',
@@ -119,6 +118,32 @@ export function UsersPanel({
     } finally {
       setDeletingUserId(null);
       setPendingDeleteUserId(null);
+    }
+  }
+
+  async function generateSetupLink(userId: string) {
+    setLinkActionUserId(userId);
+    try {
+      const result = await createUserPasswordSetupLink(userId, authToken);
+      setGeneratedSetupLink({
+        email: result.email,
+        setupUrl: result.setupUrl,
+        expiresAt: result.expiresAt,
+      });
+    } finally {
+      setLinkActionUserId(null);
+    }
+  }
+
+  async function copySetupLink() {
+    if (!generatedSetupLink) return;
+
+    try {
+      await navigator.clipboard.writeText(generatedSetupLink.setupUrl);
+      setIsCopyingSetupLink(true);
+      window.setTimeout(() => setIsCopyingSetupLink(false), 1600);
+    } catch {
+      setIsCopyingSetupLink(false);
     }
   }
 
@@ -169,6 +194,7 @@ export function UsersPanel({
       <form
         onSubmit={handleSubmit(async (rawValues) => {
           const values = formSchema.parse(rawValues);
+          setGeneratedSetupLink(null);
           if (editingUser) {
             await updateMutation.mutateAsync({
               id: editingUser.id,
@@ -176,7 +202,6 @@ export function UsersPanel({
                 clientId,
                 name: values.name,
                 email: values.email,
-                password: values.password,
                 phone: values.phone,
                 role: values.role,
                 isActive: values.isActive,
@@ -184,15 +209,15 @@ export function UsersPanel({
             });
             setEditingUserId(null);
           } else {
-            await createMutation.mutateAsync({
+            const createdUser = await createMutation.mutateAsync({
               clientId,
               name: values.name,
               email: values.email,
-              password: values.password,
               phone: values.phone,
               role: values.role,
               isActive: values.isActive,
             });
+            await generateSetupLink(createdUser.id);
           }
         })}
       >
@@ -207,16 +232,6 @@ export function UsersPanel({
             <label className="mb-1 block text-xs text-muted">Email</label>
             <Input {...register('email')} placeholder="usuario@empresa.com.br" />
             {errors.email ? <p className="mt-1 text-xs text-bad">{errors.email.message}</p> : null}
-          </div>
-
-          <div>
-            <label className="mb-1 block text-xs text-muted">
-              {editingUser ? 'Nova senha (opcional)' : 'Senha'}
-            </label>
-            <Input type="password" {...register('password')} placeholder="minimo 6 caracteres" />
-            {errors.password ? (
-              <p className="mt-1 text-xs text-bad">{errors.password.message}</p>
-            ) : null}
           </div>
 
           <div>
@@ -264,6 +279,34 @@ export function UsersPanel({
         </Panel>
       </form>
 
+      {generatedSetupLink ? (
+        <Panel className="mb-4 p-4">
+          <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ink">
+            <KeyRound className="h-4 w-4 text-accent" />
+            Link de primeiro acesso gerado para {generatedSetupLink.email}
+          </div>
+          <p className="text-xs text-muted">
+            Expira em {formatRelativeDateTime(generatedSetupLink.expiresAt)}.
+          </p>
+          <div className="mt-3 rounded-2xl border border-line/70 bg-bg/40 p-3 font-mono text-xs text-ink">
+            {generatedSetupLink.setupUrl}
+          </div>
+          <div className="mt-3 flex items-center gap-2">
+            <Button type="button" size="sm" variant="secondary" onClick={() => void copySetupLink()}>
+              <Copy className="mr-2 h-3.5 w-3.5" />
+              Copiar link
+            </Button>
+            {isCopyingSetupLink ? (
+              <span className="text-xs text-ok">Link copiado.</span>
+            ) : (
+              <span className="text-xs text-muted">
+                Envie este link ao usuario para ele definir a propria senha.
+              </span>
+            )}
+          </div>
+        </Panel>
+      ) : null}
+
       {createMutation.isError || updateMutation.isError || deleteMutation.isError ? (
         <Feedback variant="danger" className="mb-3">
           {createMutation.error?.message ??
@@ -289,6 +332,7 @@ export function UsersPanel({
                 <th>Papel</th>
                 <th>Status</th>
                 <th>Ultimo login</th>
+                <th>Acesso</th>
                 <th className="text-right">Acoes</th>
               </tr>
             </thead>
@@ -317,6 +361,18 @@ export function UsersPanel({
                     {user.lastLoginAt
                       ? formatRelativeDateTime(user.lastLoginAt)
                       : 'Sem login'}
+                  </td>
+                  <td>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      loading={linkActionUserId === user.id}
+                      onClick={() => {
+                        void generateSetupLink(user.id);
+                      }}
+                    >
+                      Gerar link
+                    </Button>
                   </td>
                   <td className="text-right">
                     <div className="inline-flex items-center gap-2">

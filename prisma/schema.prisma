@@ -186,8 +186,23 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   client       Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  passwordResetTokens PasswordResetToken[]
 
   @@index([clientId])
+}
+
+model PasswordResetToken {
+  id         String   @id @default(uuid())
+  userId     String
+  tokenHash  String   @unique
+  purpose    String
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose, expiresAt])
+  @@index([expiresAt])
 }
 
 model ClientModule {

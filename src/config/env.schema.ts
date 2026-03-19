@@ -9,6 +9,16 @@ const optionalUrlEnv = z.preprocess((value) => {
   return normalized.length === 0 ? undefined : normalized;
 }, z.string().url().optional());
 
+const booleanEnv = z.preprocess((value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value !== 'string') return value;
+
+  const normalized = value.trim().toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;
+  if (['0', 'false', 'no', 'off', ''].includes(normalized)) return false;
+  return value;
+}, z.boolean());
+
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(3000),
@@ -24,10 +34,15 @@ export const envSchema = z.object({
   AUTH_LOGIN_RATE_LIMIT_MAX_ATTEMPTS: z.coerce.number().default(5),
   AUTH_LOGIN_RATE_LIMIT_MAX_TRACKED_KEYS: z.coerce.number().default(10000),
   AUTH_LOGIN_LOCK_MINUTES: z.coerce.number().default(15),
+  AUTH_PASSWORD_RESET_TTL_MINUTES: z.coerce.number().default(60),
+  AUTH_PASSWORD_RETURN_LINK_IN_RESPONSE: booleanEnv.default(false),
+  WEB_APP_URL: z.string().url().optional(),
   TURNSTILE_SECRET_KEY: z.string().optional(),
   TURNSTILE_VERIFY_URL: z.string().url().default(
     'https://challenges.cloudflare.com/turnstile/v0/siteverify',
   ),
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().optional(),
 
   DEVICE_API_KEY: z.string().min(1, 'DEVICE_API_KEY e obrigatoria').optional(),
 

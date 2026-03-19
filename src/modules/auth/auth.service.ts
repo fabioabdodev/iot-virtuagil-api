@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -11,6 +12,8 @@ import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { SessionUser } from './auth.types';
+import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
+import { ConfirmPasswordResetDto } from './dto/confirm-password-reset.dto';
 
 type AuthTokenPayload = {
   sub: string;
@@ -24,9 +27,19 @@ type LoginContext = {
   ipAddress?: string;
 };
 
+type PasswordFlowContext = {
+  ipAddress?: string;
+};
+
 type LoginAttemptState = {
   attempts: number[];
   blockedUntil: number | null;
+};
+
+type PasswordResetIssueResult = {
+  resetUrl: string;
+  expiresAt: Date;
+  token: string;
 };
 
 @Injectable()
@@ -85,6 +98,105 @@ export class AuthService {
 
   async me(authorization?: string) {
     return this.authenticateFromAuthorization(authorization);
+  }
+
+  async requestPasswordReset(
+    dto: RequestPasswordResetDto,
+    context: PasswordFlowContext = {},
+  ) {
+    await this.validateTurnstile(dto.turnstileToken, context.ipAddress);
+
+    const normalizedEmail = dto.email.toLowerCase().trim();
+    const user = await this.prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    } as any);
+
+    if (user && (user as any).isActive) {
+      const issued = await this.issuePasswordResetForUser((user as any).id, 'recovery');
+      await this.trySendPasswordResetEmail(normalizedEmail, issued.resetUrl, issued.expiresAt);
+
+      if (this.shouldReturnPasswordLinkInResponse()) {
+        return {
+          message:
+            'Se o e-mail existir e estiver ativo, enviamos um link de recuperacao.',
+          resetUrl: issued.resetUrl,
+          expiresAt: issued.expiresAt,
+        };
+      }
+    }
+
+    return {
+      message:
+        'Se o e-mail existir e estiver ativo, enviamos um link de recuperacao.',
+    };
+  }
+
+  async validatePasswordResetToken(token?: string) {
+    if (!token?.trim()) {
+      throw new BadRequestException('Reset token is required');
+    }
+
+    const tokenRow = await this.findValidPasswordToken(token.trim());
+
+    return {
+      valid: true,
+      emailHint: this.maskEmail((tokenRow as any).user.email),
+      expiresAt: (tokenRow as any).expiresAt,
+    };
+  }
+
+  async resetPassword(dto: ConfirmPasswordResetDto) {
+    const token = dto.token.trim();
+    const password = dto.password.trim();
+    if (!token) throw new BadRequestException('Reset token is required');
+    if (password.length < 6) {
+      throw new BadRequestException('Password must have at least 6 characters');
+    }
+
+    const tokenRow = await this.findValidPasswordToken(token);
+    const userId = (tokenRow as any).userId as string;
+
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          passwordHash: this.hashPassword(password),
+        },
+      } as any),
+      (this.prisma as any).passwordResetToken.updateMany({
+        where: {
+          userId,
+          usedAt: null,
+        },
+        data: {
+          usedAt: new Date(),
+        },
+      }),
+    ]);
+
+    return {
+      message: 'Senha atualizada com sucesso.',
+    };
+  }
+
+  async issuePasswordSetupLinkForUserId(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    } as any);
+
+    if (!user || !(user as any).isActive) {
+      throw new NotFoundException('User not found');
+    }
+
+    const issued = await this.issuePasswordResetForUser((user as any).id, 'setup');
+    await this.trySendPasswordResetEmail((user as any).email, issued.resetUrl, issued.expiresAt);
+
+    return {
+      userId: (user as any).id,
+      email: (user as any).email,
+      setupUrl: issued.resetUrl,
+      expiresAt: issued.expiresAt,
+    };
   }
 
   hashPassword(password: string) {
@@ -281,6 +393,151 @@ export class AuthService {
 
   private buildLoginKey(email: string, ipAddress?: string) {
     return `${email}|${ipAddress?.trim() || 'unknown'}`;
+  }
+
+  private hashResetToken(token: string) {
+    return createHmac('sha256', this.getAuthSecret())
+      .update(`password-reset:${token}`)
+      .digest('hex');
+  }
+
+  private getPasswordResetTtlMinutes() {
+    return this.configService.get<number>('AUTH_PASSWORD_RESET_TTL_MINUTES') ?? 60;
+  }
+
+  private getWebAppUrl() {
+    return this.configService.get<string>('WEB_APP_URL') ?? 'https://monitor.virtuagil.com.br';
+  }
+
+  private buildPasswordResetUrl(rawToken: string) {
+    const baseUrl = this.getWebAppUrl().replace(/\/$/, '');
+    return `${baseUrl}/?resetToken=${encodeURIComponent(rawToken)}`;
+  }
+
+  private shouldReturnPasswordLinkInResponse() {
+    return this.configService.get<boolean>('AUTH_PASSWORD_RETURN_LINK_IN_RESPONSE') ?? false;
+  }
+
+  private async issuePasswordResetForUser(
+    userId: string,
+    purpose: 'setup' | 'recovery',
+  ): Promise<PasswordResetIssueResult> {
+    const rawToken = randomBytes(32).toString('hex');
+    const tokenHash = this.hashResetToken(rawToken);
+    const expiresAt = new Date(Date.now() + this.getPasswordResetTtlMinutes() * 60 * 1000);
+
+    await this.prisma.$transaction([
+      (this.prisma as any).passwordResetToken.updateMany({
+        where: {
+          userId,
+          purpose,
+          usedAt: null,
+          expiresAt: {
+            gt: new Date(),
+          },
+        },
+        data: {
+          usedAt: new Date(),
+        },
+      }),
+      (this.prisma as any).passwordResetToken.create({
+        data: {
+          userId,
+          tokenHash,
+          purpose,
+          expiresAt,
+        },
+      }),
+    ]);
+
+    return {
+      token: rawToken,
+      resetUrl: this.buildPasswordResetUrl(rawToken),
+      expiresAt,
+    };
+  }
+
+  private async findValidPasswordToken(token: string) {
+    const tokenHash = this.hashResetToken(token);
+    const tokenRow = await (this.prisma as any).passwordResetToken.findUnique({
+      where: { tokenHash },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!tokenRow || tokenRow.usedAt) {
+      throw new UnauthorizedException('Invalid or used reset token');
+    }
+
+    if (new Date(tokenRow.expiresAt).getTime() <= Date.now()) {
+      throw new UnauthorizedException('Reset token expired');
+    }
+
+    if (!tokenRow.user || !tokenRow.user.isActive) {
+      throw new UnauthorizedException('Session user not found');
+    }
+
+    return tokenRow;
+  }
+
+  private async trySendPasswordResetEmail(
+    email: string,
+    resetUrl: string,
+    expiresAt: Date,
+  ) {
+    const resendApiKey = this.configService.get<string>('RESEND_API_KEY')?.trim();
+    const fromEmail = this.configService.get<string>('RESEND_FROM_EMAIL')?.trim();
+    if (!resendApiKey || !fromEmail) {
+      this.logger.warn(
+        `Password reset email not sent (missing RESEND config) for ${email}`,
+      );
+      return;
+    }
+
+    const payload = {
+      from: fromEmail,
+      to: [email],
+      subject: 'Virtuagil Monitor - Defina ou recupere sua senha',
+      html: [
+        '<p>Ola,</p>',
+        '<p>Use o link abaixo para definir ou recuperar sua senha no Virtuagil Monitor:</p>',
+        `<p><a href="${resetUrl}">${resetUrl}</a></p>`,
+        `<p>Este link expira em ${this.getPasswordResetTtlMinutes()} minutos (ate ${expiresAt.toISOString()}).</p>`,
+        '<p>Se voce nao solicitou este acesso, ignore esta mensagem.</p>',
+      ].join(''),
+    };
+
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${resendApiKey}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        this.logger.warn(
+          `Password reset email failed status=${response.status} email=${email}`,
+        );
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Password reset email error email=${email} reason=${(error as Error).message}`,
+      );
+    }
+  }
+
+  private maskEmail(email: string) {
+    const [local, domain] = email.split('@');
+    if (!local || !domain) return email;
+    if (local.length <= 2) {
+      return `${local[0] ?? '*'}***@${domain}`;
+    }
+
+    return `${local.slice(0, 2)}***@${domain}`;
   }
 
   private async validateTurnstile(
