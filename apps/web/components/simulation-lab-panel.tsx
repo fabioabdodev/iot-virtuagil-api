@@ -45,6 +45,10 @@ function resolveSimulationDevices(clientId?: string) {
   return 'freezer_01,freezer_02';
 }
 
+function normalizeAdminToken(token: string) {
+  return token.trim().replace(/^Bearer\s+/i, '');
+}
+
 export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps) {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
   const [adminSessionToken, setAdminSessionToken] = useState('');
@@ -54,6 +58,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
   const demoTenant = client?.name ?? clientId ?? 'conta-demo';
   const simulatorUrl = 'https://api-monitor.virtuagil.com.br';
   const simulatorDevices = resolveSimulationDevices(clientId);
+  const simulatorPrimaryDevice = simulatorDevices.split(',')[0]?.trim() || 'freezer_01';
   const simulatorApiKey = client?.deviceApiKey ?? null;
   const simulatorApiKeyPlaceholder = 'SUA_CHAVE_DEVICE';
 
@@ -118,6 +123,38 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       scope: 'production',
     },
     {
+      title: 'Leitura avulsa: temperatura (PowerShell)',
+      description:
+        'Envia uma leitura manual em producao para validar rapidamente regra e historico sem rodar simulador continuo.',
+      command: `$body=@{device_id="${simulatorPrimaryDevice}";sensor_type="temperature";value=-17.4;unit="celsius"}|ConvertTo-Json; Invoke-WebRequest -Uri "${simulatorUrl}/iot/readings" -Method Post -ContentType "application/json" -Headers @{ "x-device-key"="${simulatorApiKeyPlaceholder}" } -Body $body`,
+      badge: 'ambiental',
+      scope: 'production',
+    },
+    {
+      title: 'Leitura avulsa: umidade (PowerShell)',
+      description:
+        'Simula sensor de umidade para cenarios como adega, camara fria ou ambiente sensivel.',
+      command: `$body=@{device_id="${simulatorPrimaryDevice}";sensor_type="umidade";value=64.2;unit="percent"}|ConvertTo-Json; Invoke-WebRequest -Uri "${simulatorUrl}/iot/readings" -Method Post -ContentType "application/json" -Headers @{ "x-device-key"="${simulatorApiKeyPlaceholder}" } -Body $body`,
+      badge: 'ambiental',
+      scope: 'production',
+    },
+    {
+      title: 'Leitura avulsa: gases (PowerShell)',
+      description:
+        'Simula leitura de gases para validar cenarios de risco em cozinha, caldeira ou areas tecnicas.',
+      command: `$body=@{device_id="${simulatorPrimaryDevice}";sensor_type="gases";value=420;unit="ppm"}|ConvertTo-Json; Invoke-WebRequest -Uri "${simulatorUrl}/iot/readings" -Method Post -ContentType "application/json" -Headers @{ "x-device-key"="${simulatorApiKeyPlaceholder}" } -Body $body`,
+      badge: 'ambiental',
+      scope: 'production',
+    },
+    {
+      title: 'Consultar historico: umidade (PowerShell)',
+      description:
+        'Consulta as ultimas leituras de umidade do equipamento em producao (requer token de sessao).',
+      command: `Invoke-WebRequest -Uri "${simulatorUrl}/readings/${simulatorPrimaryDevice}?sensor=umidade&limit=20${clientId ? `&clientId=${clientId}` : ''}" -Headers @{ "Authorization" = "Bearer SEU_TOKEN_ADMIN" }`,
+      badge: 'consulta',
+      scope: 'production',
+    },
+    {
       title: 'Popular base demo',
       description:
         'Cria clientes, equipamentos, regras, atuadores demo e historicos iniciais sem hardware real.',
@@ -132,6 +169,22 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: 'npm run db:verify-actuation',
       badge: 'schema',
       scope: 'local',
+    },
+    {
+      title: 'Conferir fluxos do n8n',
+      description:
+        'Valida se as URLs de webhook de alerta (offline, online e temperatura) estao configuradas no ambiente atual.',
+      command: 'npm run alerts:check:n8n',
+      badge: 'n8n',
+      scope: 'production',
+    },
+    {
+      title: 'Ping real dos webhooks n8n',
+      description:
+        'Dispara payloads de teste para os webhooks configurados e falha em modo estrito se algum fluxo nao responder.',
+      command: 'npm run alerts:check:n8n -- --ping --strict --timeout-ms=15000',
+      badge: 'n8n',
+      scope: 'production',
     },
     {
       title: 'Cadastrar atuador',
@@ -191,7 +244,10 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
     }
 
     if (options?.injectAdminToken && adminSessionToken.trim()) {
-      nextCommand = nextCommand.replaceAll('SEU_TOKEN_ADMIN', adminSessionToken.trim());
+      nextCommand = nextCommand.replaceAll(
+        'SEU_TOKEN_ADMIN',
+        normalizeAdminToken(adminSessionToken),
+      );
     }
 
     return nextCommand;
