@@ -22,6 +22,17 @@ Objetivo:
 - evitar depender de memoria ou teste improvisado
 - dar um roteiro facil de repetir em demo ou revisao operacional
 
+## Nomes reais dos blocos no Monitor (UI atual)
+
+Para evitar orientacao incorreta durante suporte:
+
+- contratacao do modulo `ambiental`: abrir `Modulos do cliente`
+- leituras de `temperatura`, `umidade` e `gases`: abrir `Equipamentos`
+- regras de alerta ambiental: abrir `Regras de alerta`
+- comandos `on/off` e historico de atuador: abrir `Acionamento`
+
+No layout atual, nao existe um card principal separado chamado `Ambiental`.
+
 ## Preparacao
 
 Base local padrao:

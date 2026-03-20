@@ -9,6 +9,7 @@ import { AuthUser } from '@/types/auth';
 import { ClientStatus } from '@/types/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Feedback } from '@/components/ui/feedback';
 import { Input, Select } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
@@ -34,6 +35,8 @@ const statusBadgeClassName: Record<ClientStatus, string> = {
   inactive: 'bg-muted/20 text-muted border-line/70',
   delinquent: 'bg-bad/10 text-bad border-bad/20',
 };
+
+type PhoneField = 'adminPhone' | 'alertPhone' | 'billingPhone';
 
 export function ClientProfilePanel({
   clientId,
@@ -63,8 +66,12 @@ export function ClientProfilePanel({
   const [status, setStatus] = useState<ClientStatus>('active');
   const [notes, setNotes] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
+  const [phoneFieldError, setPhoneFieldError] = useState<PhoneField | null>(null);
+  const [phoneFieldErrorMessage, setPhoneFieldErrorMessage] = useState<string | null>(null);
   const [copiedDeviceApiKey, setCopiedDeviceApiKey] = useState(false);
   const [showDeviceApiKey, setShowDeviceApiKey] = useState(false);
+  const [isRotateDeviceApiKeyConfirmOpen, setIsRotateDeviceApiKeyConfirmOpen] =
+    useState(false);
 
   useEffect(() => {
     if (!data) return;
@@ -85,7 +92,38 @@ export function ClientProfilePanel({
     setBillingEmail(data.billingEmail ?? '');
     setStatus(data.status);
     setNotes(data.notes ?? '');
+    setPhoneFieldError(null);
+    setPhoneFieldErrorMessage(null);
   }, [data]);
+
+  useEffect(() => {
+    const apiErrorMessage = updateMutation.error?.message;
+    if (!apiErrorMessage) return;
+
+    const fieldMatch = apiErrorMessage.match(/\[field:([^\]]+)\]/);
+    if (!fieldMatch) return;
+
+    const fields = fieldMatch[1]
+      .split('|')
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    const field = fields.find((value): value is PhoneField =>
+      value === 'adminPhone' || value === 'alertPhone' || value === 'billingPhone',
+    );
+
+    if (!field) return;
+
+    setPhoneFieldError(field);
+    setPhoneFieldErrorMessage(
+      apiErrorMessage.replace(/\s*\[field:[^\]]+\]\s*/, '').trim(),
+    );
+  }, [updateMutation.error]);
+
+  function clearPhoneFieldError() {
+    setPhoneFieldError(null);
+    setPhoneFieldErrorMessage(null);
+  }
 
   if (!clientId) {
     return (
@@ -112,6 +150,7 @@ export function ClientProfilePanel({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFormError(null);
+    clearPhoneFieldError();
 
     if (!document.trim() || !isValidCpfOrCnpj(document)) {
       setFormError('Informe um CPF ou CNPJ valido.');
@@ -124,18 +163,24 @@ export function ClientProfilePanel({
     }
 
     if (!adminPhone.trim() || !isValidPhone(adminPhone)) {
+      setPhoneFieldError('adminPhone');
+      setPhoneFieldErrorMessage('Informe um telefone valido para o administrador.');
       setFormError('Informe um telefone valido para o administrador.');
       return;
     }
 
     const nextAlertPhone = useSameAlertPhone ? adminPhone : alertPhone;
     if (!nextAlertPhone.trim() || !isValidPhone(nextAlertPhone)) {
+      setPhoneFieldError('alertPhone');
+      setPhoneFieldErrorMessage('Informe um WhatsApp valido para alertas.');
       setFormError('Informe um WhatsApp valido para alertas.');
       return;
     }
 
     const nextBillingPhone = useSameBillingPhone ? adminPhone : billingPhone;
     if (!nextBillingPhone.trim() || !isValidPhone(nextBillingPhone)) {
+      setPhoneFieldError('billingPhone');
+      setPhoneFieldErrorMessage('Informe um telefone valido para o financeiro.');
       setFormError('Informe um telefone valido para o financeiro.');
       return;
     }
@@ -183,6 +228,29 @@ export function ClientProfilePanel({
 
   return (
     <Panel className="p-4 sm:p-5">
+      <ConfirmDialog
+        open={isRotateDeviceApiKeyConfirmOpen}
+        title="Gerar nova chave do equipamento?"
+        description={
+          <>
+            <strong>Acao de alto impacto.</strong> Tem certeza que deseja gerar uma
+            nova chave? Isso invalida a chave atual e pode interromper o envio de
+            dados de <strong>todos os devices deste cliente</strong> ate que cada
+            integracao/firmware seja atualizada com a nova chave.
+          </>
+        }
+        confirmLabel="Gerar nova chave"
+        loading={updateMutation.isPending}
+        onCancel={() => setIsRotateDeviceApiKeyConfirmOpen(false)}
+        onConfirm={async () => {
+          try {
+            await handleRotateDeviceApiKey();
+          } finally {
+            setIsRotateDeviceApiKeyConfirmOpen(false);
+          }
+        }}
+      />
+
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.18em] text-muted">
@@ -207,7 +275,7 @@ export function ClientProfilePanel({
           {error?.message ?? 'Falha ao carregar perfil do cliente.'}
         </Feedback>
       ) : null}
-      {updateMutation.isError ? (
+      {updateMutation.isError && !phoneFieldError ? (
         <Feedback variant="danger" className="mb-3">
           {updateMutation.error?.message ??
             'Falha ao atualizar dados comerciais do cliente.'}
@@ -291,9 +359,20 @@ export function ClientProfilePanel({
                 <label className="mb-1 block text-xs text-muted">Contato do administrador *</label>
                 <Input
                   value={adminPhone}
-                  onChange={(event) => setAdminPhone(event.target.value)}
+                  onChange={(event) => {
+                    setAdminPhone(event.target.value);
+                    clearPhoneFieldError();
+                  }}
                   placeholder="(31) 99999-0000"
+                  className={
+                    phoneFieldError === 'adminPhone'
+                      ? 'border-bad/60 focus:border-bad'
+                      : undefined
+                  }
                 />
+                {phoneFieldError === 'adminPhone' && phoneFieldErrorMessage ? (
+                  <p className="mt-1 text-xs text-bad">{phoneFieldErrorMessage}</p>
+                ) : null}
               </div>
               <div>
                 <label className="mb-1 block text-xs text-muted">Chave do device da conta</label>
@@ -340,7 +419,7 @@ export function ClientProfilePanel({
                     variant="secondary"
                     size="sm"
                     loading={updateMutation.isPending}
-                    onClick={() => void handleRotateDeviceApiKey()}
+                    onClick={() => setIsRotateDeviceApiKeyConfirmOpen(true)}
                   >
                     <RefreshCcw className="mr-2 h-3.5 w-3.5" />
                     Gerar nova chave
@@ -360,7 +439,10 @@ export function ClientProfilePanel({
                     type="checkbox"
                     className="h-4 w-4 rounded border-line/70"
                     checked={useSameAlertPhone}
-                    onChange={(event) => setUseSameAlertPhone(event.target.checked)}
+                    onChange={(event) => {
+                      setUseSameAlertPhone(event.target.checked);
+                      clearPhoneFieldError();
+                    }}
                   />
                   Usar o mesmo WhatsApp para alertas
                 </label>
@@ -371,10 +453,21 @@ export function ClientProfilePanel({
                 </label>
                 <Input
                   value={useSameAlertPhone ? adminPhone : alertPhone}
-                  onChange={(event) => setAlertPhone(event.target.value)}
+                  onChange={(event) => {
+                    setAlertPhone(event.target.value);
+                    clearPhoneFieldError();
+                  }}
                   disabled={useSameAlertPhone}
                   placeholder="(31) 99999-0001"
+                  className={
+                    phoneFieldError === 'alertPhone'
+                      ? 'border-bad/60 focus:border-bad'
+                      : undefined
+                  }
                 />
+                {phoneFieldError === 'alertPhone' && phoneFieldErrorMessage ? (
+                  <p className="mt-1 text-xs text-bad">{phoneFieldErrorMessage}</p>
+                ) : null}
               </div>
               <div>
                 <label className="mb-2 flex items-center gap-2 text-xs text-muted">
@@ -382,7 +475,10 @@ export function ClientProfilePanel({
                     type="checkbox"
                     className="h-4 w-4 rounded border-line/70"
                     checked={useSameBillingPhone}
-                    onChange={(event) => setUseSameBillingPhone(event.target.checked)}
+                    onChange={(event) => {
+                      setUseSameBillingPhone(event.target.checked);
+                      clearPhoneFieldError();
+                    }}
                   />
                   Usar o mesmo telefone para financeiro
                 </label>
@@ -402,10 +498,21 @@ export function ClientProfilePanel({
                 </label>
                 <Input
                   value={useSameBillingPhone ? adminPhone : billingPhone}
-                  onChange={(event) => setBillingPhone(event.target.value)}
+                  onChange={(event) => {
+                    setBillingPhone(event.target.value);
+                    clearPhoneFieldError();
+                  }}
                   disabled={useSameBillingPhone}
                   placeholder="(31) 3333-0000"
+                  className={
+                    phoneFieldError === 'billingPhone'
+                      ? 'border-bad/60 focus:border-bad'
+                      : undefined
+                  }
                 />
+                {phoneFieldError === 'billingPhone' && phoneFieldErrorMessage ? (
+                  <p className="mt-1 text-xs text-bad">{phoneFieldErrorMessage}</p>
+                ) : null}
               </div>
               <div className="md:col-span-2">
                 <label className="mb-1 block text-xs text-muted">E-mail financeiro *</label>

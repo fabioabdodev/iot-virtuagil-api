@@ -326,6 +326,51 @@ Ao criar telas novas ou expandir modulos existentes:
 - manter nomes tecnicos como `clientId` e payloads apenas onde forem realmente necessarios para cadastro, suporte ou simulacao
 - novos modulos devem nascer alinhados a essa direcao, sem exigir uma rodada posterior de traducao da interface
 
+## Nomenclatura real dos cards no Monitor (evitar erro de orientacao)
+
+Para suporte, onboarding e estudos de caso, usar exatamente os nomes atuais da UI:
+
+- `Clientes`
+- `Modulos do cliente`
+- `Equipamentos`
+- `Regras de alerta`
+- `Acionamento`
+- `Perfil do cliente`
+- `Laboratorio`
+- `Auditoria`
+
+Importante para o modulo `ambiental`:
+
+- o modulo `ambiental` aparece como contratacao em `Modulos do cliente`
+- leituras de `temperatura`, `umidade` e `gases` aparecem em `Equipamentos`
+- configuracao de regras ambientais aparece em `Regras de alerta`
+- evitar instruir usuario a procurar um card principal chamado `Ambiental` quando a tela estiver no layout atual
+
+## Registro de UX consolidado (2026-03-20)
+
+Melhorias aplicadas para reduzir friccao operacional:
+
+- conflito de telefone no perfil do cliente agora informa:
+  - nome e `id` do cliente duplicado
+  - campo de origem do conflito
+- frontend do `Perfil do cliente` agora destaca em vermelho o campo com conflito de telefone
+- acao `Gerar nova chave` no perfil do cliente agora exige confirmacao explicita:
+  - `Tem certeza que deseja criar uma nova chave?`
+
+## Direcao de notificacao para cliente multiunidade
+
+Regra de produto a partir de 20/03/2026:
+
+- um mesmo cliente (mesmo CNPJ) pode possuir duas ou mais unidades
+- cada unidade pode ter gerente operacional e WhatsApp proprios
+- alertas devem identificar unidade no texto e priorizar envio ao responsavel local
+
+Padrao operacional atual:
+
+- fase imediata: roteamento por `device_id` ou `device_location` no `n8n`
+- fase nativa: evoluir dominio para `Client -> Unit -> Device`
+- documento de referencia: `.github/instructions/case-studies/MULTI_UNIT_WHATSAPP_PATTERN.md`
+
 ## Direcao de continuidade por estudo de caso
 
 Quando houver tarefa ligada a cliente real, demonstracao, onboarding ou implantacao:

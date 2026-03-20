@@ -32,9 +32,19 @@ describe('AlertDeliveryQueueService', () => {
     fakePrismaService = {
       client: {
         findUnique: jest.fn().mockResolvedValue({
+          id: 'client_a',
+          name: 'Sabor da Serra',
+          document: '11222333000181',
           alertPhone: '5531999999999',
           adminPhone: '5531888888888',
           phone: '5531777777777',
+        }),
+      },
+      device: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'dev1',
+          name: 'Adega Vinhos',
+          location: 'Unidade Centro',
         }),
       },
     };

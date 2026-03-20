@@ -29,12 +29,15 @@ const targets = [
   },
   {
     key: 'N8N_ONLINE_WEBHOOK_URL',
-    eventType: 'device_online',
+    eventType: 'device_back_online',
     sample: {
-      type: 'device_online',
+      type: 'device_back_online',
+      event_type_alias: 'device_online',
       device_id: 'check_freezer_01',
       came_online_at: new Date().toISOString(),
       offline_since: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      cameOnlineAt: new Date().toISOString(),
+      offlineSince: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
       created_at: new Date().toISOString(),
       client_id: 'check-client',
     },
@@ -143,4 +146,3 @@ main().catch((error) => {
   console.error('Falha ao executar verificacao de alertas n8n:', error);
   process.exitCode = 1;
 });
-

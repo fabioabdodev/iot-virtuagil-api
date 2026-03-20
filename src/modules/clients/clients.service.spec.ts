@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ClientsService } from './clients.service';
 
@@ -76,5 +76,30 @@ describe('ClientsService', () => {
   it('should throw not found when client does not exist', async () => {
     fakePrisma.client.findUnique.mockResolvedValue(null);
     await expect(service.findOne('missing')).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('should include duplicated client name and id when phone already exists', async () => {
+    fakePrisma.client.findUnique.mockResolvedValue(null);
+    fakePrisma.client.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: 'cliente-duplicado',
+        name: 'Cliente Duplicado',
+      });
+
+    await expect(
+      service.create({
+        id: 'client_novo',
+        name: 'Client Novo',
+        adminName: 'Novo Admin',
+        document: '11.222.333/0001-81',
+        adminPhone: '(31) 99999-9999',
+        billingPhone: '(31) 98888-7777',
+        billingEmail: 'financeiro@clientenovo.com',
+      }),
+    ).rejects.toMatchObject<Partial<ConflictException>>({
+      message:
+        'Ja existe um cliente com este telefone: Cliente Duplicado (cliente-duplicado). Campos: Contato do administrador, WhatsApp principal para alertas. [field:adminPhone|alertPhone]',
+    });
   });
 });

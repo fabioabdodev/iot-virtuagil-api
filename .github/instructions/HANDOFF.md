@@ -9,6 +9,42 @@ Nota de terminologia ativa:
 - para produto e autorizacao, considerar apenas os modulos `ambiental`, `acionamento` e `energia`
 - referencias a `temperature` ou `actuation` neste arquivo aparecem como historico tecnico de transicao
 
+## Atualizacao complementar (2026-03-20)
+
+Fechamentos e ajustes desta rodada:
+
+- estudo de caso `sabor-serra-restaurante` foi validado novamente com sucesso:
+  - ingestao ambiental (`temperature`, `umidade`, `gases`) em `200`
+  - leitura critica de gases (`1500 ppm`) persistida
+  - acionamento `rele_luzes_salao_01` com `on/off` em `201`
+  - historico de comandos retornando no endpoint do atuador
+- validacao `n8n` em modo estrito com `PING_OK` para os 3 webhooks esperados
+- padrao de documentacao reforcado para evitar erro recorrente de UX:
+  - usar nome real dos cards da UI atual
+  - nao instruir usuario a procurar um card principal chamado `Ambiental`
+- cards corretos do Monitor no layout atual:
+  - `Clientes`
+  - `Modulos do cliente`
+  - `Equipamentos`
+  - `Regras de alerta`
+  - `Acionamento`
+  - `Perfil do cliente`
+  - `Laboratorio`
+  - `Auditoria`
+- melhoria de UX implementada no `Perfil do cliente`:
+  - erro de telefone duplicado agora traz nome/id do cliente conflitante
+  - campo de telefone com conflito fica destacado em vermelho
+  - `Gerar nova chave` agora pede confirmacao explicita antes de rotacionar
+- direcao nova validada com usuario para alertas multiunidade:
+  - cliente pode ter duas ou mais unidades com gerentes distintos
+  - cada unidade pode ter WhatsApp de alerta diferente
+  - mensagens de alerta devem citar cliente + unidade + equipamento
+  - fase imediata sera roteamento no n8n por `device_id`/`device_location`
+  - fase nativa sera modelagem `Client -> Unit -> Device`
+- playbook operacional de campo criado para evitar improviso em incidentes de conectividade:
+  - arquivo: `.github/instructions/OPS_FIELD_PLAYBOOK.md`
+  - cobre rotacao de `deviceApiKey` e troca de Wi-Fi no estabelecimento
+
 Resumo do ponto de parada para retomar no proximo chat/agente:
 
 - caso ativo atual: `sabor-serra-restaurante`

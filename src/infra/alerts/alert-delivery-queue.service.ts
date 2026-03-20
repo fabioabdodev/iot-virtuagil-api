@@ -176,87 +176,225 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
   }
 
   private async mapPayloadToWebhookBody(payload: AlertPayload) {
-    const recipient = await this.resolveRecipient(payload.clientId);
+    const context = await this.resolveAlertContext(
+      payload.clientId,
+      payload.deviceId,
+    );
+    const timezone =
+      this.configService.get<string>('ALERTS_TIMEZONE') ?? 'America/Sao_Paulo';
 
     if (payload.type === 'device_offline') {
+      const offlineSinceLocal = this.toLocalDateTime(payload.offlineSince, timezone);
+      const lastSeenLocal = this.toLocalDateTime(payload.lastSeenAt, timezone);
       return {
         type: payload.type,
         client_id: payload.clientId,
+        clientId: payload.clientId,
+        client_name: context.clientName,
+        clientName: context.clientName,
+        client_document: context.clientDocument,
+        clientDocument: context.clientDocument,
         device_id: payload.deviceId,
+        deviceId: payload.deviceId,
+        device_name: context.deviceName,
+        deviceName: context.deviceName,
+        device_location: context.deviceLocation,
+        deviceLocation: context.deviceLocation,
+        establishment_label: context.establishmentLabel,
+        establishmentLabel: context.establishmentLabel,
         last_seen_at: payload.lastSeenAt,
+        lastSeenAt: payload.lastSeenAt,
+        last_seen_local: lastSeenLocal,
+        lastSeenLocal,
         offline_since: payload.offlineSince,
-        recipient_phone: recipient?.phone ?? null,
-        recipient_source: recipient?.source ?? null,
+        offlineSince: payload.offlineSince,
+        offline_since_local: offlineSinceLocal,
+        offlineSinceLocal: offlineSinceLocal,
+        recipient_phone: context.recipientPhone,
+        recipientPhone: context.recipientPhone,
+        recipient_source: context.recipientSource,
+        recipientSource: context.recipientSource,
       };
     }
 
     if (payload.type === 'device_back_online') {
+      const recoveredOfflineSince = payload.offlineSince ?? payload.lastSeenAt;
+      const offlineSinceLocal = this.toLocalDateTime(recoveredOfflineSince, timezone);
+      const cameOnlineLocal = this.toLocalDateTime(payload.cameOnlineAt, timezone);
+      const lastSeenLocal = this.toLocalDateTime(payload.lastSeenAt, timezone);
       return {
         type: payload.type,
+        event_type_alias: 'device_online',
         client_id: payload.clientId,
+        clientId: payload.clientId,
+        client_name: context.clientName,
+        clientName: context.clientName,
+        client_document: context.clientDocument,
+        clientDocument: context.clientDocument,
         device_id: payload.deviceId,
+        deviceId: payload.deviceId,
+        device_name: context.deviceName,
+        deviceName: context.deviceName,
+        device_location: context.deviceLocation,
+        deviceLocation: context.deviceLocation,
+        establishment_label: context.establishmentLabel,
+        establishmentLabel: context.establishmentLabel,
         last_seen_at: payload.lastSeenAt,
-        offline_since: payload.offlineSince,
+        lastSeenAt: payload.lastSeenAt,
+        last_seen_local: lastSeenLocal,
+        lastSeenLocal,
+        offline_since: recoveredOfflineSince,
+        offlineSince: recoveredOfflineSince,
+        offline_since_source: payload.offlineSince
+          ? 'offline_since'
+          : payload.lastSeenAt
+            ? 'last_seen_at_fallback'
+            : null,
+        offline_since_local: offlineSinceLocal,
+        offlineSinceLocal: offlineSinceLocal,
         came_online_at: payload.cameOnlineAt,
-        recipient_phone: recipient?.phone ?? null,
-        recipient_source: recipient?.source ?? null,
+        cameOnlineAt: payload.cameOnlineAt,
+        came_online_local: cameOnlineLocal,
+        cameOnlineLocal,
+        recipient_phone: context.recipientPhone,
+        recipientPhone: context.recipientPhone,
+        recipient_source: context.recipientSource,
+        recipientSource: context.recipientSource,
       };
     }
 
     if (payload.type === 'device_connectivity_instability') {
+      const offlineSinceLocal = this.toLocalDateTime(payload.offlineSince, timezone);
+      const cameOnlineLocal = this.toLocalDateTime(payload.cameOnlineAt, timezone);
       return {
         type: payload.type,
         client_id: payload.clientId,
+        clientId: payload.clientId,
+        client_name: context.clientName,
+        clientName: context.clientName,
+        client_document: context.clientDocument,
+        clientDocument: context.clientDocument,
         device_id: payload.deviceId,
+        deviceId: payload.deviceId,
+        device_name: context.deviceName,
+        deviceName: context.deviceName,
+        device_location: context.deviceLocation,
+        deviceLocation: context.deviceLocation,
+        establishment_label: context.establishmentLabel,
+        establishmentLabel: context.establishmentLabel,
         offline_since: payload.offlineSince,
+        offlineSince: payload.offlineSince,
+        offline_since_local: offlineSinceLocal,
+        offlineSinceLocal: offlineSinceLocal,
         came_online_at: payload.cameOnlineAt,
+        cameOnlineAt: payload.cameOnlineAt,
+        came_online_local: cameOnlineLocal,
+        cameOnlineLocal,
         flap_count: payload.flapCount,
+        flapCount: payload.flapCount,
         window_minutes: payload.windowMinutes,
-        recipient_phone: recipient?.phone ?? null,
-        recipient_source: recipient?.source ?? null,
+        windowMinutes: payload.windowMinutes,
+        recipient_phone: context.recipientPhone,
+        recipientPhone: context.recipientPhone,
+        recipient_source: context.recipientSource,
+        recipientSource: context.recipientSource,
       };
     }
 
+    const occurredAtLocal = this.toLocalDateTime(payload.occurredAt, timezone);
     return {
       type: payload.type,
       client_id: payload.clientId,
+      clientId: payload.clientId,
+      client_name: context.clientName,
+      clientName: context.clientName,
+      client_document: context.clientDocument,
+      clientDocument: context.clientDocument,
       rule_id: payload.ruleId,
+      ruleId: payload.ruleId,
       device_id: payload.deviceId,
+      deviceId: payload.deviceId,
+      device_name: context.deviceName,
+      deviceName: context.deviceName,
+      device_location: context.deviceLocation,
+      deviceLocation: context.deviceLocation,
+      establishment_label: context.establishmentLabel,
+      establishmentLabel: context.establishmentLabel,
       temperature: payload.temperature,
       min_temperature: payload.minTemperature,
+      minTemperature: payload.minTemperature,
       max_temperature: payload.maxTemperature,
+      maxTemperature: payload.maxTemperature,
       occurred_at: payload.occurredAt,
-      recipient_phone: recipient?.phone ?? null,
-      recipient_source: recipient?.source ?? null,
+      occurredAt: payload.occurredAt,
+      occurred_at_local: occurredAtLocal,
+      occurredAtLocal,
+      recipient_phone: context.recipientPhone,
+      recipientPhone: context.recipientPhone,
+      recipient_source: context.recipientSource,
+      recipientSource: context.recipientSource,
     };
   }
 
-  private async resolveRecipient(clientId: string | null) {
-    if (!clientId) return null;
-
-    const client = await this.prisma.client.findUnique({
+  private async resolveAlertContext(clientId: string | null, deviceId: string) {
+    const client = clientId
+      ? await this.prisma.client.findUnique({
       where: { id: clientId },
       select: {
+        id: true,
+        name: true,
+        document: true,
         alertPhone: true,
         adminPhone: true,
         phone: true,
       },
+    } as any)
+      : null;
+    const device = await this.prisma.device.findUnique({
+      where: { id: deviceId },
+      select: {
+        id: true,
+        name: true,
+        location: true,
+      },
     } as any);
 
-    if (!client) return null;
+    const recipientPhone = client?.alertPhone ?? client?.adminPhone ?? client?.phone ?? null;
+    const recipientSource = client?.alertPhone
+      ? 'alert_phone'
+      : client?.adminPhone
+        ? 'admin_phone'
+        : client?.phone
+          ? 'client_phone'
+          : null;
+    const establishmentLabel =
+      device?.location ?? device?.name ?? device?.id ?? deviceId;
 
-    if (client.alertPhone) {
-      return { phone: client.alertPhone, source: 'alert_phone' as const };
-    }
+    return {
+      recipientPhone,
+      recipientSource,
+      clientName: client?.name ?? null,
+      clientDocument: client?.document ?? null,
+      deviceName: device?.name ?? null,
+      deviceLocation: device?.location ?? null,
+      establishmentLabel,
+    };
+  }
 
-    if (client.adminPhone) {
-      return { phone: client.adminPhone, source: 'admin_phone' as const };
-    }
+  private toLocalDateTime(value: string | null, timeZone: string) {
+    if (!value) return null;
 
-    if (client.phone) {
-      return { phone: client.phone, source: 'client_phone' as const };
-    }
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return null;
 
-    return null;
+    return parsed.toLocaleString('pt-BR', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
   }
 }

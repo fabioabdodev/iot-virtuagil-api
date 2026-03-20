@@ -50,7 +50,26 @@ Importante para continuidade:
   - primeiro cadastrar e configurar no Monitor
   - depois validar comportamento visual e permissao no proprio painel
   - por ultimo usar API/scripts apenas para fechamento tecnico, evidencia e diagnostico
+- ao orientar passos no Monitor, usar sempre os nomes reais dos cards da UI atual:
+  - `Clientes`
+  - `Modulos do cliente`
+  - `Equipamentos`
+  - `Regras de alerta`
+  - `Acionamento`
+  - `Perfil do cliente`
+  - `Laboratorio`
+  - `Auditoria`
+- nao assumir que existe um card principal chamado `Ambiental`; no estado atual:
+  - contratacao de `ambiental` aparece em `Modulos do cliente`
+  - historico/leituras aparecem em `Equipamentos`
+  - regras aparecem em `Regras de alerta`
 - ao criar ou evoluir modulos novos no frontend, preferir linguagem orientada ao cliente e a operacao real
+- para cenarios de alerta com cliente multiunidade:
+  - incluir contexto de `cliente + unidade + equipamento` na mensagem
+  - evitar notificacao generica sem identificacao operacional da unidade
+  - consultar `.github/instructions/case-studies/MULTI_UNIT_WHATSAPP_PATTERN.md`
+- para eventos de campo com impacto de conectividade (rotacao de chave ou troca de Wi-Fi), consultar:
+  - `.github/instructions/OPS_FIELD_PLAYBOOK.md`
 - evitar expor na UI termos internos como `tenant`, `clientId`, `device` ou nomes de arquitetura quando houver equivalente mais claro para negocio
 - usar termos como `cliente`, `conta`, `equipamento`, `codigo interno` e `painel` quando isso nao esconder uma necessidade tecnica real
 

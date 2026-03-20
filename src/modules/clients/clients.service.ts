@@ -158,11 +158,24 @@ export class ClientsService {
     },
     ignoredClientId?: string,
   ) {
-    const candidates = [
-      ...new Set([phones.adminPhone, phones.alertPhone, phones.billingPhone].filter(Boolean)),
-    ];
+    const phoneEntries = [
+      { key: 'adminPhone', label: 'Contato do administrador', value: phones.adminPhone },
+      { key: 'alertPhone', label: 'WhatsApp principal para alertas', value: phones.alertPhone },
+      { key: 'billingPhone', label: 'Contato financeiro', value: phones.billingPhone },
+    ].filter((entry): entry is { key: string; label: string; value: string } => Boolean(entry.value));
 
-    for (const phone of candidates) {
+    const candidatesByPhone = new Map<
+      string,
+      Array<{ key: string; label: string }>
+    >();
+
+    for (const entry of phoneEntries) {
+      const current = candidatesByPhone.get(entry.value) ?? [];
+      current.push({ key: entry.key, label: entry.label });
+      candidatesByPhone.set(entry.value, current);
+    }
+
+    for (const [phone, fields] of candidatesByPhone.entries()) {
       const duplicatedPhone = await this.prisma.client.findFirst({
         where: {
           id: ignoredClientId ? { not: ignoredClientId } : undefined,
@@ -173,10 +186,23 @@ export class ClientsService {
             { billingPhone: phone },
           ],
         },
+        select: {
+          id: true,
+          name: true,
+        },
       });
 
       if (duplicatedPhone) {
-        throw new ConflictException('Ja existe um cliente com este telefone');
+        const fieldLabels = fields.map((field) => field.label);
+        const fieldKeys = fields.map((field) => field.key);
+        const fieldContext =
+          fieldLabels.length > 1
+            ? `Campos: ${fieldLabels.join(', ')}`
+            : `Campo: ${fieldLabels[0]}`;
+
+        throw new ConflictException(
+          `Ja existe um cliente com este telefone: ${duplicatedPhone.name} (${duplicatedPhone.id}). ${fieldContext}. [field:${fieldKeys.join('|')}]`,
+        );
       }
     }
   }
