@@ -2,18 +2,7 @@
 import { PrismaService } from '../../prisma/prisma.service';
 import { UpsertClientModuleDto } from './dto/upsert-client-module.dto';
 
-const MODULE_ALIASES: Record<string, 'ambiental' | 'acionamento' | 'energia'> = {
-  ambiental: 'ambiental',
-  temperature: 'ambiental',
-  acionamento: 'acionamento',
-  actuation: 'acionamento',
-  energia: 'energia',
-};
-
-const LEGACY_MODULE_MAP: Partial<Record<'ambiental' | 'acionamento' | 'energia', 'temperature' | 'actuation'>> = {
-  ambiental: 'temperature',
-  acionamento: 'actuation',
-};
+const SUPPORTED_MODULE_KEYS = new Set(['ambiental', 'acionamento', 'energia']);
 
 const FALLBACK_MODULES = [
   {
@@ -94,7 +83,7 @@ export class ClientModulesService {
   async list(clientId: string) {
     await this.ensureClientExists(clientId);
 
-    const [catalogRows, accessRows, legacyRows] = await Promise.all([
+    const [catalogRows, accessRows] = await Promise.all([
       this.prisma.moduleCatalog.findMany({
         include: {
           items: {
@@ -107,29 +96,15 @@ export class ClientModulesService {
         where: { clientId },
         orderBy: { itemKey: 'asc' },
       } as any),
-      this.prisma.clientModule.findMany({
-        where: { clientId },
-      } as any),
     ]);
 
     const modules = catalogRows.length > 0 ? catalogRows : FALLBACK_MODULES;
     const accessByItemKey = new Map(accessRows.map((row: any) => [row.itemKey, row]));
-    const legacyByModule = new Map(
-      legacyRows.map((row: any) => [row.moduleKey, Boolean(row.enabled)]),
-    );
 
     return modules.map((module: any) => {
       const items = (module.items ?? []).map((item: any) => {
         const access = accessByItemKey.get(item.key);
-        let enabled = access?.enabled ?? false;
-
-        if (!enabled && module.key === 'ambiental' && item.key === 'temperatura') {
-          enabled = legacyByModule.get('temperature') === true;
-        }
-
-        if (!enabled && module.key === 'acionamento' && item.key === 'rele') {
-          enabled = legacyByModule.get('actuation') === true;
-        }
+        const enabled = access?.enabled ?? false;
 
         return {
           id: access?.id ?? `${clientId}:${item.key}`,
@@ -163,10 +138,10 @@ export class ClientModulesService {
   async upsert(dto: UpsertClientModuleDto) {
     await this.ensureClientExists(dto.clientId);
 
-    const normalizedModuleKey = this.normalizeModuleKey(dto.moduleKey);
-    if (!normalizedModuleKey) {
+    if (!this.normalizeModuleKey(dto.moduleKey)) {
       throw new BadRequestException('moduleKey is not supported');
     }
+    const normalizedModuleKey = dto.moduleKey;
 
     if (dto.itemKey) {
       const item = await this.prisma.moduleCatalogItem.findUnique({
@@ -230,8 +205,6 @@ export class ClientModulesService {
       );
     }
 
-    await this.syncLegacyModuleBridge(dto.clientId, normalizedModuleKey);
-
     const modules = await this.list(dto.clientId);
     return modules.find((module) => module.moduleKey === normalizedModuleKey);
   }
@@ -244,46 +217,7 @@ export class ClientModulesService {
   }
 
   private normalizeModuleKey(moduleKey: string) {
-    return MODULE_ALIASES[moduleKey];
-  }
-
-  private async syncLegacyModuleBridge(
-    clientId: string,
-    moduleKey: 'ambiental' | 'acionamento' | 'energia',
-  ) {
-    const legacyModuleKey = LEGACY_MODULE_MAP[moduleKey];
-    if (!legacyModuleKey) return;
-
-    const catalogItems = await this.prisma.moduleCatalogItem.findMany({
-      where: { moduleKey },
-      select: { key: true },
-    } as any);
-    const itemKeys = catalogItems.map((row: any) => row.key);
-
-    const enabledCount = await this.prisma.clientModuleItem.count({
-      where: {
-        clientId,
-        itemKey: { in: itemKeys },
-        enabled: true,
-      },
-    } as any);
-
-    await this.prisma.clientModule.upsert({
-      where: {
-        clientId_moduleKey: {
-          clientId,
-          moduleKey: legacyModuleKey,
-        },
-      },
-      update: {
-        enabled: enabledCount > 0,
-      },
-      create: {
-        clientId,
-        moduleKey: legacyModuleKey,
-        enabled: enabledCount > 0,
-      },
-    } as any);
+    return SUPPORTED_MODULE_KEYS.has(moduleKey);
   }
 }
 

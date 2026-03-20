@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { CheckCircle2, ClipboardList, FlaskConical, MapPinned, Snowflake, UserRound } from 'lucide-react';
+import { CheckCircle2, ClipboardList, FlaskConical, MapPinned, Snowflake, UserRound, Workflow } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Panel } from '@/components/ui/panel';
 import { Button } from '@/components/ui/button';
@@ -20,15 +20,13 @@ type CaseStudyGuidePanelProps = {
   onCreateDevice?: () => void;
 };
 
-const cuidareCase = {
-  clientName: 'Cuidare',
-  clientId: 'cuidare-vacinas',
-  adminEmail: 'admin@cuidare.com.br',
-  deviceId: 'freezer_vacinas_01',
-  deviceName: 'Freezer Vacinas 01',
-  location: 'Sala de armazenamento',
+const restaurantCase = {
+  clientName: 'Restaurante Sabor da Serra',
+  clientId: 'sabor-serra-restaurante',
+  adminEmail: 'gerencia@saborserra.com.br',
+  environmentalDevices: ['freezer_cozinha_01', 'camara_fria_01'],
+  actuatorId: 'rele_luzes_salao_01',
   sensorType: 'temperature',
-  expectedModule: 'ambiental',
 };
 
 export function CaseStudyGuidePanel({
@@ -41,57 +39,81 @@ export function CaseStudyGuidePanel({
   actuatorsCount,
   onCreateDevice,
 }: CaseStudyGuidePanelProps) {
-  const temperatureEnabled =
-    clientId == null
-      ? false
-      : clientModules.find((module) => module.moduleKey === 'ambiental')?.enabled ?? false;
+  const ambientalModule = clientModules.find((module) => module.moduleKey === 'ambiental');
+  const acionamentoModule = clientModules.find((module) => module.moduleKey === 'acionamento');
+  const enabledAmbientalItems = new Set(
+    (ambientalModule?.items ?? [])
+      .filter((item) => item.enabled)
+      .map((item) => item.itemKey),
+  );
+  const enabledAcionamentoItems = new Set(
+    (acionamentoModule?.items ?? [])
+      .filter((item) => item.enabled)
+      .map((item) => item.itemKey),
+  );
 
-  const hasExpectedClient = clientId === cuidareCase.clientId;
-  const hasDevice = devices.some((device) => device.id === cuidareCase.deviceId);
+  const hasExpectedClient = clientId === restaurantCase.clientId;
+  const hasAmbientalBase =
+    Boolean(ambientalModule?.enabled) && enabledAmbientalItems.has('temperatura');
+  const hasAcionamentoBase =
+    Boolean(acionamentoModule?.enabled) &&
+    enabledAcionamentoItems.has('rele') &&
+    enabledAcionamentoItems.has('status_abertura') &&
+    enabledAcionamentoItems.has('tempo_aberto');
+  const hasCoreDevices = restaurantCase.environmentalDevices.every((expectedDeviceId) =>
+    devices.some((device) => device.id === expectedDeviceId),
+  );
+  const hasAnyCoreDeviceOnline = restaurantCase.environmentalDevices.some((expectedDeviceId) =>
+    devices.some((device) => device.id === expectedDeviceId && !device.isOffline),
+  );
   const hasRule = alertRules.some(
     (rule) =>
-      rule.sensorType === cuidareCase.sensorType &&
-      (rule.deviceId === cuidareCase.deviceId || rule.deviceId == null),
+      (rule.sensorType === restaurantCase.sensorType || rule.sensorType === 'temperatura') &&
+      (restaurantCase.environmentalDevices.includes(rule.deviceId ?? '') || rule.deviceId == null),
   );
-  const hasOnlineDevice = devices.some(
-    (device) => device.id === cuidareCase.deviceId && !device.isOffline,
-  );
+  const hasActuator = actuatorsCount > 0;
 
   const steps = [
     {
       title: '1. Criar a conta do cliente',
-      description: `Cadastre o cliente com \`${cuidareCase.clientName}\` e codigo interno \`${cuidareCase.clientId}\`.`,
+      description: `Cadastre o cliente com \`${restaurantCase.clientName}\` e codigo interno \`${restaurantCase.clientId}\`.`,
       done: hasExpectedClient,
     },
     {
-      title: '2. Confirmar o recurso contratado',
-      description: `Habilite o modulo \`${cuidareCase.expectedModule}\` para abrir monitoramento, historico e alertas.`,
-      done: hasExpectedClient && temperatureEnabled,
+      title: '2. Fechar contratacao ambiental',
+      description: 'Habilite a categoria `ambiental` com item `temperatura` para liberar monitoramento e alertas.',
+      done: hasExpectedClient && hasAmbientalBase,
     },
     {
-      title: '3. Estruturar o equipamento principal',
-      description: `Cadastre \`${cuidareCase.deviceId}\` com nome \`${cuidareCase.deviceName}\` em \`${cuidareCase.location}\`.`,
-      done: hasExpectedClient && hasDevice,
+      title: '3. Estruturar equipamentos do caso',
+      description: 'Cadastrar `freezer_cozinha_01` e `camara_fria_01` como base do modulo ambiental.',
+      done: hasExpectedClient && hasCoreDevices,
     },
     {
-      title: '4. Criar a primeira regra operacional',
-      description: 'Configure uma regra conservadora para comecar a demonstracao com leitura normal, desvio e resposta operacional.',
-      done: hasExpectedClient && hasRule,
+      title: '4. Criar regras operacionais',
+      description: 'Definir limites de temperatura para os equipamentos do caso e deixar pelo menos 1 regra ativa.',
+      done: hasExpectedClient && hasCoreDevices && hasRule,
     },
     {
       title: '5. Ensaiar a visita no laboratorio',
-      description: 'Depois da estrutura pronta, simule operacao normal, alerta e offline para mostrar o valor antes do hardware.',
-      done: hasExpectedClient && hasDevice && hasRule && hasOnlineDevice,
+      description: 'Rodar `normal`, `alerta`, `critico` e `offline` para demonstrar ambiental ponta a ponta.',
+      done: hasExpectedClient && hasCoreDevices && hasRule && hasAnyCoreDeviceOnline,
     },
     {
-      title: '6. Preparar oferta de acionamento',
-      description: 'Depois da temperatura estavel, habilite acionamento e cadastre ao menos um ponto para vender comando assistido.',
+      title: '6. Preparar trilha de alerta no n8n',
+      description: 'Validar webhook, execucao no n8n e entrega final no WhatsApp antes de fechar demonstracao.',
+      done: hasExpectedClient && hasCoreDevices && hasRule,
+    },
+    {
+      title: '7. Fechar acionamento para venda',
+      description: 'Habilite `acionamento` com itens `rele`, `status_abertura`, `tempo_aberto` e cadastre ponto de comando.',
       done:
         hasExpectedClient &&
-        hasDevice &&
+        hasCoreDevices &&
         hasRule &&
+        hasAcionamentoBase &&
         actuationEnabled &&
-        actuatorsCount > 0,
+        hasActuator,
     },
   ];
 
@@ -106,12 +128,12 @@ export function CaseStudyGuidePanel({
             Roteiro pratico para chegada de cliente real
           </h2>
           <p className="mt-2 max-w-3xl text-sm text-muted">
-            Use este bloco como se a Cuidare tivesse chegado agora. Ele te mostra o que fazer na plataforma, em qual ordem e com quais valores de referencia.
+            Use este bloco como se o Restaurante Sabor da Serra tivesse chegado agora. Ele mostra a ordem de onboarding para fechar ambiental e acionamento com narrativa comercial.
           </p>
         </div>
         <Badge>
           <ClipboardList className="h-3.5 w-3.5 text-accent" />
-          caso Cuidare
+          caso Restaurante
         </Badge>
       </div>
 
@@ -146,23 +168,23 @@ export function CaseStudyGuidePanel({
               <p className="text-sm font-medium text-ink">Dados para cadastrar</p>
             </div>
             <div className="mt-3 space-y-2 text-xs text-muted">
-              <p><strong className="text-ink">Cliente:</strong> {cuidareCase.clientName}</p>
-              <p><strong className="text-ink">Codigo interno:</strong> {cuidareCase.clientId}</p>
-              <p><strong className="text-ink">Admin inicial:</strong> {cuidareCase.adminEmail}</p>
-              <p><strong className="text-ink">Modulo inicial:</strong> ambiental</p>
+              <p><strong className="text-ink">Cliente:</strong> {restaurantCase.clientName}</p>
+              <p><strong className="text-ink">Codigo interno:</strong> {restaurantCase.clientId}</p>
+              <p><strong className="text-ink">Admin inicial:</strong> {restaurantCase.adminEmail}</p>
+              <p><strong className="text-ink">Categorias:</strong> ambiental + acionamento</p>
             </div>
           </div>
 
           <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
             <div className="flex items-center gap-2">
               <Snowflake className="h-4 w-4 text-[hsl(var(--accent-2))]" />
-              <p className="text-sm font-medium text-ink">Primeiro equipamento</p>
+              <p className="text-sm font-medium text-ink">Equipamentos base</p>
             </div>
             <div className="mt-3 space-y-2 text-xs text-muted">
-              <p><strong className="text-ink">deviceId:</strong> {cuidareCase.deviceId}</p>
-              <p><strong className="text-ink">Nome:</strong> {cuidareCase.deviceName}</p>
-              <p><strong className="text-ink">Local:</strong> {cuidareCase.location}</p>
-              <p><strong className="text-ink">Uso:</strong> freezer critico para vacinas</p>
+              <p><strong className="text-ink">deviceId 1:</strong> freezer_cozinha_01</p>
+              <p><strong className="text-ink">deviceId 2:</strong> camara_fria_01</p>
+              <p><strong className="text-ink">atuador:</strong> {restaurantCase.actuatorId}</p>
+              <p><strong className="text-ink">Uso:</strong> freezer, camara fria e luzes do salao</p>
             </div>
           </div>
 
@@ -174,8 +196,8 @@ export function CaseStudyGuidePanel({
             <div className="mt-3 space-y-2 text-xs text-muted">
               <p>Faixa de temperatura exigida pela operacao.</p>
               <p>Quem recebe alertas no horario comercial e fora dele.</p>
-              <p>Tempo maximo de resposta e contingencia local.</p>
-              <p>Internet e energia disponiveis no ponto do freezer.</p>
+              <p>Tempo maximo de porta aberta antes de alerta critico.</p>
+              <p>Janela de ligar/desligar luzes com acionamento assistido.</p>
             </div>
           </div>
 
@@ -186,30 +208,56 @@ export function CaseStudyGuidePanel({
             </div>
             <div className="mt-3 space-y-2 text-xs text-muted">
               <p>1. Mostrar a conta pronta no painel.</p>
-              <p>2. Simular leitura normal para passar seguranca.</p>
-              <p>3. Simular alerta de temperatura e offline.</p>
-              <p>4. Fechar explicando o que ja esta pronto e o que depende da instalacao fisica.</p>
+              <p>2. Simular normal/alerta/critico/offline no ambiental.</p>
+              <p>3. Disparar comando ON/OFF no rele de luzes.</p>
+              <p>4. Fechar com evidencias de n8n + WhatsApp e historico de comando.</p>
             </div>
           </div>
         </div>
       </div>
 
+      <div className="mb-4 rounded-2xl border border-line/70 bg-bg/30 p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <Workflow className="h-4 w-4 text-accent" />
+          <p className="text-sm font-medium text-ink">
+            Fluxo n8n para fechar o estudo de caso
+          </p>
+        </div>
+        <div className="space-y-2 text-xs leading-6 text-muted">
+          <p>
+            1. Conferir URLs de webhook no ambiente atual com <code>npm run alerts:check:n8n</code>.
+          </p>
+          <p>
+            2. Validar ping real em modo estrito com <code>npm run alerts:check:n8n -- --ping --strict --timeout-ms=15000</code>.
+          </p>
+          <p>
+            3. Disparar um cenario de alerta no laboratorio e confirmar execucao no n8n.
+          </p>
+          <p>
+            4. Confirmar entrega final no WhatsApp (nao considerar apenas status PENDING).
+          </p>
+          <p>
+            Criterio de aceite: dashboard mostra evento, n8n processa, Evolution entrega e o responsavel recebe a mensagem.
+          </p>
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         {!hasExpectedClient ? (
-          <Badge>Primeiro passo: criar a conta {cuidareCase.clientId}</Badge>
+          <Badge>Primeiro passo: abrir a conta {restaurantCase.clientId}</Badge>
         ) : null}
-        {hasExpectedClient && !hasDevice && onCreateDevice ? (
+        {hasExpectedClient && !hasCoreDevices && onCreateDevice ? (
           <Button variant="primary" onClick={onCreateDevice}>
-            Cadastrar o freezer da Cuidare
+            Cadastrar equipamentos do restaurante
           </Button>
         ) : null}
         {client && hasExpectedClient ? (
           <Badge variant="success">Conta atual alinhada ao estudo de caso</Badge>
         ) : null}
-        {hasExpectedClient && hasDevice && hasRule && hasOnlineDevice ? (
-          <Badge variant="success">Temperatura pronta para venda assistida</Badge>
+        {hasExpectedClient && hasAmbientalBase && hasCoreDevices && hasRule && hasAnyCoreDeviceOnline ? (
+          <Badge variant="success">Ambiental pronto para venda assistida</Badge>
         ) : null}
-        {hasExpectedClient && actuationEnabled && actuatorsCount > 0 ? (
+        {hasExpectedClient && hasAcionamentoBase && actuationEnabled && hasActuator ? (
           <Badge variant="success">Acionamento pronto para demonstracao comercial</Badge>
         ) : null}
       </div>

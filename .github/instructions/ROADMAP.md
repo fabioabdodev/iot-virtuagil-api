@@ -56,7 +56,7 @@ Direcao de continuidade apos refatoracao:
 - laboratorio `/lab`
 - deploy automatizado em producao
 
-### Fase 7 - Consolidacao do modulo temperatura
+### Fase 7 - Consolidacao do modulo ambiental (item temperatura)
 
 - loading e feedback melhores no dashboard
 - confirmacao customizada para exclusao
@@ -104,9 +104,9 @@ Estado atual:
 
 Proximo ponto de continuidade:
 
-- consolidar testes manuais finais e roteiro de demonstracao comercial dos modulos `temperatura` e `acionamento`
+- consolidar testes manuais finais e roteiro de demonstracao comercial dos modulos `ambiental` e `acionamento`
 - manter refinamentos operacionais focados em UX, observabilidade e deploy
-- manter o modulo `temperatura` apenas em manutencao corretiva
+- manter o modulo `ambiental` (item `temperatura`) apenas em manutencao corretiva
 
 ## Proximos passos recomendados
 

@@ -4,6 +4,11 @@ Data de referencia: 2026-03-16
 
 ## Atualizacao rapida (2026-03-19)
 
+Nota de terminologia ativa:
+
+- para produto e autorizacao, considerar apenas os modulos `ambiental`, `acionamento` e `energia`
+- referencias a `temperature` ou `actuation` neste arquivo aparecem como historico tecnico de transicao
+
 Resumo do ponto de parada para retomar no proximo chat/agente:
 
 - caso ativo atual: `sabor-serra-restaurante`
@@ -65,7 +70,7 @@ Identidade tecnica atual escolhida:
 
 ## O que foi concluido
 
-- modulo `temperatura` validado com cobertura e2e
+- modulo `ambiental` (item `temperatura`) validado com cobertura e2e
 - modulo `acionamento` validado com cobertura e2e
 - regras de isolamento por tenant revisadas
 - correcao aplicada no `PATCH /devices/:id` para nao mascarar conflito de `clientId`
@@ -432,7 +437,7 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - caso `Cuidare`
   - status atual:
     - cliente selecionado
-    - modulo `temperature` habilitado
+    - modulo `ambiental` com item `temperatura` habilitado
     - primeiro equipamento criado
   - proximo passo operacional:
     - criar a primeira regra de alerta do `Freezer Vacinas 01`

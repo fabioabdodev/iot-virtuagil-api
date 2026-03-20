@@ -9,7 +9,7 @@ applyTo: '**'
 
 Direcao consolidada apos a refatoracao:
 
-- o modulo `temperatura` foi promovido para modulo-categoria `ambiental`
+- o item `temperatura` foi promovido para modulo-categoria `ambiental`
 - `ambiental` agora concentra itens expansivos como:
   - `temperatura`
   - `umidade`
@@ -63,9 +63,9 @@ Funcionalidades ja implementadas:
 6. Multi-tenant basico
    - isolamento por `clientId` no backend e no dashboard
 
-## Estado atual do modulo temperatura
+## Estado atual do modulo ambiental (item temperatura)
 
-O modulo `temperatura` esta funcionalmente concluido e operacionalmente validado.
+O modulo `ambiental`, no item `temperatura`, esta funcionalmente concluido e operacionalmente validado.
 
 Ja foi validado:
 
@@ -231,8 +231,8 @@ Regras atuais:
 - `GET /auth/me` restaura a sessao do frontend
 - rotas administrativas usam sessao autenticada
 - rotas de `users`, `clients` e `client-modules` exigem role `admin`
-- rotas de `devices`, `readings`, `alert-rules` exigem modulo `temperature` habilitado
-- rotas de `actuators` exigem modulo `actuation` habilitado
+- rotas de `devices`, `readings`, `alert-rules` exigem modulo `ambiental` habilitado
+- rotas de `actuators` exigem modulo `acionamento` habilitado
 - o backend faz scoping por `clientId` do usuario autenticado
 - admin de cliente atua apenas dentro do proprio tenant
 - admin de plataforma e representado por usuario com `clientId = null`
@@ -419,7 +419,7 @@ Observacao importante para continuidade:
 
 Estado consolidado em 15/03/2026:
 
-- modulo `temperatura` segue encerrado no escopo funcional atual
+- modulo `ambiental` (item `temperatura`) segue encerrado no escopo funcional atual
 - modulo `acionamento` foi iniciado no backend e no dashboard
 - backend do `acionamento` ja possui:
   - modelagem `Actuator` e `ActuationCommand`
@@ -494,7 +494,7 @@ Estado consolidado em 15/03/2026:
   - manter `DIRECT_DATABASE_URL` configurado nos ambientes onde houver migrate/verificacao administrativa
   - revisar por que `npx prisma migrate deploy` encontrou timeout no advisory lock mesmo com o schema ja presente
   - revisar a imagem da API para remover o warning atual de Prisma/OpenSSL
-  - consolidar o roteiro final de demonstracao comercial dos modulos `temperatura` e `acionamento`
+  - consolidar o roteiro final de demonstracao comercial dos modulos `ambiental` e `acionamento`
   - definir onde os dumps de backup serao armazenados fora da VPS principal
 - restricao importante:
   - ainda nao existem hardwares fisicos disponiveis

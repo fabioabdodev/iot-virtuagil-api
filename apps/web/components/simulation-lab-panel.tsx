@@ -1,14 +1,19 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import {
+  CheckCircle2,
   Copy,
   Eye,
   EyeOff,
+  Goal,
   MapPinned,
   PlayCircle,
+  Sparkle,
   ShieldAlert,
   TerminalSquare,
+  Timer,
   WandSparkles,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -16,11 +21,20 @@ import { Button } from '@/components/ui/button';
 import { Feedback } from '@/components/ui/feedback';
 import { Input } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
+import { ActuatorSummary } from '@/types/actuator';
+import { AlertRule } from '@/types/alert-rule';
 import { ClientSummary } from '@/types/client';
+import { DeviceSummary } from '@/types/device';
 
 type SimulationLabPanelProps = {
   clientId?: string;
   client?: ClientSummary;
+  devices?: DeviceSummary[];
+  alertRules?: AlertRule[];
+  actuators?: ActuatorSummary[];
+  actuationEnabled?: boolean;
+  canCreateDevices?: boolean;
+  canManageAlertRules?: boolean;
 };
 
 type Scenario = {
@@ -29,6 +43,7 @@ type Scenario = {
   command: string;
   badge?: string;
   scope?: 'production' | 'local';
+  level?: 'core' | 'advanced';
 };
 
 type DemoStep = {
@@ -49,10 +64,31 @@ function normalizeAdminToken(token: string) {
   return token.trim().replace(/^Bearer\s+/i, '');
 }
 
-export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps) {
+function isOutOfRange(device: DeviceSummary) {
+  if (device.lastTemperature == null) return false;
+  if (device.minTemperature != null && device.lastTemperature < device.minTemperature) {
+    return true;
+  }
+  if (device.maxTemperature != null && device.lastTemperature > device.maxTemperature) {
+    return true;
+  }
+  return false;
+}
+
+export function SimulationLabPanel({
+  clientId,
+  client,
+  devices = [],
+  alertRules = [],
+  actuators = [],
+  actuationEnabled = false,
+  canCreateDevices = false,
+  canManageAlertRules = false,
+}: SimulationLabPanelProps) {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
   const [adminSessionToken, setAdminSessionToken] = useState('');
   const [showAdminSessionToken, setShowAdminSessionToken] = useState(false);
+  const [showAdvancedScenarios, setShowAdvancedScenarios] = useState(false);
 
   const suffix = clientId ? ` --client-id ${clientId}` : '';
   const demoTenant = client?.name ?? clientId ?? 'conta-demo';
@@ -61,6 +97,76 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
   const simulatorPrimaryDevice = simulatorDevices.split(',')[0]?.trim() || 'freezer_01';
   const simulatorApiKey = client?.deviceApiKey ?? null;
   const simulatorApiKeyPlaceholder = 'SUA_CHAVE_DEVICE';
+  const hasClientInFocus = Boolean(clientId);
+  const hasDevices = devices.length > 0;
+  const hasTemperatureRule = alertRules.some(
+    (rule) =>
+      (rule.sensorType === 'temperature' || rule.sensorType === 'temperatura') &&
+      rule.enabled,
+  );
+  const hasLiveReadings = devices.some((device) => !device.isOffline && device.lastReadingAt);
+  const hasIncidentEvidence = devices.some((device) => device.isOffline || isOutOfRange(device));
+  const hasActuationReady = !actuationEnabled || actuators.length > 0;
+
+  const demoFlowSteps = [
+    {
+      key: 'client',
+      title: '1. Definir conta em foco',
+      description: 'Selecionar o cliente antes de qualquer simulacao.',
+      done: hasClientInFocus,
+      href: '#resumo-operacional',
+      actionLabel: 'Ir para resumo',
+      showAction: !hasClientInFocus,
+    },
+    {
+      key: 'device',
+      title: '2. Confirmar equipamento',
+      description: 'Ter pelo menos um equipamento cadastrado para ensaio.',
+      done: hasDevices,
+      href: '#equipamentos',
+      actionLabel: canCreateDevices ? 'Cadastrar equipamento' : 'Ver equipamentos',
+      showAction: !hasDevices,
+    },
+    {
+      key: 'rule',
+      title: '3. Ajustar regra operacional',
+      description: 'Ativar uma regra de temperatura para provar monitoramento.',
+      done: hasTemperatureRule,
+      href: '#regras-alerta',
+      actionLabel: canManageAlertRules ? 'Configurar regra' : 'Ver regras',
+      showAction: !hasTemperatureRule,
+    },
+    {
+      key: 'normal',
+      title: '4. Simular operacao normal',
+      description: 'Executar baseline para validar historico e status online.',
+      done: hasLiveReadings,
+      href: '#laboratorio',
+      actionLabel: 'Rodar baseline',
+      showAction: !hasLiveReadings,
+    },
+    {
+      key: 'incident',
+      title: '5. Simular incidente',
+      description: 'Gerar alerta/offline para evidenciar valor da plataforma.',
+      done: hasIncidentEvidence,
+      href: '#laboratorio',
+      actionLabel: 'Rodar cenario critico',
+      showAction: !hasIncidentEvidence,
+    },
+    {
+      key: 'actuation',
+      title: '6. Fechar com acionamento',
+      description: 'Quando contratado, demonstrar ponto de comando e historico.',
+      done: hasActuationReady,
+      href: '#acionamento',
+      actionLabel: actuationEnabled ? 'Abrir acionamento' : 'Nao contratado',
+      showAction: actuationEnabled && !hasActuationReady,
+    },
+  ];
+
+  const completedSteps = demoFlowSteps.filter((step) => step.done).length;
+  const nextPendingStep = demoFlowSteps.find((step) => !step.done);
 
   const demoSteps: DemoStep[] = [
     {
@@ -97,6 +203,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset normal --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKeyPlaceholder}`,
       badge: 'baseline',
       scope: 'production',
+      level: 'core',
     },
     {
       title: 'Pre-alerta',
@@ -105,6 +212,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset alerta --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKeyPlaceholder}`,
       badge: 'alerta',
       scope: 'production',
+      level: 'core',
     },
     {
       title: 'Cenario critico',
@@ -113,6 +221,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset critico --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKeyPlaceholder}`,
       badge: 'critico',
       scope: 'production',
+      level: 'core',
     },
     {
       title: 'Ensaio de offline',
@@ -121,6 +230,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `npm run simulate:iot -- --devices ${simulatorDevices} --preset normal --count 3 --url ${simulatorUrl}${suffix} --api-key ${simulatorApiKeyPlaceholder}`,
       badge: 'offline',
       scope: 'production',
+      level: 'core',
     },
     {
       title: 'Leitura avulsa: temperatura (PowerShell)',
@@ -129,6 +239,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `$body=@{device_id="${simulatorPrimaryDevice}";sensor_type="temperature";value=-17.4;unit="celsius"}|ConvertTo-Json; Invoke-WebRequest -Uri "${simulatorUrl}/iot/readings" -Method Post -ContentType "application/json" -Headers @{ "x-device-key"="${simulatorApiKeyPlaceholder}" } -Body $body`,
       badge: 'ambiental',
       scope: 'production',
+      level: 'advanced',
     },
     {
       title: 'Leitura avulsa: umidade (PowerShell)',
@@ -137,6 +248,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `$body=@{device_id="${simulatorPrimaryDevice}";sensor_type="umidade";value=64.2;unit="percent"}|ConvertTo-Json; Invoke-WebRequest -Uri "${simulatorUrl}/iot/readings" -Method Post -ContentType "application/json" -Headers @{ "x-device-key"="${simulatorApiKeyPlaceholder}" } -Body $body`,
       badge: 'ambiental',
       scope: 'production',
+      level: 'advanced',
     },
     {
       title: 'Leitura avulsa: gases (PowerShell)',
@@ -145,6 +257,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `$body=@{device_id="${simulatorPrimaryDevice}";sensor_type="gases";value=420;unit="ppm"}|ConvertTo-Json; Invoke-WebRequest -Uri "${simulatorUrl}/iot/readings" -Method Post -ContentType "application/json" -Headers @{ "x-device-key"="${simulatorApiKeyPlaceholder}" } -Body $body`,
       badge: 'ambiental',
       scope: 'production',
+      level: 'advanced',
     },
     {
       title: 'Consultar historico: umidade (PowerShell)',
@@ -153,6 +266,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `Invoke-WebRequest -Uri "${simulatorUrl}/readings/${simulatorPrimaryDevice}?sensor=umidade&limit=20${clientId ? `&clientId=${clientId}` : ''}" -Headers @{ "Authorization" = "Bearer SEU_TOKEN_ADMIN" }`,
       badge: 'consulta',
       scope: 'production',
+      level: 'advanced',
     },
     {
       title: 'Popular base demo',
@@ -161,6 +275,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: 'npm run db:seed',
       badge: 'seed',
       scope: 'local',
+      level: 'advanced',
     },
     {
       title: 'Verificar migration',
@@ -169,6 +284,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: 'npm run db:verify-actuation',
       badge: 'schema',
       scope: 'local',
+      level: 'advanced',
     },
     {
       title: 'Conferir fluxos do n8n',
@@ -177,6 +293,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: 'npm run alerts:check:n8n',
       badge: 'n8n',
       scope: 'production',
+      level: 'core',
     },
     {
       title: 'Ping real dos webhooks n8n',
@@ -185,6 +302,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: 'npm run alerts:check:n8n -- --ping --strict --timeout-ms=15000',
       badge: 'n8n',
       scope: 'production',
+      level: 'core',
     },
     {
       title: 'Cadastrar atuador',
@@ -193,6 +311,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `curl -X POST ${simulatorUrl}/actuators -H "Content-Type: application/json" -H "Authorization: Bearer SEU_TOKEN_ADMIN" -d "{\\"id\\":\\"sauna_main\\",\\"clientId\\":\\"${clientId ?? 'virtuagil'}\\",\\"name\\":\\"Sauna principal\\"}"`,
       badge: 'acionamento',
       scope: 'production',
+      level: 'advanced',
     },
     {
       title: 'Enviar comando ON',
@@ -202,6 +321,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         `curl -X POST ${simulatorUrl}/actuators/sauna_main/commands -H "Content-Type: application/json" -H "Authorization: Bearer SEU_TOKEN_ADMIN" -d "{\\"desiredState\\":\\"on\\",\\"source\\":\\"lab\\"}"`,
       badge: 'manual',
       scope: 'production',
+      level: 'advanced',
     },
     {
       title: 'Enviar comando OFF',
@@ -211,6 +331,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         `curl -X POST ${simulatorUrl}/actuators/sauna_main/commands -H "Content-Type: application/json" -H "Authorization: Bearer SEU_TOKEN_ADMIN" -d "{\\"desiredState\\":\\"off\\",\\"source\\":\\"lab\\"}"`,
       badge: 'manual',
       scope: 'production',
+      level: 'advanced',
     },
     {
       title: 'Listar atuadores',
@@ -219,6 +340,7 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `curl "${simulatorUrl}/actuators?clientId=${clientId ?? 'virtuagil'}" -H "Authorization: Bearer SEU_TOKEN_ADMIN"`,
       badge: 'consulta',
       scope: 'production',
+      level: 'advanced',
     },
     {
       title: 'Historico do acionamento',
@@ -227,8 +349,13 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
       command: `curl ${simulatorUrl}/actuators/sauna_main/commands -H "Authorization: Bearer SEU_TOKEN_ADMIN"`,
       badge: 'log',
       scope: 'production',
+      level: 'advanced',
     },
   ];
+
+  const visibleScenarios = showAdvancedScenarios
+    ? scenarios
+    : scenarios.filter((scenario) => (scenario.level ?? 'advanced') === 'core');
 
   function resolveCommandForCopy(
     command: string,
@@ -299,6 +426,72 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
           Pronto para terminal
         </Badge>
       </div>
+
+      <Panel className="mb-5 p-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.16em] text-muted">
+              Fluxo unico de demonstracao
+            </p>
+            <h3 className="mt-1 text-base font-semibold text-ink">
+              Passo a passo guiado da visita comercial
+            </h3>
+          </div>
+          <Badge variant={completedSteps === demoFlowSteps.length ? 'success' : undefined}>
+            <Goal className="h-3.5 w-3.5 text-accent" />
+            {completedSteps}/{demoFlowSteps.length} etapas
+          </Badge>
+        </div>
+
+        <div className="grid gap-3 lg:grid-cols-2">
+          {demoFlowSteps.map((step) => (
+            <div
+              key={step.key}
+              className={`rounded-2xl border p-3 ${
+                step.done ? 'border-ok/30 bg-ok/10' : 'border-line/70 bg-bg/30'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <div className="rounded-2xl border border-line/70 bg-card/40 p-2">
+                  {step.done ? (
+                    <CheckCircle2 className="h-4 w-4 text-ok" />
+                  ) : (
+                    <Timer className="h-4 w-4 text-accent" />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-ink">{step.title}</p>
+                  <p className="mt-1 text-xs leading-6 text-muted">{step.description}</p>
+                  {step.showAction ? (
+                    <div className="mt-2">
+                      <Link
+                        href={step.href}
+                        className="inline-flex rounded-xl border border-line/70 bg-card/70 px-3 py-2 text-xs font-semibold text-ink transition hover:border-accent/40"
+                      >
+                        {step.actionLabel}
+                      </Link>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-3 rounded-2xl border border-line/70 bg-bg/30 p-3 text-xs text-muted">
+          {nextPendingStep ? (
+            <p>
+              Proximo passo sugerido: <strong className="text-ink">{nextPendingStep.title}</strong>
+              . Complete esta etapa para manter o roteiro continuo.
+            </p>
+          ) : (
+            <p className="flex items-center gap-2">
+              <Sparkle className="h-4 w-4 text-ok" />
+              Roteiro completo: a conta ja esta pronta para demonstracao fim a fim.
+            </p>
+          )}
+        </div>
+      </Panel>
 
       <Panel className="mb-5 p-4">
         <p className="text-xs uppercase tracking-[0.16em] text-muted">
@@ -448,8 +641,22 @@ export function SimulationLabPanel({ clientId, client }: SimulationLabPanelProps
         </div>
       </Panel>
 
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <p className="text-xs text-muted">
+          Exibindo {visibleScenarios.length} comando(s) do roteiro
+          {showAdvancedScenarios ? ' completo' : ' minimo'}.
+        </p>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => setShowAdvancedScenarios((current) => !current)}
+        >
+          {showAdvancedScenarios ? 'Ocultar avancados' : 'Mostrar avancados'}
+        </Button>
+      </div>
+
       <div className="grid gap-4 xl:grid-cols-2">
-        {scenarios.map((scenario) => (
+        {visibleScenarios.map((scenario) => (
           <Panel
             key={scenario.title}
             variant="strong"

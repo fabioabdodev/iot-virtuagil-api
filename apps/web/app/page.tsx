@@ -204,7 +204,7 @@ function DashboardContent() {
   const enabledAmbientalItems = (ambientalModule?.items ?? [])
     .filter((item) => item.enabled)
     .map((item) => item.itemKey);
-  const temperatureEnabled =
+  const ambientalEnabled =
     scopedClientId == null
       ? true
       : ambientalModule?.enabled ?? false;
@@ -213,7 +213,7 @@ function DashboardContent() {
       ? true
       : clientModules.find((module) => module.moduleKey === 'acionamento')?.enabled ?? false;
   const { data: alertRulesData } = useAlertRules(
-    temperatureEnabled ? scopedClientId : undefined,
+    ambientalEnabled ? scopedClientId : undefined,
     authToken,
   );
   const { data: actuatorsData } = useActuators(
@@ -943,10 +943,11 @@ function DashboardContent() {
         />
       </AccordionPanel>
 
+      <div id="equipamentos" className="mt-6 scroll-mt-28">
       <AccordionPanel
         title="Equipamentos"
         description="Cadastre, revise e acompanhe os equipamentos da conta."
-        className="mt-6 animate-fade-up [animation-delay:220ms]"
+        className="animate-fade-up [animation-delay:220ms]"
       >
       <Panel className="p-4 sm:p-5 border-0 bg-transparent shadow-none">
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
@@ -994,7 +995,7 @@ function DashboardContent() {
           </div>
         </div>
 
-        {formMode === 'create' && temperatureEnabled && canCreateDevices ? (
+        {formMode === 'create' && ambientalEnabled && canCreateDevices ? (
           <div className="mb-5">
             <DeviceForm
               mode="create"
@@ -1034,7 +1035,7 @@ function DashboardContent() {
 
         {formMode === 'edit' &&
         editingDevice &&
-        temperatureEnabled &&
+        ambientalEnabled &&
         canEditDeviceTemperature ? (
           <div className="mb-5">
             <DeviceForm
@@ -1120,7 +1121,7 @@ function DashboardContent() {
           </Feedback>
         ) : null}
 
-        {!isLoading && temperatureEnabled && devices.length > 0 ? (
+        {!isLoading && ambientalEnabled && devices.length > 0 ? (
           <div className="space-y-4">
             <DataTableWrapper>
               <DataTable>
@@ -1266,7 +1267,7 @@ function DashboardContent() {
             ) : null}
           </div>
         ) : null}
-        {!isLoading && !isError && temperatureEnabled && devices.length === 0 ? (
+        {!isLoading && !isError && ambientalEnabled && devices.length === 0 ? (
           <SetupGuideCard
             eyebrow="Equipamentos"
             title={
@@ -1306,19 +1307,20 @@ function DashboardContent() {
             secondaryLabel="Abrir laboratorio"
           />
         ) : null}
-        {!isLoadingClientModules && !temperatureEnabled ? (
+        {!isLoadingClientModules && !ambientalEnabled ? (
           <Feedback>
-            O recurso de `temperatura` nao esta habilitado para este cliente.
+            O modulo `ambiental` nao esta habilitado para este cliente.
           </Feedback>
         ) : null}
       </Panel>
       </AccordionPanel>
+      </div>
 
-      {temperatureEnabled ? (
+      {ambientalEnabled ? (
         <div id="regras-alerta" className="mt-6 scroll-mt-28">
           <AccordionPanel
             title="Regras de alerta"
-            description="Defina como a conta reage a temperatura fora da faixa e outros eventos."
+            description="Defina como a conta reage a eventos ambientais e outros incidentes operacionais."
           >
             <AlertRulesPanel
               clientId={scopedClientId}
@@ -1337,7 +1339,7 @@ function DashboardContent() {
       ) : scopedClientId ? (
         <div className="mt-6">
           <AccessNotice
-            title="Temperatura indisponivel"
+            title="Ambiental indisponivel"
             description="Este cliente nao contratou o recurso ambiental, por isso equipamentos, leituras e regras ficam bloqueados nesta conta."
             badge="nao contratado"
             hint="Habilite o recurso no painel de contratacao para liberar equipamentos, historico e alertas."
@@ -1563,7 +1565,16 @@ function DashboardContent() {
           description="Ensaie a demonstracao e simule a operacao sem depender do hardware."
           defaultOpen={false}
         >
-          <SimulationLabPanel clientId={scopedClientId} client={selectedClient} />
+          <SimulationLabPanel
+            clientId={scopedClientId}
+            client={selectedClient}
+            devices={devices}
+            alertRules={alertRules}
+            actuators={actuators}
+            actuationEnabled={actuationEnabled}
+            canCreateDevices={canCreateDevices}
+            canManageAlertRules={canManageAlertRules}
+          />
         </AccordionPanel>
       </div>
 

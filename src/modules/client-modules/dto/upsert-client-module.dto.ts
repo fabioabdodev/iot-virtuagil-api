@@ -12,8 +12,8 @@ export class UpsertClientModuleDto {
   clientId: string;
 
   @IsString()
-  @IsIn(['ambiental', 'acionamento', 'energia', 'temperature', 'actuation'])
-  moduleKey: 'ambiental' | 'acionamento' | 'energia' | 'temperature' | 'actuation';
+  @IsIn(['ambiental', 'acionamento', 'energia'])
+  moduleKey: 'ambiental' | 'acionamento' | 'energia';
 
   @IsOptional()
   @IsString()

@@ -46,13 +46,13 @@ function determineJourneyStage(options: {
   devicesCount: number;
   alertRulesCount: number;
   offlineDevices: number;
-  temperatureEnabled: boolean;
+  ambientalEnabled: boolean;
 }) {
-  if (!options.temperatureEnabled) {
+  if (!options.ambientalEnabled) {
     return {
       title: 'Contratacao e escopo',
       description:
-        'Esta conta ainda precisa habilitar o recurso principal de temperatura antes de seguir para onboarding e simulacao.',
+        'Esta conta ainda precisa habilitar o modulo ambiental antes de seguir para onboarding e simulacao.',
       checklist: [
         'Definir escopo inicial por equipamento critico',
         'Confirmar recurso contratado e responsaveis',
@@ -80,7 +80,7 @@ function determineJourneyStage(options: {
       description:
         'A estrutura principal ja existe. O proximo passo e criar a regra de alerta e simular eventos para alinhar a resposta do cliente.',
       checklist: [
-        'Configurar a primeira regra de temperatura',
+        'Configurar a primeira regra ambiental',
         'Simular leitura normal e fora da faixa',
         'Validar quem recebe alerta e como reage',
       ],
@@ -131,23 +131,23 @@ export function CommercialReadinessPanel({
   devices,
   clientModules,
 }: CommercialReadinessPanelProps) {
-  const temperatureEnabled =
+  const ambientalEnabled =
     clientId == null
       ? true
       : clientModules.find((module) => module.moduleKey === 'ambiental')?.enabled ?? false;
-  const actuationEnabled =
+  const acionamentoEnabled =
     clientId == null
       ? true
       : clientModules.find((module) => module.moduleKey === 'acionamento')?.enabled ?? false;
 
   const { data: alertRulesData } = useAlertRules(
-    temperatureEnabled ? clientId : undefined,
+    ambientalEnabled ? clientId : undefined,
     authToken,
   );
   const { data: actuatorsData } = useActuators(
-    actuationEnabled ? clientId : undefined,
+    acionamentoEnabled ? clientId : undefined,
     authToken,
-    actuationEnabled,
+    acionamentoEnabled,
   );
 
   if (!clientId) {
@@ -173,7 +173,7 @@ export function CommercialReadinessPanel({
     devicesCount: devices.length,
     alertRulesCount: alertRules.length,
     offlineDevices,
-    temperatureEnabled,
+    ambientalEnabled,
   });
 
   const readinessScore = Math.max(
@@ -183,32 +183,32 @@ export function CommercialReadinessPanel({
       [
         enabledModules > 0 ? 20 : 0,
         devices.length > 0 ? 25 : 0,
-        temperatureEnabled && alertRules.length > 0 ? 20 : 0,
-        actuationEnabled && actuators.length > 0 ? 20 : 0,
+        ambientalEnabled && alertRules.length > 0 ? 20 : 0,
+        acionamentoEnabled && actuators.length > 0 ? 20 : 0,
         offlineDevices === 0 && devices.length > 0 ? 15 : 0,
       ].reduce((sum, value) => sum + value, 0),
     ),
   );
 
   const nextSteps = [
-    !temperatureEnabled && 'Habilitar o recurso ambiental para abrir a oferta principal de monitoramento.',
-    temperatureEnabled && devices.length === 0 && 'Cadastrar o primeiro equipamento para liberar historico, online/offline e leitura atual.',
-    temperatureEnabled && devices.length > 0 && alertRules.length === 0 && 'Criar ao menos uma regra de alerta para demonstrar valor operacional logo no onboarding.',
-    actuationEnabled && actuators.length === 0 && 'Cadastrar o primeiro ponto de acionamento para provar o fluxo de comando e historico do recurso de acionamento.',
+    !ambientalEnabled && 'Habilitar o modulo ambiental para abrir a oferta principal de monitoramento.',
+    ambientalEnabled && devices.length === 0 && 'Cadastrar o primeiro equipamento para liberar historico, online/offline e leitura atual.',
+    ambientalEnabled && devices.length > 0 && alertRules.length === 0 && 'Criar ao menos uma regra de alerta para demonstrar valor operacional logo no onboarding.',
+    acionamentoEnabled && actuators.length === 0 && 'Cadastrar o primeiro ponto de acionamento para provar o fluxo de comando e historico do recurso de acionamento.',
     offlineDevices > 0 && 'Regularizar equipamentos offline antes de usar esta conta como demonstracao comercial.',
   ].filter(Boolean) as string[];
 
-  const temperatureGate = moduleReadinessGate([
-    temperatureEnabled,
+  const ambientalGate = moduleReadinessGate([
+    ambientalEnabled,
     devices.length > 0,
     alertRules.length > 0,
     devices.length > 0 && offlineDevices === 0,
   ]);
-  const actuationGate = moduleReadinessGate([
-    actuationEnabled,
+  const acionamentoGate = moduleReadinessGate([
+    acionamentoEnabled,
     devices.length > 0,
     actuators.length > 0,
-    actuationEnabled ? temperatureGate.complete : true,
+    acionamentoEnabled ? ambientalGate.complete : true,
   ]);
 
   return (
@@ -289,15 +289,15 @@ export function CommercialReadinessPanel({
           <div className="rounded-[24px] border border-line/70 bg-bg/30 p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
-                Recurso temperatura
+                Modulo ambiental
               </p>
               <Siren className="h-4 w-4 text-ok" />
             </div>
             <p className="mt-3 text-base font-semibold text-ink">
-              {temperatureEnabled ? 'Disponivel' : 'Nao contratado'}
+              {ambientalEnabled ? 'Disponivel' : 'Nao contratado'}
             </p>
             <p className="mt-2 text-sm text-muted">
-              {temperatureEnabled
+              {ambientalEnabled
                 ? `${devices.length} equipamento(s) e ${alertRules.length} regra(s) configurada(s).`
                 : 'Habilite para oferecer monitoramento, historico e alertas.'}
             </p>
@@ -306,15 +306,15 @@ export function CommercialReadinessPanel({
           <div className="rounded-[24px] border border-line/70 bg-bg/30 p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
-                Recurso acionamento
+                Modulo acionamento
               </p>
               <ToggleRight className="h-4 w-4 text-[hsl(var(--accent-2))]" />
             </div>
             <p className="mt-3 text-base font-semibold text-ink">
-              {actuationEnabled ? 'Disponivel' : 'Nao contratado'}
+              {acionamentoEnabled ? 'Disponivel' : 'Nao contratado'}
             </p>
             <p className="mt-2 text-sm text-muted">
-              {actuationEnabled
+              {acionamentoEnabled
                 ? `${actuators.length} ponto(s) de acionamento pronto(s) para comando e historico.`
                 : 'Habilite para vender controle manual assistido pela plataforma.'}
             </p>
@@ -380,18 +380,18 @@ export function CommercialReadinessPanel({
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-line/70 bg-bg/30 p-4">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold text-ink">Gate de venda - Temperatura</p>
-            <Badge variant={temperatureGate.complete ? 'success' : 'neutral'}>
-              {temperatureGate.done}/{temperatureGate.total}
+            <p className="text-sm font-semibold text-ink">Gate de venda - Ambiental</p>
+            <Badge variant={ambientalGate.complete ? 'success' : 'neutral'}>
+              {ambientalGate.done}/{ambientalGate.total}
             </Badge>
           </div>
           <p className="mt-2 text-sm text-muted">
-            {temperatureGate.complete
+            {ambientalGate.complete
               ? 'Modulo pronto para proposta comercial com demonstracao em producao.'
-              : 'Feche os itens abaixo para vender monitoramento de temperatura com seguranca.'}
+              : 'Feche os itens abaixo para vender monitoramento ambiental com seguranca.'}
           </p>
           <div className="mt-3 space-y-2 text-xs text-muted">
-            <p>{temperatureEnabled ? 'OK' : 'Pendente'} - modulo ambiental contratado</p>
+            <p>{ambientalEnabled ? 'OK' : 'Pendente'} - modulo ambiental contratado</p>
             <p>{devices.length > 0 ? 'OK' : 'Pendente'} - ao menos 1 equipamento cadastrado</p>
             <p>{alertRules.length > 0 ? 'OK' : 'Pendente'} - ao menos 1 regra de alerta ativa</p>
             <p>{devices.length > 0 && offlineDevices === 0 ? 'OK' : 'Pendente'} - equipamentos sem alerta offline no momento</p>
@@ -401,20 +401,20 @@ export function CommercialReadinessPanel({
         <div className="rounded-2xl border border-line/70 bg-bg/30 p-4">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-semibold text-ink">Gate de venda - Acionamento</p>
-            <Badge variant={actuationGate.complete ? 'success' : 'neutral'}>
-              {actuationGate.done}/{actuationGate.total}
+            <Badge variant={acionamentoGate.complete ? 'success' : 'neutral'}>
+              {acionamentoGate.done}/{acionamentoGate.total}
             </Badge>
           </div>
           <p className="mt-2 text-sm text-muted">
-            {actuationGate.complete
+            {acionamentoGate.complete
               ? 'Modulo pronto para oferta comercial de comando assistido e historico.'
               : 'Finalize os itens para vender o modulo de acionamento com confianca.'}
           </p>
           <div className="mt-3 space-y-2 text-xs text-muted">
-            <p>{actuationEnabled ? 'OK' : 'Pendente'} - modulo acionamento contratado</p>
+            <p>{acionamentoEnabled ? 'OK' : 'Pendente'} - modulo acionamento contratado</p>
             <p>{devices.length > 0 ? 'OK' : 'Pendente'} - cliente com equipamento associado</p>
             <p>{actuators.length > 0 ? 'OK' : 'Pendente'} - ao menos 1 ponto de acionamento cadastrado</p>
-            <p>{actuationEnabled ? (temperatureGate.complete ? 'OK' : 'Pendente') : 'Nao aplicavel'} - base de temperatura estabilizada para narrativa integrada</p>
+            <p>{acionamentoEnabled ? (ambientalGate.complete ? 'OK' : 'Pendente') : 'Nao aplicavel'} - base ambiental estabilizada para narrativa integrada</p>
           </div>
         </div>
       </div>

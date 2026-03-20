@@ -86,7 +86,7 @@ Regra de evolucao:
 
 Estado atual dessa regra:
 
-- o modulo `temperatura` ja pode ser tratado como encerrado para abrir o modulo `acionamento`
+- o modulo `ambiental` no item `temperatura` ja pode ser tratado como encerrado para abrir o modulo `acionamento`
 
 ## Evolucao esperada
 

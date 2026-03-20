@@ -333,30 +333,6 @@ async function seedUsers() {
   }
 }
 
-async function seedClientModules() {
-  const modules = [
-    { clientId: 'virtuagil', moduleKey: 'temperature', enabled: true },
-    { clientId: 'virtuagil', moduleKey: 'actuation', enabled: true },
-    { clientId: 'cliente_teste', moduleKey: 'temperature', enabled: true },
-    { clientId: 'cliente_teste', moduleKey: 'actuation', enabled: false },
-  ];
-
-  for (const module of modules) {
-    await prisma.clientModule.upsert({
-      where: {
-        clientId_moduleKey: {
-          clientId: module.clientId,
-          moduleKey: module.moduleKey,
-        },
-      },
-      update: {
-        enabled: module.enabled,
-      },
-      create: module,
-    });
-  }
-}
-
 async function seedModuleCatalog() {
   for (const module of MODULE_CATALOG) {
     await prisma.moduleCatalog.upsert({
@@ -395,11 +371,11 @@ async function seedClientModuleItems() {
   const desiredByClient = [
     {
       clientId: 'virtuagil',
-      items: ['temperatura', 'rele'],
+      items: ['temperatura', 'rele', 'status_abertura', 'tempo_aberto'],
     },
     {
       clientId: 'cliente_teste',
-      items: ['temperatura'],
+      items: ['temperatura', 'umidade'],
     },
   ];
 
@@ -424,37 +400,6 @@ async function seedClientModuleItems() {
     }
   }
 
-  // Ponte de compatibilidade para bases antigas: converte contratacao legado em itens.
-  const legacyRows = await prisma.clientModule.findMany();
-  for (const row of legacyRows) {
-    if (!row.enabled) continue;
-
-    const mappedItems =
-      row.moduleKey === 'temperature'
-        ? ['temperatura']
-        : row.moduleKey === 'actuation'
-          ? ['rele']
-          : [];
-
-    for (const itemKey of mappedItems) {
-      await prisma.clientModuleItem.upsert({
-        where: {
-          clientId_itemKey: {
-            clientId: row.clientId,
-            itemKey,
-          },
-        },
-        update: {
-          enabled: true,
-        },
-        create: {
-          clientId: row.clientId,
-          itemKey,
-          enabled: true,
-        },
-      });
-    }
-  }
 }
 
 async function seedActuators() {
@@ -555,7 +500,6 @@ async function main() {
 
   await seedClients();
   await seedModuleCatalog();
-  await seedClientModules();
   await seedClientModuleItems();
   await seedDevices();
   await seedAlertRules();
