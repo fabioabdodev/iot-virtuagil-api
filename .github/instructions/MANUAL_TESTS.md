@@ -307,7 +307,30 @@ Enquanto nao houver hardware:
 - tratar `currentState` como estado operacional registrado na plataforma
 - nao prometer confirmacao eletrica real da carga
 
-## 5.1 Fluxo ponta a ponta com WhatsApp
+## 5.1 Padrao de execucao dos estudos de caso (UI-first)
+
+Regra oficial para novos atendimentos e demos:
+
+1. realizar cadastro de cliente, equipamento, regra e atuador no Monitor
+2. validar se a jornada ficou clara para um operador nao tecnico
+3. anotar friccao de UI na hora em que ela aparece
+4. usar API/scripts apenas para:
+   - validar webhook/n8n
+   - gerar evidencia tecnica repetivel
+   - investigar erro que o painel nao explica
+
+Checklist do caso `sabor-serra-restaurante` no Monitor:
+
+- cliente selecionado no filtro do dashboard
+- modulo `ambiental` habilitado com itens `temperatura`, `umidade`, `gases`
+- modulo `acionamento` habilitado com item `rele`
+- equipamento `adega_vinhos_01` existente e online
+- atuador `rele_luzes_salao_01` criado e vinculado ao equipamento certo
+- regra ambiental de gases critica habilitada
+
+Se `POST /actuators/:id/commands` retornar `404 Actuator not found`, primeiro revisar no Monitor se o `id` do atuador cadastrado e exatamente o mesmo usado no teste.
+
+## 5.2 Fluxo ponta a ponta com WhatsApp
 
 Direcao atual do produto:
 

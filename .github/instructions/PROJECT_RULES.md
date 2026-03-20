@@ -332,6 +332,11 @@ Quando houver tarefa ligada a cliente real, demonstracao, onboarding ou implanta
 
 - consultar primeiro `estudos de caso/README.md`
 - abrir depois o arquivo especifico do cliente, como `estudos de caso/cuidare.md`
+- seguir o padrao versionado em `.github/instructions/case-studies/UI_FIRST_PATTERN.md`
+- executar em modo `UI-first`:
+  - cadastro e configuracao primeiro pelo Monitor
+  - validacao de usabilidade, navegacao e linguagem no proprio painel
+  - API/scripts apenas para evidenciar integracao, diagnosticar falhas e automatizar repeticao
 - tratar cada estudo de caso como base para um roteiro pratico de implantacao dentro do dashboard
 - o trabalho esperado nao e apenas revisar copy:
   - deve ensinar a ordem real de uso da plataforma

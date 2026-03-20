@@ -12,6 +12,10 @@ Nota de terminologia ativa:
 Resumo do ponto de parada para retomar no proximo chat/agente:
 
 - caso ativo atual: `sabor-serra-restaurante`
+- preferencia explicita do usuario consolidada:
+  - conduzir estudo de caso em modo `UI-first` no Monitor
+  - fazer cadastros no painel para aprender o fluxo real e mapear melhorias de UI
+  - usar API/scripts so para validacao tecnica complementar
 - fluxo de validacao ambiental foi executado com sucesso em producao:
   - ingestao em `POST /iot/readings` para `temperature`, `umidade`, `gases`
   - leitura em `GET /readings/:deviceId?sensor=...` com retorno `200`
@@ -45,11 +49,11 @@ Estado funcional atual do estudo de caso:
 
 Pendencia imediata para fechar demonstracao comercial:
 
-1. validar disparo visual no painel para regra critica de gases
-2. validar fluxos n8n:
-   - `npm run alerts:check:n8n`
-   - `npm run alerts:check:n8n -- --ping --strict --timeout-ms=15000`
-3. confirmar entrega no WhatsApp (alerta correspondente)
+1. no Monitor, confirmar que o atuador existe com `id` exato `rele_luzes_salao_01`
+2. se nao existir, cadastrar no painel e vincular em `adega_vinhos_01`
+3. repetir acionamento `on/off` e validar historico no painel
+4. validar disparo visual no painel para regra critica de gases
+5. confirmar entrega no WhatsApp (alerta correspondente)
 
 Observacoes operacionais que evitaram retrabalho:
 
@@ -151,7 +155,7 @@ Comando executado com sucesso:
 ```bash
 npm run test:e2e -- --runInBand
 npm run build
-cd apps/web && npm run build
+cd apps/web; npm run build
 npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
 npx prisma generate
 ```
@@ -298,7 +302,7 @@ npx prisma generate
 npm run build
 npm test -- --runInBand src/modules/devices/devices.service.spec.ts src/modules/alert-rules/alert-rules.service.spec.ts
 npm run test:e2e -- --runInBand test/devices-tenant.e2e-spec.ts test/alert-rules.e2e-spec.ts test/client-modules.e2e-spec.ts test/devices-crud.e2e-spec.ts
-cd apps/web && npm run build
+cd apps/web; npm run build
 npx prisma generate
 npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
 ```
@@ -315,7 +319,7 @@ npm run test:e2e -- --runInBand test/actuators.e2e-spec.ts
   - girar a `TURNSTILE_SECRET_KEY` no Cloudflare e atualizar a VPS, porque a chave atual foi exposta em conversa operacional
 - em `15/03/2026` a base local foi revalidada apos a estabilizacao recente:
   - `npm run build` ok no backend
-  - `cd apps/web && npm run build` ok no frontend
+  - `cd apps/web; npm run build` ok no frontend
   - `npm test -- --runInBand` ok com `12/12` suites e `42/42` testes
   - `npm run test:e2e -- --runInBand` ok com `14/14` suites e `50/50` testes
 - os testes de configuracao de ambiente foram alinhados ao requisito atual de `AUTH_SECRET`
