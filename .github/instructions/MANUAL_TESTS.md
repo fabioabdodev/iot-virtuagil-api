@@ -18,7 +18,7 @@ Este arquivo existe para dar praticidade.
 
 Objetivo:
 
-- fechar validacao manual dos modulos `temperatura` e `acionamento`
+- fechar validacao manual dos modulos `ambiental` e `acionamento`
 - evitar depender de memoria ou teste improvisado
 - dar um roteiro facil de repetir em demo ou revisao operacional
 
@@ -88,7 +88,7 @@ Esperado:
 - `200`
 - usuario autenticado retornado
 
-## 2. Modulo temperatura
+## 2. Modulo ambiental (item temperatura)
 
 Se esse modulo ja foi validado anteriormente, use esta parte apenas como revisao rapida.
 
@@ -277,7 +277,7 @@ Esperado:
 
 ## 4. Criterio de fechamento dos modulos
 
-### Temperatura
+### Ambiental (item temperatura)
 
 Considerar fechado quando:
 

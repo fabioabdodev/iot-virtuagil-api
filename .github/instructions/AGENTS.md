@@ -75,6 +75,21 @@ Evitar:
 - mover arquivos sem motivo claro
 - espalhar regra de negocio em controllers
 
+## Regra critica de shell (PowerShell)
+
+Neste repositorio, os comandos locais rodam em PowerShell.
+
+Regra obrigatoria para agentes:
+
+- nunca usar `&&` para encadear comandos
+- usar `;` entre comandos
+
+Exemplo correto:
+
+```powershell
+git add .; git commit -m "mensagem"
+```
+
 ## Regras de backend
 
 - Controllers devem ser finos

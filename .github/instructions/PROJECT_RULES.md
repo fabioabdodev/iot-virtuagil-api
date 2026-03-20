@@ -282,6 +282,19 @@ Quando a validacao for manual:
 - usar `.github/instructions/MANUAL_TESTS.md` como roteiro base
 - evitar complicar a validacao com processos pesados quando a API puder ser verificada diretamente
 
+## Regra critica de comandos no PowerShell
+
+Para evitar erro recorrente de parser neste ambiente:
+
+- nao usar `&&` para encadear comandos
+- usar `;` entre comandos no PowerShell
+
+Exemplo:
+
+```powershell
+npm run build; npm run test:e2e -- --runInBand
+```
+
 ## Higiene operacional de disco na VPS
 
 Em ciclos com muitos deploys, o maior vilao de disco tende a ser Docker:
