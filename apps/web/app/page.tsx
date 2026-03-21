@@ -492,7 +492,7 @@ function DashboardContent() {
               <div className="flex justify-center">
                 <div className="inline-flex rounded-3xl border border-line/70 bg-card/70 px-4 py-3 shadow-[0_24px_80px_rgba(0,0,0,0.34)]">
                   <Image
-                    src="/brand/virtuagil_logo_low.png"
+                    src="/brand/logomarca.png"
                     alt="Virtuagil"
                     width={164}
                     height={48}
@@ -849,7 +849,7 @@ function DashboardContent() {
             <div className="mb-5 flex flex-wrap items-center gap-4">
               <div className="glass rounded-2xl border px-3 py-2">
                 <Image
-                  src="/brand/virtuagil_logo_low.png"
+                  src="/brand/logomarca.png"
                   alt="Virtuagil"
                   width={146}
                   height={42}

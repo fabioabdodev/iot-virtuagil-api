@@ -20,11 +20,11 @@ export const metadata: Metadata = {
   description: 'Dashboard de monitoramento de dispositivos IoT',
   icons: {
     icon: [
-      { url: '/brand/favicon_v_32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/brand/favicon_v_16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/brand/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/brand/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
     ],
     apple: [
-      { url: '/brand/favicon_v_128.png', sizes: '128x128', type: 'image/png' },
+      { url: '/brand/favicon-180x180.png', sizes: '180x180', type: 'image/png' },
     ],
   },
 };
