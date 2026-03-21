@@ -13,6 +13,7 @@ import { Panel } from '@/components/ui/panel';
 
 type ClientModulesPanelProps = {
   clientId?: string;
+  clientName?: string;
   authToken?: string;
   currentUser: AuthUser | null;
   canManage: boolean;
@@ -21,6 +22,7 @@ type ClientModulesPanelProps = {
 
 export function ClientModulesPanel({
   clientId,
+  clientName,
   authToken,
   currentUser,
   canManage,
@@ -52,6 +54,15 @@ export function ClientModulesPanel({
 
   return (
     <Panel className="animate-fade-up p-5 [animation-delay:360ms]">
+      <div className="mb-4 rounded-2xl border border-accent/40 bg-accent/10 p-3">
+        <p className="text-xs uppercase tracking-[0.16em] text-accent">
+          Modulos contratados deste cliente
+        </p>
+        <p className="mt-1 text-sm text-muted">
+          Conta em foco: <span className="font-medium text-ink">{clientName ?? clientId}</span>
+        </p>
+      </div>
+
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">Recursos do cliente</h2>

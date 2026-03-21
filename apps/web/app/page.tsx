@@ -919,6 +919,7 @@ function DashboardContent() {
       >
         <ClientModulesPanel
           clientId={scopedClientId}
+          clientName={selectedClient?.name}
           authToken={authToken}
           currentUser={user}
           canManage={canManageClientModules}
