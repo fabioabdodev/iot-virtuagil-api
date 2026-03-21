@@ -13,6 +13,7 @@ describe('Energy (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
+    const now = Date.now();
     const devices = [
       { id: 'freezer_01', clientId: 'client_a' },
       { id: 'freezer_02', clientId: 'client_a' },
@@ -25,28 +26,28 @@ describe('Energy (e2e)', () => {
         sensorType: 'consumo',
         value: 12.4,
         unit: 'kwh',
-        createdAt: new Date('2026-03-20T10:00:00.000Z'),
+        createdAt: new Date(now - 30 * 60 * 1000),
       },
       {
         deviceId: 'freezer_02',
         sensorType: 'consumo',
         value: 10.8,
         unit: 'kwh',
-        createdAt: new Date('2026-03-20T11:00:00.000Z'),
+        createdAt: new Date(now - 20 * 60 * 1000),
       },
       {
         deviceId: 'freezer_02',
         sensorType: 'corrente',
         value: 3.1,
         unit: 'a',
-        createdAt: new Date('2026-03-20T11:00:00.000Z'),
+        createdAt: new Date(now - 10 * 60 * 1000),
       },
       {
         deviceId: 'freezer_01',
         sensorType: 'tensao',
         value: 220,
         unit: 'v',
-        createdAt: new Date('2026-03-20T11:00:00.000Z'),
+        createdAt: new Date(now - 5 * 60 * 1000),
       },
     ];
 
