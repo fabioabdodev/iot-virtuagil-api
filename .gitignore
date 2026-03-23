@@ -92,3 +92,6 @@ logomarca/
 
 # base de conhecimento local da Jade (copiar/colar manual para Google Docs)
 docs/jade-knowledge/
+
+# documentacao local (nao versionar)
+docs/
