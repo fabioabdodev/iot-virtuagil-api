@@ -13,7 +13,38 @@ Nota de terminologia ativa:
 
 ## Atualizacao complementar (2026-03-22)
 
+## Atualizacao complementar (2026-03-23)
+
+Fechamento adicional apos retomada de internet:
+
+- bateria completa dos workflows executada novamente em producao com sucesso:
+  - `Carga normal`
+  - `Pre-alerta`
+  - `Cenario critico`
+  - `Ensaio de offline`
+  - retorno para `Carga normal`
+- pings reais dos webhooks `offline`, `online`, `temperatura` e `acionamento` confirmados com `200`
+- ajuste final de copy no workflow de acionamento registrado:
+  - humanizacao de `client_id` tecnico para nome amigavel quando `client_name` nao vier
+  - `Comando` em `LIGADO`/`DESLIGADO`
+  - `Executado em` formatado em `pt-BR` (`America/Sao_Paulo`)
+  - remocao de `(<device_id>)` no campo visual de equipamento
+- fonte de verdade mantida em:
+  - `.github/instructions/N8N_WHATSAPP_PLAYBOOK_2026-03-22.md`
+
 Fechamentos desta rodada para evitar regressao de cadastro e duplicidade:
+
+Referencia obrigatoria para continuidade n8n/WhatsApp desta rodada:
+
+- ler primeiro: `.github/instructions/N8N_WHATSAPP_PLAYBOOK_2026-03-22.md`
+- esse arquivo consolida:
+  - workflows oficiais
+  - campos/fallbacks obrigatorios
+  - padrao de `IF Phone Present`
+  - regra de mensagens humanizadas
+  - ordem oficial de teste do Laboratorio
+  - erros recorrentes e correcoes
+  - criterios de aceite
 
 - `devices` agora bloqueia cadastro incompleto:
   - `clientId` obrigatorio
