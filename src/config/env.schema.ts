@@ -49,6 +49,7 @@ export const envSchema = z.object({
   N8N_OFFLINE_WEBHOOK_URL: optionalUrlEnv,
   N8N_ONLINE_WEBHOOK_URL: optionalUrlEnv,
   N8N_TEMPERATURE_ALERT_WEBHOOK_URL: optionalUrlEnv,
+  N8N_ENERGY_ALERT_WEBHOOK_URL: optionalUrlEnv,
   N8N_ACTUATION_WEBHOOK_URL: optionalUrlEnv,
   ACTUATION_NOTIFY_ENABLED: booleanEnv.default(false),
   ACTUATION_NOTIFY_COOLDOWN_SECONDS: z.coerce.number().default(900),

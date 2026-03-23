@@ -42,8 +42,10 @@ describe('envSchema', () => {
       DATABASE_URL: 'postgresql://user:pass@localhost:5432/app',
       AUTH_SECRET: 'super-secret-key',
       N8N_ONLINE_WEBHOOK_URL: '   ',
+      N8N_ENERGY_ALERT_WEBHOOK_URL: '',
     });
 
     expect(result.N8N_ONLINE_WEBHOOK_URL).toBeUndefined();
+    expect(result.N8N_ENERGY_ALERT_WEBHOOK_URL).toBeUndefined();
   });
 });

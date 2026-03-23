@@ -22,6 +22,8 @@ describe('AlertDeliveryQueueService', () => {
           return 'https://example.com/offline-webhook';
         if (key === 'N8N_ONLINE_WEBHOOK_URL')
           return 'https://example.com/online-webhook';
+        if (key === 'N8N_ENERGY_ALERT_WEBHOOK_URL')
+          return 'https://example.com/energy-webhook';
         if (key === 'ALERT_QUEUE_BATCH_SIZE') return 20;
         if (key === 'ALERT_QUEUE_RETRY_MAX') return 3;
         if (key === 'ALERT_QUEUE_RETRY_DELAY_MS') return 1000;
@@ -147,6 +149,31 @@ describe('AlertDeliveryQueueService', () => {
       expect.objectContaining({
         method: 'POST',
         body: expect.stringContaining('"flap_count":3'),
+      }),
+    );
+  });
+
+  it('should enqueue and deliver energy alert payload', async () => {
+    service.enqueue({
+      type: 'energy_out_of_range',
+      clientId: 'client_a',
+      ruleId: 'rule_energy_1',
+      deviceId: 'dev1',
+      sensorType: 'consumo',
+      value: 9.8,
+      unit: 'kwh',
+      minValue: 2,
+      maxValue: 8,
+      occurredAt: new Date('2026-03-12T10:06:00.000Z').toISOString(),
+    });
+
+    await jest.advanceTimersByTimeAsync(1100);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.com/energy-webhook',
+      expect.objectContaining({
+        method: 'POST',
+        body: expect.stringContaining('"sensor_type":"consumo"'),
       }),
     );
   });

@@ -5,6 +5,8 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AlertDeliveryQueueService } from '../../infra/alerts/alert-delivery-queue.service';
 import { ConnectivityAlertPolicyService } from '../../infra/alerts/connectivity-alert-policy.service';
 
+const ENERGY_SENSOR_TYPES = ['corrente', 'tensao', 'consumo'] as const;
+
 @Injectable()
 export class MonitorService {
   private readonly logger = new Logger(MonitorService.name);
@@ -70,6 +72,7 @@ export class MonitorService {
     if (!hasConfigurableRules) {
       await this.processLegacyDeviceThresholds(temperatureCooldownMinutes);
     }
+    await this.processConfiguredEnergyRules();
   }
 
   private async processConfiguredTemperatureRules() {
@@ -261,6 +264,142 @@ export class MonitorService {
         }
       }
     }
+  }
+
+  private async processConfiguredEnergyRules() {
+    const rules = await this.prisma.alertRule.findMany({
+      where: {
+        enabled: true,
+        sensorType: { in: Array.from(ENERGY_SENSOR_TYPES) },
+      },
+      orderBy: { createdAt: 'asc' },
+    } as any);
+
+    if (rules.length === 0) {
+      return;
+    }
+
+    const devicesByClient = new Map<string, any[]>();
+
+    for (const rule of rules as any[]) {
+      let devices: any[] = [];
+
+      if (rule.deviceId) {
+        const device = await this.prisma.device.findUnique({
+          where: { id: rule.deviceId },
+        });
+        if (device && (device as any).clientId === rule.clientId) {
+          devices = [device];
+        }
+      } else {
+        if (!devicesByClient.has(rule.clientId)) {
+          const clientDevices = await this.prisma.device.findMany({
+            where: { clientId: rule.clientId },
+          } as any);
+          devicesByClient.set(rule.clientId, clientDevices);
+        }
+        devices = devicesByClient.get(rule.clientId) ?? [];
+      }
+
+      for (const device of devices) {
+        await this.evaluateEnergyRuleForDevice(rule, device);
+      }
+    }
+  }
+
+  private async evaluateEnergyRuleForDevice(rule: any, device: any) {
+    const lastReading = await this.prisma.sensorReading.findFirst({
+      where: {
+        deviceId: device.id,
+        sensorType: rule.sensorType,
+      },
+      orderBy: { createdAt: 'desc' },
+    } as any);
+
+    if (!lastReading) return;
+
+    const readingValue = lastReading.value;
+    const below = rule.minValue != null && readingValue < rule.minValue;
+    const above = rule.maxValue != null && readingValue > rule.maxValue;
+    const outOfRange = below || above;
+
+    const now = new Date(Date.now());
+    const state = await this.prisma.alertRuleState.upsert({
+      where: {
+        ruleId_deviceId: {
+          ruleId: rule.id,
+          deviceId: device.id,
+        },
+      } as any,
+      update: {},
+      create: {
+        ruleId: rule.id,
+        deviceId: device.id,
+      } as any,
+    } as any);
+
+    if (!outOfRange) {
+      if ((state as any).breachStartedAt) {
+        await this.prisma.alertRuleState.update({
+          where: { id: (state as any).id },
+          data: { breachStartedAt: null },
+        } as any);
+      }
+      return;
+    }
+
+    const breachStartedAt = (state as any).breachStartedAt ?? now;
+    if (!(state as any).breachStartedAt) {
+      await this.prisma.alertRuleState.update({
+        where: { id: (state as any).id },
+        data: { breachStartedAt },
+      } as any);
+    }
+
+    const toleranceMs = (rule.toleranceMinutes ?? 0) * 60 * 1000;
+    if (now.getTime() - breachStartedAt.getTime() < toleranceMs) {
+      return;
+    }
+
+    const cooldownMs = (rule.cooldownMinutes ?? 5) * 60 * 1000;
+    const lastTriggeredAt = (state as any).lastTriggeredAt as Date | null;
+    if (
+      lastTriggeredAt &&
+      now.getTime() - lastTriggeredAt.getTime() < cooldownMs
+    ) {
+      return;
+    }
+
+    const occurredAt = (lastReading.createdAt as Date | null) ?? now;
+    this.logger.warn(
+      `Rule ${rule.id} alerta de energia para device ${device.id}: sensor=${rule.sensorType} value=${readingValue} (limites ${rule.minValue}-${rule.maxValue})`,
+    );
+
+    this.alertQueue.enqueue({
+      type: 'energy_out_of_range',
+      clientId: rule.clientId,
+      ruleId: rule.id,
+      deviceId: device.id,
+      sensorType: rule.sensorType,
+      value: readingValue,
+      unit: lastReading.unit ?? null,
+      minValue: rule.minValue ?? null,
+      maxValue: rule.maxValue ?? null,
+      occurredAt: occurredAt.toISOString(),
+    });
+
+    await this.prisma.alertRuleState.update({
+      where: { id: (state as any).id },
+      data: {
+        breachStartedAt,
+        lastTriggeredAt: now,
+      },
+    } as any);
+
+    await this.prisma.device.update({
+      where: { id: device.id },
+      data: { lastAlertAt: now },
+    });
   }
 
   private async sendTemperatureAlert(payload: {

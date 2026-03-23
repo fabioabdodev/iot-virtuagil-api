@@ -55,6 +55,21 @@ const targets = [
       client_id: 'check-client',
     },
   },
+  {
+    key: 'N8N_ENERGY_ALERT_WEBHOOK_URL',
+    eventType: 'energy_out_of_range',
+    sample: {
+      type: 'energy_out_of_range',
+      device_id: 'check_freezer_01',
+      sensor_type: 'consumo',
+      value: 9.8,
+      unit: 'kwh',
+      min_value: 2,
+      max_value: 8,
+      created_at: new Date().toISOString(),
+      client_id: 'check-client',
+    },
+  },
 ];
 
 function maskUrl(url) {

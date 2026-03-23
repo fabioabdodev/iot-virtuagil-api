@@ -13,6 +13,19 @@ type TemperatureAlertPayload = {
   occurredAt: string;
 };
 
+type EnergyAlertPayload = {
+  type: 'energy_out_of_range';
+  clientId: string | null;
+  ruleId: string | null;
+  deviceId: string;
+  sensorType: 'corrente' | 'tensao' | 'consumo';
+  value: number;
+  unit: string | null;
+  minValue: number | null;
+  maxValue: number | null;
+  occurredAt: string;
+};
+
 type OfflineAlertPayload = {
   type: 'device_offline';
   clientId: string | null;
@@ -42,6 +55,7 @@ type ConnectivityInstabilityPayload = {
 
 type AlertPayload =
   | TemperatureAlertPayload
+  | EnergyAlertPayload
   | OfflineAlertPayload
   | OnlineAlertPayload
   | ConnectivityInstabilityPayload;
@@ -160,6 +174,10 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
   }
 
   private getWebhookUrl(type: AlertPayload['type']) {
+    if (type === 'energy_out_of_range') {
+      return this.configService.get<string>('N8N_ENERGY_ALERT_WEBHOOK_URL');
+    }
+
     if (type === 'device_offline') {
       return this.configService.get<string>('N8N_OFFLINE_WEBHOOK_URL');
     }
@@ -294,6 +312,45 @@ export class AlertDeliveryQueueService implements OnModuleDestroy {
         flapCount: payload.flapCount,
         window_minutes: payload.windowMinutes,
         windowMinutes: payload.windowMinutes,
+        recipient_phone: context.recipientPhone,
+        recipientPhone: context.recipientPhone,
+        recipient_source: context.recipientSource,
+        recipientSource: context.recipientSource,
+      };
+    }
+
+    if (payload.type === 'energy_out_of_range') {
+      const occurredAtLocal = this.toLocalDateTime(payload.occurredAt, timezone);
+      return {
+        type: payload.type,
+        client_id: payload.clientId,
+        clientId: payload.clientId,
+        client_name: context.clientName,
+        clientName: context.clientName,
+        client_document: context.clientDocument,
+        clientDocument: context.clientDocument,
+        rule_id: payload.ruleId,
+        ruleId: payload.ruleId,
+        device_id: payload.deviceId,
+        deviceId: payload.deviceId,
+        device_name: context.deviceName,
+        deviceName: context.deviceName,
+        device_location: context.deviceLocation,
+        deviceLocation: context.deviceLocation,
+        establishment_label: context.establishmentLabel,
+        establishmentLabel: context.establishmentLabel,
+        sensor_type: payload.sensorType,
+        sensorType: payload.sensorType,
+        value: payload.value,
+        unit: payload.unit,
+        min_value: payload.minValue,
+        minValue: payload.minValue,
+        max_value: payload.maxValue,
+        maxValue: payload.maxValue,
+        occurred_at: payload.occurredAt,
+        occurredAt: payload.occurredAt,
+        occurred_at_local: occurredAtLocal,
+        occurredAtLocal,
         recipient_phone: context.recipientPhone,
         recipientPhone: context.recipientPhone,
         recipient_source: context.recipientSource,
