@@ -90,7 +90,8 @@ env_prod_tmp="$(mktemp)"
 drift_tmp="$(mktemp)"
 extra_tmp="$(mktemp)"
 missing_tmp="$(mktemp)"
-trap 'rm -f "$service_env_tmp" "$env_prod_tmp" "$drift_tmp" "$extra_tmp" "$missing_tmp"' EXIT
+managed_keys_tmp="$(mktemp)"
+trap 'rm -f "$service_env_tmp" "$env_prod_tmp" "$drift_tmp" "$extra_tmp" "$missing_tmp" "$managed_keys_tmp"' EXIT
 
 extract_service_env() {
   local service="$1"
@@ -109,17 +110,28 @@ for svc in "${STACK_NAME}_api" "${STACK_NAME}_web"; do
 done
 
 sort -u "$service_env_tmp" -o "$service_env_tmp"
-grep -E '^[A-Za-z_][A-Za-z0-9_]*=' "$ENV_FILE" \
-  | sed -E 's/[[:space:]]+$//' \
+
+# Chaves realmente gerenciadas pela stack (placeholders ${VAR}).
+grep -oE '\$\{[A-Za-z_][A-Za-z0-9_]*(:-[^}]*)?\}' "$STACK_FILE" \
+  | sed -E 's/^\$\{([A-Za-z_][A-Za-z0-9_]*).*/\1/' \
+  | sort -u > "$managed_keys_tmp"
+
+# APP_RELEASE/APP_BUILD_TIME sao dinâmicos por deploy, nao devem falhar strict.
+grep -vE '^(APP_RELEASE|APP_BUILD_TIME)$' "$managed_keys_tmp" > "${managed_keys_tmp}.filtered" || true
+mv "${managed_keys_tmp}.filtered" "$managed_keys_tmp"
+
+grep -E '^[A-Za-z_][A-Za-z0-9_]*=' "$ENV_FILE" | sed -E 's/[[:space:]]+$//' \
+  | awk -F= 'NR==FNR {k[$1]=1; next} ($1 in k) {print $0}' "$managed_keys_tmp" - \
   | sort -u > "$env_prod_tmp"
 
 say "[4/7] Comparando env.prod x ambiente efetivo..."
 
-# chaves do env.prod que estao ausentes no servico
+# chaves gerenciadas pela stack que estao ausentes no servico
 comm -23 <(cut -d= -f1 "$env_prod_tmp" | sort) <(cut -d= -f1 "$service_env_tmp" | sort) > "$missing_tmp" || true
 
-# chaves extras no servico que nao estao no env.prod (podem vir do stack/portainer)
-comm -13 <(cut -d= -f1 "$env_prod_tmp" | sort) <(cut -d= -f1 "$service_env_tmp" | sort) > "$extra_tmp" || true
+# chaves extras no servico (fora do gerenciamento da stack + runtime esperadas)
+comm -13 <(cut -d= -f1 "$env_prod_tmp" | sort) <(cut -d= -f1 "$service_env_tmp" | sort) \
+  | grep -vE '^(NODE_ENV|PORT)$' > "$extra_tmp" || true
 
 # chaves com valor divergente
 awk -F= '
