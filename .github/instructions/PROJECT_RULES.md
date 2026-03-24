@@ -307,6 +307,32 @@ Regras atuais:
 - artefatos locais de execucao como `tmp-*.log` devem ficar em `logs/`, nao soltos na raiz
 - `TURNSTILE_SECRET_KEY` deve ficar apenas em segredo de ambiente; se for exposta em chat, screenshot ou ticket, girar no Cloudflare
 
+## Banco e migrations (regra obrigatoria)
+
+Diretriz oficial para qualquer mudanca estrutural no banco:
+
+- usar Prisma como caminho padrao (`prisma/migrations`)
+- evitar aplicar schema diretamente no SQL Editor do Supabase como solucao definitiva
+- excecao operacional (emergencia): se for necessario aplicar SQL manual para destravar producao, registrar no mesmo ciclo uma migration Prisma equivalente
+- sem migration correspondente no repositorio, a mudanca nao deve ser tratada como concluida
+- validar sempre com:
+  - `npx prisma migrate deploy`
+  - `npx prisma migrate status`
+
+Atualizacao consolidada (Jade):
+
+- as tabelas `jade_*` agora devem ser tratadas como parte oficial do schema versionado
+- migration oficial: `prisma/migrations/20260324193000_create_jade_tables/migration.sql`
+
+## Regra de artefatos `fixed` (workflows)
+
+Para fluxos n8n deste projeto:
+
+- manter `tmp/workflows-fix/fixed/` como referencia local oficial dos workflows corrigidos
+- ao ajustar workflow no n8n UI, refletir a versao final na pasta `fixed`
+- evitar editar/copiar JSON intermediario fora da `fixed` como se fosse versao final
+- ao retomar um incidente, priorizar sempre o arquivo da `fixed` correspondente
+
 ## Direcao de evolucao
 
 Ver `.github/instructions/ROADMAP.md` para a sequencia de evolucao.

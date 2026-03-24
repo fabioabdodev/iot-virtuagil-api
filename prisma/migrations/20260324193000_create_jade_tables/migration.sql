@@ -1,5 +1,5 @@
-﻿-- Jade CRM + Memory schema (Supabase/Postgres)
--- Execute no SQL Editor do Supabase
+-- Jade CRM + Memory schema
+-- Consolidated as Prisma migration to version manual Supabase SQL changes.
 
 create extension if not exists pgcrypto;
 
@@ -34,7 +34,7 @@ create table if not exists public.jade_messages (
   id uuid primary key default gen_random_uuid(),
   conversation_id uuid references public.jade_conversations(id) on delete cascade,
   lead_phone text not null,
-  role text not null check (role in ('user','assistant','system')),
+  role text not null check (role in ('user', 'assistant', 'system')),
   content text not null,
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()
@@ -46,7 +46,7 @@ create table if not exists public.jade_follow_up_queue (
   lead_name text,
   is_client boolean not null default false,
   reason text,
-  status text not null default 'pending' check (status in ('pending','processing','done','canceled')),
+  status text not null default 'pending' check (status in ('pending', 'processing', 'done', 'canceled')),
   priority int not null default 3,
   next_contact_at timestamptz,
   last_attempt_at timestamptz,
@@ -60,7 +60,7 @@ create table if not exists public.jade_human_handoff (
   lead_phone text not null,
   lead_name text,
   reason text,
-  status text not null default 'open' check (status in ('open','in_progress','resolved','canceled')),
+  status text not null default 'open' check (status in ('open', 'in_progress', 'resolved', 'canceled')),
   assigned_to text,
   summary text,
   created_at timestamptz not null default now(),
@@ -103,14 +103,12 @@ create trigger trg_jade_handoff_updated_at
 before update on public.jade_human_handoff
 for each row execute function public.set_updated_at();
 
--- RLS (service role bypassa, mas manter explicito)
 alter table public.jade_contacts enable row level security;
 alter table public.jade_conversations enable row level security;
 alter table public.jade_messages enable row level security;
 alter table public.jade_follow_up_queue enable row level security;
 alter table public.jade_human_handoff enable row level security;
 
--- opcional: bloqueia anon/public
 revoke all on table public.jade_contacts from anon, authenticated;
 revoke all on table public.jade_conversations from anon, authenticated;
 revoke all on table public.jade_messages from anon, authenticated;

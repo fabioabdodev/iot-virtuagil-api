@@ -928,8 +928,8 @@ Entregas registradas:
 
 - workflow `Jade` em JSON unico:
   - `tmp/workflows-fix/fixed/Virtuagil - Jade - Assistente Virtual - FIXED.json`
-- schema SQL para Supabase:
-  - `tmp/workflows-fix/fixed/jade-supabase-schema.sql`
+- migration oficial de schema Jade:
+  - `prisma/migrations/20260324193000_create_jade_tables/migration.sql`
 - documentos base locais para copiar/colar no Google Docs:
   - `docs/jade-knowledge/README.md`
   - `docs/jade-knowledge/JADE_SOBRE_EMPRESA.md`
@@ -969,3 +969,11 @@ Diretriz para proximos agentes:
 - nao inventar preco/condicao comercial fora de docs
 - se faltarem dados em docs, direcionar para suporte humano
 - sempre validar fluxo sem responder grupos
+
+Atualizacao operacional (2026-03-24):
+
+- tabelas `jade_*` foram consolidadas em migration Prisma oficial
+- o arquivo local `tmp/workflows-fix/fixed/jade-supabase-schema.sql` foi removido para evitar dupla-fonte de verdade
+- regra reforcada:
+  - schema de banco deve ser mantido via Prisma migration
+  - workflow final deve ser preservado na pasta `tmp/workflows-fix/fixed/`

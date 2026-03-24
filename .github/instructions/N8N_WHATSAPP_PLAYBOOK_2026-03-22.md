@@ -150,6 +150,30 @@ Versoes locais de importacao n8n:
 Nota:
 
 - arquivos fora de `tmp/workflows-fix/fixed` podem estar desatualizados/intermediarios
+- manter `tmp/workflows-fix/fixed` como fonte local oficial para copia/importacao
+
+## 10) Regra obrigatoria de governanca (Prisma)
+
+- alteracoes de schema de banco usadas por workflows devem ser versionadas via Prisma migration no repositorio
+- SQL manual no Supabase Editor so pode ser excecao operacional; quando ocorrer, a migration Prisma equivalente deve ser criada no mesmo ciclo
+- para Jade, considerar oficial a migration:
+  - `prisma/migrations/20260324193000_create_jade_tables/migration.sql`
+
+## 11) Jade - correcoes obrigatorias consolidadas
+
+No workflow `Virtuagil - Jade - Assistente Virtual`:
+
+- `lead_phone` deve representar o remetente real (priorizar `remoteJid/from`; usar `sender` apenas como fallback)
+- lookup de cliente no Supabase deve buscar por telefone com prioridade:
+  - `alertPhone`
+  - `adminPhone`
+  - `phone` (fallback)
+- lookup deve usar `limit=1`
+- `Set Context` deve considerar cliente valido quando houver `id` no item retornado
+- regra de roteamento:
+  - `is_client=false` -> forcar `followup`
+  - `is_client=true` com saudacao simples (`oi/ola/...`) -> priorizar atendimento de cliente existente
+- saudacao final de cliente deve tentar usar `adminName` quando disponivel
 
 ## 9) Ajuste final de copy (2026-03-23)
 
