@@ -397,7 +397,9 @@ export function ClientProfilePanel({
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-muted">Nome do administrador *</label>
+                <label className="mb-1 block text-xs text-muted">
+                  Nome do contato principal (administrador) *
+                </label>
                 <Input
                   value={adminName}
                   onChange={(event) => setAdminName(event.target.value)}
@@ -405,7 +407,9 @@ export function ClientProfilePanel({
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-muted">Contato do administrador *</label>
+                <label className="mb-1 block text-xs text-muted">
+                  WhatsApp do contato principal *
+                </label>
                 <Input
                   value={adminPhone}
                   onChange={(event) => {
@@ -546,6 +550,9 @@ export function ClientProfilePanel({
                   />
                   Usar o mesmo WhatsApp para alertas
                 </label>
+                <p className="text-xs text-muted">
+                  Quando marcado, os alertas e a Jade usam o mesmo WhatsApp do contato principal.
+                </p>
               </div>
               <div>
                 <label className="mb-1 block text-xs text-muted">

@@ -380,7 +380,9 @@ export function ClientsPanel({
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs text-muted">Nome do administrador *</label>
+                    <label className="mb-1 block text-xs text-muted">
+                      Nome do contato principal (administrador) *
+                    </label>
                     <Input {...register('adminName')} placeholder="Fabio Abdo" />
                     {errors.adminName ? (
                       <p className="mt-1 text-xs text-bad">{errors.adminName.message}</p>
@@ -410,7 +412,9 @@ export function ClientsPanel({
                 <p className="mb-3 text-xs uppercase tracking-[0.16em] text-muted">Contatos</p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1 block text-xs text-muted">Contato do administrador *</label>
+                    <label className="mb-1 block text-xs text-muted">
+                      WhatsApp do contato principal *
+                    </label>
                     <Input {...register('adminPhone')} placeholder="(31) 99999-0000" />
                     {errors.adminPhone ? (
                       <p className="mt-1 text-xs text-bad">{errors.adminPhone.message}</p>
@@ -426,6 +430,9 @@ export function ClientsPanel({
                       />
                       Usar o mesmo WhatsApp para alertas
                     </label>
+                    <p className="text-xs text-muted">
+                      Marcado: alertas e Jade usam o WhatsApp do contato principal.
+                    </p>
                   </div>
 
                   <div>
