@@ -15,6 +15,7 @@
     "db:seed": "node ./scripts/db-seed.mjs",
     "db:verify-actuation": "node ./scripts/verify-actuation-schema.mjs",
     "alerts:check:n8n": "node ./scripts/check-n8n-alerts.mjs",
+    "n8n:sanitize": "node ./scripts/sanitize-n8n-workflow.mjs",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "health:check:prod": "node ./scripts/check-production-health.mjs",
     "simulate:iot": "node ./scripts/iot-simulator.mjs",

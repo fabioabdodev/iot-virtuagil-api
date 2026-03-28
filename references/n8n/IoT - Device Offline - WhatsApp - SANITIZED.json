@@ -1,0 +1,189 @@
+{
+  "name": "IoT - Device Offline - WhatsApp",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "device-offline",
+        "options": {}
+      },
+      "id": "a9da93ef-8513-4957-9671-306995ca1f81",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1840,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "recipient_phone",
+              "value": "={{ (() => { const d = $json.body?.payload ?? $json.body ?? $json; const raw = String(d.recipient_phone || d.recipientPhone || d.alert_phone || d.alertPhone || d.admin_phone || d.adminPhone || d.phone || d.client_phone || d.clientPhone || '').replace(/\\D/g, ''); if (!raw) return ''; return raw.startsWith('55') ? raw : `55${raw}`; })() }}",
+              "type": "string",
+              "id": "6598bcb9-add7-431d-923c-35d5f62f839c"
+            },
+            {
+              "name": "message",
+              "value": "={{ (() => {\n  const d = $json.body?.payload ?? $json.body ?? $json;\n  const fmt = (v) => { if (!v) return 'nÃ£o disponÃ­vel'; const dt = new Date(v); return Number.isNaN(dt.getTime()) ? String(v) : dt.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }); };\n\n  const client = d.client_name || d.clientName || d.client_id || d.clientId || 'Cliente nÃ£o identificado';\n  const deviceId = d.device_id || d.deviceId || 'device_nao_informado';\n  const deviceName = d.device_name || d.deviceName || d.device_label || d.deviceLabel || deviceId;\n  const location = d.device_location || d.deviceLocation || d.location || d.establishment_label || d.establishmentLabel || 'NÃ£o informado';\n\n  const lastSeen = d.last_seen_local || d.lastSeenLocal || fmt(d.last_seen_at || d.lastSeenAt);\n  const offlineSince = d.offline_since_local || d.offlineSinceLocal || fmt(d.offline_since || d.offlineSince) || lastSeen;\n\n  return 'ðŸ”´ EQUIPAMENTO OFFLINE ðŸš¨\\n\\n' +\n    'Cliente: ' + client + '\\n' +\n    'Local: ' + location + '\\n' +\n    'Equipamento: ' + deviceName + '\\n\\n' +\n    'Ãšltima comunicaÃ§Ã£o: ' + lastSeen + '\\n' +\n    'Offline desde: ' + offlineSince + '\\n\\n' +\n    'AÃ§Ã£o recomendada: verificar energia, internet e conectividade local.\\n' +\n    'Equipe Virtuagil Monitor';\n})() }}",
+              "type": "string",
+              "id": "115eac20-ba43-486a-99ed-87646e771181"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b76f65ce-a791-40fd-a20b-54ce9070b056",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1600,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "phone_present",
+              "leftValue": "={{ $json.recipient_phone }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e0f222cf-fe59-43b0-a8cd-76d52be1ee00",
+      "name": "IF Phone Present",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1440,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evolution.virtuagil.com.br/message/sendText/Virtuagil%20Atendimento",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "__REDACTED__"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.recipient_phone }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e57f73a8-da06-4e05-80be-4940c9398498",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1216,
+        -272
+      ]
+    },
+    {
+      "parameters": {
+        "content": "FLUXO IOT DE ALERTA (OUTBOUND)\n- Recebe webhook tecnico da API (eventos operacionais).\n- Envia notificacao WhatsApp para telefone de alerta/admin.\n- Nao processa conversa de cliente e nao responde mensagens recebidas.\n- Nao conflita com a Jade: atendimento conversacional fica somente no workflow 'jade-assistente'.",
+        "height": 180,
+        "width": 460,
+        "color": 6
+      },
+      "id": "8f8250c9-fee7-4cd4-bf12-c7d9f4c91cd3",
+      "name": "NOTE - ALERTA ONLY",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        -520
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "IF Phone Present",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Phone Present": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {},
+  "tags": [
+    {
+      "updatedAt": "2026-03-17T14:55:39.673Z",
+      "createdAt": "2026-03-17T14:55:39.673Z",
+      "id": "5jhSLR0Oc3shUwhn",
+      "name": "virtuagil"
+    }
+  ]
+}

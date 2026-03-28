@@ -1,0 +1,28 @@
+{
+  "workflows": [
+    {
+      "input": "tmp/workflows-fix/fixed/Jade - Current Stable - FIXED.json",
+      "output": "references/n8n/Jade - Current Stable - SANITIZED.json"
+    },
+    {
+      "input": "tmp/workflows-fix/fixed/IoT - Alerta de Temperatura - WhatsApp - FIXED.json",
+      "output": "references/n8n/IoT - Alerta de Temperatura - WhatsApp - SANITIZED.json"
+    },
+    {
+      "input": "tmp/workflows-fix/fixed/IoT - Device Offline - WhatsApp - FIXED.json",
+      "output": "references/n8n/IoT - Device Offline - WhatsApp - SANITIZED.json"
+    },
+    {
+      "input": "tmp/workflows-fix/fixed/IoT - Device Online - WhatsApp - FIXED.json",
+      "output": "references/n8n/IoT - Device Online - WhatsApp - SANITIZED.json"
+    },
+    {
+      "input": "tmp/workflows-fix/fixed/IoT - Acionamento - WhatsApp - FIXED.json",
+      "output": "references/n8n/IoT - Acionamento - WhatsApp - SANITIZED.json"
+    },
+    {
+      "input": "tmp/workflows-fix/fixed/IoT - Energia - WhatsApp - FIXED.json",
+      "output": "references/n8n/IoT - Energia - WhatsApp - SANITIZED.json"
+    }
+  ]
+}
