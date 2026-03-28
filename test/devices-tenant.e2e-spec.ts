@@ -114,7 +114,7 @@ describe('Devices Tenant Isolation (e2e)', () => {
   it('should isolate GET/PATCH/DELETE by clientId', async () => {
     await request(app.getHttpServer())
       .post('/devices')
-      .send({ id: 'freezer_01', clientId: 'client_a' })
+      .send({ id: 'freezer_01', clientId: 'client_a', name: 'Freezer A' })
       .expect(201);
 
     await request(app.getHttpServer())
@@ -127,12 +127,12 @@ describe('Devices Tenant Isolation (e2e)', () => {
 
     await request(app.getHttpServer())
       .patch('/devices/freezer_01?clientId=client_b')
-      .send({ name: 'X' })
+      .send({ name: 'Outro nome' })
       .expect(404);
 
     await request(app.getHttpServer())
       .patch('/devices/freezer_01?clientId=client_a')
-      .send({ clientId: 'client_b', name: 'X' })
+      .send({ clientId: 'client_b', name: 'Outro nome' })
       .expect(400);
 
     await request(app.getHttpServer())

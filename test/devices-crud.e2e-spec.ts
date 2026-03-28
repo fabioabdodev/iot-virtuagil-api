@@ -163,6 +163,7 @@ describe('Devices CRUD (e2e)', () => {
       .post('/devices')
       .send({
         id: 'freezer_01',
+        clientId: 'client_a',
         name: 'Freezer A',
         minTemperature: -20,
         maxTemperature: -10,
@@ -192,6 +193,8 @@ describe('Devices CRUD (e2e)', () => {
       .post('/devices')
       .send({
         id: 'freezer_01',
+        clientId: 'client_a',
+        name: 'Freezer A',
         minTemperature: -20,
         maxTemperature: -10,
       })
@@ -219,7 +222,7 @@ describe('Devices CRUD (e2e)', () => {
   it('DELETE /devices/:id should remove existing device', async () => {
     await request(app.getHttpServer())
       .post('/devices')
-      .send({ id: 'freezer_01' })
+      .send({ id: 'freezer_01', clientId: 'client_a', name: 'Freezer A' })
       .expect(201);
 
     await request(app.getHttpServer())
