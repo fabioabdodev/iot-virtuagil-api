@@ -551,6 +551,12 @@ Correcoes validadas em producao:
 - a stack de producao agora deve preferir `API_IMAGE` e `WEB_IMAGE` com tag imutavel por release em vez de depender apenas de `latest`
 - o projeto agora possui `npm run health:check:prod` para validacao rapida do `/health` publicado
 - em producao, a stack do Swarm e o `.env.prod` da VPS devem permanecer alinhados; variaveis no Portainer isoladamente nao garantem que o deploy por SSH use o mesmo conjunto
+- regra fixa para novas variaveis de producao:
+  - adicionar o valor em `/opt/iot-virtuagil-api/.env.prod`
+  - adicionar o mapeamento correspondente em `deploy/swarm/stack.prod.yml`
+  - se o update for pelo Portainer, conferir tambem `Environment variables` da stack com o valor real
+  - nunca deixar o campo `value` do Portainer como `${NOME_DA_VARIAVEL}` esperando interpolacao automatica
+- sempre validar a injecao real com `docker service inspect iot-monitor_api`
 - em VPS pequena, o rollout da stack deve preferir `update_config.order = stop-first` para evitar `exit code 137` durante troca de imagem
 - Cloudflare configurado no plano `Free`
 - `monitor.virtuagil.com.br` validado com proxy ativo no Cloudflare

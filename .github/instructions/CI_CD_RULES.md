@@ -66,6 +66,20 @@ Observacao:
 - isso reduz o risco de pipeline verde com Swarm ainda reaproveitando uma imagem antiga marcada como `latest`
 - a stack salva no Portainer pode ficar desatualizada em relacao ao `stack.prod.yml`; quando houver divergencia entre Portainer, VPS e workflow, tratar a copia efetivamente usada no `docker stack deploy` como fonte principal
 - variaveis obrigatorias da API, como `AUTH_SECRET`, precisam existir em `.env.prod` e tambem ser repassadas no bloco `environment` do servico `api`
+- regra operacional correta para env em producao:
+  - o valor fica em `/opt/iot-virtuagil-api/.env.prod`
+  - o `deploy/swarm/stack.prod.yml` precisa declarar a variavel no bloco `services.api.environment`
+  - o Portainer/stack nao deve virar segunda fonte de valor com segredo hardcoded
+  - se a variavel existir no `.env.prod`, mas nao estiver declarada no `stack.prod.yml`, ela nao chega ao container
+- quando o update da stack for feito pelo editor do Portainer:
+  - a secao `Environment variables` da stack precisa conter o valor real usado na interpolacao
+  - deixar `${VARIAVEL}` no campo `value` dessa secao nao resolve a interpolacao
+  - no Portainer CE, a stack pode subir com placeholders literais como `${APP_RELEASE}` ou `${DEVICE_API_KEY}` se o `value` nao estiver preenchido
+- caso confirmado em `29/03/2026`:
+  - `JADE_COMMERCIAL_GATEWAY_KEY` estava correta no `.env.prod`
+  - mas nao aparecia em `docker service inspect iot-monitor_api`
+  - causa: a chave nao estava declarada em `deploy/swarm/stack.prod.yml`
+  - depois de declarar no YAML, a stack do Portainer ainda nao interpolava enquanto `Environment variables -> JADE_COMMERCIAL_GATEWAY_KEY` estava com `${JADE_COMMERCIAL_GATEWAY_KEY}` em vez do valor real `farm2809`
 - a VPS atual esperada pelo workflow usa o caminho `/opt/iot-virtuagil-api`
 - o namespace de imagens atual e `ghcr.io/fabioabdodev/iot-virtuagil-api`
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY` entra no build do web via GitHub Secrets

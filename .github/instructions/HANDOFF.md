@@ -912,6 +912,23 @@ Importante:
 - houve incidente em que `.env.prod` estava correto, mas o container nao recebia as novas vars
 - causa: `deploy/swarm/stack.prod.yml` nao repassava as novas variaveis
 - correcao ja aplicada no repo (`e5a1c2f`)
+- regra operacional reforcada em `29/03/2026`:
+  - valor sensivel novo deve entrar em `/opt/iot-virtuagil-api/.env.prod`
+  - o mesmo nome tambem precisa ser declarado no bloco `services.api.environment` de `deploy/swarm/stack.prod.yml`
+  - no Portainer, manter apenas a referencia `${VARIAVEL}` no editor da stack
+  - nao hardcodar segredo novo no editor do Portainer
+  - validacao final obrigatoria: `docker service inspect iot-monitor_api --format '{{range .Spec.TaskTemplate.ContainerSpec.Env}}{{println .}}{{end}}'`
+- ajuste fino confirmado no mesmo dia:
+  - ao usar `Update the stack` pelo Portainer CE, a secao `Environment variables` precisa ter o valor real da chave
+  - se o `value` ficar como `${JADE_COMMERCIAL_GATEWAY_KEY}`, o servico pode continuar sem interpolar corretamente
+  - sinal claro do problema: `docker service inspect iot-monitor_api` mostra placeholders literais como `${APP_RELEASE}` ou `${DEVICE_API_KEY}`
+- incidente confirmado em `29/03/2026` com Jade comercial:
+  - `JADE_COMMERCIAL_GATEWAY_KEY` existia no `.env.prod`
+  - a API retornava `401 JADE_COMMERCIAL_GATEWAY_KEY nao configurada`
+  - causa exata: `deploy/swarm/stack.prod.yml` nao declarava `JADE_COMMERCIAL_GATEWAY_KEY` em `services.api.environment`
+  - depois disso, a variavel so entrou no servico quando:
+    - a linha `JADE_COMMERCIAL_GATEWAY_KEY: ${JADE_COMMERCIAL_GATEWAY_KEY}` foi adicionada ao YAML da stack
+    - e o `Environment variables` da stack recebeu `farm2809` como valor real
 - na VPS atual `/opt/iot-virtuagil-api` **nao e clone git**
   - `git pull` ali falha com `not a git repository`
   - ajustes no `stack.prod.yml` local podem precisar ser manuais

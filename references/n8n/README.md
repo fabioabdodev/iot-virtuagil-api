@@ -18,7 +18,7 @@ Objetivo:
 ## Comando base
 
 ```bash
-npm run n8n:sanitize -- --in "tmp/workflows-fix/fixed/Jade - Current Stable - FIXED.json" --out "references/n8n/Jade - Current Stable - SANITIZED.json"
+npm run n8n:sanitize -- --in "workflowsN8N/Jade assistente WhatsApp.json" --out "references/n8n/Jade - Current Stable - SANITIZED.json"
 ```
 
 ## Manifesto opcional
@@ -29,7 +29,7 @@ Crie um arquivo JSON com esta estrutura:
 {
   "workflows": [
     {
-      "input": "tmp/workflows-fix/fixed/Jade - Current Stable - FIXED.json",
+      "input": "workflowsN8N/Jade assistente WhatsApp.json",
       "output": "references/n8n/Jade - Current Stable - SANITIZED.json"
     }
   ]
@@ -52,6 +52,10 @@ npm run n8n:sanitize -- --manifest references/n8n/manifest.local.json
 
 ## Observacao operacional
 
-Os workflows reais da Jade e dos alertas ainda continuam em `tmp/workflows-fix/fixed/`.
+Fonte local canonica atual:
+
+- Jade principal: `workflowsN8N/Jade assistente WhatsApp.json`
+- alertas e fluxos auxiliares ainda podem usar `tmp/workflows-fix/fixed/` como area local de trabalho
+
 Esta pasta nao substitui o n8n de producao nem o export bruto local.
 Ela serve para criar uma trilha versionada e auditavel da arquitetura sem expor segredo.

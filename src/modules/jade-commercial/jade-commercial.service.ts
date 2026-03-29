@@ -96,12 +96,17 @@ export class JadeCommercialService {
   }
 
   async scheduleCommercialFollowUp(input: ScheduleCommercialFollowUpInput) {
-    await this.upsertSalesLead({
+    const contact = await this.upsertSalesLead({
       leadPhone: input.leadPhone,
       leadName: input.leadName,
       interestTopic: input.interestTopic,
       notes: input.reason,
     });
+
+    const resolvedInterestTopic =
+      input.interestTopic?.trim() ||
+      contact.interestTopic ||
+      (((contact as any).interestTopics as string[] | undefined)?.at(-1) ?? null);
 
     return this.prisma.jadeFollowUpQueue.create({
       data: {
@@ -111,7 +116,7 @@ export class JadeCommercialService {
         reason: input.reason ?? 'lead_sem_conversao_imediata',
         status: 'pending',
         priority: 3,
-        interestTopic: input.interestTopic ?? null,
+        interestTopic: resolvedInterestTopic,
         followUpStage: input.followUpStage ?? 'initial',
         offerType: input.offerType ?? 'discount_25',
         nextContactAt:
