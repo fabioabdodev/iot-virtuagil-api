@@ -18,6 +18,7 @@ import { ClientModulesModule } from './modules/client-modules/client-modules.mod
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { SolutionsModule } from './modules/solutions/solutions.module';
 import { EnergyModule } from './modules/energy/energy.module';
+import { JadeCommercialModule } from './modules/jade-commercial/jade-commercial.module';
 import { validateEnv } from './config/env';
 import { InfraModule } from './infra/infra.module';
 
@@ -46,6 +47,7 @@ import { InfraModule } from './infra/infra.module';
     AuditLogsModule,
     SolutionsModule,
     EnergyModule,
+    JadeCommercialModule,
   ],
   controllers: [AppController],
   providers: [AppService],

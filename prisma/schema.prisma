@@ -277,18 +277,26 @@ model AuditLog {
 }
 
 model JadeContact {
-  id            String    @id @default(uuid())
-  leadPhone     String    @unique @map("lead_phone")
-  leadName      String?   @map("lead_name")
-  source        String?   @default("whatsapp")
-  isClient      Boolean   @default(false) @map("is_client")
-  clientId      String?   @map("client_id")
-  tags          String[]  @default([])
-  status        String?   @default("active")
-  notes         String?
-  lastMessageAt DateTime? @map("last_message_at")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id                     String    @id @default(uuid())
+  leadPhone              String    @unique @map("lead_phone")
+  leadName               String?   @map("lead_name")
+  source                 String?   @default("whatsapp")
+  isClient               Boolean   @default(false) @map("is_client")
+  clientId               String?   @map("client_id")
+  tags                   String[]  @default([])
+  status                 String?   @default("active")
+  notes                  String?
+  salesMode              Boolean   @default(false) @map("sales_mode")
+  interestTopic          String?   @map("interest_topic")
+  leadTemperature        String?   @default("warm") @map("lead_temperature")
+  commercialStatus       String?   @default("active") @map("commercial_status")
+  lastCommercialIntentAt DateTime? @map("last_commercial_intent_at")
+  lastOfferAt            DateTime? @map("last_offer_at")
+  optOutAt               DateTime? @map("opt_out_at")
+  convertedAt            DateTime? @map("converted_at")
+  lastMessageAt          DateTime? @map("last_message_at")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
 
   @@map("jade_contacts")
 }
@@ -331,8 +339,14 @@ model JadeFollowUpQueue {
   reason        String?
   status        String    @default("pending")
   priority      Int       @default(3)
+  interestTopic String?   @map("interest_topic")
+  followUpStage String?   @default("initial") @map("follow_up_stage")
+  offerType     String?   @map("offer_type")
+  lastResponse  String?   @map("last_response")
   nextContactAt DateTime? @map("next_contact_at")
   lastAttemptAt DateTime? @map("last_attempt_at")
+  lastOfferAt   DateTime? @map("last_offer_at")
+  optOutAt      DateTime? @map("opt_out_at")
   attempts      Int       @default(0)
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
@@ -342,16 +356,19 @@ model JadeFollowUpQueue {
 }
 
 model JadeHumanHandoff {
-  id         String    @id @default(uuid())
-  leadPhone  String    @map("lead_phone")
-  leadName   String?   @map("lead_name")
-  reason     String?
-  status     String    @default("open")
-  assignedTo String?   @map("assigned_to")
-  summary    String?
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
-  resolvedAt DateTime? @map("resolved_at")
+  id               String    @id @default(uuid())
+  leadPhone        String    @map("lead_phone")
+  leadName         String?   @map("lead_name")
+  reason           String?
+  interestTopic    String?   @map("interest_topic")
+  commercialIntent String?   @map("commercial_intent")
+  sourceStage      String?   @map("source_stage")
+  status           String    @default("open")
+  assignedTo       String?   @map("assigned_to")
+  summary          String?
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  resolvedAt       DateTime? @map("resolved_at")
 
   @@index([status, createdAt])
   @@map("jade_human_handoff")

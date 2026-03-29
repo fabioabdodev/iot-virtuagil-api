@@ -15,6 +15,51 @@ Nota de terminologia ativa:
 
 ## Atualizacao complementar (2026-03-23)
 
+## Atualizacao complementar (2026-03-28)
+
+Fechamento operacional da Jade nesta rodada:
+
+- base operacional mais recente validada pelo usuario:
+  - `C:\Users\Fabio\Downloads\Jade - Main Agent - FIXED (11).json`
+- copia local de trabalho mantida em:
+  - `workflowsN8N/Jade assistente WhatsApp.json`
+- estado funcional validado no n8n/WhatsApp:
+  - texto responde corretamente
+  - audio responde corretamente
+  - imagem responde corretamente
+  - video permanece bloqueado
+- a regressao de imagem desta rodada ocorreu porque o `FIXED (11)` voltou ao formato antigo no no `Set Image Message`
+- correcao local aplicada e validada:
+  - `Set Image Message` deve permanecer como `Code` node
+  - o node deve extrair o texto da analise da imagem do payload embrulhado em `wrapped['0']` quando existir
+  - esse ajuste foi o que restaurou a resposta correta para imagens
+- diretriz operacional importante:
+  - nao retomar a camada de anti-spam automaticamente na Jade sem nova validacao dedicada
+  - nesta rodada, as tentativas de bloqueio por spam foram removidas para preservar estabilidade
+
+Planejamento tecnico aprovado para a proxima etapa comercial da Jade:
+
+- pessoas que nao forem clientes da Virtuagil devem entrar em `modo_venda`
+- quando houver interesse positivo, a Jade deve criar `handoff_humano`
+- quando houver resposta negativa ou adiamento, a Jade deve entrar em trilha de `follow_up_comercial`
+- clientes ativos entram em trilha separada de `cross_sell_clientes`
+  - apenas para modulos que ainda nao possuem
+  - sem desconto em modulo ja contratado
+- a modelagem Prisma foi expandida para suportar isso com novos campos em:
+  - `jade_contacts`
+  - `jade_follow_up_queue`
+  - `jade_human_handoff`
+- migration criada para essa etapa:
+  - `prisma/migrations/20260328233000_expand_jade_commercial_pipeline/migration.sql`
+- modulo backend inicial criado para centralizar a logica comercial da Jade:
+  - `src/modules/jade-commercial/jade-commercial.service.ts`
+  - `src/modules/jade-commercial/jade-commercial.module.ts`
+- escopo atual desse modulo:
+  - registrar/atualizar lead comercial
+  - agendar follow-up comercial
+  - abrir handoff humano
+  - calcular oportunidade de cross-sell para cliente ativo a partir dos modulos ja contratados
+
 Fechamento adicional apos retomada de internet:
 
 - bateria completa dos workflows executada novamente em producao com sucesso:

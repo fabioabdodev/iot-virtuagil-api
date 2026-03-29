@@ -334,6 +334,12 @@ Para fluxos n8n deste projeto:
 - ao retomar um incidente, priorizar sempre o arquivo correspondente em `workflowsN8N/`
 - arquivo canonico atual da Jade:
   - `workflowsN8N/Jade assistente WhatsApp.json`
+- quando a Jade voltar a falhar apenas para imagem, verificar primeiro o no `Set Image Message`
+  - no estado estavel desta rodada, ele nao deve ficar como `Set`
+  - ele deve ficar como `Code` node
+  - a extracao do texto da imagem deve considerar payload embrulhado em `wrapped['0']`
+- nao reintroduzir bloqueio anti-spam na Jade sem validacao isolada
+  - nesta rodada, a camada de anti-spam foi retirada para preservar estabilidade do fluxo principal
 - arquivos auxiliares atuais:
   - `workflowsN8N/IoT acionamento WhatsApp.json`
   - `workflowsN8N/IoT alerta de temperatura WhatsApp.json`

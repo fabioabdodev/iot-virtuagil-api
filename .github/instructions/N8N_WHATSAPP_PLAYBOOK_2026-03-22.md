@@ -151,6 +151,17 @@ Nota:
 
 - arquivos fora de `workflowsN8N/` podem estar desatualizados/intermediarios
 - manter `workflowsN8N/` como fonte local oficial para copia/importacao
+- para a Jade, o estado estavel mais recente validado nesta rodada usa:
+  - texto ok
+  - audio ok
+  - imagem ok
+  - video bloqueado
+- no ramo de imagem da Jade:
+  - `Get Image Base64 From Evolution`
+  - `Convert Image To File`
+  - `Analyze Image`
+  - `Set Image Message` ajustado como `Code` node para extrair o texto da analise
+- se a Jade voltar a pedir que o usuario descreva a imagem, revisar primeiro esse no de imagem antes de mexer em prompt, memoria ou buffer
 
 ## 10) Regra obrigatoria de governanca (Prisma)
 
