@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchEnergyReadings } from '@/lib/api';
 import type { EnergySensorType } from '@/types/energy';
 
+const ENERGY_READINGS_REFETCH_INTERVAL_MS = 180000;
+
 export function useEnergyReadings(
   deviceId?: string,
   clientId?: string,
@@ -27,8 +29,9 @@ export function useEnergyReadings(
     enabled: Boolean(deviceId && clientId && authToken && enabled),
     retry: 2,
     refetchOnWindowFocus: false,
-    refetchInterval: 30000,
-    refetchIntervalInBackground: true,
+    staleTime: 60000,
+    refetchInterval: ENERGY_READINGS_REFETCH_INTERVAL_MS,
+    refetchIntervalInBackground: false,
     placeholderData: (previousData) => previousData,
   });
 }

@@ -3,6 +3,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchActuators } from '@/lib/api';
 
+const ACTUATORS_REFETCH_INTERVAL_MS = 120000;
+
 export function useActuators(
   clientId?: string,
   authToken?: string,
@@ -14,8 +16,9 @@ export function useActuators(
     enabled: Boolean(clientId && authToken && enabled),
     retry: 2,
     refetchOnWindowFocus: false,
-    refetchInterval: 30000,
-    refetchIntervalInBackground: true,
+    staleTime: 30000,
+    refetchInterval: ACTUATORS_REFETCH_INTERVAL_MS,
+    refetchIntervalInBackground: false,
     placeholderData: (previousData) => previousData,
   });
 }

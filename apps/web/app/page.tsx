@@ -60,6 +60,10 @@ import { useDeviceMutations } from '@/hooks/use-device-mutations';
 import { useDevices } from '@/hooks/use-devices';
 import { useClientModules } from '@/hooks/use-client-modules';
 import { formatHumanDateTime, formatRelativeDateTime } from '@/lib/date';
+import {
+  formatMonitoringInterval,
+  formatOfflineAlertDelay,
+} from '@/lib/monitoring-profile';
 
 function statusClass(isOffline: boolean) {
   return isOffline
@@ -1193,6 +1197,10 @@ function DashboardContent() {
                           <span>{device.name ?? device.id}</span>
                           <span className="text-xs text-muted">
                             codigo tecnico: {device.id}
+                          </span>
+                          <span className="text-xs text-muted">
+                            cadencia: {formatMonitoringInterval(device.monitoringIntervalSeconds)} |
+                            offline: {formatOfflineAlertDelay(device.offlineAlertDelayMinutes)}
                           </span>
                         </div>
                       </td>

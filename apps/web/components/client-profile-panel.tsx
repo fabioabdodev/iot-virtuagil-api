@@ -7,6 +7,11 @@ import { useClient } from '@/hooks/use-client';
 import { useClientMutations } from '@/hooks/use-client-mutations';
 import { AuthUser } from '@/types/auth';
 import { ClientStatus } from '@/types/client';
+import {
+  describeMonitoringTier,
+  formatMonitoringInterval,
+  formatOfflineAlertDelay,
+} from '@/lib/monitoring-profile';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -90,6 +95,8 @@ export function ClientProfilePanel({
   const [billingPhone, setBillingPhone] = useState('');
   const [actuationNotifyCooldownMinutes, setActuationNotifyCooldownMinutes] =
     useState('15');
+  const [monitoringIntervalSeconds, setMonitoringIntervalSeconds] = useState('300');
+  const [offlineAlertDelayMinutes, setOfflineAlertDelayMinutes] = useState('15');
   const [useSameAlertPhone, setUseSameAlertPhone] = useState(true);
   const [useSameBillingPhone, setUseSameBillingPhone] = useState(true);
   const [billingEmail, setBillingEmail] = useState('');
@@ -121,6 +128,8 @@ export function ClientProfilePanel({
     setActuationNotifyCooldownMinutes(
       String(data.actuationNotifyCooldownMinutes ?? 15),
     );
+    setMonitoringIntervalSeconds(String(data.monitoringIntervalSeconds ?? 300));
+    setOfflineAlertDelayMinutes(String(data.offlineAlertDelayMinutes ?? 15));
     setUseSameAlertPhone(nextAlertPhone === nextAdminPhone);
     setUseSameBillingPhone(nextBillingPhone === nextAdminPhone);
     setBillingEmail(data.billingEmail ?? '');
@@ -244,6 +253,30 @@ export function ClientProfilePanel({
       return;
     }
 
+    const parsedMonitoringIntervalSeconds = Number(monitoringIntervalSeconds);
+    if (
+      !Number.isFinite(parsedMonitoringIntervalSeconds) ||
+      parsedMonitoringIntervalSeconds < 10 ||
+      parsedMonitoringIntervalSeconds > 86400
+    ) {
+      setFormError(
+        'Cadencia de monitoramento invalida. Use um valor entre 10 e 86400 segundos.',
+      );
+      return;
+    }
+
+    const parsedOfflineAlertDelayMinutes = Number(offlineAlertDelayMinutes);
+    if (
+      !Number.isFinite(parsedOfflineAlertDelayMinutes) ||
+      parsedOfflineAlertDelayMinutes < 1 ||
+      parsedOfflineAlertDelayMinutes > 10080
+    ) {
+      setFormError(
+        'Tempo de alerta offline invalido. Use um valor entre 1 e 10080 minutos.',
+      );
+      return;
+    }
+
     await updateMutation.mutateAsync({
       name: name.trim() || undefined,
       adminName: adminName.trim() || undefined,
@@ -257,6 +290,8 @@ export function ClientProfilePanel({
       actuationNotifyCooldownMinutes: Math.floor(
         parsedActuationNotifyCooldownMinutes,
       ),
+      monitoringIntervalSeconds: Math.floor(parsedMonitoringIntervalSeconds),
+      offlineAlertDelayMinutes: Math.floor(parsedOfflineAlertDelayMinutes),
       status,
       notes: notes.trim() || undefined,
     });
@@ -352,7 +387,7 @@ export function ClientProfilePanel({
 
       {data ? (
         <>
-          <div className="mb-4 grid gap-3 md:grid-cols-3">
+          <div className="mb-4 grid gap-3 md:grid-cols-5">
             <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
                 Cliente
@@ -376,6 +411,25 @@ export function ClientProfilePanel({
               </p>
               <p className="mt-2 text-sm font-medium text-ink">
                 {currentUser?.name ?? 'Admin'}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">
+                Cadencia padrao
+              </p>
+              <p className="mt-2 text-sm font-medium text-ink">
+                {formatMonitoringInterval(data.monitoringIntervalSeconds)}
+              </p>
+              <p className="mt-1 text-xs text-muted">
+                {describeMonitoringTier(data.monitoringIntervalSeconds)}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-line/70 bg-bg/30 p-3">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">
+                Offline
+              </p>
+              <p className="mt-2 text-sm font-medium text-ink">
+                {formatOfflineAlertDelay(data.offlineAlertDelayMinutes)}
               </p>
             </div>
           </div>
@@ -512,6 +566,40 @@ export function ClientProfilePanel({
                 />
                 <p className="mt-1 text-xs text-muted">
                   Evita mensagens repetidas de ligar/desligar em pouco tempo.
+                </p>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-muted">
+                  Cadencia de monitoramento (segundos)
+                </label>
+                <Input
+                  type="number"
+                  min={10}
+                  max={86400}
+                  step={10}
+                  value={monitoringIntervalSeconds}
+                  onChange={(event) => setMonitoringIntervalSeconds(event.target.value)}
+                  placeholder="300"
+                />
+                <p className="mt-1 text-xs text-muted">
+                  Define a frequencia esperada de leitura para esta conta.
+                </p>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-muted">
+                  Alerta de offline (minutos)
+                </label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={10080}
+                  step={1}
+                  value={offlineAlertDelayMinutes}
+                  onChange={(event) => setOfflineAlertDelayMinutes(event.target.value)}
+                  placeholder="15"
+                />
+                <p className="mt-1 text-xs text-muted">
+                  Quanto tempo sem leitura a operacao aceita antes de marcar offline.
                 </p>
               </div>
               <div>

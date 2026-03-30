@@ -72,6 +72,22 @@ const formSchema = z.object({
     .trim()
     .min(1, 'Email financeiro obrigatorio')
     .refine((value) => isValidEmail(value), { message: 'Email invalido' }),
+  monitoringIntervalSeconds: z
+    .string()
+    .trim()
+    .min(1, 'Cadencia obrigatoria')
+    .transform((value) => Number(value))
+    .refine((value) => Number.isFinite(value) && value >= 10 && value <= 86400, {
+      message: 'Use entre 10 e 86400 segundos',
+    }),
+  offlineAlertDelayMinutes: z
+    .string()
+    .trim()
+    .min(1, 'Tempo de alerta offline obrigatorio')
+    .transform((value) => Number(value))
+    .refine((value) => Number.isFinite(value) && value >= 1 && value <= 10080, {
+      message: 'Use entre 1 e 10080 minutos',
+    }),
   status: z.enum(['active', 'inactive', 'delinquent']).default('active'),
   notes: z.string().trim().optional().transform((value) => value || undefined),
 }).superRefine((values, context) => {
@@ -150,6 +166,8 @@ export function ClientsPanel({
       useSameBillingPhone: true,
       useSameAlertPhone: true,
       billingEmail: '',
+      monitoringIntervalSeconds: '300',
+      offlineAlertDelayMinutes: '15',
       status: 'active',
       notes: '',
     },
@@ -366,6 +384,8 @@ export function ClientsPanel({
                   : values.billingName,
                 billingPhone: billingPhone ?? values.adminPhone,
                 billingEmail: values.billingEmail,
+                monitoringIntervalSeconds: values.monitoringIntervalSeconds,
+                offlineAlertDelayMinutes: values.offlineAlertDelayMinutes,
                 status: values.status,
                 notes: values.notes,
               });
@@ -526,6 +546,52 @@ export function ClientsPanel({
                     {errors.billingEmail ? (
                       <p className="mt-1 text-xs text-bad">{errors.billingEmail.message}</p>
                     ) : null}
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs text-muted">
+                        Cadencia de monitoramento (segundos)
+                      </label>
+                      <Input
+                        type="number"
+                        min={10}
+                        max={86400}
+                        step={10}
+                        {...register('monitoringIntervalSeconds')}
+                        placeholder="300"
+                      />
+                      <p className="mt-1 text-xs text-muted">
+                        Ex.: 30, 60, 300 ou 86400.
+                      </p>
+                      {errors.monitoringIntervalSeconds ? (
+                        <p className="mt-1 text-xs text-bad">
+                          {errors.monitoringIntervalSeconds.message}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <div>
+                      <label className="mb-1 block text-xs text-muted">
+                        Alerta offline (minutos)
+                      </label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={10080}
+                        step={1}
+                        {...register('offlineAlertDelayMinutes')}
+                        placeholder="15"
+                      />
+                      <p className="mt-1 text-xs text-muted">
+                        Ex.: 5, 15, 60 ou 1440.
+                      </p>
+                      {errors.offlineAlertDelayMinutes ? (
+                        <p className="mt-1 text-xs text-bad">
+                          {errors.offlineAlertDelayMinutes.message}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
 
                   <div>

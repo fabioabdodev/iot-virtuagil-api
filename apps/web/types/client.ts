@@ -10,6 +10,8 @@ export interface ClientSummary {
   alertPhone: string;
   actuationNotifyCooldownMinutes: number | null;
   deviceApiKey: string | null;
+  monitoringIntervalSeconds: number;
+  offlineAlertDelayMinutes: number;
   billingName: string | null;
   billingPhone: string | null;
   phone: string | null;
@@ -30,6 +32,8 @@ export interface ClientInput {
   actuationNotifyCooldownMinutes?: number;
   deviceApiKey?: string;
   regenerateDeviceApiKey?: boolean;
+  monitoringIntervalSeconds?: number;
+  offlineAlertDelayMinutes?: number;
   billingName?: string;
   billingPhone?: string;
   billingEmail?: string;
@@ -47,6 +51,8 @@ export interface CreateClientInput extends ClientInput {
   alertPhone: string;
   actuationNotifyCooldownMinutes?: number;
   deviceApiKey?: string;
+  monitoringIntervalSeconds?: number;
+  offlineAlertDelayMinutes?: number;
   billingName?: string;
   billingPhone: string;
   billingEmail: string;

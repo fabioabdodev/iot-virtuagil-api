@@ -36,6 +36,26 @@ const formSchema = z
       .refine((value) => value == null || Number.isFinite(value), {
         message: 'Maximo invalido',
       }),
+    monitoringIntervalSeconds: z
+      .string()
+      .optional()
+      .transform((value) => (value?.trim() ? Number(value) : undefined))
+      .refine(
+        (value) => value == null || (Number.isFinite(value) && value >= 10 && value <= 86400),
+        {
+          message: 'Cadencia invalida',
+        },
+      ),
+    offlineAlertDelayMinutes: z
+      .string()
+      .optional()
+      .transform((value) => (value?.trim() ? Number(value) : undefined))
+      .refine(
+        (value) => value == null || (Number.isFinite(value) && value >= 1 && value <= 10080),
+        {
+          message: 'Offline invalido',
+        },
+      ),
   })
   .refine(
     (values) =>
@@ -56,6 +76,8 @@ type DeviceFormOutput = {
   location?: string;
   minTemperature?: number;
   maxTemperature?: number;
+  monitoringIntervalSeconds?: number;
+  offlineAlertDelayMinutes?: number;
 };
 
 type DeviceFormProps = {
@@ -98,6 +120,8 @@ export function DeviceForm({
       location: '',
       minTemperature: '',
       maxTemperature: '',
+      monitoringIntervalSeconds: '',
+      offlineAlertDelayMinutes: '',
     },
   });
   const watchedName = useWatch({
@@ -114,6 +138,14 @@ export function DeviceForm({
           device.minTemperature != null ? String(device.minTemperature) : '',
         maxTemperature:
           device.maxTemperature != null ? String(device.maxTemperature) : '',
+        monitoringIntervalSeconds:
+          device.monitoringIntervalSeconds != null
+            ? String(device.monitoringIntervalSeconds)
+            : '',
+        offlineAlertDelayMinutes:
+          device.offlineAlertDelayMinutes != null
+            ? String(device.offlineAlertDelayMinutes)
+            : '',
       });
       return;
     }
@@ -123,6 +155,8 @@ export function DeviceForm({
       location: '',
       minTemperature: '',
       maxTemperature: '',
+      monitoringIntervalSeconds: '',
+      offlineAlertDelayMinutes: '',
     });
   }, [mode, device, reset]);
 
@@ -169,6 +203,12 @@ export function DeviceForm({
         : undefined,
       maxTemperature: allowTemperatureFields
         ? parsed.maxTemperature
+        : undefined,
+      monitoringIntervalSeconds: allowStructureFields
+        ? parsed.monitoringIntervalSeconds
+        : undefined,
+      offlineAlertDelayMinutes: allowStructureFields
+        ? parsed.offlineAlertDelayMinutes
         : undefined,
     };
 
@@ -276,6 +316,46 @@ export function DeviceForm({
               {errors.maxTemperature ? (
                 <p className="mt-1 text-xs text-bad">
                   {errors.maxTemperature.message}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {allowStructureFields ? (
+            <div>
+              <label className="mb-1 block text-xs text-muted">
+                Cadencia (segundos)
+              </label>
+              <Input
+                {...register('monitoringIntervalSeconds')}
+                placeholder="vazio = herdar da conta"
+              />
+              <p className="mt-1 text-xs text-muted">
+                Ex.: 30, 60, 300 ou 86400.
+              </p>
+              {errors.monitoringIntervalSeconds ? (
+                <p className="mt-1 text-xs text-bad">
+                  {errors.monitoringIntervalSeconds.message}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {allowStructureFields ? (
+            <div>
+              <label className="mb-1 block text-xs text-muted">
+                Offline (minutos)
+              </label>
+              <Input
+                {...register('offlineAlertDelayMinutes')}
+                placeholder="vazio = herdar da conta"
+              />
+              <p className="mt-1 text-xs text-muted">
+                Quanto tempo o equipamento pode ficar sem leitura antes do alerta.
+              </p>
+              {errors.offlineAlertDelayMinutes ? (
+                <p className="mt-1 text-xs text-bad">
+                  {errors.offlineAlertDelayMinutes.message}
                 </p>
               ) : null}
             </div>

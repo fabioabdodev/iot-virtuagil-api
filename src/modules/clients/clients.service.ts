@@ -65,6 +65,13 @@ export class ClientsService {
 
     const deviceApiKey = this.resolveClientDeviceApiKey(dto.id, dto.deviceApiKey);
     await this.ensureDeviceApiKeyIsUnique(deviceApiKey);
+    const monitoringIntervalSeconds = this.resolveMonitoringIntervalSeconds(
+      dto.monitoringIntervalSeconds,
+    );
+    const offlineAlertDelayMinutes = this.resolveOfflineAlertDelayMinutes(
+      dto.offlineAlertDelayMinutes,
+      monitoringIntervalSeconds,
+    );
 
     return this.prisma.client.create({
       data: {
@@ -78,6 +85,8 @@ export class ClientsService {
         alertPhone,
         actuationNotifyCooldownMinutes: dto.actuationNotifyCooldownMinutes,
         deviceApiKey,
+        monitoringIntervalSeconds,
+        offlineAlertDelayMinutes,
         billingName: dto.billingName?.trim() ?? trimmedAdminName,
         billingPhone,
         billingEmail: trimmedBillingEmail,
@@ -175,6 +184,15 @@ export class ClientsService {
           (existing as any).deviceApiKey ?? undefined,
         );
     await this.ensureDeviceApiKeyIsUnique(deviceApiKey, id);
+    const monitoringIntervalSeconds = this.resolveMonitoringIntervalSeconds(
+      dto.monitoringIntervalSeconds,
+      (existing as any).monitoringIntervalSeconds,
+    );
+    const offlineAlertDelayMinutes = this.resolveOfflineAlertDelayMinutes(
+      dto.offlineAlertDelayMinutes,
+      monitoringIntervalSeconds,
+      (existing as any).offlineAlertDelayMinutes,
+    );
 
     return this.prisma.client.update({
       where: { id },
@@ -188,6 +206,8 @@ export class ClientsService {
         alertPhone,
         actuationNotifyCooldownMinutes: dto.actuationNotifyCooldownMinutes,
         deviceApiKey,
+        monitoringIntervalSeconds,
+        offlineAlertDelayMinutes,
         billingName: dto.billingName?.trim(),
         billingPhone: dto.billingPhone != null ? billingPhone : undefined,
         billingEmail: nextBillingEmail,
@@ -279,6 +299,37 @@ export class ClientsService {
 
   private generateClientDeviceApiKey(clientId: string) {
     return `dvk_${clientId}_${randomBytes(10).toString('hex')}`;
+  }
+
+  private resolveMonitoringIntervalSeconds(
+    providedValue?: number,
+    currentValue?: number,
+  ) {
+    if (providedValue != null) {
+      return Math.floor(providedValue);
+    }
+
+    if (currentValue != null) {
+      return currentValue;
+    }
+
+    return 300;
+  }
+
+  private resolveOfflineAlertDelayMinutes(
+    providedValue: number | undefined,
+    monitoringIntervalSeconds: number,
+    currentValue?: number,
+  ) {
+    if (providedValue != null) {
+      return Math.floor(providedValue);
+    }
+
+    if (currentValue != null) {
+      return currentValue;
+    }
+
+    return Math.max(5, Math.ceil((monitoringIntervalSeconds * 3) / 60));
   }
 
   private async ensureDeviceApiKeyIsUnique(

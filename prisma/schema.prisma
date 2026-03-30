@@ -42,6 +42,11 @@ model Device {
   offlineSince DateTime?
   lastAlertAt  DateTime?
 
+  // optional override; when null, inherit cadence from client
+  monitoringIntervalSeconds Int?
+  // optional override; when null, inherit offline alert delay from client
+  offlineAlertDelayMinutes  Int?
+
   // configurable temperature boundaries for each device
   minTemperature Float? // null => no lower limit
   maxTemperature Float? // null => no upper limit
@@ -64,6 +69,8 @@ model Client {
   alertPhone                     String
   actuationNotifyCooldownMinutes Int?
   deviceApiKey                   String?             @unique
+  monitoringIntervalSeconds      Int                 @default(300)
+  offlineAlertDelayMinutes       Int                 @default(15)
   billingName                    String?
   billingPhone                   String?
   billingEmail                   String?

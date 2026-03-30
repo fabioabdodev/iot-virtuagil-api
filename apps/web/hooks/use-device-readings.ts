@@ -3,6 +3,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchDeviceReadings } from '@/lib/api';
 
+const LIVE_READINGS_REFETCH_INTERVAL_MS = 60000;
+
 export function useDeviceReadings(
   deviceId?: string,
   clientId?: string,
@@ -18,8 +20,9 @@ export function useDeviceReadings(
     enabled: Boolean(deviceId),
     retry: 2,
     refetchOnWindowFocus: false,
-    refetchInterval: live ? 15000 : false,
-    refetchIntervalInBackground: live,
+    staleTime: live ? 15000 : 60000,
+    refetchInterval: live ? LIVE_READINGS_REFETCH_INTERVAL_MS : false,
+    refetchIntervalInBackground: false,
     placeholderData: (previousData) => previousData,
   });
 }

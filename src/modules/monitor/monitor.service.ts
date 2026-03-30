@@ -20,28 +20,31 @@ export class MonitorService {
 
   @Cron('*/1 * * * *')
   async checkOfflineDevices() {
-    const minutesOffline =
-      this.configService.get<number>('DEVICE_OFFLINE_MINUTES') ?? 5;
     const temperatureCooldownMinutes =
       this.configService.get<number>('TEMPERATURE_ALERT_COOLDOWN_MINUTES') ?? 5;
 
-    const cutoff = new Date(Date.now() - minutesOffline * 60 * 1000);
     const totalDevices = await this.prisma.device.count();
     const offlineCandidates = await this.prisma.device.findMany({
       where: {
-        AND: [
-          { isOffline: false },
-          {
-            OR: [{ lastSeen: null }, { lastSeen: { lt: cutoff } }],
-          },
-        ],
+        isOffline: false,
       },
-    });
+      include: {
+        client: {
+          select: {
+            monitoringIntervalSeconds: true,
+            offlineAlertDelayMinutes: true,
+          },
+        },
+      },
+    } as any);
+    const dueOfflineCandidates = offlineCandidates.filter((device) =>
+      this.isDeviceOfflineCandidate(device as any),
+    );
     this.logger.log(
-      `Monitor tick totalDevices=${totalDevices} offlineCandidates=${offlineCandidates.length} cutoff=${cutoff.toISOString()} offlineThresholdMinutes=${minutesOffline}`,
+      `Monitor tick totalDevices=${totalDevices} offlineCandidates=${dueOfflineCandidates.length}`,
     );
 
-    for (const device of offlineCandidates) {
+    for (const device of dueOfflineCandidates as any[]) {
       const offlineSince = new Date(Date.now());
       await this.prisma.device.update({
         where: { id: device.id },
@@ -73,6 +76,43 @@ export class MonitorService {
       await this.processLegacyDeviceThresholds(temperatureCooldownMinutes);
     }
     await this.processConfiguredEnergyRules();
+  }
+
+  private isDeviceOfflineCandidate(device: {
+    lastSeen?: Date | null;
+    offlineAlertDelayMinutes?: number | null;
+    monitoringIntervalSeconds?: number | null;
+    client?: {
+      offlineAlertDelayMinutes?: number | null;
+      monitoringIntervalSeconds?: number | null;
+    } | null;
+  }) {
+    const effectiveDelayMinutes = this.resolveOfflineAlertDelayMinutes(device);
+    const cutoff = new Date(Date.now() - effectiveDelayMinutes * 60 * 1000);
+    return !device.lastSeen || device.lastSeen < cutoff;
+  }
+
+  private resolveOfflineAlertDelayMinutes(device: {
+    offlineAlertDelayMinutes?: number | null;
+    monitoringIntervalSeconds?: number | null;
+    client?: {
+      offlineAlertDelayMinutes?: number | null;
+      monitoringIntervalSeconds?: number | null;
+    } | null;
+  }) {
+    const explicitDelay =
+      device.offlineAlertDelayMinutes ??
+      device.client?.offlineAlertDelayMinutes ??
+      null;
+    if (explicitDelay != null) {
+      return explicitDelay;
+    }
+
+    const monitoringIntervalSeconds =
+      device.monitoringIntervalSeconds ??
+      device.client?.monitoringIntervalSeconds ??
+      300;
+    return Math.max(5, Math.ceil((monitoringIntervalSeconds * 3) / 60));
   }
 
   private async processConfiguredTemperatureRules() {

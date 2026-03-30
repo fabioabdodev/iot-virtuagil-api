@@ -8,6 +8,8 @@ export type DeviceSummary = {
   offlineSince: string | null;
   minTemperature: number | null;
   maxTemperature: number | null;
+  monitoringIntervalSeconds: number | null;
+  offlineAlertDelayMinutes: number | null;
   lastTemperature: number | null;
   lastReadingAt: string | null;
 };
@@ -26,4 +28,6 @@ export type DeviceInput = {
   location?: string;
   minTemperature?: number;
   maxTemperature?: number;
+  monitoringIntervalSeconds?: number;
+  offlineAlertDelayMinutes?: number;
 };

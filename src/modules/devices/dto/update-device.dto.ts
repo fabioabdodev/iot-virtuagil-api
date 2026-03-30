@@ -5,7 +5,9 @@ import {
   IsNumber,
   IsNotEmpty,
   Matches,
+  Max,
   MinLength,
+  Min,
 } from 'class-validator';
 
 export class UpdateDeviceDto {
@@ -34,4 +36,18 @@ export class UpdateDeviceDto {
   @Type(() => Number)
   @IsNumber()
   maxTemperature?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(10)
+  @Max(86400)
+  monitoringIntervalSeconds?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(10080)
+  offlineAlertDelayMinutes?: number;
 }

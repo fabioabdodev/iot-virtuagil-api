@@ -56,6 +56,8 @@ export class DevicesService {
       clientId: dto.clientId,
       name: dto.name?.trim(),
       location: dto.location,
+      monitoringIntervalSeconds: dto.monitoringIntervalSeconds,
+      offlineAlertDelayMinutes: dto.offlineAlertDelayMinutes,
       minTemperature: dto.minTemperature,
       maxTemperature: dto.maxTemperature,
       isOffline: false,
@@ -123,6 +125,10 @@ export class DevicesService {
         offlineSince: device.offlineSince,
         minTemperature: (device as any).minTemperature ?? null,
         maxTemperature: (device as any).maxTemperature ?? null,
+        monitoringIntervalSeconds:
+          (device as any).monitoringIntervalSeconds ?? null,
+        offlineAlertDelayMinutes:
+          (device as any).offlineAlertDelayMinutes ?? null,
         lastTemperature: latest?.temperature ?? null,
         lastReadingAt: latest?.createdAt ?? null,
       };
@@ -227,7 +233,9 @@ export class DevicesService {
       const hasStructuralFields =
         dto.clientId !== undefined ||
         dto.name !== undefined ||
-        dto.location !== undefined;
+        dto.location !== undefined ||
+        dto.monitoringIntervalSeconds !== undefined ||
+        dto.offlineAlertDelayMinutes !== undefined;
 
       if (hasStructuralFields) {
         throw new ForbiddenException(
@@ -254,6 +262,8 @@ export class DevicesService {
       clientId: clientId ?? dto.clientId,
       name: dto.name,
       location: dto.location,
+      monitoringIntervalSeconds: dto.monitoringIntervalSeconds,
+      offlineAlertDelayMinutes: dto.offlineAlertDelayMinutes,
       minTemperature: dto.minTemperature,
       maxTemperature: dto.maxTemperature,
     };

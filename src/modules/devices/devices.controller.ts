@@ -107,7 +107,9 @@ export class DevicesController {
       const hasStructuralFields =
         dto.clientId !== undefined ||
         dto.name !== undefined ||
-        dto.location !== undefined;
+        dto.location !== undefined ||
+        dto.monitoringIntervalSeconds !== undefined ||
+        dto.offlineAlertDelayMinutes !== undefined;
 
       if (hasStructuralFields) {
         throw new ForbiddenException(

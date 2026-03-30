@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   Matches,
+  Max,
   MaxLength,
   Min,
 } from 'class-validator';
@@ -54,6 +55,18 @@ export class CreateClientDto {
   @IsInt()
   @Min(1)
   actuationNotifyCooldownMinutes?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(10)
+  @Max(86400)
+  monitoringIntervalSeconds?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(10080)
+  offlineAlertDelayMinutes?: number;
 
   @IsOptional()
   @IsString()
