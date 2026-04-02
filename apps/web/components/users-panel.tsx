@@ -30,7 +30,9 @@ const formSchema = z.object({
     .refine((value) => isValidPhone(value), 'Telefone invalido'),
   role: z.enum(['admin', 'operator']),
   preferredLayout: z.enum(['inherit', 'technical', 'client']),
-  isActive: z.enum(['true', 'false']).transform((value) => value === 'true'),
+  isActive: z
+    .union([z.enum(['true', 'false']), z.boolean()])
+    .transform((value) => value === true || value === 'true'),
 });
 
 type FormValues = z.input<typeof formSchema>;
@@ -236,7 +238,7 @@ export function UsersPanel({
             }
           } else {
             try {
-              const createdUser = await createMutation.mutateAsync({
+              await createMutation.mutateAsync({
                 clientId,
                 name: values.name,
                 email: values.email,
@@ -254,17 +256,9 @@ export function UsersPanel({
                 preferredLayout: 'inherit',
                 isActive: 'true',
               });
-              setSuccessMessage(`Usuario ${values.name} criado com sucesso.`);
-
-              try {
-                await generateSetupLink(createdUser.id);
-              } catch (error) {
-                setLocalError(
-                  error instanceof Error
-                    ? `${error.message} O usuario foi criado, mas o link de acesso nao foi gerado.`
-                    : 'O usuario foi criado, mas o link de acesso nao foi gerado.',
-                );
-              }
+              setSuccessMessage(
+                `Usuario ${values.name} criado com sucesso. Agora voce pode usar o botao "Primeiro acesso" na lista para gerar o link.`,
+              );
             } catch (error) {
               setLocalError(
                 error instanceof Error ? error.message : 'Falha ao criar usuario.',
