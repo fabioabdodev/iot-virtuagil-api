@@ -78,6 +78,8 @@ export function UsersPanel({
     setupUrl: string;
     expiresAt: string;
   } | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
   const [isCopyingSetupLink, setIsCopyingSetupLink] = useState(false);
   const [linkActionUserId, setLinkActionUserId] = useState<string | null>(null);
 
@@ -208,11 +210,33 @@ export function UsersPanel({
       <form
         onSubmit={handleSubmit(async (rawValues) => {
           const values = formSchema.parse(rawValues);
+          setLocalError(null);
+          setSuccessMessage(null);
           setGeneratedSetupLink(null);
           if (editingUser) {
-            await updateMutation.mutateAsync({
-              id: editingUser.id,
-              payload: {
+            try {
+              await updateMutation.mutateAsync({
+                id: editingUser.id,
+                payload: {
+                  clientId,
+                  name: values.name,
+                  email: values.email,
+                  phone: values.phone,
+                  role: values.role,
+                  preferredLayout: values.preferredLayout,
+                  isActive: values.isActive,
+                },
+              });
+              setEditingUserId(null);
+              setSuccessMessage(`Usuario ${values.name} atualizado com sucesso.`);
+            } catch (error) {
+              setLocalError(
+                error instanceof Error ? error.message : 'Falha ao atualizar usuario.',
+              );
+            }
+          } else {
+            try {
+              const createdUser = await createMutation.mutateAsync({
                 clientId,
                 name: values.name,
                 email: values.email,
@@ -220,20 +244,32 @@ export function UsersPanel({
                 role: values.role,
                 preferredLayout: values.preferredLayout,
                 isActive: values.isActive,
-              },
-            });
-            setEditingUserId(null);
-          } else {
-            const createdUser = await createMutation.mutateAsync({
-              clientId,
-              name: values.name,
-              email: values.email,
-              phone: values.phone,
-              role: values.role,
-              preferredLayout: values.preferredLayout,
-              isActive: values.isActive,
-            });
-            await generateSetupLink(createdUser.id);
+              });
+
+              reset({
+                name: '',
+                email: '',
+                phone: '',
+                role: 'operator',
+                preferredLayout: 'inherit',
+                isActive: 'true',
+              });
+              setSuccessMessage(`Usuario ${values.name} criado com sucesso.`);
+
+              try {
+                await generateSetupLink(createdUser.id);
+              } catch (error) {
+                setLocalError(
+                  error instanceof Error
+                    ? `${error.message} O usuario foi criado, mas o link de acesso nao foi gerado.`
+                    : 'O usuario foi criado, mas o link de acesso nao foi gerado.',
+                );
+              }
+            } catch (error) {
+              setLocalError(
+                error instanceof Error ? error.message : 'Falha ao criar usuario.',
+              );
+            }
           }
         })}
       >
@@ -334,6 +370,18 @@ export function UsersPanel({
             )}
           </div>
         </Panel>
+      ) : null}
+
+      {localError ? (
+        <Feedback variant="danger" className="mb-3">
+          {localError}
+        </Feedback>
+      ) : null}
+
+      {successMessage ? (
+        <Feedback variant="success" className="mb-3">
+          {successMessage}
+        </Feedback>
       ) : null}
 
       {createMutation.isError || updateMutation.isError || deleteMutation.isError ? (
