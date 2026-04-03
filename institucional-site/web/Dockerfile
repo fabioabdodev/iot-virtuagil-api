@@ -21,7 +21,7 @@ ENV HOSTNAME=0.0.0.0
 ENV NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/5531999990000
 ENV NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
 COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/static ./app/.next/static
+COPY --from=builder /app/public ./app/public
 EXPOSE 3000
 CMD ["node", "app/server.js"]
