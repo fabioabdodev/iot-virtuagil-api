@@ -232,7 +232,6 @@ jobs:
             export IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
             export API_IMAGE="${{ needs.build-and-push.outputs.api_image }}"
             export WEB_IMAGE="${{ needs.build-and-push.outputs.web_image }}"
-            export SITE_IMAGE="${{ needs.build-and-push.outputs.site_image }}"
             export APP_RELEASE="${{ github.sha }}"
             export APP_BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
@@ -251,11 +250,42 @@ jobs:
               -e DIRECT_DATABASE_URL="${DIRECT_DATABASE_URL:-}" \
               "${API_IMAGE}" npx prisma migrate deploy
             docker stack deploy -c deploy/swarm/stack.prod.yml iot-monitor --with-registry-auth
-            if [ -f /opt/virtuagil-site/.env.prod ]; then
-              set -a
-              . /opt/virtuagil-site/.env.prod
-              set +a
+
+            if [ ! -f /opt/virtuagil-site/.env.prod ]; then
+              echo "Falha: .env.prod do institucional nao encontrado em /opt/virtuagil-site"
+              exit 1
             fi
+
+            SITE_DUPLICATED_KEYS="$(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' /opt/virtuagil-site/.env.prod | cut -d= -f1 | sort | uniq -d || true)"
+            if [ -n "${SITE_DUPLICATED_KEYS}" ]; then
+              echo "Falha: .env.prod do institucional possui chaves duplicadas."
+              echo "${SITE_DUPLICATED_KEYS}"
+              exit 1
+            fi
+
+            set -a
+            . /opt/virtuagil-site/.env.prod
+            set +a
+
+            trim_var NEXT_PUBLIC_WHATSAPP_URL
+            trim_var NEXT_PUBLIC_CONTACT_EMAIL
+
+            if [ -z "${NEXT_PUBLIC_WHATSAPP_URL:-}" ]; then
+              echo "Falha: NEXT_PUBLIC_WHATSAPP_URL nao pode ficar vazia."
+              exit 1
+            fi
+
+            if [ -z "${NEXT_PUBLIC_CONTACT_EMAIL:-}" ]; then
+              echo "Falha: NEXT_PUBLIC_CONTACT_EMAIL nao pode ficar vazia."
+              exit 1
+            fi
+
+            validate_optional_url NEXT_PUBLIC_WHATSAPP_URL
+
+            export SITE_IMAGE="${{ needs.build-and-push.outputs.site_image }}"
+            export APP_RELEASE="${{ github.sha }}"
+            export APP_BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
             docker stack deploy -c /opt/virtuagil-site/portainer-stack.yml virtuagil-site --with-registry-auth
             docker service ls | grep iot-monitor
             docker service ls | grep virtuagil-site

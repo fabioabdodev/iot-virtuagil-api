@@ -24,7 +24,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=network_public
-        - traefik.http.routers.virtuagil-site.rule=Host(`www.virtuagil.com.br`)
+        - traefik.http.routers.virtuagil-site.rule=Host(`www.virtuagil.com.br`) || Host(`virtuagil.com.br`)
         - traefik.http.routers.virtuagil-site.entrypoints=websecure
         - traefik.http.routers.virtuagil-site.tls=true
         - traefik.http.routers.virtuagil-site.tls.certresolver=letsencryptresolver

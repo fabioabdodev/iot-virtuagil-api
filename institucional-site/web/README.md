@@ -40,3 +40,25 @@ npm run start
 - preencher `SITE_IMAGE` com essa tag no deploy
 - expor `APP_RELEASE` e `APP_BUILD_TIME` no container
 - validar a release ativa em `https://www.virtuagil.com.br/api/health`
+
+## Ambiente de producao do institucional
+
+Na VPS, manter um arquivo proprio em:
+
+```bash
+/opt/virtuagil-site/.env.prod
+```
+
+Campos minimos:
+
+```bash
+NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/553171029727
+NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
+```
+
+O workflow de deploy do repositório:
+
+- copia `institucional-site/web/portainer-stack.yml` para `/opt/virtuagil-site/`
+- exige que `/opt/virtuagil-site/.env.prod` exista
+- carrega esse arquivo antes do `docker stack deploy`
+- injeta automaticamente `SITE_IMAGE`, `APP_RELEASE` e `APP_BUILD_TIME`
