@@ -17,6 +17,7 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 ENV NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/5531999990000
 ENV NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
 COPY --from=builder /app/.next/standalone ./
