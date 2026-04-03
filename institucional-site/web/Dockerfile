@@ -19,7 +19,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/5531999990000
 ENV NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
-COPY --from=builder /app/.next/standalone/institucional-site/web ./
+COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 EXPOSE 3000
