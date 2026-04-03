@@ -14,6 +14,7 @@ env:
   IMAGE_NAMESPACE: ghcr.io/fabioabdodev/iot-virtuagil-api
   API_IMAGE_NAME: ghcr.io/fabioabdodev/iot-virtuagil-api/api
   WEB_IMAGE_NAME: ghcr.io/fabioabdodev/iot-virtuagil-api/web
+  SITE_IMAGE_NAME: ghcr.io/fabioabdodev/iot-virtuagil-api/institucional-site
 
 jobs:
   build-and-push:
@@ -22,6 +23,7 @@ jobs:
       image_tag: ${{ steps.image_refs.outputs.image_tag }}
       api_image: ${{ steps.image_refs.outputs.api_image }}
       web_image: ${{ steps.image_refs.outputs.web_image }}
+      site_image: ${{ steps.image_refs.outputs.site_image }}
 
     steps:
       - name: Checkout
@@ -34,6 +36,7 @@ jobs:
           echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
           echo "api_image=${{ env.API_IMAGE_NAME }}:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
           echo "web_image=${{ env.WEB_IMAGE_NAME }}:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "site_image=${{ env.SITE_IMAGE_NAME }}:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -66,6 +69,15 @@ jobs:
             type=raw,value=latest
             type=sha,format=short
 
+      - name: Extract Site metadata
+        id: meta_site
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAMESPACE }}/institucional-site
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
       - name: Build and push API image
         uses: docker/build-push-action@v6
         with:
@@ -90,6 +102,20 @@ jobs:
             ${{ env.WEB_IMAGE_NAME }}:latest
             ${{ steps.image_refs.outputs.web_image }}
           labels: ${{ steps.meta_web.outputs.labels }}
+
+      - name: Build and push institutional site image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./institucional-site/web
+          file: ./institucional-site/web/Dockerfile
+          build-args: |
+            NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/553171029727
+            NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
+          push: true
+          tags: |
+            ${{ env.SITE_IMAGE_NAME }}:latest
+            ${{ steps.image_refs.outputs.site_image }}
+          labels: ${{ steps.meta_site.outputs.labels }}
 
   deploy-swarm:
     runs-on: ubuntu-latest

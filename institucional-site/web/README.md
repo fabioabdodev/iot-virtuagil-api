@@ -27,5 +27,8 @@ npm run start
 ## Deploy esperado
 
 - stack propria do institucional
-- `Dockerfile` desta pasta
+- imagem publicada no `GHCR`
+- stack do `Portainer` apontando para `institucional-site/web/portainer-stack.yml`
 - dominio principal `www.virtuagil.com.br`
+- proxy por `Traefik`
+- DNS e borda por `Cloudflare`

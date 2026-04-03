@@ -2,12 +2,9 @@ version: "3.8"
 
 services:
   virtuagil-site:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: virtuagil/site-institucional:local
+    image: ${SITE_IMAGE:-ghcr.io/fabioabdodev/iot-virtuagil-api/institucional-site:latest}
     networks:
-      - traefik_public
+      - network_public
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -15,14 +12,20 @@ services:
       - NEXT_PUBLIC_CONTACT_EMAIL=${NEXT_PUBLIC_CONTACT_EMAIL}
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        order: stop-first
       labels:
         - traefik.enable=true
-        - traefik.docker.network=traefik_public
+        - traefik.docker.network=network_public
         - traefik.http.routers.virtuagil-site.rule=Host(`www.virtuagil.com.br`)
         - traefik.http.routers.virtuagil-site.entrypoints=websecure
         - traefik.http.routers.virtuagil-site.tls=true
+        - traefik.http.routers.virtuagil-site.tls.certresolver=letsencryptresolver
         - traefik.http.services.virtuagil-site.loadbalancer.server.port=3000
 
 networks:
-  traefik_public:
+  network_public:
     external: true
