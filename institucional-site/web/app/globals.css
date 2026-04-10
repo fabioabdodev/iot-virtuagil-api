@@ -1,14 +1,14 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #071017;
-  --foreground: #f4f7fb;
-  --muted: #93a6bf;
-  --card: rgba(11, 18, 30, 0.78);
-  --line: rgba(148, 178, 210, 0.18);
-  --brand: #2cb8f2;
-  --brand-2: #f2c94c;
-  --brand-3: #60d8a5;
+  --background: #fff8f1;
+  --foreground: #241813;
+  --muted: #6f625a;
+  --card: rgba(255, 255, 255, 0.82);
+  --line: rgba(54, 39, 29, 0.08);
+  --brand: #e57a41;
+  --brand-2: #1f845a;
+  --brand-3: #d9a25f;
 }
 
 * {
@@ -24,10 +24,18 @@ body {
   margin: 0;
   color: var(--foreground);
   background:
-    radial-gradient(circle at top left, rgba(44, 184, 242, 0.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(242, 201, 76, 0.12), transparent 22%),
-    linear-gradient(180deg, #071017 0%, #09131c 50%, #050b12 100%);
-  font-family: Arial, Helvetica, sans-serif;
+    radial-gradient(
+      circle at top left,
+      rgba(229, 122, 65, 0.12),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(31, 132, 90, 0.1),
+      transparent 24%
+    ),
+    linear-gradient(180deg, #fff8f1 0%, #fffdfb 52%, #fff4ea 100%);
+  font-family: 'Avenir Next', 'Segoe UI', 'Helvetica Neue', sans-serif;
 }
 
 a {
@@ -36,7 +44,7 @@ a {
 }
 
 .text-gradient-brand {
-  background: linear-gradient(90deg, #f4f7fb 0%, #bfe9ff 45%, #f8dd8a 100%);
+  background: linear-gradient(90deg, #241813 0%, #7e4d2d 46%, #1f845a 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -45,8 +53,8 @@ a {
 .surface-glass {
   border: 1px solid var(--line);
   background: var(--card);
-  box-shadow: 0 28px 100px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 28px 100px rgba(107, 72, 44, 0.08);
+  backdrop-filter: blur(18px);
 }
 
 .section-grid {

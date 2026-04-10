@@ -9,10 +9,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-[linear-gradient(90deg,#2cb8f2_0%,#f2c94c_100%)] text-slate-950 shadow-[0_18px_45px_rgba(44,184,242,0.22)] hover:-translate-y-0.5',
+          'bg-[linear-gradient(135deg,#e57a41_0%,#d6954f_100%)] text-white shadow-[0_18px_45px_rgba(171,101,50,0.22)] hover:-translate-y-0.5 hover:shadow-[0_22px_55px_rgba(171,101,50,0.26)]',
         secondary:
-          'border border-white/12 bg-white/4 text-white hover:-translate-y-0.5 hover:border-sky-300/30 hover:bg-white/8',
-        ghost: 'text-slate-200 hover:bg-white/6',
+          'border border-black/8 bg-white/82 text-stone-900 shadow-[0_12px_35px_rgba(72,48,30,0.06)] hover:-translate-y-0.5 hover:border-[#e9cdbb] hover:bg-white',
+        ghost: 'text-stone-900 hover:bg-white/80',
       },
       size: {
         sm: 'h-10 px-4 text-sm',
