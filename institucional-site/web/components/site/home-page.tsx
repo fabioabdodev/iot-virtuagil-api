@@ -71,9 +71,9 @@ export function HomePage({
 }: HomePageProps) {
   return (
     <main className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-[radial-gradient(circle_at_top_left,rgba(229,122,65,0.18),transparent_36%),radial-gradient(circle_at_top_right,rgba(31,132,90,0.14),transparent_32%),linear-gradient(180deg,rgba(255,248,241,0.95),rgba(255,248,241,0))]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-[radial-gradient(circle_at_top_left,rgba(214,134,66,0.14),transparent_34%),radial-gradient(circle_at_top_right,rgba(76,154,120,0.1),transparent_30%),linear-gradient(180deg,rgba(6,8,12,0.98),rgba(6,8,12,0))]" />
 
-      <header className="sticky top-0 z-40 border-b border-black/5 bg-[rgba(255,248,241,0.82)] backdrop-blur-xl">
+      <header className="relative z-40 border-b border-white/10 bg-[rgba(7,11,16,0.78)] backdrop-blur-xl">
         <div className="mx-auto grid min-h-[88px] w-[min(1240px,calc(100%-32px))] grid-cols-[auto_1fr_auto] items-center gap-4">
           <Link
             href="/"
@@ -87,19 +87,19 @@ export function HomePage({
               height={48}
               className="h-auto w-[158px] md:w-[176px]"
             />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500 md:text-[11px]">
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-400 md:text-[11px]">
               Tecnologia em automacao
             </span>
           </Link>
 
-          <nav className="hidden justify-center gap-7 text-sm font-medium text-stone-600 md:flex">
-            <Link href="/solucoes" className="transition hover:text-stone-950">
+          <nav className="hidden justify-center gap-7 text-sm font-medium text-stone-400 md:flex">
+            <Link href="/solucoes" className="transition hover:text-white">
               Solucoes
             </Link>
-            <Link href="/planos" className="transition hover:text-stone-950">
+            <Link href="/planos" className="transition hover:text-white">
               Planos
             </Link>
-            <Link href="/contato" className="transition hover:text-stone-950">
+            <Link href="/contato" className="transition hover:text-white">
               Contato
             </Link>
           </nav>
@@ -123,16 +123,16 @@ export function HomePage({
       <section className="relative pb-14 pt-12 md:pb-20 md:pt-20">
         <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <motion.div {...rise}>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-black/8 bg-white/75 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-600 shadow-[0_12px_40px_rgba(43,33,24,0.06)]">
-              <Sparkles className="h-3.5 w-3.5 text-[#e57a41]" />
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-300 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
+              <Sparkles className="h-3.5 w-3.5 text-[#d68642]" />
               Automacao comercial
             </div>
 
-            <h1 className="max-w-[11ch] font-serif text-5xl leading-[0.94] tracking-[-0.03em] text-stone-950 md:text-7xl">
+            <h1 className="max-w-[11ch] font-serif text-5xl leading-[0.94] tracking-[-0.03em] text-white md:text-7xl">
               Solucoes em monitoramento de equipamentos.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base leading-8 text-stone-600 md:text-lg">
+            <p className="mt-6 max-w-2xl text-base leading-8 text-stone-300 md:text-lg">
               Temperaturas, gases, acionamentos e consumo de forma automatica,
               diminuindo muito os custos operacionais do seu negocio.
             </p>
@@ -166,12 +166,12 @@ export function HomePage({
               ].map(([label, value]) => (
                 <div
                   key={label}
-                  className="rounded-[26px] border border-black/6 bg-white/72 px-5 py-5 shadow-[0_18px_50px_rgba(43,33,24,0.07)] backdrop-blur-sm"
+                  className="rounded-[26px] border border-white/10 bg-white/6 px-5 py-5 shadow-[0_18px_50px_rgba(0,0,0,0.2)] backdrop-blur-sm"
                 >
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-stone-500">
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
                     {label}
                   </div>
-                  <strong className="mt-2 block text-[17px] leading-6 text-stone-900">
+                  <strong className="mt-2 block text-[17px] leading-6 text-white">
                     {value}
                   </strong>
                 </div>
@@ -183,27 +183,27 @@ export function HomePage({
             {...rise}
             transition={{ ...rise.transition, delay: 0.08 }}
           >
-            <div className="relative rounded-[36px] border border-[#f0d8c9] bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(255,244,236,0.94))] p-4 shadow-[0_30px_120px_rgba(123,73,37,0.14)] md:p-6">
+            <div className="relative rounded-[36px] border border-white/10 bg-[linear-gradient(180deg,rgba(18,22,29,0.94),rgba(10,13,18,0.98))] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.28)] md:p-6">
               <div className="mb-5 flex items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-[#f7ede7] px-3 py-2 text-sm text-stone-600">
-                  <Bot className="h-4 w-4 text-[#e57a41]" />
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/6 px-3 py-2 text-sm text-stone-300">
+                  <Bot className="h-4 w-4 text-[#d68642]" />
                   Jade como assistente comercial
                 </div>
-                <div className="rounded-full border border-black/6 bg-white/80 px-3 py-2 text-xs uppercase tracking-[0.18em] text-stone-500">
+                <div className="rounded-full border border-white/10 bg-white/6 px-3 py-2 text-xs uppercase tracking-[0.18em] text-stone-400">
                   atendimento inicial
                 </div>
               </div>
 
               <HeroIllustration />
 
-              <div className="mt-5 rounded-[28px] border border-[#efd8cb] bg-[#fffaf6] p-6">
-                <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#b86438]">
+              <div className="mt-5 rounded-[28px] border border-white/10 bg-white/6 p-6">
+                <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#d68642]">
                   Primeira conversa
                 </div>
-                <h2 className="font-serif text-3xl text-stone-950">
+                <h2 className="font-serif text-3xl text-white">
                   Como posso ajudar?
                 </h2>
-                <p className="mt-3 text-sm leading-7 text-stone-600">
+                <p className="mt-3 text-sm leading-7 text-stone-300">
                   A Jade apresenta os modulos, entende a principal dor da
                   operacao e orienta o visitante para o proximo passo comercial
                   com uma linguagem leve, simples e humana.
@@ -263,19 +263,19 @@ export function HomePage({
       <section className="py-10 md:py-14">
         <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-4 lg:grid-cols-[1.02fr_0.98fr]">
           <motion.div {...rise}>
-            <Card className="bg-[linear-gradient(180deg,#fffdfb,#fff6ef)]">
+            <Card className="border-white/10 bg-[linear-gradient(180deg,#171d26,#10151c)]">
               <CardContent>
-                <div className="mb-3 inline-flex items-center gap-2 text-sm uppercase tracking-[0.22em] text-stone-500">
-                  <Building2 className="h-4 w-4 text-[#1f845a]" />
+                <div className="mb-3 inline-flex items-center gap-2 text-sm uppercase tracking-[0.22em] text-stone-400">
+                  <Building2 className="h-4 w-4 text-[#4c9a78]" />
                   Segmentos
                 </div>
-                <h2 className="max-w-[13ch] font-serif text-4xl leading-tight text-stone-950 md:text-5xl">
+                <h2 className="max-w-[13ch] font-serif text-4xl leading-tight text-white md:text-5xl">
                   Onde atuamos
                 </h2>
-                <ul className="mt-6 grid gap-3 text-sm leading-7 text-stone-700">
+                <ul className="mt-6 grid gap-3 text-sm leading-7 text-stone-300">
                   {segments.map((segment) => (
                     <li key={segment} className="flex items-start gap-3">
-                      <Zap className="mt-1 h-4 w-4 flex-none text-[#e57a41]" />
+                      <Zap className="mt-1 h-4 w-4 flex-none text-[#d68642]" />
                       <span>{segment}</span>
                     </li>
                   ))}
@@ -331,10 +331,10 @@ export function HomePage({
       <section className="py-10 md:py-14">
         <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
           <motion.div {...rise} className="mb-7">
-            <div className="text-sm uppercase tracking-[0.22em] text-stone-500">
+            <div className="text-sm uppercase tracking-[0.22em] text-stone-400">
               Planos e pacotes
             </div>
-            <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-stone-950 md:text-5xl">
+            <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-white md:text-5xl">
               Pacotes com leitura simples para acelerar a decisao.
             </h2>
           </motion.div>
@@ -349,21 +349,21 @@ export function HomePage({
                 <Card
                   className={
                     plan.name === 'Operacao Local'
-                      ? 'border-[#ead0bc] bg-[linear-gradient(180deg,#fffaf6,#fff1e8)] shadow-[0_24px_70px_rgba(190,115,61,0.14)]'
-                      : 'bg-white/82'
+                      ? 'border-[#3f2f24] bg-[linear-gradient(180deg,#1a212b,#121821)] shadow-[0_24px_70px_rgba(0,0,0,0.24)]'
+                      : 'border-white/10 bg-[linear-gradient(180deg,#171d26,#10151c)]'
                   }
                 >
                   <CardContent>
-                    <div className="text-[11px] uppercase tracking-[0.18em] text-stone-500">
+                    <div className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
                       Pacote comercial
                     </div>
-                    <h3 className="mt-3 font-serif text-3xl text-stone-950">
+                    <h3 className="mt-3 font-serif text-3xl text-white">
                       {plan.name}
                     </h3>
-                    <p className="mt-4 text-sm leading-7 text-stone-600">
+                    <p className="mt-4 text-sm leading-7 text-stone-300">
                       {plan.text}
                     </p>
-                    <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#f7ede7] px-3 py-2 text-sm font-semibold text-[#b86438]">
+                    <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/8 px-3 py-2 text-sm font-semibold text-[#d68642]">
                       Sob consulta
                     </div>
                   </CardContent>
@@ -377,16 +377,16 @@ export function HomePage({
       <section className="pb-18 pt-10 md:pb-24 md:pt-14">
         <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
           <motion.div {...rise}>
-            <Card className="overflow-hidden border-[#eed5c6] bg-[linear-gradient(135deg,#fff8f1,#fff1e6)] shadow-[0_32px_110px_rgba(161,94,41,0.14)]">
+            <Card className="overflow-hidden border-white/10 bg-[linear-gradient(135deg,#171d26,#10151c)] shadow-[0_32px_110px_rgba(0,0,0,0.24)]">
               <CardContent className="grid gap-6 lg:grid-cols-[1.1fr_auto] lg:items-center">
                 <div>
-                  <div className="text-sm uppercase tracking-[0.22em] text-stone-500">
+                  <div className="text-sm uppercase tracking-[0.22em] text-stone-400">
                     Contato comercial
                   </div>
-                  <h2 className="mt-3 max-w-[14ch] font-serif text-4xl leading-tight text-stone-950 md:text-5xl">
+                  <h2 className="mt-3 max-w-[14ch] font-serif text-4xl leading-tight text-white md:text-5xl">
                     Vamos transformar isso em proposta comercial.
                   </h2>
-                  <p className="mt-5 max-w-2xl text-sm leading-8 text-stone-600 md:text-base">
+                  <p className="mt-5 max-w-2xl text-sm leading-8 text-stone-300 md:text-base">
                     Se fizer sentido para a sua operacao, a Jade abre a conversa
                     agora e ajuda a identificar a melhor entrada entre
                     temperatura, acionamento, consumo, gases ou um projeto

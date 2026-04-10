@@ -16,7 +16,7 @@ type ProductDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
 }
 
@@ -51,7 +51,7 @@ export default async function ProductDetailPage({
 
   return (
     <main className="pb-20">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-[rgba(7,11,16,0.72)] backdrop-blur-xl">
+      <header className="relative z-40 border-b border-white/10 bg-[rgba(7,11,16,0.78)] backdrop-blur-xl">
         <div className="mx-auto grid min-h-[88px] w-[min(1240px,calc(100%-32px))] grid-cols-[auto_1fr_auto] items-center gap-4">
           <Link
             href="/"

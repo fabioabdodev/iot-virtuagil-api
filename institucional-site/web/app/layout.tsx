@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SiteFooter } from '@/components/site/site-footer';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -48,9 +49,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const whatsappUrl =
+    process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
+  const contactEmail =
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'contato@virtuagil.com.br';
+  const monitorUrl =
+    process.env.NEXT_PUBLIC_MONITOR_URL ?? 'https://monitor.virtuagil.com.br';
+
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body className="min-h-screen">
+        <div className="flex min-h-screen flex-col">
+          <div className="flex-1">{children}</div>
+          <SiteFooter
+            contactEmail={contactEmail}
+            whatsappUrl={whatsappUrl}
+            monitorUrl={monitorUrl}
+          />
+        </div>
+      </body>
     </html>
   );
 }

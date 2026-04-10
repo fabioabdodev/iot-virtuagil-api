@@ -20,7 +20,7 @@ const monitorUrl =
 export default function ContatoPage() {
   return (
     <main className="pb-20">
-      <header className="sticky top-0 z-40 border-b border-black/5 bg-[rgba(255,248,241,0.82)] backdrop-blur-xl">
+      <header className="relative z-40 border-b border-white/10 bg-[rgba(7,11,16,0.78)] backdrop-blur-xl">
         <div className="mx-auto grid min-h-[88px] w-[min(1240px,calc(100%-32px))] grid-cols-[auto_1fr_auto] items-center gap-4">
           <Link
             href="/"
@@ -34,19 +34,19 @@ export default function ContatoPage() {
               height={48}
               className="h-auto w-[158px] md:w-[176px]"
             />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500 md:text-[11px]">
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-400 md:text-[11px]">
               Tecnologia em automacao
             </span>
           </Link>
 
-          <nav className="hidden justify-center gap-7 text-sm font-medium text-stone-600 md:flex">
-            <Link href="/solucoes" className="transition hover:text-stone-950">
+          <nav className="hidden justify-center gap-7 text-sm font-medium text-stone-400 md:flex">
+            <Link href="/solucoes" className="transition hover:text-white">
               Solucoes
             </Link>
-            <Link href="/planos" className="transition hover:text-stone-950">
+            <Link href="/planos" className="transition hover:text-white">
               Planos
             </Link>
-            <Link href="/contato" className="text-stone-950">
+            <Link href="/contato" className="text-white">
               Contato
             </Link>
           </nav>
@@ -69,13 +69,13 @@ export default function ContatoPage() {
       <section className="pt-12 md:pt-18">
         <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div>
-            <div className="inline-flex rounded-full border border-black/8 bg-white/72 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-600">
+            <div className="inline-flex rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-300">
               Contato comercial
             </div>
-            <h1 className="mt-5 max-w-[10ch] font-serif text-5xl leading-[0.96] tracking-[-0.03em] text-stone-950 md:text-7xl">
+            <h1 className="mt-5 max-w-[10ch] font-serif text-5xl leading-[0.96] tracking-[0.03em] text-white md:text-7xl">
               Vamos entender sua operacao e montar o proximo passo.
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-stone-600 md:text-lg">
+            <p className="mt-6 max-w-2xl text-base leading-8 text-stone-300 md:text-lg">
               Se voce quer reduzir custo operacional, melhorar visibilidade ou
               avaliar por onde comecar, a Jade pode abrir a conversa e orientar
               a melhor entrada comercial para o seu caso.
@@ -94,16 +94,16 @@ export default function ContatoPage() {
             </div>
           </div>
 
-          <Card className="bg-[linear-gradient(135deg,#fff8f1,#fff1e6)] shadow-[0_24px_80px_rgba(161,94,41,0.12)]">
+          <Card className="border-white/10 bg-[linear-gradient(135deg,#171d26,#10151c)] shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
             <CardContent className="grid gap-4">
-              <div className="rounded-[24px] border border-black/6 bg-white/76 p-5">
-                <div className="mb-3 inline-flex rounded-full bg-[#fff1e7] p-3 text-[#e57a41]">
+              <div className="rounded-[24px] border border-white/10 bg-white/6 p-5">
+                <div className="mb-3 inline-flex rounded-full bg-white/8 p-3 text-[#d68642]">
                   <MessageCircleMore className="h-5 w-5" />
                 </div>
-                <h2 className="font-serif text-3xl text-stone-950">
+                <h2 className="font-serif text-3xl text-white">
                   Atendimento inicial com linguagem simples
                 </h2>
-                <p className="mt-3 text-sm leading-7 text-stone-600">
+                <p className="mt-3 text-sm leading-7 text-stone-300">
                   A conversa comeca leve, humana e objetiva. Primeiro entendemos
                   sua operacao. Depois, sugerimos o melhor caminho.
                 </p>
@@ -132,13 +132,13 @@ export default function ContatoPage() {
                   return (
                     <div
                       key={item.label}
-                      className="rounded-[22px] border border-black/6 bg-white/72 p-4"
+                      className="rounded-[22px] border border-white/10 bg-white/6 p-4"
                     >
-                      <Icon className="h-4 w-4 text-[#1f845a]" />
-                      <div className="mt-3 text-[11px] uppercase tracking-[0.18em] text-stone-500">
+                      <Icon className="h-4 w-4 text-[#4c9a78]" />
+                      <div className="mt-3 text-[11px] uppercase tracking-[0.18em] text-stone-400">
                         {item.label}
                       </div>
-                      <div className="mt-2 text-sm font-semibold text-stone-900">
+                      <div className="mt-2 text-sm font-semibold text-white">
                         {item.value}
                       </div>
                     </div>
