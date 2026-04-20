@@ -4,11 +4,11 @@
   --background: #06080c;
   --foreground: #f4efe8;
   --muted: #9d958d;
-  --card: rgba(18, 22, 29, 0.88);
+  --card: rgba(15, 22, 24, 0.88);
   --line: rgba(255, 255, 255, 0.08);
-  --brand: #d68642;
-  --brand-2: #4c9a78;
-  --brand-3: #c8a06a;
+  --brand: #2ca476;
+  --brand-2: #7fe2bf;
+  --brand-3: #154535;
 }
 
 * {
@@ -23,19 +23,13 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--foreground);
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(214, 134, 66, 0.14),
-      transparent 24%
-    ),
-    radial-gradient(
-      circle at top right,
-      rgba(76, 154, 120, 0.1),
-      transparent 22%
-    ),
-    linear-gradient(180deg, #06080c 0%, #0b0f15 52%, #06080c 100%);
-  font-family: 'Avenir Next', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  background-color: transparent;
+  font-family: var(--font-sans), 'Segoe UI', sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-display), 'Times New Roman', serif;
+  letter-spacing: 0.01em;
 }
 
 a {
@@ -44,7 +38,7 @@ a {
 }
 
 .text-gradient-brand {
-  background: linear-gradient(90deg, #f8f3ec 0%, #d68642 42%, #4c9a78 100%);
+  background: linear-gradient(90deg, #f8f3ec 0%, #56c59d 42%, #b4ffdf 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

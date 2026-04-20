@@ -1,18 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
-import {
-  ArrowRight,
-  Bot,
-  Building2,
-  ChevronRight,
-  Sparkles,
-  Zap,
-} from 'lucide-react';
+import { ArrowRight, Bot, Building2, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { OfferCarousel, type Offer } from '@/components/ui/offer-carousel';
 import { HeroIllustration } from '@/components/site/hero-illustration';
 import { products } from '@/lib/products';
 
@@ -58,67 +51,39 @@ const rise = {
   transition: { duration: 0.55, ease: 'easeOut' as const },
 };
 
+const productCarouselImages: Record<string, string> = {
+  temperatura:
+    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1974&auto=format&fit=crop',
+  acionamento:
+    'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1974&auto=format&fit=crop',
+  consumo:
+    'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1974&auto=format&fit=crop',
+  gases:
+    'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1974&auto=format&fit=crop',
+};
+
 type HomePageProps = {
   whatsappUrl: string;
   contactEmail: string;
-  monitorUrl: string;
 };
 
-export function HomePage({
-  whatsappUrl,
-  contactEmail,
-  monitorUrl,
-}: HomePageProps) {
+export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
+  const productOffers: Offer[] = products.map((item) => ({
+    id: item.slug,
+    imageSrc: productCarouselImages[item.slug] ?? item.image,
+    imageAlt: item.title,
+    tag: item.shortLabel,
+    title: item.title,
+    description: item.summary,
+    brandLogoSrc: '/brand/favicon-192x192.png',
+    brandName: 'Virtuagil',
+    promoCode: item.category,
+    href: `/solucoes/${item.slug}`,
+  }));
+
   return (
     <main className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-[radial-gradient(circle_at_top_left,rgba(214,134,66,0.14),transparent_34%),radial-gradient(circle_at_top_right,rgba(76,154,120,0.1),transparent_30%),linear-gradient(180deg,rgba(6,8,12,0.98),rgba(6,8,12,0))]" />
-
-      <header className="relative z-40 border-b border-white/10 bg-[rgba(7,11,16,0.78)] backdrop-blur-xl">
-        <div className="mx-auto grid min-h-[88px] w-[min(1240px,calc(100%-32px))] grid-cols-[auto_1fr_auto] items-center gap-4">
-          <Link
-            href="/"
-            aria-label="Virtuagil"
-            className="inline-flex flex-col items-start"
-          >
-            <Image
-              src="/brand/logomarca.png"
-              alt="Virtuagil"
-              width={176}
-              height={48}
-              className="h-auto w-[158px] md:w-[176px]"
-            />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-400 md:text-[11px]">
-              Tecnologia em automacao
-            </span>
-          </Link>
-
-          <nav className="hidden justify-center gap-7 text-sm font-medium text-stone-400 md:flex">
-            <Link href="/solucoes" className="transition hover:text-white">
-              Solucoes
-            </Link>
-            <Link href="/planos" className="transition hover:text-white">
-              Planos
-            </Link>
-            <Link href="/contato" className="transition hover:text-white">
-              Contato
-            </Link>
-          </nav>
-
-          <div className="hidden items-center gap-3 md:flex">
-            <Button asChild variant="secondary">
-              <a href={monitorUrl} target="_blank" rel="noreferrer">
-                Area do cliente
-              </a>
-            </Button>
-            <Button asChild>
-              <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                <WhatsAppIcon className="h-4 w-4" />
-                Fale com a Jade
-              </a>
-            </Button>
-          </div>
-        </div>
-      </header>
 
       <section className="relative pb-14 pt-12 md:pb-20 md:pt-20">
         <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
@@ -216,47 +181,9 @@ export function HomePage({
 
       <section className="pb-10 pt-2 md:pb-14">
         <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {products.map((item, index) => (
-              <motion.article
-                key={item.title}
-                {...rise}
-                transition={{ ...rise.transition, delay: index * 0.05 }}
-                className="group relative min-h-[360px] overflow-hidden rounded-[30px] border border-white/10 bg-[#10171f]"
-                style={{
-                  backgroundImage: `${item.image}, linear-gradient(180deg,#4b2d1a,#2f1e12)`,
-                }}
-              >
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,14,20,0.12),rgba(9,14,20,0.88))] transition duration-300 group-hover:bg-[linear-gradient(180deg,rgba(9,14,20,0.06),rgba(9,14,20,0.84))]" />
-                <div className="relative flex h-full flex-col justify-end p-6 text-white">
-                  <div className="mb-3 inline-flex w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] backdrop-blur-sm">
-                    {item.shortLabel}
-                  </div>
-                  <h3 className="font-serif text-3xl">{item.title}</h3>
-                  <p className="mt-3 max-w-[24ch] text-sm leading-7 text-white/84">
-                    {item.summary}
-                  </p>
-                  <ul className="mt-5 grid gap-2 text-sm text-white/78">
-                    {item.bullets.slice(0, 2).map((bullet) => (
-                      <li key={bullet} className="flex items-start gap-2">
-                        <ChevronRight className="mt-0.5 h-4 w-4 flex-none text-[#d9a25f]" />
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-6">
-                    <Link
-                      href={`/solucoes/${item.slug}`}
-                      className="inline-flex items-center gap-2 rounded-full border border-white/16 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/14"
-                    >
-                      Conheca o produto
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </div>
-              </motion.article>
-            ))}
-          </div>
+          <motion.div {...rise}>
+            <OfferCarousel offers={productOffers} />
+          </motion.div>
         </div>
       </section>
 

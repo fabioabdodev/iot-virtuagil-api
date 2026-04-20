@@ -1,64 +1,27 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import type { Metadata } from 'next';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { products } from '@/lib/products';
 
-const whatsappUrl =
-  process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/5531999990000';
-const monitorUrl =
-  process.env.NEXT_PUBLIC_MONITOR_URL ?? 'https://monitor.virtuagil.com.br';
+export const metadata: Metadata = {
+  title: 'Solucoes | Virtuagil',
+  description:
+    'Conheca os modulos da Virtuagil para monitoramento, automacao e visibilidade operacional com crescimento por etapas.',
+  alternates: {
+    canonical: '/solucoes',
+  },
+  openGraph: {
+    title: 'Solucoes | Virtuagil',
+    description:
+      'Modulos de temperatura, acionamento, consumo e gases para evolucao operacional com proposta comercial clara.',
+    url: 'https://www.virtuagil.com.br/solucoes',
+  },
+};
 
 export default function SolucoesPage() {
   return (
     <main className="pb-20">
-      <header className="relative z-40 border-b border-white/10 bg-[rgba(7,11,16,0.78)] backdrop-blur-xl">
-        <div className="mx-auto grid min-h-[88px] w-[min(1240px,calc(100%-32px))] grid-cols-[auto_1fr_auto] items-center gap-4">
-          <Link
-            href="/"
-            aria-label="Virtuagil"
-            className="inline-flex flex-col items-start"
-          >
-            <Image
-              src="/brand/logomarca.png"
-              alt="Virtuagil"
-              width={176}
-              height={48}
-              className="h-auto w-[158px] md:w-[176px]"
-            />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-400 md:text-[11px]">
-              Tecnologia em automacao
-            </span>
-          </Link>
-
-          <nav className="hidden justify-center gap-7 text-sm font-medium text-stone-400 md:flex">
-            <Link href="/solucoes" className="text-white">
-              Solucoes
-            </Link>
-            <Link href="/planos" className="transition hover:text-white">
-              Planos
-            </Link>
-            <Link href="/contato" className="transition hover:text-white">
-              Contato
-            </Link>
-          </nav>
-
-          <div className="hidden items-center gap-3 md:flex">
-            <Button asChild variant="secondary">
-              <a href={monitorUrl} target="_blank" rel="noreferrer">
-                Area do cliente
-              </a>
-            </Button>
-            <Button asChild>
-              <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                Falar com a Jade
-              </a>
-            </Button>
-          </div>
-        </div>
-      </header>
-
       <section className="pt-12 md:pt-18">
         <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
           <div>
