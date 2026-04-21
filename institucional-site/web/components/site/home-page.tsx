@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowRight, Bot, Building2, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { OfferCarousel, type Offer } from '@/components/ui/offer-carousel';
-import { HeroIllustration } from '@/components/site/hero-illustration';
 import { products } from '@/lib/products';
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -148,7 +148,16 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                 </div>
               </div>
 
-              <HeroIllustration />
+              <div className="overflow-hidden rounded-[24px] border border-white/10">
+                <Image
+                  src="/hero/iot.jpg"
+                  alt="Ecossistema IoT com dispositivos conectados"
+                  width={1080}
+                  height={632}
+                  className="h-auto w-full object-cover"
+                  priority
+                />
+              </div>
 
               <div className="mt-5 rounded-[28px] border border-white/10 bg-white/6 p-6">
                 <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#d68642]">
@@ -158,9 +167,10 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                   Como posso ajudar?
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-stone-300">
-                  A Jade apresenta os modulos, entende a principal dor da
-                  operacao e orienta o visitante para o proximo passo comercial
-                  com uma linguagem leve, simples e humana.
+                  A Jade e nossa secretaria e vai te orientar em tudo. Apresenta
+                  os modulos, entende a principal dor da operacao e orienta o
+                  visitante para o proximo passo comercial com uma linguagem
+                  leve, simples e humana.
                 </p>
               </div>
             </div>
@@ -177,7 +187,7 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
       </section>
 
       <section className="py-10 md:py-14">
-        <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-4 lg:grid-cols-[1.02fr_0.98fr]">
+        <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
           <motion.div {...rise}>
             <Card className="border-white/10 bg-[linear-gradient(180deg,#171d26,#10151c)]">
               <CardContent>
@@ -196,48 +206,6 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                     </li>
                   ))}
                 </ul>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            {...rise}
-            transition={{ ...rise.transition, delay: 0.08 }}
-          >
-            <Card className="bg-[linear-gradient(135deg,#284336,#1f352b)] text-white shadow-[0_28px_90px_rgba(31,52,43,0.24)]">
-              <CardContent>
-                <div className="text-sm uppercase tracking-[0.22em] text-white/70">
-                  Posicionamento
-                </div>
-                <h2 className="mt-3 max-w-[14ch] font-serif text-4xl leading-tight md:text-5xl">
-                  Beleza, clareza e proposta comercial antes da complexidade
-                  tecnica.
-                </h2>
-                <p className="mt-5 text-sm leading-8 text-white/78">
-                  O institucional precisa transmitir valor, confianca e vontade
-                  de conversar. O painel tecnico fica para dentro. Aqui, a marca
-                  precisa vender seguranca, ganho operacional e proximo passo
-                  claro.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className="bg-white text-[#1f352b] hover:bg-white/92"
-                  >
-                    <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                      <WhatsAppIcon className="h-4 w-4" />
-                      Conversar com a Jade
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="secondary"
-                    className="border-white/20 bg-white/10 text-white hover:bg-white/14"
-                  >
-                    <Link href="/planos">Ver pacotes</Link>
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </motion.div>

@@ -79,7 +79,11 @@ export function SiteHeader({ monitorUrl, whatsappUrl }: SiteHeaderProps) {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Button asChild variant="secondary">
+          <Button
+            asChild
+            variant="secondary"
+            className="border-blue-500/80 bg-[linear-gradient(135deg,#2563eb_0%,#1d4ed8_100%)] text-blue-50 shadow-[0_14px_36px_rgba(30,64,175,0.35)] hover:border-blue-300 hover:brightness-110"
+          >
             <a href={monitorUrl} target="_blank" rel="noreferrer">
               Area do cliente
             </a>
@@ -124,7 +128,12 @@ export function SiteHeader({ monitorUrl, whatsappUrl }: SiteHeaderProps) {
               </Link>
             </div>
             <div className="mt-4 grid gap-2">
-              <Button asChild size="sm" variant="secondary">
+              <Button
+                asChild
+                size="sm"
+                variant="secondary"
+                className="border-blue-500/80 bg-[linear-gradient(135deg,#2563eb_0%,#1d4ed8_100%)] text-blue-50 shadow-[0_14px_36px_rgba(30,64,175,0.35)] hover:border-blue-300 hover:brightness-110"
+              >
                 <a href={monitorUrl} target="_blank" rel="noreferrer">
                   Area do cliente
                 </a>
