@@ -29,18 +29,19 @@ const segments = [
   'Operacoes que precisam vender melhor e operar melhor',
 ];
 
-const plans = [
+const highlights = [
   {
-    name: 'Essencial',
-    text: 'Entrada rapida com foco em monitoramento e ganho operacional direto.',
+    title: 'Reducao de custos',
+    description: 'Controle tudo remotamente 24 horas por dia.',
   },
   {
-    name: 'Operacao Local',
-    text: 'Monitoramento com mais regra, acionamento e rotina padronizada.',
+    title: 'Tenha o controle',
+    description:
+      'Receba alertas via WhatsApp e monitore tudo de maneira simples e eficaz.',
   },
   {
-    name: 'Gestao Completa',
-    text: 'Combinacao modular para operacoes que querem mais controle e mais valor.',
+    title: 'Crescimento modular',
+    description: 'Economia e gestao simples.',
   },
 ];
 
@@ -106,28 +107,18 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
               </Button>
             </div>
 
-            <div className="mt-10 grid gap-3 md:grid-cols-3">
-              {[
-                [
-                  'Reducao de custos',
-                  'Controle tudo remotamente 24 horas por dia.',
-                ],
-                [
-                  'Tenha o controle',
-                  'Receba alertas via WhatsApp e monitore tudo de maneira simples e eficaz.',
-                ],
-                ['Crescimento modular', 'Economia e gestao simples'],
-              ].map(([label, value]) => (
+            <div className="relative z-30 mt-10 grid gap-3 md:grid-cols-3">
+              {highlights.map((item) => (
                 <div
-                  key={label}
-                  className="rounded-[26px] border border-white/10 bg-white/6 px-5 py-5 shadow-[0_18px_50px_rgba(0,0,0,0.2)] backdrop-blur-sm"
+                  key={item.title}
+                  className="rounded-[26px] border border-slate-500/40 bg-[linear-gradient(180deg,rgba(15,23,42,0.82),rgba(15,23,42,0.62))] px-5 py-5 shadow-[0_20px_44px_rgba(2,6,23,0.58)] backdrop-blur-md"
                 >
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                    {label}
-                  </div>
-                  <strong className="mt-2 block text-[17px] leading-6 text-white">
-                    {value}
-                  </strong>
+                  <h3 className="text-[21px] font-bold leading-7 text-white">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-base font-normal leading-7 text-stone-300/90">
+                    {item.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -166,7 +157,7 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
         </div>
       </section>
 
-      <section className="pb-10 pt-2 md:pb-14">
+      <section className="relative z-10 pb-10 pt-2 md:pb-14">
         <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
           <motion.div {...rise}>
             <OfferCarousel offers={productOffers} />
@@ -197,52 +188,6 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
               </CardContent>
             </Card>
           </motion.div>
-        </div>
-      </section>
-
-      <section className="py-10 md:py-14">
-        <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
-          <motion.div {...rise} className="mb-7">
-            <div className="text-sm uppercase tracking-[0.22em] text-stone-400">
-              Planos e pacotes
-            </div>
-            <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-white md:text-5xl">
-              Pacotes com leitura simples para acelerar a decisao.
-            </h2>
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {plans.map((plan, index) => (
-              <motion.div
-                key={plan.name}
-                {...rise}
-                transition={{ ...rise.transition, delay: index * 0.05 }}
-              >
-                <Card
-                  className={
-                    plan.name === 'Operacao Local'
-                      ? 'border-[#3f2f24] bg-[linear-gradient(180deg,#1a212b,#121821)] shadow-[0_24px_70px_rgba(0,0,0,0.24)]'
-                      : 'border-white/10 bg-[linear-gradient(180deg,#171d26,#10151c)]'
-                  }
-                >
-                  <CardContent>
-                    <div className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                      Pacote comercial
-                    </div>
-                    <h3 className="mt-3 font-serif text-3xl text-white">
-                      {plan.name}
-                    </h3>
-                    <p className="mt-4 text-sm leading-7 text-stone-300">
-                      {plan.text}
-                    </p>
-                    <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/8 px-3 py-2 text-sm font-semibold text-[#d68642]">
-                      Sob consulta
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
