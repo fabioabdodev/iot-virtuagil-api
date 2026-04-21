@@ -82,8 +82,8 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
               Automacao comercial
             </div>
 
-            <h1 className="max-w-[11ch] font-serif text-5xl leading-[0.94] tracking-[-0.03em] text-white md:text-7xl">
-              Solucoes em monitoramento de equipamentos.
+            <h1 className="max-w-[11ch] text-5xl font-bold leading-[0.94] tracking-[-0.03em] text-white md:text-7xl">
+              Soluções em monitoramento de equipamentos.
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-stone-300 md:text-lg">
