@@ -249,6 +249,7 @@ function DashboardContent() {
     data: clientModulesData,
     isLoading: isLoadingClientModules,
   } = useClientModules(scopedClientId, authToken);
+  const hasSelectedClient = Boolean(scopedClientId);
   const clientModules = clientModulesData ?? [];
   const ambientalModule = clientModules.find(
     (module) => module.moduleKey === 'ambiental',
@@ -263,18 +264,15 @@ function DashboardContent() {
   const historySensors = Array.from(
     new Set([...enabledAmbientalItems, ...enabledEnergyItems]),
   );
-  const ambientalEnabled =
-    scopedClientId == null
-      ? true
-      : ambientalModule?.enabled ?? false;
-  const energiaEnabled =
-    scopedClientId == null
-      ? true
-      : energiaModule?.enabled ?? false;
-  const actuationEnabled =
-    scopedClientId == null
-      ? true
-      : clientModules.find((module) => module.moduleKey === 'acionamento')?.enabled ?? false;
+  const ambientalEnabled = hasSelectedClient
+    ? ambientalModule?.enabled ?? false
+    : false;
+  const energiaEnabled = hasSelectedClient
+    ? energiaModule?.enabled ?? false
+    : false;
+  const actuationEnabled = hasSelectedClient
+    ? clientModules.find((module) => module.moduleKey === 'acionamento')?.enabled ?? false
+    : false;
   const { data: alertRulesData } = useAlertRules(
     ambientalEnabled ? scopedClientId : undefined,
     authToken,
@@ -289,6 +287,7 @@ function DashboardContent() {
     scopedClientId,
     50,
     authToken,
+    hasSelectedClient,
   );
   const devices = data ?? [];
   const alertRules = alertRulesData ?? [];
@@ -1042,20 +1041,32 @@ function DashboardContent() {
         </p>
       </section>
 
-      <AccordionPanel
-        title="Monitoramento da conta"
-        description="Veja rapidamente o estado dos equipamentos e as ocorrencias recentes."
-        className="mt-6"
-      >
-        <OperationalActivityPanel
-          clientId={scopedClientId}
-          client={selectedClient}
-          authToken={authToken}
-          devices={devices}
-          clientModules={clientModules}
-        />
-      </AccordionPanel>
+      {hasSelectedClient ? (
+        <AccordionPanel
+          title="Monitoramento da conta"
+          description="Veja rapidamente o estado dos equipamentos e as ocorrencias recentes."
+          className="mt-6"
+        >
+          <OperationalActivityPanel
+            clientId={scopedClientId}
+            client={selectedClient}
+            authToken={authToken}
+            devices={devices}
+            clientModules={clientModules}
+          />
+        </AccordionPanel>
+      ) : (
+        <div className="mt-6">
+          <AccessNotice
+            title="Selecione um cliente"
+            description="Escolha uma conta na secao Clientes para liberar monitoramento, equipamentos e regras."
+            badge="cliente obrigatorio"
+            hint="Depois de selecionar, o painel carrega os dados da conta automaticamente."
+          />
+        </div>
+      )}
 
+      {hasSelectedClient ? (
       <div id="equipamentos" className="mt-6 scroll-mt-28">
       <AccordionPanel
         title="Equipamentos"
@@ -1438,6 +1449,7 @@ function DashboardContent() {
       </Panel>
       </AccordionPanel>
       </div>
+      ) : null}
 
       {ambientalEnabled ? (
         <div id="regras-alerta" className="mt-6 scroll-mt-28">
@@ -1519,7 +1531,7 @@ function DashboardContent() {
             />
           </AccordionPanel>
         </div>
-      ) : (
+      ) : scopedClientId ? (
         <div className="mt-6">
           <AccessNotice
             title="Energia indisponivel"
@@ -1528,7 +1540,7 @@ function DashboardContent() {
             hint="Habilite os itens do modulo energia para liberar leitura de corrente, tensao e consumo."
           />
         </div>
-      )}
+      ) : null}
 
       {canViewInternalGuides ? (
         <AccordionPanel

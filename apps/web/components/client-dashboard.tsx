@@ -227,7 +227,7 @@ export function ClientDashboard() {
     isLoading: isLoadingDevices,
     isError,
     error,
-  } = useDevices(clientId, 24, authToken);
+  } = useDevices(clientId, 24, authToken, Boolean(clientId));
 
   const devices = devicesData ?? [];
   const onlineCount = devices.filter((device) => !device.isOffline).length;

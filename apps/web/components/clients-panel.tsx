@@ -355,47 +355,56 @@ export function ClientsPanel({
             onSubmit={handleSubmit(async (rawValues) => {
               setFormError(null);
               setSuccessMessage(null);
-              const values = formSchema.parse(rawValues);
-              const normalizedDocument = normalizeDigits(values.document);
-              const billingPhone = values.useSameBillingPhone
-                ? values.adminPhone
-                : values.billingPhone;
-              const alertPhone = values.useSameAlertPhone
-                ? values.adminPhone
-                : (values.alertPhone ?? values.adminPhone);
-              const alertContactName = (values.useSameAlertPhone
-                ? values.adminName
-                : values.alertContactName) ?? values.adminName;
-
-              if (duplicateDocuments.has(normalizedDocument)) {
-                setFormError('Ja existe um cliente com este CPF ou CNPJ.');
-                setIsCreateOpen(true);
-                return;
-              }
-
-              await createMutation.mutateAsync({
-                id: generatedClientId,
-                name: values.name,
-                adminName: values.adminName,
-                alertContactName,
-                document: values.document,
-                adminPhone: values.adminPhone,
-                alertPhone,
-                billingName: values.useSameBillingPhone
+              try {
+                const values = rawValues;
+                const normalizedDocument = normalizeDigits(values.document);
+                const billingPhone = values.useSameBillingPhone
+                  ? values.adminPhone
+                  : values.billingPhone;
+                const alertPhone = values.useSameAlertPhone
+                  ? values.adminPhone
+                  : (values.alertPhone ?? values.adminPhone);
+                const alertContactName = (values.useSameAlertPhone
                   ? values.adminName
-                  : values.billingName,
-                billingPhone: billingPhone ?? values.adminPhone,
-                billingEmail: values.billingEmail,
-                monitoringIntervalSeconds: values.monitoringIntervalSeconds,
-                offlineAlertDelayMinutes: values.offlineAlertDelayMinutes,
-                preferredLayout: values.preferredLayout,
-                status: values.status,
-                notes: values.notes,
-              });
-              reset();
-              onSelectClient(generatedClientId);
-              setSuccessMessage(`Cliente ${values.name} criado com sucesso.`);
-              setIsCreateOpen(false);
+                  : values.alertContactName) ?? values.adminName;
+
+                if (duplicateDocuments.has(normalizedDocument)) {
+                  setFormError('Ja existe um cliente com este CPF ou CNPJ.');
+                  setIsCreateOpen(true);
+                  return;
+                }
+
+                const created = await createMutation.mutateAsync({
+                  id: generatedClientId,
+                  name: values.name,
+                  adminName: values.adminName,
+                  alertContactName,
+                  document: values.document,
+                  adminPhone: values.adminPhone,
+                  alertPhone,
+                  billingName: values.useSameBillingPhone
+                    ? values.adminName
+                    : values.billingName,
+                  billingPhone: billingPhone ?? values.adminPhone,
+                  billingEmail: values.billingEmail,
+                  monitoringIntervalSeconds: Number(values.monitoringIntervalSeconds),
+                  offlineAlertDelayMinutes: Number(values.offlineAlertDelayMinutes),
+                  preferredLayout: values.preferredLayout,
+                  status: values.status,
+                  notes: values.notes,
+                });
+                reset();
+                onSelectClient(created.id ?? generatedClientId);
+                setSuccessMessage(`Cliente ${values.name} criado com sucesso.`);
+                setIsCreateOpen(false);
+              } catch (error) {
+                setFormError(
+                  error instanceof Error
+                    ? error.message
+                    : 'Falha ao criar cliente.',
+                );
+                setIsCreateOpen(true);
+              }
             })}
           >
             <div className="mb-3">
