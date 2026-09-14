@@ -4,10 +4,11 @@ import { FormEvent, useState } from 'react';
 import { ArrowRight, CreditCard, LoaderCircle, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+const PLAN_ID = 'fundador_500';
+const PLAN_PRICE = 249;
+
 export function PaymentForm() {
   const [clienteId, setClienteId] = useState('');
-  const [descricao, setDescricao] = useState('Implantacao Atendente IA Virtuagil');
-  const [valor, setValor] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,14 +16,6 @@ export function PaymentForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
-
-    const numericValue = Number(valor.replace(',', '.'));
-
-    if (!Number.isFinite(numericValue) || numericValue <= 0) {
-      setError('Confira o valor informado na proposta.');
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -33,9 +26,8 @@ export function PaymentForm() {
         },
         body: JSON.stringify({
           cliente_id: clienteId.trim(),
-          descricao: descricao.trim(),
-          valor: numericValue,
           email: email.trim(),
+          plano: PLAN_ID,
         }),
       });
 
@@ -58,6 +50,19 @@ export function PaymentForm() {
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-5">
+      <div className="rounded-2xl border border-[#6a4a31] bg-[#d68642]/8 p-5">
+        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e5a266]">
+          Plano Fundador
+        </div>
+        <div className="mt-2 flex items-end gap-2">
+          <span className="font-serif text-4xl text-white">R$ {PLAN_PRICE}</span>
+          <span className="pb-1 text-sm text-stone-400">/mes</span>
+        </div>
+        <p className="mt-2 text-xs leading-6 text-stone-400">
+          Ate 500 atendimentos por mes. Implantacao gratuita para as 10 primeiras vagas.
+        </p>
+      </div>
+
       <div className="grid gap-2">
         <label htmlFor="cliente_id" className="text-sm font-semibold text-stone-200">
           Codigo do cliente
@@ -73,7 +78,7 @@ export function PaymentForm() {
           className="h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none transition placeholder:text-stone-500 focus:border-[#d68642]"
         />
         <p className="text-xs leading-5 text-stone-400">
-          Use exatamente o identificador informado pela Virtuagil na sua proposta.
+          Use exatamente o identificador informado pela Virtuagil. Se ainda nao recebeu o codigo, fale com a Jade antes de pagar.
         </p>
       </div>
 
@@ -94,44 +99,6 @@ export function PaymentForm() {
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-[1fr_0.72fr]">
-        <div className="grid gap-2">
-          <label htmlFor="descricao" className="text-sm font-semibold text-stone-200">
-            Descricao
-          </label>
-          <input
-            id="descricao"
-            name="descricao"
-            value={descricao}
-            onChange={(event) => setDescricao(event.target.value)}
-            required
-            maxLength={180}
-            className="h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none transition placeholder:text-stone-500 focus:border-[#d68642]"
-          />
-        </div>
-
-        <div className="grid gap-2">
-          <label htmlFor="valor" className="text-sm font-semibold text-stone-200">
-            Valor combinado
-          </label>
-          <div className="relative">
-            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-stone-400">
-              R$
-            </span>
-            <input
-              id="valor"
-              name="valor"
-              inputMode="decimal"
-              value={valor}
-              onChange={(event) => setValor(event.target.value)}
-              placeholder="0,00"
-              required
-              className="h-12 w-full rounded-xl border border-white/10 bg-white/5 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-stone-500 focus:border-[#d68642]"
-            />
-          </div>
-        </div>
-      </div>
-
       {error ? (
         <div className="rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm leading-6 text-red-200">
           {error}
@@ -147,7 +114,7 @@ export function PaymentForm() {
         ) : (
           <>
             <CreditCard className="h-4 w-4" />
-            Ir para o Mercado Pago
+            Pagar R$ {PLAN_PRICE} no Mercado Pago
             <ArrowRight className="h-4 w-4" />
           </>
         )}
@@ -156,7 +123,7 @@ export function PaymentForm() {
       <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 text-xs leading-6 text-stone-400">
         <ShieldCheck className="mt-0.5 h-4 w-4 flex-none text-[#4c9a78]" />
         <span>
-          O pagamento e concluido no ambiente seguro do Mercado Pago. A Virtuagil nao recebe nem armazena dados do seu cartao.
+          O valor do plano e definido pela Virtuagil e validado no servidor. O pagamento e concluido no ambiente seguro do Mercado Pago; a Virtuagil nao recebe nem armazena dados do seu cartao.
         </span>
       </div>
     </form>
