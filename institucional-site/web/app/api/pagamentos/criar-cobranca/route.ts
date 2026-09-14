@@ -3,6 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 const DEFAULT_PAYMENT_WEBHOOK_URL =
   'https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-cobranca';
 
+const PLANS = {
+  fundador_500: {
+    valor: 249,
+    descricao: 'Atendente IA Virtuagil - Plano Fundador - ate 500 atendimentos/mes',
+  },
+} as const;
+
+type PlanId = keyof typeof PLANS;
+
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
@@ -35,20 +44,13 @@ export async function POST(request: NextRequest) {
   }
 
   const clienteId = String(payload.cliente_id ?? '').trim();
-  const descricao = String(payload.descricao ?? '').trim();
   const email = String(payload.email ?? '').trim().toLowerCase();
-  const valor = Number(payload.valor);
+  const planId = String(payload.plano ?? '') as PlanId;
+  const plan = PLANS[planId];
 
   if (!/^[a-zA-Z0-9_-]{2,80}$/.test(clienteId)) {
     return NextResponse.json(
       { ok: false, message: 'Codigo do cliente invalido.' },
-      { status: 400 },
-    );
-  }
-
-  if (descricao.length < 3 || descricao.length > 180) {
-    return NextResponse.json(
-      { ok: false, message: 'Descricao da cobranca invalida.' },
       { status: 400 },
     );
   }
@@ -60,9 +62,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!Number.isFinite(valor) || valor <= 0 || valor > 1_000_000) {
+  if (!plan) {
     return NextResponse.json(
-      { ok: false, message: 'Valor da cobranca invalido.' },
+      { ok: false, message: 'Plano de pagamento invalido.' },
       { status: 400 },
     );
   }
@@ -78,8 +80,8 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         cliente_id: clienteId,
-        descricao,
-        valor,
+        descricao: plan.descricao,
+        valor: plan.valor,
         email,
       }),
       cache: 'no-store',
@@ -119,6 +121,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       ok: true,
+      plano: planId,
+      valor: plan.valor,
       checkout_url: data.checkout_url,
       preference_id: data.preference_id,
     });
