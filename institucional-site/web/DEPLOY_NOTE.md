@@ -1,1 +1,0 @@
-Alteracoes do Plano Fundador devem permanecer restritas ao site institucional.
