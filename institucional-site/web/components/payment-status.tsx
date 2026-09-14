@@ -27,7 +27,7 @@ const content = {
     icon: CircleAlert,
     eyebrow: 'Pagamento nao concluido',
     title: 'O pagamento nao foi finalizado.',
-    text: 'Voce pode tentar novamente ou falar com a Jade para confirmar seu codigo de cliente e receber ajuda com o pagamento.',
+    text: 'Voce pode tentar novamente ou falar com o atendimento da Virtuagil para confirmar seu codigo de cliente e receber ajuda com o pagamento.',
     accent: 'text-red-300',
   },
 } as const;
@@ -74,7 +74,7 @@ export function PaymentStatus({ status }: { status: Status }) {
               <Button asChild variant="secondary">
                 <a href={whatsappUrl} target="_blank" rel="noreferrer">
                   <MessageCircleMore className="h-4 w-4" />
-                  Falar com a Jade
+                  Falar com a Virtuagil
                 </a>
               </Button>
             </div>
