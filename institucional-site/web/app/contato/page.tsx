@@ -1,31 +1,23 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import {
-  ArrowRight,
-  Mail,
-  MapPin,
-  MessageCircleMore,
-  Phone,
-} from 'lucide-react';
+import { ArrowRight, Bot, Mail, MessageCircleMore, Phone, Workflow } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 const whatsappUrl =
-  process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/5531999990000';
+  process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
 const contactEmail =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'contato@virtuagil.com.br';
 
 export const metadata: Metadata = {
-  title: 'Contato | Virtuagil',
+  title: 'Contato',
   description:
-    'Converse com a equipe comercial da Virtuagil e avalie o melhor caminho para monitoramento e automacao da sua operacao.',
-  alternates: {
-    canonical: '/contato',
-  },
+    'Fale com a Virtuagil sobre Atendente IA, automacao de processos e projetos IoT para sua empresa.',
+  alternates: { canonical: '/contato' },
   openGraph: {
     title: 'Contato | Virtuagil',
     description:
-      'Fale com a Jade e receba orientacao para a melhor proposta comercial para seu contexto operacional.',
+      'Converse com a Jade sobre o Atendente IA ou fale com a equipe sobre automacao de processos e IoT.',
     url: 'https://www.virtuagil.com.br/contato',
   },
 };
@@ -39,13 +31,11 @@ export default function ContatoPage() {
             <div className="inline-flex rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-300">
               Contato comercial
             </div>
-            <h1 className="mt-5 max-w-[10ch] font-serif text-5xl leading-[0.96] tracking-[0.03em] text-white md:text-7xl">
-              Vamos entender sua operacao e montar o proximo passo.
+            <h1 className="mt-5 max-w-[11ch] font-serif text-5xl leading-[0.96] tracking-[-0.03em] text-white md:text-7xl">
+              Conte o que sua empresa precisa automatizar.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-stone-300 md:text-lg">
-              Se voce quer reduzir custo operacional, melhorar visibilidade ou
-              avaliar por onde comecar, a Jade pode abrir a conversa e orientar
-              a melhor entrada comercial para o seu caso.
+              Para conhecer o Atendente IA, converse com a Jade e veja a propria automacao funcionando. Para integracoes de processos ou IoT, nossa equipe avalia o contexto e prepara o proximo passo.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -67,47 +57,24 @@ export default function ContatoPage() {
                 <div className="mb-3 inline-flex rounded-full bg-white/8 p-3 text-[#d68642]">
                   <MessageCircleMore className="h-5 w-5" />
                 </div>
-                <h2 className="font-serif text-3xl text-white">
-                  Atendimento inicial com linguagem simples
-                </h2>
+                <h2 className="font-serif text-3xl text-white">Comece pelo canal mais simples</h2>
                 <p className="mt-3 text-sm leading-7 text-stone-300">
-                  A conversa comeca leve, humana e objetiva. Primeiro entendemos
-                  sua operacao. Depois, sugerimos o melhor caminho.
+                  A Jade apresenta o Atendente IA, tira duvidas e identifica interesse. Quando o assunto exigir projeto sob medida, a conversa segue com uma pessoa da equipe.
                 </p>
               </div>
 
               <div className="grid gap-3 md:grid-cols-3">
                 {[
-                  {
-                    icon: Phone,
-                    label: 'WhatsApp',
-                    value: 'Atendimento rapido',
-                  },
-                  {
-                    icon: Mail,
-                    label: 'E-mail',
-                    value: contactEmail,
-                  },
-                  {
-                    icon: MapPin,
-                    label: 'Atuacao',
-                    value: 'Projetos locais e regionais',
-                  },
+                  { icon: Bot, label: 'Atendente IA', value: 'Demo com a Jade' },
+                  { icon: Workflow, label: 'Projetos', value: 'Automacao sob medida' },
+                  { icon: Mail, label: 'E-mail', value: contactEmail },
                 ].map((item) => {
                   const Icon = item.icon;
-
                   return (
-                    <div
-                      key={item.label}
-                      className="rounded-[22px] border border-white/10 bg-white/6 p-4"
-                    >
+                    <div key={item.label} className="rounded-[22px] border border-white/10 bg-white/6 p-4">
                       <Icon className="h-4 w-4 text-[#4c9a78]" />
-                      <div className="mt-3 text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                        {item.label}
-                      </div>
-                      <div className="mt-2 text-sm font-semibold text-white">
-                        {item.value}
-                      </div>
+                      <div className="mt-3 text-[11px] uppercase tracking-[0.18em] text-stone-400">{item.label}</div>
+                      <div className="mt-2 text-sm font-semibold text-white">{item.value}</div>
                     </div>
                   );
                 })}
@@ -122,34 +89,23 @@ export default function ContatoPage() {
           <Card className="bg-[linear-gradient(135deg,#284336,#1f352b)] text-white shadow-[0_28px_90px_rgba(31,52,43,0.24)]">
             <CardContent className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
-                <div className="text-sm uppercase tracking-[0.22em] text-white/70">
-                  Antes da proposta
-                </div>
-                <h2 className="mt-3 max-w-[14ch] font-serif text-4xl leading-tight md:text-5xl">
-                  Entendemos sua necessidade antes de empurrar uma solucao.
+                <div className="text-sm uppercase tracking-[0.22em] text-white/70">O que podemos automatizar</div>
+                <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight md:text-5xl">
+                  Atendimento, processos digitais e operacoes conectadas.
                 </h2>
                 <p className="mt-5 max-w-2xl text-sm leading-8 text-white/78 md:text-base">
-                  Podemos conversar sobre temperatura, gases, acionamentos,
-                  consumo ou um desenho sob medida. O foco e montar algo que
-                  faca sentido para sua operacao de verdade.
+                  O Atendente IA e nossa oferta pronta para o WhatsApp. Tambem desenvolvemos integracoes entre sistemas e projetos IoT de monitoramento e controle conforme a necessidade da operacao.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="bg-white text-[#1f352b] hover:bg-white/92"
-                >
+                <Button asChild variant="ghost" className="bg-white text-[#1f352b] hover:bg-white/92">
                   <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                    <Phone className="h-4 w-4" />
                     Falar com a Jade
                   </a>
                 </Button>
-                <Button
-                  asChild
-                  variant="secondary"
-                  className="border-white/20 bg-white/10 text-white hover:bg-white/14"
-                >
+                <Button asChild variant="secondary" className="border-white/20 bg-white/10 text-white hover:bg-white/14">
                   <Link href="/solucoes">Ver solucoes</Link>
                 </Button>
               </div>

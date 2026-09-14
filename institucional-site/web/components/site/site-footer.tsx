@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Globe, Mail, Phone } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 
 type SiteFooterProps = {
   contactEmail: string;
@@ -16,25 +16,17 @@ function formatPhoneFromWhatsapp(url: string) {
     return `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7)}`;
   }
 
-  return phone || '(31) 7102-9727';
+  return phone || 'WhatsApp comercial';
 }
 
-export function SiteFooter({
-  contactEmail,
-  whatsappUrl,
-  monitorUrl,
-}: SiteFooterProps) {
+export function SiteFooter({ contactEmail, whatsappUrl, monitorUrl }: SiteFooterProps) {
   const phoneLabel = formatPhoneFromWhatsapp(whatsappUrl);
 
   return (
     <footer className="border-t border-white/10 bg-[#070b10]">
       <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-8 py-10 md:grid-cols-[1.15fr_0.85fr] md:py-14">
         <div>
-          <Link
-            href="/"
-            aria-label="Virtuagil"
-            className="inline-flex flex-col items-start"
-          >
+          <Link href="/" aria-label="Virtuagil" className="inline-flex flex-col items-start">
             <Image
               src="/brand/logomarca.png"
               alt="Virtuagil"
@@ -48,9 +40,7 @@ export function SiteFooter({
           </Link>
 
           <p className="mt-5 max-w-xl text-sm leading-7 text-stone-400">
-            Soluçoes em monitoramento de equipamentos com foco em Temperatura,
-            Gases, Acionamentos e Consumo para reduzir custos operacionais e
-            melhorar o controle da operação do seu negócio..
+            Automacao com Inteligencia Artificial, integracoes de processos e IoT para reduzir trabalho manual, melhorar atendimento e dar mais controle a operacao.
           </p>
 
           <p className="mt-6 text-xs uppercase tracking-[0.18em] text-stone-600">
@@ -60,69 +50,27 @@ export function SiteFooter({
 
         <div className="grid gap-6 sm:grid-cols-2">
           <div>
-            <div className="text-[11px] uppercase tracking-[0.2em] text-stone-500">
-              Contato
-            </div>
+            <div className="text-[11px] uppercase tracking-[0.2em] text-stone-500">Contato</div>
             <div className="mt-4 grid gap-3 text-sm text-stone-300">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-3 transition hover:text-white"
-              >
+              <a href={whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 transition hover:text-white">
                 <Phone className="h-4 w-4 text-[#d68642]" />
                 {phoneLabel}
               </a>
-              <a
-                href={`mailto:${contactEmail}`}
-                className="inline-flex items-center gap-3 transition hover:text-white"
-              >
+              <a href={`mailto:${contactEmail}`} className="inline-flex items-center gap-3 transition hover:text-white">
                 <Mail className="h-4 w-4 text-[#4c9a78]" />
                 {contactEmail}
-              </a>
-              <a
-                href={monitorUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-3 transition hover:text-white"
-              >
-                <span className="h-2 w-2 rounded-full bg-[#d68642]" />
-                Area do cliente
               </a>
             </div>
           </div>
 
           <div>
-            <div className="text-[11px] uppercase tracking-[0.2em] text-stone-500">
-              Presenca digital
-            </div>
+            <div className="text-[11px] uppercase tracking-[0.2em] text-stone-500">Acesso rapido</div>
             <div className="mt-4 grid gap-3 text-sm text-stone-300">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-3 transition hover:text-white"
-              >
-                <Phone className="h-4 w-4 text-[#d68642]" />
-                WhatsApp comercial
-              </a>
-              <a
-                href="https://www.instagram.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-3 transition hover:text-white"
-              >
-                <Globe className="h-4 w-4 text-[#d68642]" />
-                Instagram
-              </a>
-              <a
-                href="https://www.linkedin.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-3 transition hover:text-white"
-              >
-                <Globe className="h-4 w-4 text-[#4c9a78]" />
-                LinkedIn
+              <Link href="/solucoes/atendente-ia" className="transition hover:text-white">Atendente IA</Link>
+              <Link href="/solucoes/automacao-processos" className="transition hover:text-white">Automacao de Processos</Link>
+              <Link href="/solucoes" className="transition hover:text-white">Solucoes IoT</Link>
+              <a href={monitorUrl} target="_blank" rel="noreferrer" className="transition hover:text-white">
+                Area do cliente IoT
               </a>
             </div>
           </div>

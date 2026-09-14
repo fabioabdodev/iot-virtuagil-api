@@ -14,6 +14,8 @@ services:
       - APP_BUILD_TIME=${APP_BUILD_TIME:-unknown}
       - NEXT_PUBLIC_WHATSAPP_URL=${NEXT_PUBLIC_WHATSAPP_URL}
       - NEXT_PUBLIC_CONTACT_EMAIL=${NEXT_PUBLIC_CONTACT_EMAIL}
+      - NEXT_PUBLIC_MONITOR_URL=${NEXT_PUBLIC_MONITOR_URL:-https://monitor.virtuagil.com.br}
+      - NEXT_PUBLIC_MERCADO_PAGO_PAYMENT_URL=${NEXT_PUBLIC_MERCADO_PAGO_PAYMENT_URL:-}
     deploy:
       replicas: 1
       restart_policy:
