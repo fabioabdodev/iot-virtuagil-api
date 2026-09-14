@@ -1,22 +1,34 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { ArrowRight, Bot, Check, Cpu, CreditCard, Sparkles, Workflow } from 'lucide-react';
+import {
+  ArrowRight,
+  Bot,
+  Check,
+  Cpu,
+  CreditCard,
+  Sparkles,
+  Workflow,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
-const mercadoPagoUrl = process.env.NEXT_PUBLIC_MERCADO_PAGO_PAYMENT_URL;
+
+const founderMessage = encodeURIComponent(
+  'Olá! Quero uma das vagas do Plano Fundador do Atendente IA por R$ 249/mês.',
+);
+const founderWhatsappUrl = `${whatsappUrl}?text=${founderMessage}`;
 
 export const metadata: Metadata = {
   title: 'Planos e Contratacao',
   description:
-    'Conheca as formas de contratacao da Virtuagil para Atendente IA, automacao de processos e projetos IoT.',
+    'Contrate o Atendente IA da Virtuagil com preco de lancamento. Automacao de processos e IoT seguem com proposta conforme escopo.',
   alternates: { canonical: '/planos' },
   openGraph: {
     title: 'Planos e Contratacao | Virtuagil',
     description:
-      'Atendente IA, automacoes sob medida e IoT com contratacao orientada ao seu contexto.',
+      'Atendente IA com preco fundador para os primeiros clientes, alem de automacoes sob medida e projetos IoT.',
     url: 'https://www.virtuagil.com.br/planos',
   },
 };
@@ -52,13 +64,13 @@ const offers = [
   {
     icon: Cpu,
     name: 'Automacao IoT',
-    subtitle: 'Monitoramento e controle',
+    subtitle: 'Sob consulta',
     text: 'Projetos para monitorar temperatura, gases, consumo, equipamentos e outras variaveis da operacao.',
     bullets: [
-      'Monitoramento continuo',
-      'Alertas e historico',
+      'Preco conforme hardware e quantidade de pontos',
+      'Monitoramento, alertas e historico',
       'Acionamentos e controle quando aplicavel',
-      'Combinacao de modulos conforme o projeto',
+      'Projeto dimensionado para cada operacao',
     ],
     href: '/solucoes',
   },
@@ -75,25 +87,87 @@ export default function PlanosPage() {
               Planos e contratacao
             </div>
             <h1 className="mt-5 max-w-[12ch] font-serif text-5xl leading-[0.96] tracking-[-0.03em] text-white md:text-7xl">
-              Comece pela automacao que resolve a dor mais urgente.
+              Comece pequeno. Automatize o atendimento que mais toma seu tempo.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-stone-300 md:text-lg">
-              O Atendente IA e nossa solucao pronta para implantacao. Automacoes de processos e projetos IoT sao dimensionados conforme o escopo da operacao.
+              O Atendente IA tem uma oferta de entrada simples para pequenos negocios e profissionais. Projetos de IoT continuam sendo dimensionados conforme hardware, instalacao e escopo.
             </p>
           </div>
 
-          <Card className="border-white/10 bg-[linear-gradient(135deg,#171d26,#10151c)]">
+          <Card className="border-[#6a4a31] bg-[linear-gradient(135deg,#211a17,#10151c)] shadow-[0_24px_70px_rgba(0,0,0,0.24)]">
             <CardContent>
-              <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Sem surpresa comercial</div>
-              <h2 className="mt-3 max-w-[14ch] font-serif text-4xl leading-tight text-white">
-                Primeiro entendemos. Depois formalizamos a contratacao.
+              <div className="text-sm uppercase tracking-[0.22em] text-[#d68642]">Preco fundador</div>
+              <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-white">
+                10 vagas para validar a operacao junto com a Virtuagil.
               </h2>
               <p className="mt-5 text-sm leading-8 text-stone-300">
-                Os valores sao apresentados de acordo com volume, configuracao e escopo. Depois da aprovacao, o pagamento pode ser realizado com seguranca pelo Mercado Pago.
+                Uma condicao de lancamento para os primeiros clientes do Atendente IA, com implantacao gratuita e limite de uso claro.
               </p>
               <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2 text-xs font-semibold text-stone-300">
                 <CreditCard className="h-4 w-4 text-[#d68642]" />
-                Pagamento via Mercado Pago
+                Pagamento seguro via Mercado Pago
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section className="pt-10 md:pt-14">
+        <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
+          <Card className="overflow-hidden border-[#6a4a31] bg-[linear-gradient(135deg,#241a15,#121821)] shadow-[0_32px_110px_rgba(0,0,0,0.28)]">
+            <CardContent className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+              <div>
+                <div className="inline-flex rounded-full bg-[#d68642]/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#e5a266]">
+                  Apenas 10 clientes no lancamento
+                </div>
+                <h2 className="mt-5 font-serif text-4xl leading-tight text-white md:text-5xl">
+                  Atendente IA — Plano Fundador
+                </h2>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-300 md:text-base">
+                  Para autonomos e pequenos negocios que querem responder mais rapido, acompanhar interessados e ter atendimento humano quando necessario.
+                </p>
+
+                <ul className="mt-7 grid gap-3 text-sm text-stone-200 sm:grid-cols-2">
+                  {[
+                    'Ate 500 atendimentos por mes',
+                    '1 numero de WhatsApp',
+                    'IA personalizada para o negocio',
+                    'Follow-up automatico',
+                    'Transferencia para atendimento humano',
+                    'Dashboard de contatos e resultados',
+                    'Configuracao inicial inclusa',
+                    'Suporte da Virtuagil',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <Check className="mt-0.5 h-4 w-4 flex-none text-[#4c9a78]" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-3xl border border-white/10 bg-black/20 p-6 md:p-8">
+                <div className="text-sm text-stone-400">Preco de lancamento</div>
+                <div className="mt-2 flex items-end gap-2">
+                  <span className="font-serif text-6xl leading-none text-white">R$ 249</span>
+                  <span className="pb-1 text-sm text-stone-400">/mes</span>
+                </div>
+                <div className="mt-3 text-sm font-semibold text-[#7fc6a4]">Implantacao gratuita para as 10 primeiras vagas</div>
+                <p className="mt-5 text-xs leading-6 text-stone-400">
+                  Condicao especial de validacao inicial. Acima de 500 atendimentos mensais, a Virtuagil avalia o plano adequado para o volume da operacao.
+                </p>
+
+                <div className="mt-7 grid gap-3">
+                  <Button asChild size="lg" className="w-full">
+                    <a href={founderWhatsappUrl} target="_blank" rel="noreferrer">
+                      Quero uma das 10 vagas
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                  </Button>
+                  <Button asChild size="lg" variant="secondary" className="w-full">
+                    <Link href="/pagamento">Ja tenho meu codigo de cliente</Link>
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -152,12 +226,12 @@ export default function PlanosPage() {
           <Card className="overflow-hidden border-white/10 bg-[linear-gradient(135deg,#171d26,#10151c)] shadow-[0_32px_110px_rgba(0,0,0,0.24)]">
             <CardContent className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
-                <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Proximo passo</div>
+                <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Quer ver funcionando?</div>
                 <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-white md:text-5xl">
-                  Converse com a Jade e veja o Atendente IA funcionando na pratica.
+                  Converse com a Jade e teste a experiencia do Atendente IA.
                 </h2>
                 <p className="mt-5 max-w-2xl text-sm leading-8 text-stone-300 md:text-base">
-                  Para o Atendente IA, a propria Jade apresenta a solucao e identifica seu interesse. Para automacoes de processos e IoT, nossa equipe continua a conversa e prepara a proposta.
+                  A propria Jade apresenta a solucao, responde suas duvidas e identifica se o Plano Fundador atende ao seu volume.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -167,15 +241,6 @@ export default function PlanosPage() {
                     <ArrowRight className="h-4 w-4" />
                   </a>
                 </Button>
-                {mercadoPagoUrl ? (
-                  <Button asChild size="lg" variant="secondary">
-                    <a href={mercadoPagoUrl} target="_blank" rel="noreferrer">Pagar com Mercado Pago</a>
-                  </Button>
-                ) : (
-                  <Button asChild size="lg" variant="secondary">
-                    <Link href="/contato">Solicitar proposta</Link>
-                  </Button>
-                )}
               </div>
             </CardContent>
           </Card>
