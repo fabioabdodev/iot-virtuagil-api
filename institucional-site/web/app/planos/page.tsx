@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
-const mercadoPagoUrl = process.env.NEXT_PUBLIC_MERCADO_PAGO_PAYMENT_URL;
 
 export const metadata: Metadata = {
   title: 'Planos e Contratacao',
@@ -167,15 +166,9 @@ export default function PlanosPage() {
                     <ArrowRight className="h-4 w-4" />
                   </a>
                 </Button>
-                {mercadoPagoUrl ? (
-                  <Button asChild size="lg" variant="secondary">
-                    <a href={mercadoPagoUrl} target="_blank" rel="noreferrer">Pagar com Mercado Pago</a>
-                  </Button>
-                ) : (
-                  <Button asChild size="lg" variant="secondary">
-                    <Link href="/contato">Solicitar proposta</Link>
-                  </Button>
-                )}
+                <Button asChild size="lg" variant="secondary">
+                  <Link href="/pagamento">Pagar proposta aprovada</Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
