@@ -226,18 +226,18 @@ export default function PlanosPage() {
           <Card className="overflow-hidden border-white/10 bg-[linear-gradient(135deg,#171d26,#10151c)] shadow-[0_32px_110px_rgba(0,0,0,0.24)]">
             <CardContent className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
-                <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Quer ver funcionando?</div>
+                <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Quer conhecer melhor?</div>
                 <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-white md:text-5xl">
-                  Converse com a Jade e teste a experiencia do Atendente IA.
+                  Fale com a Virtuagil sobre o Atendente IA.
                 </h2>
                 <p className="mt-5 max-w-2xl text-sm leading-8 text-stone-300 md:text-base">
-                  A propria Jade apresenta a solucao, responde suas duvidas e identifica se o Plano Fundador atende ao seu volume.
+                  Nosso atendimento apresenta a solucao, responde suas duvidas e identifica se o Plano Fundador atende ao seu volume.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
                 <Button asChild size="lg">
                   <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                    Falar com a Jade
+                    Falar com a Virtuagil
                     <ArrowRight className="h-4 w-4" />
                   </a>
                 </Button>
