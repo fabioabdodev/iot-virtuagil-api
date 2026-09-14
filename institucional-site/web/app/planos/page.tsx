@@ -207,7 +207,7 @@ export default function PlanosPage() {
                     ))}
                   </ul>
                   <div className="mt-auto pt-7">
-                    <Button asChild variant={offer.featured ? 'default' : 'secondary'}>
+                    <Button asChild variant={offer.featured ? 'primary' : 'secondary'}>
                       <Link href={offer.href}>
                         Ver detalhes
                         <ArrowRight className="h-4 w-4" />
