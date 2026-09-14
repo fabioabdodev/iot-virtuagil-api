@@ -13,7 +13,7 @@ const content = {
     icon: CircleCheckBig,
     eyebrow: 'Pagamento confirmado',
     title: 'Recebemos a confirmacao do seu pagamento.',
-    text: 'O Mercado Pago concluiu a transacao. A Virtuagil processa a confirmacao automaticamente e segue com a ativacao combinada na proposta.',
+    text: 'O Mercado Pago concluiu a transacao. A Virtuagil processa a confirmacao automaticamente e segue com a ativacao do seu Plano Fundador.',
     accent: 'text-[#4c9a78]',
   },
   pending: {
@@ -27,7 +27,7 @@ const content = {
     icon: CircleAlert,
     eyebrow: 'Pagamento nao concluido',
     title: 'O pagamento nao foi finalizado.',
-    text: 'Voce pode tentar novamente ou falar com a Jade para confirmar os dados da proposta e receber ajuda com o pagamento.',
+    text: 'Voce pode tentar novamente ou falar com a Jade para confirmar seu codigo de cliente e receber ajuda com o pagamento.',
     accent: 'text-red-300',
   },
 } as const;
