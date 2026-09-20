@@ -1,20 +1,19 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Poppins } from 'next/font/google';
+import { Manrope, Sora } from 'next/font/google';
 import { SiteHeader } from '@/components/site/site-header';
 import { SiteFooter } from '@/components/site/site-footer';
-import { Component as BackgroundSnippets } from '@/components/ui/background-snippets';
 import './globals.css';
 
-const poppins = Poppins({
+const manrope = Manrope({
   subsets: ['latin'],
   variable: '--font-sans',
-  weight: ['400', '500', '600', '700'],
+  display: 'swap',
 });
 
-const cormorant = Cormorant_Garamond({
+const sora = Sora({
   subsets: ['latin'],
   variable: '--font-display',
-  weight: ['500', '600', '700'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -24,13 +23,12 @@ export const metadata: Metadata = {
     template: '%s | Virtuagil',
   },
   description:
-    'Soluções de automação com inteligência artificial, atendimento no WhatsApp, automação de processos e IoT para empresas que querem reduzir tarefas manuais e operar melhor.',
+    'Automação com inteligência artificial, processos integrados e IoT para empresas que querem atender melhor, reduzir tarefas manuais e ganhar controle da operação.',
   keywords: [
+    'assistente de IA para empresas',
     'automação com inteligência artificial',
+    'atendimento com IA no WhatsApp',
     'automação empresarial',
-    'atendimento com IA',
-    'chatbot para WhatsApp',
-    'automação de atendimento WhatsApp',
     'automação de processos',
     'integração de sistemas',
     'automação IoT',
@@ -41,7 +39,6 @@ export const metadata: Metadata = {
   authors: [{ name: 'Virtuagil', url: 'https://www.virtuagil.com.br' }],
   creator: 'Virtuagil',
   publisher: 'Virtuagil',
-  alternates: { canonical: '/' },
   robots: {
     index: true,
     follow: true,
@@ -68,7 +65,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtuagil | Automação com IA, Processos e IoT',
     description:
-      'Automação inteligente para atendimento, processos e operações. Conheça o Atendente IA da Virtuagil e nossas soluções sob medida e IoT.',
+      'Assistente de IA para WhatsApp, automação de processos e soluções IoT para empresas que querem operar melhor.',
     url: 'https://www.virtuagil.com.br',
     siteName: 'Virtuagil',
     images: [
@@ -91,14 +88,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const whatsappUrl =
     process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
   const contactEmail =
     process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'contato@virtuagil.com.br';
   const monitorUrl =
     process.env.NEXT_PUBLIC_MONITOR_URL ?? 'https://monitor.virtuagil.com.br';
-  const siteTheme = process.env.NEXT_PUBLIC_SITE_THEME ?? 'emerald-market';
+  const assistantUrl =
+    process.env.NEXT_PUBLIC_ASSISTENTE_URL ?? 'https://atendente.virtuagil.com.br';
 
   const organizationJsonLd = {
     '@context': 'https://schema.org',
@@ -127,22 +127,23 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="pt-BR">
-      <body
-        className={`${poppins.variable} ${cormorant.variable} min-h-screen`}
-        data-theme={siteTheme}
-      >
-        <BackgroundSnippets />
+      <body className={`${manrope.variable} ${sora.variable} min-h-screen`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         <div className="flex min-h-screen flex-col">
-          <SiteHeader monitorUrl={monitorUrl} whatsappUrl={whatsappUrl} />
-          <div className="flex-1 pt-[88px]">{children}</div>
+          <SiteHeader
+            monitorUrl={monitorUrl}
+            assistantUrl={assistantUrl}
+            whatsappUrl={whatsappUrl}
+          />
+          <div className="flex-1 pt-[76px]">{children}</div>
           <SiteFooter
             contactEmail={contactEmail}
             whatsappUrl={whatsappUrl}
             monitorUrl={monitorUrl}
+            assistantUrl={assistantUrl}
           />
         </div>
       </body>
