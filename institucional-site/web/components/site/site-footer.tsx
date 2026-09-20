@@ -1,11 +1,12 @@
-import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, Phone } from 'lucide-react';
+import Link from 'next/link';
+import { Bot, ExternalLink, Mail, Monitor, Phone } from 'lucide-react';
 
 type SiteFooterProps = {
   contactEmail: string;
   whatsappUrl: string;
   monitorUrl: string;
+  assistantUrl: string;
 };
 
 function formatPhoneFromWhatsapp(url: string) {
@@ -19,62 +20,112 @@ function formatPhoneFromWhatsapp(url: string) {
   return phone || 'WhatsApp comercial';
 }
 
-export function SiteFooter({ contactEmail, whatsappUrl, monitorUrl }: SiteFooterProps) {
+export function SiteFooter({
+  contactEmail,
+  whatsappUrl,
+  monitorUrl,
+  assistantUrl,
+}: SiteFooterProps) {
   const phoneLabel = formatPhoneFromWhatsapp(whatsappUrl);
 
   return (
-    <footer className="border-t border-white/10 bg-[#070b10]">
-      <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-8 py-10 md:grid-cols-[1.15fr_0.85fr] md:py-14">
+    <footer className="mt-16 border-t border-white/[0.07] bg-[#04070b]/86">
+      <div className="section-shell grid gap-10 py-12 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
         <div>
-          <Link href="/" aria-label="Virtuagil" className="inline-flex flex-col items-start">
+          <Link href="/" aria-label="Virtuagil" className="inline-flex">
             <Image
               src="/brand/logomarca.png"
               alt="Virtuagil"
               width={176}
               height={48}
-              className="h-auto w-[158px] md:w-[176px]"
+              className="h-auto w-[158px]"
             />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500 md:text-[11px]">
-              Tecnologia em automacao
-            </span>
           </Link>
-
-          <p className="mt-5 max-w-xl text-sm leading-7 text-stone-400">
-            Automacao com Inteligencia Artificial, integracoes de processos e IoT para reduzir trabalho manual, melhorar atendimento e dar mais controle a operacao.
+          <p className="mt-5 max-w-lg text-sm leading-7 text-slate-400">
+            Inteligência artificial, automação de processos e IoT aplicados a
+            problemas reais de operação, atendimento e crescimento.
           </p>
-
-          <p className="mt-6 text-xs uppercase tracking-[0.18em] text-stone-600">
-            Virtuagil • Todos os direitos reservados
-          </p>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2">
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.2em] text-stone-500">Contato</div>
-            <div className="mt-4 grid gap-3 text-sm text-stone-300">
-              <a href={whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 transition hover:text-white">
-                <Phone className="h-4 w-4 text-[#d68642]" />
-                {phoneLabel}
-              </a>
-              <a href={`mailto:${contactEmail}`} className="inline-flex items-center gap-3 transition hover:text-white">
-                <Mail className="h-4 w-4 text-[#4c9a78]" />
-                {contactEmail}
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.2em] text-stone-500">Acesso rapido</div>
-            <div className="mt-4 grid gap-3 text-sm text-stone-300">
-              <Link href="/solucoes/atendente-ia" className="transition hover:text-white">Atendente IA</Link>
-              <Link href="/solucoes/automacao-processos" className="transition hover:text-white">Automacao de Processos</Link>
-              <Link href="/solucoes" className="transition hover:text-white">Solucoes IoT</Link>
-              <a href={monitorUrl} target="_blank" rel="noreferrer" className="transition hover:text-white">
-                Area do cliente IoT
-              </a>
-            </div>
+          <div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-500">
+            <span className="rounded-full border border-white/[0.07] px-3 py-1.5">
+              Belo Horizonte • Brasil
+            </span>
+            <span className="rounded-full border border-white/[0.07] px-3 py-1.5">
+              Tecnologia em automação
+            </span>
           </div>
         </div>
+
+        <div>
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+            Navegação
+          </div>
+          <div className="mt-4 grid gap-3 text-sm text-slate-300">
+            <Link href="/solucoes" className="transition hover:text-white">
+              Soluções
+            </Link>
+            <Link href="/planos" className="transition hover:text-white">
+              Planos
+            </Link>
+            <Link href="/contato" className="transition hover:text-white">
+              Contato
+            </Link>
+            <Link
+              href="/contratar-assistente-ia"
+              className="inline-flex items-center gap-2 font-semibold text-emerald-300 transition hover:text-emerald-200"
+            >
+              <Bot className="h-4 w-4" />
+              Contratar Assistente de IA
+            </Link>
+          </div>
+        </div>
+
+        <div>
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+            Contato e acesso
+          </div>
+          <div className="mt-4 grid gap-3 text-sm text-slate-300">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
+              <Phone className="h-4 w-4 text-emerald-300" />
+              {phoneLabel}
+            </a>
+            <a
+              href={`mailto:${contactEmail}`}
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
+              <Mail className="h-4 w-4 text-sky-300" />
+              {contactEmail}
+            </a>
+            <a
+              href={assistantUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
+              <ExternalLink className="h-4 w-4 text-emerald-300" />
+              Dashboard Assistente de IA
+            </a>
+            <a
+              href={monitorUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
+              <Monitor className="h-4 w-4 text-sky-300" />
+              Plataforma IoT
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="soft-divider" />
+      <div className="section-shell flex flex-col gap-2 py-5 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+        <span>© {new Date().getFullYear()} Virtuagil. Todos os direitos reservados.</span>
+        <span>Automação que trabalha junto com a sua operação.</span>
       </div>
     </footer>
   );
