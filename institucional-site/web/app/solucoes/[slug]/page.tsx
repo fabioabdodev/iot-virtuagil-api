@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, ChevronLeft, CreditCard, MessageCircleMore, ShieldCheck, UserCheck } from 'lucide-react';
+import {
+  ArrowRight,
+  Bot,
+  CheckCircle2,
+  ChevronLeft,
+  MessageCircleMore,
+  ShieldCheck,
+  UserCheck,
+} from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,7 +16,6 @@ import { getProductBySlug, products } from '@/lib/products';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
-const mercadoPagoUrl = process.env.NEXT_PUBLIC_MERCADO_PAGO_PAYMENT_URL;
 
 type ProductDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -18,12 +25,15 @@ export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
 }
 
-export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: ProductDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = getProductBySlug(slug);
   if (!product) return {};
 
   const canonical = `/solucoes/${product.slug}`;
+
   return {
     title: product.title,
     description: product.summary,
@@ -37,12 +47,14 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   };
 }
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default async function ProductDetailPage({
+  params,
+}: ProductDetailPageProps) {
   const { slug } = await params;
   const product = getProductBySlug(slug);
   if (!product) notFound();
 
-  const isAtendenteIa = product.slug === 'atendente-ia';
+  const isAssistenteIa = product.slug === 'atendente-ia';
   const serviceJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -57,92 +69,117 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   };
 
   return (
-    <main className="pb-20">
+    <main className="pb-16 md:pb-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
 
-      <section className="pt-12 md:pt-18">
-        <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+      <section className="relative py-14 md:py-20">
+        <div className="glow-orb right-[-120px] top-[10px] h-[320px] w-[320px] bg-emerald-400/10" />
+        <div className="section-shell grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
           <div>
-            <Link href="/solucoes" className="inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition hover:text-white">
+            <Link
+              href="/solucoes"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 transition hover:text-white"
+            >
               <ChevronLeft className="h-4 w-4" />
-              Voltar para solucoes
+              Voltar para soluções
             </Link>
-            <div className="mt-6 inline-flex rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-300">
-              {product.category}
-            </div>
-            <h1 className="mt-5 max-w-[11ch] font-serif text-5xl leading-[0.96] tracking-[-0.03em] text-white md:text-7xl">
+
+            <div className="mt-6 eyebrow">{product.category}</div>
+
+            <h1 className="mt-5 max-w-[12ch] font-display text-5xl font-semibold leading-[0.96] tracking-[-0.04em] text-white md:text-6xl">
               {product.title}
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-stone-300 md:text-lg">{product.subtitle}</p>
-            {isAtendenteIa && (
-              <div className="mt-7 flex flex-wrap gap-3">
+
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+              {product.subtitle}
+            </p>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+              {isAssistenteIa ? (
+                <>
+                  <Button asChild size="lg">
+                    <Link href="/contratar-assistente-ia">
+                      Contratar Assistente de IA
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="secondary">
+                    <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                      <MessageCircleMore className="h-4 w-4" />
+                      Falar com a Jade
+                    </a>
+                  </Button>
+                </>
+              ) : (
                 <Button asChild size="lg">
                   <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                    Testar com a Jade
+                    Falar com a Virtuagil
                     <ArrowRight className="h-4 w-4" />
                   </a>
                 </Button>
-                <Button asChild size="lg" variant="secondary">
-                  <Link href="/planos">Ver contratacao</Link>
-                </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <article
-            className="relative min-h-[380px] overflow-hidden rounded-[32px] border border-white/10 bg-[#10171f]"
+            className="relative min-h-[390px] overflow-hidden rounded-[32px] border border-white/[0.08] bg-[#0b1219] shadow-[0_30px_100px_rgba(0,0,0,0.3)]"
             style={{
-              backgroundImage: `url(${product.image}), linear-gradient(180deg,#202632,#0e1319)`,
+              backgroundImage: `url(${product.image}), linear-gradient(180deg,#15202c,#081017)`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
           >
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,14,20,0.06),rgba(10,14,20,0.82))]" />
-            <div className="relative flex h-full flex-col justify-end p-7 text-white">
-              <div className="inline-flex w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/86 backdrop-blur-sm">
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,12,0.1),rgba(4,8,12,0.9))]" />
+            <div className="relative flex min-h-[390px] flex-col justify-end p-7">
+              <div className="inline-flex w-fit rounded-full border border-white/15 bg-black/30 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-white/85 backdrop-blur-md">
                 {product.shortLabel}
               </div>
-              <p className="mt-4 max-w-[30ch] text-sm leading-7 text-white/80">{product.cardDescription}</p>
+              <p className="mt-4 max-w-[36ch] text-sm leading-7 text-white/80">
+                {product.cardDescription}
+              </p>
             </div>
           </article>
         </div>
       </section>
 
-      {isAtendenteIa && (
-        <section className="pt-10 md:pt-14">
-          <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
-            <div className="mb-6">
-              <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Como funciona</div>
-              <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-white md:text-5xl">
-                Da primeira mensagem ao atendimento humano quando necessario.
+      {isAssistenteIa && (
+        <section className="py-8 md:py-12">
+          <div className="section-shell">
+            <div className="mb-7 max-w-3xl">
+              <div className="eyebrow">Como funciona</div>
+              <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white md:text-5xl">
+                Da primeira mensagem ao atendimento humano quando necessário.
               </h2>
             </div>
+
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 {
                   icon: MessageCircleMore,
-                  title: '1. Responde e orienta',
-                  text: 'A IA atende no WhatsApp com base nas informacoes e regras do seu negocio.',
+                  title: 'Responde e orienta',
+                  text: 'Atende no WhatsApp com base nas informações, produtos, serviços e regras da sua empresa.',
                 },
                 {
                   icon: UserCheck,
-                  title: '2. Identifica oportunidades',
-                  text: 'Reconhece interesse, registra o contato e executa follow-up quando fizer sentido.',
+                  title: 'Identifica oportunidades',
+                  text: 'Reconhece interesse, registra o contato e conduz follow-up quando fizer sentido.',
                 },
                 {
                   icon: ShieldCheck,
-                  title: '3. Chama uma pessoa',
-                  text: 'Quando o cliente pedir atendimento humano ou a situacao exigir, a conversa e transferida.',
+                  title: 'Chama uma pessoa',
+                  text: 'Quando o cliente pedir atendimento humano ou a situação exigir, a conversa é transferida.',
                 },
               ].map(({ icon: Icon, title, text }) => (
-                <Card key={title} className="border-white/10 bg-[linear-gradient(180deg,#171d26,#10151c)] text-white">
-                  <CardContent>
-                    <Icon className="h-6 w-6 text-[#d68642]" />
-                    <h3 className="mt-4 text-xl font-bold">{title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-stone-300">{text}</p>
+                <Card key={title} className="h-full">
+                  <CardContent className="h-full">
+                    <div className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.07]">
+                      <Icon className="h-5 w-5 text-emerald-300" />
+                    </div>
+                    <h3 className="mt-5 text-xl font-bold text-white">{title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -151,25 +188,35 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         </section>
       )}
 
-      <section className="pt-10 md:pt-14">
-        <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-5 lg:grid-cols-[1.02fr_0.98fr]">
-          <Card className="border-white/10 bg-[linear-gradient(180deg,#161c24,#0f141b)] text-white">
+      <section className="py-10 md:py-14">
+        <div className="section-shell grid gap-5 lg:grid-cols-2">
+          <Card>
             <CardContent>
-              <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Visao geral</div>
-              <h2 className="mt-3 font-serif text-4xl leading-tight">O que essa solucao resolve</h2>
-              <p className="mt-5 text-sm leading-8 text-stone-300">{product.detailIntro}</p>
-              <p className="mt-5 text-sm leading-8 text-stone-300">{product.summary}</p>
+              <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                Visão geral
+              </div>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-white">
+                O que essa solução resolve
+              </h2>
+              <p className="mt-5 text-sm leading-8 text-slate-400">
+                {product.detailIntro}
+              </p>
+              <p className="mt-4 text-sm leading-8 text-slate-400">{product.summary}</p>
             </CardContent>
           </Card>
 
-          <Card className="border-white/10 bg-[linear-gradient(180deg,#141a22,#10151c)] text-white">
+          <Card>
             <CardContent>
-              <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Entregas</div>
-              <h2 className="mt-3 font-serif text-4xl leading-tight">O que entra na proposta</h2>
-              <ul className="mt-6 grid gap-3 text-sm leading-7 text-stone-300">
+              <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                Entregas
+              </div>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-white">
+                O que entra na solução
+              </h2>
+              <ul className="mt-6 grid gap-3 text-sm leading-7 text-slate-300">
                 {product.deliverables.map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <ShieldCheck className="mt-1 h-4 w-4 flex-none text-[#d9a25f]" />
+                    <CheckCircle2 className="mt-1 h-4 w-4 flex-none text-emerald-300" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -179,16 +226,20 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         </div>
       </section>
 
-      <section className="pt-10 md:pt-14">
-        <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-5 lg:grid-cols-[0.95fr_1.05fr]">
-          <Card className="border-white/10 bg-[linear-gradient(180deg,#161c24,#0f141b)] text-white">
+      <section className="py-8 md:py-12">
+        <div className="section-shell grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <Card>
             <CardContent>
-              <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Segmentos com mais aderencia</div>
-              <h2 className="mt-3 font-serif text-4xl leading-tight">Onde essa solucao tende a gerar mais valor</h2>
-              <ul className="mt-6 grid gap-3 text-sm leading-7 text-stone-300">
+              <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                Mais aderência
+              </div>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-white">
+                Onde essa solução tende a gerar mais valor
+              </h2>
+              <ul className="mt-6 grid gap-3 text-sm leading-7 text-slate-300">
                 {product.segments.map((segment) => (
                   <li key={segment} className="flex items-start gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#d9a25f]" />
+                    <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-emerald-300" />
                     <span>{segment}</span>
                   </li>
                 ))}
@@ -196,39 +247,68 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </CardContent>
           </Card>
 
-          <Card className="border-[#3a2c24] bg-[linear-gradient(135deg,#2a1f1b,#161c24)] text-white shadow-[0_30px_90px_rgba(0,0,0,0.22)]">
-            <CardContent>
-              <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Proximo passo</div>
-              <h2 className="mt-3 max-w-[14ch] font-serif text-4xl leading-tight">
-                {isAtendenteIa ? 'Converse com a Jade e veja o produto funcionando.' : `Vamos entender se ${product.title.toLowerCase()} faz sentido para a sua operacao.`}
+          <div className="relative overflow-hidden rounded-[30px] border border-emerald-300/15 bg-[linear-gradient(135deg,rgba(12,53,42,0.95),rgba(7,19,28,0.98))] p-7 shadow-[0_30px_90px_rgba(0,0,0,0.28)]">
+            <div className="absolute right-[-80px] top-[-80px] h-[240px] w-[240px] rounded-full bg-emerald-300/10 blur-3xl" />
+            <div className="relative">
+              <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-100/60">
+                Próximo passo
+              </div>
+
+              <h2 className="mt-3 max-w-[16ch] font-display text-4xl font-semibold leading-tight text-white">
+                {isAssistenteIa
+                  ? 'Pronto para colocar o Assistente de IA na sua operação?'
+                  : `Vamos entender se ${product.title.toLowerCase()} faz sentido para sua operação.`}
               </h2>
-              <p className="mt-5 max-w-2xl text-sm leading-8 text-stone-300 md:text-base">
-                {isAtendenteIa
-                  ? 'A propria Jade usa a mesma tecnologia que configuramos para clientes. Ela apresenta a solucao, tira duvidas e identifica seu interesse.'
-                  : 'Podemos conversar sobre contexto, urgencia, estrutura atual e o melhor formato para comecar com clareza comercial e ganho operacional perceptivel.'}
+
+              <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300">
+                {isAssistenteIa
+                  ? 'O plano atual é semestral, inclui até 500 atendimentos por mês e pode ser contratado diretamente pelo site. Se preferir, converse antes com a Jade.'
+                  : 'Conte o contexto da sua empresa e a Virtuagil avalia escopo, prioridade e o melhor formato para começar.'}
               </p>
+
+              {isAssistenteIa && (
+                <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
+                  <div className="flex items-center gap-3">
+                    <Bot className="h-5 w-5 text-emerald-300" />
+                    <div>
+                      <div className="text-xs uppercase tracking-[0.16em] text-slate-500">
+                        Plano semestral
+                      </div>
+                      <div className="mt-1 text-2xl font-bold text-white">R$ 1.794</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-sm text-slate-400">
+                    Até 500 atendimentos/mês • Pix ou cartão • até 6x no checkout.
+                  </div>
+                </div>
+              )}
+
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild size="lg">
-                  <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                    {isAtendenteIa ? 'Testar com a Jade' : 'Falar com a equipe'}
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
-                </Button>
-                {isAtendenteIa && mercadoPagoUrl ? (
-                  <Button asChild size="lg" variant="secondary">
-                    <a href={mercadoPagoUrl} target="_blank" rel="noreferrer">
-                      <CreditCard className="h-4 w-4" />
-                      Pagar com Mercado Pago
-                    </a>
-                  </Button>
+                {isAssistenteIa ? (
+                  <>
+                    <Button asChild size="lg">
+                      <Link href="/contratar-assistente-ia">
+                        Contratar Assistente de IA
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button asChild size="lg" variant="secondary">
+                      <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                        Falar com a Jade
+                      </a>
+                    </Button>
+                  </>
                 ) : (
-                  <Button asChild size="lg" variant="secondary">
-                    <Link href="/planos">Ver contratacao</Link>
+                  <Button asChild size="lg">
+                    <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                      Falar com a equipe
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
                   </Button>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </section>
     </main>
