@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'nodejs';
+
 const DEFAULT_PAYMENT_WEBHOOK_URL =
-  'https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-cobranca';
+  'https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-checkout-jade500';
 
-const PLANS = {
-  fundador_500: {
-    valor: 249,
-    descricao: 'Atendente IA Virtuagil - Plano Fundador - ate 500 atendimentos/mes',
-  },
-} as const;
-
-type PlanId = keyof typeof PLANS;
+type CheckoutRequest = {
+  nome_empresa?: string;
+  nome_contato?: string;
+  telefone?: string;
+  email_acesso?: string;
+  website_url?: string;
+};
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -19,6 +20,7 @@ function isValidEmail(value: string) {
 function isMercadoPagoCheckout(value: string) {
   try {
     const url = new URL(value);
+
     return (
       url.protocol === 'https:' &&
       (url.hostname === 'mercadopago.com.br' ||
@@ -32,108 +34,155 @@ function isMercadoPagoCheckout(value: string) {
 }
 
 export async function POST(request: NextRequest) {
-  let payload: Record<string, unknown>;
+  const internalKey = process.env.VIRTUAGIL_INTERNAL_KEY?.trim() ?? '';
+
+  if (!internalKey) {
+    console.error('[assistente-checkout] VIRTUAGIL_INTERNAL_KEY ausente');
+    return NextResponse.json(
+      {
+        ok: false,
+        message: 'O checkout está temporariamente indisponível.',
+      },
+      { status: 503 },
+    );
+  }
+
+  let payload: CheckoutRequest;
 
   try {
-    payload = await request.json();
+    payload = (await request.json()) as CheckoutRequest;
   } catch {
     return NextResponse.json(
-      { ok: false, message: 'Dados de pagamento invalidos.' },
+      { ok: false, message: 'Dados da contratação inválidos.' },
       { status: 400 },
     );
   }
 
-  const clienteId = String(payload.cliente_id ?? '').trim();
-  const email = String(payload.email ?? '').trim().toLowerCase();
-  const planId = String(payload.plano ?? '') as PlanId;
-  const plan = PLANS[planId];
+  // Honeypot: bots costumam preencher este campo invisível.
+  if (String(payload.website_url ?? '').trim()) {
+    return NextResponse.json({ ok: true }, { status: 200 });
+  }
 
-  if (!/^[a-zA-Z0-9_-]{2,80}$/.test(clienteId)) {
+  const nomeEmpresa = String(payload.nome_empresa ?? '').trim();
+  const nomeContato = String(payload.nome_contato ?? '').trim();
+  const telefone = String(payload.telefone ?? '').replace(/\D/g, '');
+  const emailAcesso = String(payload.email_acesso ?? '').trim().toLowerCase();
+
+  if (nomeEmpresa.length < 2 || nomeEmpresa.length > 120) {
     return NextResponse.json(
-      { ok: false, message: 'Codigo do cliente invalido.' },
+      { ok: false, message: 'Informe o nome da empresa.' },
       { status: 400 },
     );
   }
 
-  if (!isValidEmail(email)) {
+  if (nomeContato.length < 2 || nomeContato.length > 120) {
     return NextResponse.json(
-      { ok: false, message: 'E-mail invalido.' },
+      { ok: false, message: 'Informe o nome do responsável.' },
       { status: 400 },
     );
   }
 
-  if (!plan) {
+  if (telefone.length < 10 || telefone.length > 15) {
     return NextResponse.json(
-      { ok: false, message: 'Plano de pagamento invalido.' },
+      { ok: false, message: 'Informe um WhatsApp válido com DDD.' },
+      { status: 400 },
+    );
+  }
+
+  if (!isValidEmail(emailAcesso)) {
+    return NextResponse.json(
+      { ok: false, message: 'Informe um e-mail válido para acesso ao dashboard.' },
       { status: 400 },
     );
   }
 
   const webhookUrl =
-    process.env.N8N_PAYMENT_WEBHOOK_URL ?? DEFAULT_PAYMENT_WEBHOOK_URL;
+    process.env.N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL?.trim() ||
+    DEFAULT_PAYMENT_WEBHOOK_URL;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
 
   try {
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'x-virtuagil-key': internalKey,
       },
       body: JSON.stringify({
-        cliente_id: clienteId,
-        descricao: plan.descricao,
-        valor: plan.valor,
-        email,
+        nome_empresa: nomeEmpresa,
+        nome_contato: nomeContato,
+        telefone,
+        email_acesso: emailAcesso,
+        origem: 'site_virtuagil',
       }),
       cache: 'no-store',
+      signal: controller.signal,
     });
 
-    const data = (await response.json().catch(() => null)) as
+    const text = await response.text();
+    let data:
       | {
           ok?: boolean;
           checkout_url?: string;
           preference_id?: string;
           message?: string;
+          error?: string;
         }
-      | null;
+      | null = null;
 
-    if (!response.ok || !data?.checkout_url) {
-      console.error('[payments] Falha ao criar cobranca', {
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = null;
+    }
+
+    if (
+      !response.ok ||
+      data?.ok !== true ||
+      !data.checkout_url ||
+      !isMercadoPagoCheckout(data.checkout_url)
+    ) {
+      console.error('[assistente-checkout] Falha ao criar checkout', {
         status: response.status,
-        data,
+        error: data?.error,
       });
 
       return NextResponse.json(
         {
           ok: false,
-          message: 'Nao foi possivel gerar o pagamento agora. Tente novamente.',
+          message: 'Não foi possível gerar o checkout agora. Tente novamente.',
         },
         { status: 502 },
       );
     }
 
-    if (!isMercadoPagoCheckout(data.checkout_url)) {
-      console.error('[payments] Checkout retornado com host inesperado');
-      return NextResponse.json(
-        { ok: false, message: 'Checkout de pagamento invalido.' },
-        { status: 502 },
-      );
-    }
-
-    return NextResponse.json({
-      ok: true,
-      plano: planId,
-      valor: plan.valor,
-      checkout_url: data.checkout_url,
-      preference_id: data.preference_id,
-    });
+    return NextResponse.json(
+      {
+        ok: true,
+        checkout_url: data.checkout_url,
+        preference_id: data.preference_id,
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store',
+        },
+      },
+    );
   } catch (error) {
-    console.error('[payments] Erro ao chamar webhook de pagamento', error);
+    console.error('[assistente-checkout] Erro de integração', {
+      name: error instanceof Error ? error.name : 'unknown',
+    });
+
     return NextResponse.json(
       {
         ok: false,
-        message: 'Nao foi possivel conectar ao servico de pagamento agora.',
+        message: 'Não foi possível conectar ao pagamento agora.',
       },
       { status: 502 },
     );
+  } finally {
+    clearTimeout(timeout);
   }
 }
