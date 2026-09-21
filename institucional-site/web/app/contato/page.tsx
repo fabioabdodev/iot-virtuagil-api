@@ -3,7 +3,6 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Bot,
-  Mail,
   MessageCircleMore,
   Phone,
   Workflow,
@@ -13,8 +12,6 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
-const contactEmail =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'contato@virtuagil.com.br';
 
 export const metadata: Metadata = {
   title: 'Contato',
@@ -24,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Contato | Virtuagil',
     description:
-      'Converse com a Jade sobre o Assistente de IA ou fale com a equipe sobre automação de processos e IoT.',
+      'Converse com a Virtuagil sobre o Assistente de IA, automação de processos e projetos IoT.',
     url: 'https://www.virtuagil.com.br/contato',
   },
 };
@@ -41,7 +38,7 @@ export default function ContatoPage() {
               Conte o que sua empresa precisa automatizar.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
-              Para conhecer o Assistente de IA, converse com a Jade e veja a automação funcionando.
+              Para conhecer o Assistente de IA, fale com a Virtuagil pelo WhatsApp e veja como a automação funciona.
               Para integrações de processos ou IoT, nossa equipe avalia o contexto e prepara o
               próximo passo.
             </p>
@@ -50,13 +47,7 @@ export default function ContatoPage() {
               <Button asChild size="lg">
                 <a href={whatsappUrl} target="_blank" rel="noreferrer">
                   <MessageCircleMore className="h-4 w-4" />
-                  Falar com a Jade
-                </a>
-              </Button>
-              <Button asChild variant="secondary" size="lg">
-                <a href={`mailto:${contactEmail}`}>
-                  <Mail className="h-4 w-4" />
-                  Enviar e-mail
+                  Falar no WhatsApp
                 </a>
               </Button>
             </div>
@@ -72,7 +63,7 @@ export default function ContatoPage() {
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-400">
                 Você pode contratar diretamente pelo site. Se quiser entender melhor antes,
-                a Jade responde dúvidas pelo WhatsApp.
+                você pode tirar suas dúvidas pelo WhatsApp.
               </p>
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <Button asChild>
@@ -154,32 +145,6 @@ export default function ContatoPage() {
         </div>
       </section>
 
-      <section className="py-8 md:py-12">
-        <div className="section-shell">
-          <div className="rounded-[30px] border border-white/[0.08] bg-white/[0.025] p-7 md:p-8">
-            <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
-              <div>
-                <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-                  Contato direto
-                </div>
-                <h2 className="mt-3 font-display text-3xl font-semibold text-white">
-                  Prefere falar com uma pessoa?
-                </h2>
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
-                  Escreva para {contactEmail}. Projetos sob medida seguem por avaliação comercial e
-                  técnica antes da proposta.
-                </p>
-              </div>
-              <Button asChild variant="secondary">
-                <a href={`mailto:${contactEmail}`}>
-                  <Mail className="h-4 w-4" />
-                  {contactEmail}
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
