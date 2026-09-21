@@ -282,6 +282,9 @@ jobs:
 
             export NEXT_PUBLIC_WHATSAPP_URL="${NEXT_PUBLIC_WHATSAPP_URL:-}"
             export NEXT_PUBLIC_CONTACT_EMAIL="${NEXT_PUBLIC_CONTACT_EMAIL:-}"
+            export NEXT_PUBLIC_ASSISTENTE_URL="${NEXT_PUBLIC_ASSISTENTE_URL:-}"
+            export VIRTUAGIL_INTERNAL_KEY="${VIRTUAGIL_INTERNAL_KEY:-}"
+            export N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL="${N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL:-}"
 
             if [ -f /opt/virtuagil-site/.env.prod ]; then
               SITE_DUPLICATED_KEYS="$(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' /opt/virtuagil-site/.env.prod | cut -d= -f1 | sort | uniq -d || true)"
@@ -297,11 +300,17 @@ jobs:
 
               trim_var NEXT_PUBLIC_WHATSAPP_URL
               trim_var NEXT_PUBLIC_CONTACT_EMAIL
+              trim_var NEXT_PUBLIC_ASSISTENTE_URL
+              trim_var VIRTUAGIL_INTERNAL_KEY
+              trim_var N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL
             else
               SITE_SERVICE_NAME="virtuagil-site_virtuagil-site"
               if docker service inspect "$SITE_SERVICE_NAME" >/dev/null 2>&1; then
                 export NEXT_PUBLIC_WHATSAPP_URL="${NEXT_PUBLIC_WHATSAPP_URL:-$(load_service_env "$SITE_SERVICE_NAME" NEXT_PUBLIC_WHATSAPP_URL)}"
                 export NEXT_PUBLIC_CONTACT_EMAIL="${NEXT_PUBLIC_CONTACT_EMAIL:-$(load_service_env "$SITE_SERVICE_NAME" NEXT_PUBLIC_CONTACT_EMAIL)}"
+                export NEXT_PUBLIC_ASSISTENTE_URL="${NEXT_PUBLIC_ASSISTENTE_URL:-$(load_service_env "$SITE_SERVICE_NAME" NEXT_PUBLIC_ASSISTENTE_URL)}"
+                export VIRTUAGIL_INTERNAL_KEY="${VIRTUAGIL_INTERNAL_KEY:-$(load_service_env "$SITE_SERVICE_NAME" VIRTUAGIL_INTERNAL_KEY)}"
+                export N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL="${N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL:-$(load_service_env "$SITE_SERVICE_NAME" N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL)}"
                 echo "Aviso: /opt/virtuagil-site/.env.prod nao encontrado. Reutilizando variaveis do servico atual ${SITE_SERVICE_NAME}."
               else
                 echo "Aviso: /opt/virtuagil-site/.env.prod nao encontrado e nenhum servico anterior do institucional foi localizado."
@@ -310,6 +319,26 @@ jobs:
 
             export NEXT_PUBLIC_WHATSAPP_URL="${NEXT_PUBLIC_WHATSAPP_URL:-https://wa.me/553171029727}"
             export NEXT_PUBLIC_CONTACT_EMAIL="${NEXT_PUBLIC_CONTACT_EMAIL:-contato@virtuagil.com.br}"
+            export NEXT_PUBLIC_ASSISTENTE_URL="${NEXT_PUBLIC_ASSISTENTE_URL:-https://atendente.virtuagil.com.br}"
+            export N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL="${N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL:-https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-checkout-jade500}"
+
+            if [ -z "${VIRTUAGIL_INTERNAL_KEY:-}" ]; then
+              for SOURCE_SERVICE in n8n_editor n8n_webhook n8n_worker virtuagil-atendente_atendente; do
+                if docker service inspect "$SOURCE_SERVICE" >/dev/null 2>&1; then
+                  FOUND_INTERNAL_KEY="$(load_service_env "$SOURCE_SERVICE" VIRTUAGIL_INTERNAL_KEY)"
+                  if [ -n "$FOUND_INTERNAL_KEY" ]; then
+                    export VIRTUAGIL_INTERNAL_KEY="$FOUND_INTERNAL_KEY"
+                    break
+                  fi
+                fi
+              done
+            fi
+
+            if [ -z "${VIRTUAGIL_INTERNAL_KEY:-}" ]; then
+              echo "Falha: VIRTUAGIL_INTERNAL_KEY nao esta configurada para o site institucional."
+              echo "Configure-a em /opt/virtuagil-site/.env.prod ou mantenha a mesma chave em um servico Virtuagil ja implantado."
+              exit 1
+            fi
 
             if [ -z "${NEXT_PUBLIC_WHATSAPP_URL:-}" ]; then
               echo "Falha: NEXT_PUBLIC_WHATSAPP_URL nao pode ficar vazia."
@@ -322,6 +351,8 @@ jobs:
             fi
 
             validate_optional_url NEXT_PUBLIC_WHATSAPP_URL
+            validate_optional_url NEXT_PUBLIC_ASSISTENTE_URL
+            validate_optional_url N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL
 
             export APP_RELEASE="${{ github.sha }}"
             export APP_BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
