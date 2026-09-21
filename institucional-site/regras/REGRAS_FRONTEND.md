@@ -1,179 +1,82 @@
-﻿# FRONTEND_RULES.md
+# FRONTEND_RULES.md
 
-## Stack sugerida
+## Stack do institucional
 
 - Next.js
 - TypeScript
-- app router
-- componentes reutilizaveis
-- formularios simples para captacao
+- App Router
+- Tailwind CSS
+- componentes reutilizáveis
+- Framer Motion apenas para animações discretas
+- Lucide React para ícones
 
-## Regra de separacao de produto
+## Separação
 
 O site institucional:
 
-- nao deve reutilizar a shell do monitor
-- nao deve parecer dashboard
-- nao deve misturar menus do admin
-- nao deve carregar linguagem de operacao tecnica como primeira impressao
+- vive em `institucional-site/web`
+- não reutiliza a shell do monitor
+- não deve parecer dashboard
+- não mistura menus administrativos
+- publica em stack própria
 
-Se nascer dentro deste mesmo repositorio por um periodo:
+## Direção visual atual
 
-- todo o app institucional deve ficar em `institucional-site/web/`
-- sem compartilhar rotas com o monitor
-- sem compartilhar navegacao autenticada com o produto principal
-- sem compartilhar componentes do monitor
-- sem compartilhar hooks do monitor
-- sem copiar a home tecnica do produto como base visual
+O site deve parecer:
 
-## Infraestrutura esperada
-
-O futuro site institucional pode usar a mesma linha de infraestrutura do seu ambiente atual:
-
-- Docker
-- Docker Swarm
-- Traefik
-- Cloudflare
-
-Mas deve permanecer em projeto e stack separados do produto IoT.
-
-## Direcao visual
-
-O site deve parecer premium, confiavel e comercial.
-
-Preferir:
-
-- tipografia forte
-- secoes bem ritmadas
-- imagens ou ilustracoes com contexto real de operacao
-- CTA claro
-- prova social quando existir
-
-Evitar:
-
-- visual de dashboard no site institucional
-- excesso de blocos tecnicos
-- cara de template generico
-
-## Estrutura sugerida
-
-- home
-- solucoes
-- segmentos
-- como funciona
-- planos ou proposta comercial
-- contato
-- FAQ
-
-## Regra de UI para secao de pacotes
-
-Na secao institucional de pacotes:
-
-- renderizar cards para os 3 pacotes principais:
-  - `Essencial`
-  - `Operacao Local`
-  - `Gestao Completa`
-- incluir um 4o card fixo:
-  - `Projeto Personalizado`
-- manter destaque visual do card personalizado como alternativa consultiva
-- evitar linguagem tecnica de modulo no primeiro nivel do card
-
-## Regra de UI para plataforma de clientes
-
-A plataforma deve assumir dois produtos visuais distintos:
-
-### Dashboard do cliente final
-
-Deve ser:
-
-- sofisticado
 - moderno
-- intuitivo
-- de simples leitura
-- focado em status atual e historico essencial
+- premium
+- confiável
+- comercial
+- rápido de ler
+- responsivo
 
-Deve priorizar:
+Base visual:
 
-- temperatura atual
-- faixa esperada
-- status online ou offline
-- ultimo envio
-- alertas recentes
-- cards claros e leitura rapida
+- fundo navy/preto
+- emerald/verde como acento principal
+- azul como apoio
+- tipografia Manrope + Sora
+- cards com vidro discreto
+- gradientes suaves
+- sem excesso de efeitos
 
-Deve evitar:
+## Jornada principal
 
-- excesso de filtros
-- termos tecnicos demais
-- poluicao operacional
-- visual de painel de suporte
+O CTA público prioritário é:
 
-### Dashboard tecnico do administrador
+- **Contratar Assistente de IA**
 
-Deve ser:
+Rota:
 
-- mais profundo
-- mais configuravel
-- orientado a operacao e diagnostico
+- `/contratar-assistente-ia`
 
-Deve conter:
+CTA secundário:
 
-- cadencia de monitoramento
-- regras e limites
-- configuracao de cliente
-- configuracao de device
-- telemetria detalhada
-- manutencao e suporte
+- **Falar com a Jade**
 
-## Integracoes futuras
+O usuário não deve precisar conhecer `cliente_id`, códigos internos, nomes de workflow ou termos de infraestrutura.
 
-- formulario de lead
-- WhatsApp comercial
-- analytics
-- pixel e Google Ads quando fizer sentido
+## Segurança do checkout
 
-## Implementacao inicial validada
+- preço nunca vem do navegador como fonte confiável
+- segredo nunca usa prefixo `NEXT_PUBLIC_`
+- chamadas ao n8n autenticadas acontecem apenas server-side
+- validar dados antes de gerar o checkout
+- validar que a URL retornada é do Mercado Pago
+- não manipular dados de cartão no site
 
-Ja existe uma primeira rota dedicada para cliente final:
+## Produtos
 
-- `/cliente`
+- Assistente de IA: oferta padronizada com compra direta
+- Automação de Processos: proposta sob medida
+- IoT: proposta conforme escopo/hardware
 
-## Regra de preferencia de layout
+## Validação obrigatória
 
-Na plataforma autenticada:
+Antes de merge:
 
-- cada `cliente` deve ter um layout padrao
-- cada `usuario` pode:
-  - herdar o layout do cliente
-  - usar `client`
-  - usar `technical`
+- `npm ci`
+- `npm run build`
 
-Com isso:
-
-- o admin da plataforma escolhe o perfil visual base da conta
-- o acesso tecnico continua disponivel sem forcar todos os usuarios ao mesmo painel
-
-Ela deve ser tratada como base da experiencia simplificada.
-
-Regra para proximas evolucoes:
-
-- expandir essa rota em vez de voltar a concentrar tudo na home administrativa
-- manter linguagem visual mais limpa para o cliente final
-- preservar a rota principal para uso tecnico e administrativo
-
-## Regra para o futuro institucional
-
-O site institucional deve aproveitar esse aprendizado sem copiar a interface do produto.
-
-Ele pode usar como referencia:
-
-- clareza
-- hierarquia
-- leitura rapida
-- premium visual
-
-Mas nao deve reproduzir:
-
-- cards de telemetria
-- navegacao operacional
-- blocos de administracao
+A CI deve compilar `institucional-site/web`.
