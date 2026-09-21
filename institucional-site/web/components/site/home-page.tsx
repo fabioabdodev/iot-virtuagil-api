@@ -51,7 +51,7 @@ const benefits = [
   },
   {
     icon: LayoutDashboard,
-    title: 'Visão no dashboard',
+    title: 'Visão no Painel Administrativo',
     text: 'Acompanhe contatos, uso, interesse comercial e resultados em um painel dedicado.',
   },
 ];
@@ -178,7 +178,7 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                 <div className="flex items-center justify-between rounded-2xl border border-sky-400/10 bg-sky-400/[0.05] px-4 py-3">
                   <div className="flex items-center gap-3">
                     <LayoutDashboard className="h-4 w-4 text-sky-300" />
-                    <span className="text-xs text-slate-300">Dashboard atualizado em tempo real</span>
+                    <span className="text-xs text-slate-300">Painel Administrativo atualizado em tempo real</span>
                   </div>
                   <Zap className="h-4 w-4 text-emerald-300" />
                 </div>
@@ -346,7 +346,7 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                 </h2>
                 <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
                   Plano semestral com até 500 atendimentos por mês, implantação inicial e acesso
-                  ao dashboard. O checkout aceita Pix e cartão, com até 6 parcelas.
+                  ao Painel Administrativo. O checkout aceita Pix e cartão, com até 6 parcelas.
                 </p>
               </div>
 
