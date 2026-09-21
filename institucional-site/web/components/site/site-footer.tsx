@@ -56,6 +56,12 @@ export function SiteFooter({
             <Link href="/contato" className="transition hover:text-white">
               Contato
             </Link>
+            <Link href="/termos-assistente-ia" className="transition hover:text-white">
+              Termos de Contratação
+            </Link>
+            <Link href="/privacidade" className="transition hover:text-white">
+              Privacidade e LGPD
+            </Link>
             <Link
               href="/contratar-assistente-ia"
               className="inline-flex items-center gap-2 font-semibold text-emerald-300 transition hover:text-emerald-200"
