@@ -1,64 +1,78 @@
 # Web Institucional Virtuagil
 
-Este app e o MVP do site institucional da Virtuagil.
+Aplicação institucional e comercial da Virtuagil.
 
-## Regras desta pasta
+## Domínio e separação
 
-- este app e separado do monitor
-- nao reutiliza shell, rotas ou componentes do dashboard
-- deve ser publicado em stack propria no `Portainer`
-- deve ser exposto por `Traefik`
-- deve usar `Cloudflare` na borda
+- site público: `https://virtuagil.com.br`
+- site público: `https://www.virtuagil.com.br`
+- dashboard do Assistente de IA: `https://atendente.virtuagil.com.br`
+- plataforma IoT: `https://monitor.virtuagil.com.br`
 
-## Comandos locais
+O institucional fica em `institucional-site/web` e não deve compartilhar navegação autenticada ou aparência de dashboard.
 
-```bash
-npm install
-npm run dev
-```
+## Stack
 
-## Build local
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Docker Swarm
+- Traefik
+- Cloudflare
+- GHCR
+- GitHub Actions
 
-```bash
-npm run build
-npm run start
-```
+## Rotas comerciais principais
 
-## Deploy esperado
+- `/`
+- `/solucoes`
+- `/solucoes/atendente-ia` — URL mantida por compatibilidade; produto público = Assistente de IA
+- `/planos`
+- `/contato`
+- `/contratar-assistente-ia`
 
-- stack propria do institucional
-- imagem publicada no `GHCR`
-- stack do `Portainer` apontando para `institucional-site/web/portainer-stack.yml`
-- dominio principal `www.virtuagil.com.br`
-- proxy por `Traefik`
-- DNS e borda por `Cloudflare`
+A rota legada `/pagamento` redireciona para a contratação atual.
 
-## Regra de release em producao
+## Assistente de IA
 
-- nao usar `latest` como referencia efetiva da stack
-- publicar a imagem com tag imutavel `sha-xxxxxxx`
-- preencher `SITE_IMAGE` com essa tag no deploy
-- expor `APP_RELEASE` e `APP_BUILD_TIME` no container
-- validar a release ativa em `https://www.virtuagil.com.br/api/health`
+Oferta pública vigente:
 
-## Ambiente de producao do institucional
+- R$ 1.794
+- 6 meses
+- até 500 atendimentos por mês
+- Mercado Pago
+- até 6 parcelas conforme checkout
 
-Na VPS, manter um arquivo proprio em:
+O site nunca envia o preço como fonte confiável para o n8n. O backend do site envia apenas os dados comerciais e autentica a chamada com `VIRTUAGIL_INTERNAL_KEY`.
+
+## Ambiente de produção
+
+Arquivo opcional recomendado:
 
 ```bash
 /opt/virtuagil-site/.env.prod
 ```
 
-Campos minimos:
+Variáveis:
 
 ```bash
 NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/553171029727
 NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
+NEXT_PUBLIC_MONITOR_URL=https://monitor.virtuagil.com.br
+NEXT_PUBLIC_ASSISTENTE_URL=https://atendente.virtuagil.com.br
+VIRTUAGIL_INTERNAL_KEY=<segredo>
+N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL=https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-checkout-jade500
 ```
 
-O workflow de deploy do repositório:
+Nunca versionar o valor de `VIRTUAGIL_INTERNAL_KEY`.
 
-- copia `institucional-site/web/portainer-stack.yml` para `/opt/virtuagil-site/`
-- exige que `/opt/virtuagil-site/.env.prod` exista
-- carrega esse arquivo antes do `docker stack deploy`
-- injeta automaticamente `SITE_IMAGE`, `APP_RELEASE` e `APP_BUILD_TIME`
+O deploy também pode reaproveitar a mesma chave já carregada em um serviço Virtuagil existente, sem imprimi-la em logs.
+
+## Validação
+
+```bash
+npm ci
+npm run build
+```
+
+A CI do repositório compila o institucional em pull requests antes do merge.

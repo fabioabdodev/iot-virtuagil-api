@@ -1,12 +1,12 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import {
   ArrowRight,
   Bot,
-  Check,
+  CheckCircle2,
   Cpu,
-  CreditCard,
-  Sparkles,
+  MessageCircleMore,
+  ShieldCheck,
   Workflow,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,233 +15,207 @@ import { Card, CardContent } from '@/components/ui/card';
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
 
-const founderMessage = encodeURIComponent(
-  'Olá! Quero uma das vagas do Plano Fundador do Atendente IA por R$ 249/mês.',
-);
-const founderWhatsappUrl = `${whatsappUrl}?text=${founderMessage}`;
-
 export const metadata: Metadata = {
-  title: 'Planos e Contratacao',
+  title: 'Planos e Contratação',
   description:
-    'Contrate o Atendente IA da Virtuagil com preco de lancamento. Automacao de processos e IoT seguem com proposta conforme escopo.',
+    'Contrate o Assistente de IA da Virtuagil no plano semestral ou fale com a equipe sobre automação de processos e projetos IoT.',
   alternates: { canonical: '/planos' },
   openGraph: {
-    title: 'Planos e Contratacao | Virtuagil',
+    title: 'Planos e Contratação | Virtuagil',
     description:
-      'Atendente IA com preco fundador para os primeiros clientes, alem de automacoes sob medida e projetos IoT.',
+      'Assistente de IA com contratação direta pelo site e soluções sob medida de automação e IoT.',
     url: 'https://www.virtuagil.com.br/planos',
   },
 };
 
-const offers = [
-  {
-    icon: Bot,
-    name: 'Atendente IA',
-    subtitle: 'Produto principal',
-    text: 'Atendimento inteligente no WhatsApp para responder, qualificar, acompanhar interessados e transferir para uma pessoa quando necessario.',
-    bullets: [
-      'IA configurada com as informacoes da sua empresa',
-      'Qualificacao e follow-up automatico',
-      'Transferencia para atendimento humano',
-      'Dashboard de contatos, uso e resultados',
-    ],
-    featured: true,
-    href: '/solucoes/atendente-ia',
-  },
-  {
-    icon: Workflow,
-    name: 'Automacao de Processos',
-    subtitle: 'Projeto sob medida',
-    text: 'Para integrar sistemas, APIs e rotinas e reduzir tarefas manuais que consomem tempo da equipe.',
-    bullets: [
-      'Mapeamento do processo',
-      'Integracoes entre sistemas e APIs',
-      'Rotinas, gatilhos e notificacoes automaticas',
-      'Escopo definido conforme a necessidade real',
-    ],
-    href: '/solucoes/automacao-processos',
-  },
-  {
-    icon: Cpu,
-    name: 'Automacao IoT',
-    subtitle: 'Sob consulta',
-    text: 'Projetos para monitorar temperatura, gases, consumo, equipamentos e outras variaveis da operacao.',
-    bullets: [
-      'Preco conforme hardware e quantidade de pontos',
-      'Monitoramento, alertas e historico',
-      'Acionamentos e controle quando aplicavel',
-      'Projeto dimensionado para cada operacao',
-    ],
-    href: '/solucoes',
-  },
+const assistantItems = [
+  'Até 500 atendimentos por mês',
+  'Atendimento no WhatsApp com IA',
+  'Qualificação de oportunidades',
+  'Follow-up automático',
+  'Transferência para atendimento humano',
+  'Dashboard de contatos, uso e resultados',
+  'Implantação inicial assistida',
 ];
 
 export default function PlanosPage() {
   return (
-    <main className="pb-20">
-      <section className="pt-12 md:pt-18">
-        <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-end">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-300">
-              <Sparkles className="h-3.5 w-3.5 text-[#d68642]" />
-              Planos e contratacao
-            </div>
-            <h1 className="mt-5 max-w-[12ch] font-serif text-5xl leading-[0.96] tracking-[-0.03em] text-white md:text-7xl">
-              Comece pequeno. Automatize o atendimento que mais toma seu tempo.
-            </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-stone-300 md:text-lg">
-              O Atendente IA tem uma oferta de entrada simples para pequenos negocios e profissionais. Projetos de IoT continuam sendo dimensionados conforme hardware, instalacao e escopo.
-            </p>
-          </div>
-
-          <Card className="border-[#6a4a31] bg-[linear-gradient(135deg,#211a17,#10151c)] shadow-[0_24px_70px_rgba(0,0,0,0.24)]">
-            <CardContent>
-              <div className="text-sm uppercase tracking-[0.22em] text-[#d68642]">Preco fundador</div>
-              <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-white">
-                10 vagas para validar a operacao junto com a Virtuagil.
-              </h2>
-              <p className="mt-5 text-sm leading-8 text-stone-300">
-                Uma condicao de lancamento para os primeiros clientes do Atendente IA, com implantacao gratuita e limite de uso claro.
-              </p>
-              <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2 text-xs font-semibold text-stone-300">
-                <CreditCard className="h-4 w-4 text-[#d68642]" />
-                Pagamento seguro via Mercado Pago
-              </div>
-            </CardContent>
-          </Card>
+    <main className="pb-16 md:pb-20">
+      <section className="relative py-14 md:py-20">
+        <div className="glow-orb right-[-120px] top-0 h-[320px] w-[320px] bg-emerald-400/10" />
+        <div className="section-shell">
+          <div className="eyebrow">Planos e contratação</div>
+          <h1 className="mt-5 max-w-[14ch] font-display text-5xl font-semibold leading-[0.96] tracking-[-0.04em] text-white md:text-6xl">
+            Comece com uma solução pronta ou monte a automação certa para sua operação.
+          </h1>
+          <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
+            O Assistente de IA possui contratação direta pelo site. Projetos de automação de
+            processos e IoT são dimensionados conforme escopo, integrações, hardware e operação.
+          </p>
         </div>
       </section>
 
-      <section className="pt-10 md:pt-14">
-        <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
-          <Card className="overflow-hidden border-[#6a4a31] bg-[linear-gradient(135deg,#241a15,#121821)] shadow-[0_32px_110px_rgba(0,0,0,0.28)]">
-            <CardContent className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <section className="py-6 md:py-10">
+        <div className="section-shell">
+          <div className="relative overflow-hidden rounded-[34px] border border-emerald-300/18 bg-[linear-gradient(135deg,rgba(13,58,45,0.96),rgba(8,22,31,0.98)_58%,rgba(7,19,28,0.98))] p-7 shadow-[0_36px_120px_rgba(0,0,0,0.34)] md:p-10">
+            <div className="absolute right-[-90px] top-[-110px] h-[320px] w-[320px] rounded-full bg-emerald-300/10 blur-3xl" />
+
+            <div className="relative grid gap-9 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
               <div>
-                <div className="inline-flex rounded-full bg-[#d68642]/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#e5a266]">
-                  Apenas 10 clientes no lancamento
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/15 bg-emerald-200/[0.06] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-emerald-100">
+                  <Bot className="h-4 w-4" />
+                  Assistente de IA
                 </div>
-                <h2 className="mt-5 font-serif text-4xl leading-tight text-white md:text-5xl">
-                  Atendente IA — Plano Fundador
+
+                <h2 className="mt-5 max-w-[14ch] font-display text-4xl font-semibold leading-tight tracking-[-0.035em] text-white md:text-5xl">
+                  Atendimento inteligente pronto para entrar na rotina da sua empresa.
                 </h2>
-                <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-300 md:text-base">
-                  Para autonomos e pequenos negocios que querem responder mais rapido, acompanhar interessados e ter atendimento humano quando necessario.
+
+                <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
+                  Plano semestral para empresas que querem responder melhor, organizar oportunidades e
+                  reduzir trabalho repetitivo no WhatsApp.
                 </p>
 
-                <ul className="mt-7 grid gap-3 text-sm text-stone-200 sm:grid-cols-2">
-                  {[
-                    'Ate 500 atendimentos por mes',
-                    '1 numero de WhatsApp',
-                    'IA personalizada para o negocio',
-                    'Follow-up automatico',
-                    'Transferencia para atendimento humano',
-                    'Dashboard de contatos e resultados',
-                    'Configuracao inicial inclusa',
-                    'Suporte da Virtuagil',
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <Check className="mt-0.5 h-4 w-4 flex-none text-[#4c9a78]" />
+                <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+                  {assistantItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-200">
+                      <CheckCircle2 className="mt-1 h-4 w-4 flex-none text-emerald-300" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-6 md:p-8">
-                <div className="text-sm text-stone-400">Preco de lancamento</div>
-                <div className="mt-2 flex items-end gap-2">
-                  <span className="font-serif text-6xl leading-none text-white">R$ 249</span>
-                  <span className="pb-1 text-sm text-stone-400">/mes</span>
+              <div className="rounded-[28px] border border-white/10 bg-black/20 p-6 md:p-7">
+                <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                  Plano semestral
                 </div>
-                <div className="mt-3 text-sm font-semibold text-[#7fc6a4]">Implantacao gratuita para as 10 primeiras vagas</div>
-                <p className="mt-5 text-xs leading-6 text-stone-400">
-                  Condicao especial de validacao inicial. Acima de 500 atendimentos mensais, a Virtuagil avalia o plano adequado para o volume da operacao.
+                <div className="mt-3 font-display text-5xl font-semibold tracking-[-0.045em] text-white">
+                  R$ 1.794
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-400">
+                  Pagamento único via Pix ou cartão, com até 6 parcelas disponíveis no checkout.
                 </p>
 
-                <div className="mt-7 grid gap-3">
+                <div className="mt-6 grid gap-3">
                   <Button asChild size="lg" className="w-full">
-                    <a href={founderWhatsappUrl} target="_blank" rel="noreferrer">
-                      Quero uma das 10 vagas
+                    <Link href="/contratar-assistente-ia">
+                      Contratar Assistente de IA
                       <ArrowRight className="h-4 w-4" />
-                    </a>
+                    </Link>
                   </Button>
                   <Button asChild size="lg" variant="secondary" className="w-full">
-                    <Link href="/pagamento">Ja tenho meu codigo de cliente</Link>
+                    <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                      <MessageCircleMore className="h-4 w-4" />
+                      Tirar dúvidas com a Jade
+                    </a>
                   </Button>
                 </div>
+
+                <div className="mt-5 flex items-start gap-3 border-t border-white/[0.08] pt-5 text-xs leading-6 text-slate-400">
+                  <ShieldCheck className="mt-1 h-4 w-4 flex-none text-emerald-300" />
+                  <span>
+                    O pagamento é processado pelo Mercado Pago. A Virtuagil não recebe nem armazena
+                    os dados do seu cartão.
+                  </span>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="pt-10 md:pt-14">
-        <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] gap-4 lg:grid-cols-3">
-          {offers.map((offer) => {
-            const Icon = offer.icon;
-            return (
-              <Card
-                key={offer.name}
-                className={
-                  offer.featured
-                    ? 'border-[#6a4a31] bg-[linear-gradient(180deg,#211a17,#121821)] shadow-[0_24px_70px_rgba(0,0,0,0.24)]'
-                    : 'border-white/10 bg-[linear-gradient(180deg,#171d26,#10151c)]'
-                }
-              >
+      <section className="py-12 md:py-18">
+        <div className="section-shell">
+          <div className="mb-7 max-w-3xl">
+            <div className="eyebrow">Projetos sob medida</div>
+            <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white md:text-5xl">
+              Quando o problema é específico, a solução também pode ser.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400 md:text-base">
+              Integrações e IoT variam conforme sistemas, quantidade de pontos, hardware,
+              instalação e criticidade da operação. Por isso, esses projetos seguem por diagnóstico
+              e proposta.
+            </p>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            {[
+              {
+                icon: Workflow,
+                title: 'Automação de Processos',
+                text: 'Integrações entre sistemas, APIs, notificações e rotinas para eliminar tarefas manuais e reduzir erros.',
+                bullets: [
+                  'Mapeamento do processo',
+                  'Integrações e APIs',
+                  'Fluxos e notificações automáticas',
+                ],
+                href: '/solucoes/automacao-processos',
+              },
+              {
+                icon: Cpu,
+                title: 'IoT e operação conectada',
+                text: 'Monitoramento e controle de equipamentos, ambientes, consumo e utilidades conforme a necessidade da operação.',
+                bullets: [
+                  'Monitoramento remoto',
+                  'Histórico e alertas',
+                  'Módulos expansíveis por operação',
+                ],
+                href: '/solucoes',
+              },
+            ].map(({ icon: Icon, title, text, bullets, href }) => (
+              <Card key={title} className="h-full">
                 <CardContent className="flex h-full flex-col">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="rounded-2xl border border-white/10 bg-white/6 p-3">
-                      <Icon className="h-5 w-5 text-[#d68642]" />
-                    </div>
-                    <div className="rounded-full bg-white/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-300">
-                      {offer.subtitle}
-                    </div>
+                  <div className="grid h-11 w-11 place-items-center rounded-2xl border border-sky-300/15 bg-sky-300/[0.06]">
+                    <Icon className="h-5 w-5 text-sky-300" />
                   </div>
-                  <h2 className="mt-5 font-serif text-4xl text-white">{offer.name}</h2>
-                  <p className="mt-4 text-sm leading-7 text-stone-300">{offer.text}</p>
-                  <ul className="mt-6 grid gap-3 text-sm text-stone-300">
-                    {offer.bullets.map((bullet) => (
-                      <li key={bullet} className="flex items-start gap-3">
-                        <Check className="mt-0.5 h-4 w-4 flex-none text-[#4c9a78]" />
-                        <span>{bullet}</span>
+                  <h3 className="mt-5 font-display text-3xl font-semibold text-white">{title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
+                  <ul className="mt-5 grid gap-2 text-sm text-slate-300">
+                    {bullets.map((bullet) => (
+                      <li key={bullet} className="flex items-start gap-2">
+                        <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-sky-300" />
+                        {bullet}
                       </li>
                     ))}
                   </ul>
                   <div className="mt-auto pt-7">
-                    <Button asChild variant={offer.featured ? 'primary' : 'secondary'}>
-                      <Link href={offer.href}>
-                        Ver detalhes
+                    <Button asChild variant="secondary">
+                      <Link href={href}>
+                        Conhecer solução
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="pt-10 md:pt-14">
-        <div className="mx-auto w-[min(1240px,calc(100%-32px))]">
-          <Card className="overflow-hidden border-white/10 bg-[linear-gradient(135deg,#171d26,#10151c)] shadow-[0_32px_110px_rgba(0,0,0,0.24)]">
-            <CardContent className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+      <section className="py-8 md:py-12">
+        <div className="section-shell">
+          <Card className="border-emerald-300/12 bg-[linear-gradient(135deg,rgba(12,38,32,0.92),rgba(9,18,26,0.96))]">
+            <CardContent className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
               <div>
-                <div className="text-sm uppercase tracking-[0.22em] text-stone-400">Quer conhecer melhor?</div>
-                <h2 className="mt-3 max-w-[15ch] font-serif text-4xl leading-tight text-white md:text-5xl">
-                  Fale com a Virtuagil sobre o Atendente IA.
+                <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                  Precisa conversar antes?
+                </div>
+                <h2 className="mt-3 font-display text-3xl font-semibold text-white">
+                  A Jade pode explicar o Assistente de IA antes da contratação.
                 </h2>
-                <p className="mt-5 max-w-2xl text-sm leading-8 text-stone-300 md:text-base">
-                  Nosso atendimento apresenta a solucao, responde suas duvidas e identifica se o Plano Fundador atende ao seu volume.
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
+                  Para projetos personalizados, a equipe da Virtuagil assume a conversa e avalia o
+                  escopo.
                 </p>
               </div>
-              <div className="flex flex-wrap gap-3">
-                <Button asChild size="lg">
-                  <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                    Falar com a Virtuagil
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
+              <Button asChild size="lg" variant="secondary">
+                <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                  Falar no WhatsApp
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </Button>
             </CardContent>
           </Card>
         </div>

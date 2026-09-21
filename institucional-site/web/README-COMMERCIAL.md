@@ -1,14 +1,58 @@
-# Checklist comercial do site institucional
+# Site comercial Virtuagil
 
-- Atendente IA em destaque na home e em Solucoes.
-- Jade apresentada como demonstracao real do produto.
-- Automacao de Processos apresentada como projeto sob medida.
-- IoT preservado como terceira frente comercial.
-- Area do cliente identificada como IoT para evitar confusao com o Atendente IA.
-- Precos publicos podem ser usados para produtos de IA padronizados, com escopo e limite de uso claros.
-- Projetos IoT permanecem com preco sob consulta quando dependerem de hardware, quantidade de pontos, instalacao ou escopo tecnico.
-- Oferta inicial do Atendente IA: Plano Fundador por R$ 249/mes, ate 500 atendimentos/mes, implantacao gratuita e limite de 10 clientes.
-- Pagamento do Atendente IA integrado ao Mercado Pago por rota backend do site e webhook n8n.
-- O valor comercial deve ser definido e validado no servidor; nunca aceitar valor livre enviado pelo navegador.
-- Nenhum e-mail pessoal, token ou credencial do Mercado Pago deve ser publicado no frontend.
-- `monitor.virtuagil.com.br` e `api.virtuagil.com.br` permanecem fora do escopo de alteracao do site comercial.
+Aplicação institucional publicada em:
+
+- `https://virtuagil.com.br`
+- `https://www.virtuagil.com.br`
+
+Projeto:
+
+- `institucional-site/web`
+
+## Papel do site
+
+O site apresenta três frentes:
+
+1. **Assistente de IA**
+   - produto padronizado
+   - contratação direta pelo site
+   - Jade como canal opcional de demonstração e pré-venda
+
+2. **Automação de Processos**
+   - projetos sob medida
+   - escopo e proposta comercial
+
+3. **IoT**
+   - monitoramento e controle
+   - escopo e proposta conforme hardware/operação
+
+## Compra direta do Assistente de IA
+
+Rota:
+
+- `/contratar-assistente-ia`
+
+Oferta:
+
+- R$ 1.794
+- 6 meses
+- até 500 atendimentos/mês
+- Mercado Pago
+- até 6 parcelas
+
+Depois do pagamento aprovado, o fluxo existente provisiona o usuário e o acesso fica em:
+
+- `https://atendente.virtuagil.com.br`
+
+Esse subdomínio não é o site comercial; é a aplicação autenticada do cliente.
+
+## Direção visual
+
+O institucional deve continuar:
+
+- moderno
+- premium sem excesso de efeitos
+- comercial
+- responsivo
+- sem aparência de dashboard administrativo
+- com CTA claro para contratação e para conversa com a Jade

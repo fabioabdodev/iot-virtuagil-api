@@ -7,14 +7,14 @@ const contactEmail =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'contato@virtuagil.com.br';
 
 export const metadata: Metadata = {
-  title: 'Automação com IA, Processos e IoT',
+  title: 'Assistente de IA, Automação de Processos e IoT',
   description:
-    'A Virtuagil cria soluções de automação com IA, atendimento inteligente no WhatsApp, automação de processos e IoT para empresas em Belo Horizonte e todo o Brasil.',
+    'A Virtuagil cria Assistente de IA para WhatsApp, automação de processos e soluções IoT para empresas que querem atender melhor, reduzir tarefas manuais e ganhar controle da operação.',
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'Virtuagil | Automação com IA, Processos e IoT',
+    title: 'Virtuagil | Assistente de IA, Automação e IoT',
     description:
-      'Atendimento inteligente no WhatsApp, automação de processos e soluções IoT para reduzir tarefas manuais e melhorar a operação da sua empresa.',
+      'Atendimento com IA no WhatsApp, automação de processos e soluções IoT para transformar tarefas manuais em fluxos inteligentes.',
     url: 'https://www.virtuagil.com.br/',
   },
 };

@@ -27,15 +27,15 @@ export type Product = {
 export const products: Product[] = [
   {
     slug: 'atendente-ia',
-    title: 'Atendente IA',
-    shortLabel: 'Inteligência Artificial',
+    title: 'Assistente de IA',
+    shortLabel: 'Atendimento com IA',
     category: 'Automação com IA',
     subtitle:
-      'Atendimento inteligente no WhatsApp para responder, qualificar e acompanhar clientes',
+      'Assistente de IA no WhatsApp para responder, qualificar, acompanhar e encaminhar clientes',
     summary:
-      'Atenda 24 horas, responda com base nas informações da sua empresa, identifique oportunidades e transfira para uma pessoa quando necessário.',
+      'Atenda 24 horas, responda com base nas informações da sua empresa, identifique oportunidades, faça follow-up e transfira para uma pessoa quando necessário.',
     cardDescription:
-      'Uma operação de atendimento completa para transformar conversas em oportunidades sem deixar o cliente esperando.',
+      'Uma operação de atendimento com IA para transformar conversas em oportunidades sem deixar o cliente esperando.',
     image: '/solucoes/atendente-ia.svg',
     icon: Bot,
     bullets: [
@@ -44,7 +44,7 @@ export const products: Product[] = [
       'Transferência para atendimento humano',
     ],
     deliverables: [
-      'Atendente com IA configurado para o seu negócio',
+      'Assistente de IA configurado para o seu negócio',
       'Base de conhecimento da empresa',
       'Qualificação de interessados',
       'Follow-up automático',
@@ -58,7 +58,7 @@ export const products: Product[] = [
       'Empresas que atendem e vendem pelo WhatsApp',
     ],
     detailIntro:
-      'O Atendente IA da Virtuagil organiza o primeiro atendimento comercial, responde dúvidas, identifica interesse e acompanha oportunidades para sua equipe dedicar tempo ao que realmente precisa de uma pessoa.',
+      'O Assistente de IA da Virtuagil organiza o primeiro atendimento comercial, responde dúvidas, identifica interesse e acompanha oportunidades para sua equipe dedicar tempo ao que realmente precisa de uma pessoa.',
   },
   {
     slug: 'automacao-processos',

@@ -1,37 +1,65 @@
-# Pagamentos
+# Pagamentos — Assistente de IA
 
-A Virtuagil utiliza Mercado Pago para o Atendente IA no site institucional.
+## Oferta atual
 
-## Oferta inicial
+- produto: Assistente de IA
+- ciclo: 6 meses
+- valor total: R$ 1.794
+- limite comercial: até 500 atendimentos por mês
+- checkout: Mercado Pago
+- parcelamento: até 6 parcelas, conforme exibido pelo Mercado Pago
 
-Plano Fundador:
+## Compra pelo site
 
-- R$ 249 por mes
-- ate 500 atendimentos por mes
-- implantacao gratuita
-- limitado aos 10 primeiros clientes
+A página pública é:
 
-## Fluxo
+- `/contratar-assistente-ia`
 
-1. O visitante conhece o plano em `/planos`.
-2. O CTA principal leva para a Jade para qualificacao e criacao/confirmacao do codigo do cliente.
-3. Quem ja possui codigo acessa `/pagamento`.
-4. O formulario envia somente `cliente_id`, `email` e o identificador do plano.
-5. A rota server-side `/api/pagamentos/criar-cobranca` define descricao e valor de forma fixa.
-6. O backend chama o webhook n8n `mercadopago-criar-cobranca`.
-7. O cliente e redirecionado ao checkout oficial do Mercado Pago.
-8. O webhook de notificacao do Mercado Pago confirma o pagamento no n8n e atualiza o plano do cliente.
+O formulário coleta:
 
-## Regra de seguranca
+- nome da empresa
+- nome do responsável
+- WhatsApp com DDD
+- e-mail de acesso ao dashboard
+- confirmação do e-mail
 
-O navegador nunca define o valor final da cobranca. O preco fica em uma tabela de planos no backend do site. Isso evita que o visitante altere o valor antes de gerar o checkout.
+O navegador **não envia o preço** e não conhece a chave interna.
 
-Credenciais do Mercado Pago permanecem somente no backend/n8n. Nunca publicar token, e-mail pessoal ou credencial em variaveis `NEXT_PUBLIC_*`.
+A rota server-side:
 
-## Renovacao inicial
+- `POST /api/pagamentos/criar-cobranca`
 
-Nesta fase de validacao, a cobranca e criada como pagamento avulso pelo checkout. A renovacao mensal pode ser acompanhada manualmente enquanto a operacao tiver poucos clientes. Recorrencia automatica deve ser implementada apenas quando for necessario escalar esse processo.
+chama:
 
-## IoT
+- `https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-checkout-jade500`
 
-Projetos IoT nao usam preco fixo publico neste momento. Hardware, quantidade de pontos, instalacao e escopo variam por projeto e seguem por proposta comercial.
+com o header privado:
+
+- `x-virtuagil-key`
+
+A chave vem de `VIRTUAGIL_INTERNAL_KEY` no runtime do container e nunca deve usar prefixo `NEXT_PUBLIC_`.
+
+## Pós-pagamento
+
+Após aprovação:
+
+1. o Mercado Pago notifica o n8n;
+2. o pagamento é consultado/validado;
+3. o plano do cliente é ativado;
+4. o dashboard é provisionado;
+5. o Supabase envia o convite;
+6. o cliente cria a própria senha;
+7. o acesso acontece em `https://atendente.virtuagil.com.br`.
+
+## Segurança
+
+- dados de cartão não passam pelo site Virtuagil;
+- o checkout é hospedado pelo Mercado Pago;
+- preço e regras comerciais são definidos pelo backend/n8n;
+- tokens e chaves ficam em variáveis de ambiente;
+- o site valida se a URL retornada pertence ao domínio do Mercado Pago;
+- o e-mail de acesso é confirmado antes da criação do checkout.
+
+## Legado
+
+A rota antiga `/pagamento` redireciona para `/contratar-assistente-ia`. O fluxo antigo de código de cliente e Plano Fundador de R$ 249 não faz mais parte da oferta pública.

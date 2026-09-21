@@ -6,39 +6,41 @@ Nome principal:
 
 - Virtuagil
 
-## Papel da marca
+## Posicionamento
 
 Transmitir:
 
 - tecnologia aplicada
-- confianca operacional
+- confiança operacional
 - agilidade
 - proximidade comercial
-- modularidade
+- automação com resultado prático
 
-## Direcao de marca
+## Direção visual
 
-- visual moderno, mas nao frio
-- profissional sem parecer corporativo demais
-- foco em resolver problema real do cliente
-- arquitetura de oferta simples e expansivel por modulos
+- moderno e premium, sem parecer frio
+- profissional sem excesso de aparência corporativa
+- hierarquia clara e poucos CTAs por bloco
+- fundo escuro com acentos emerald/verde e apoio de azul
+- evitar aparência de dashboard no site institucional
 
-## Separacao de marcas e produtos
+## Nomes públicos
 
-- `virtuagil.com.br`: site institucional/comercial
+Produto de atendimento:
+
+- **Assistente de IA**
+
+Jade:
+
+- é a assistente comercial da Virtuagil
+- pode aparecer em textos como `Falar com a Jade`, `Converse com a Jade` e demonstrações
+- não usar `Contratar Jade` como nome do produto
+
+## Separação de domínios
+
+- `virtuagil.com.br`: institucional, marketing, vendas e contratação
+- `atendente.virtuagil.com.br`: autenticação e dashboard do Assistente de IA
 - `monitor.virtuagil.com.br`: produto operacional IoT
-- `api-monitor.virtuagil.com.br`: API do produto
+- `api-monitor.virtuagil.com.br`: API do produto IoT
 
-O site institucional deve citar o produto, mas nao compartilhar a mesma base de
-rotas ou o mesmo objetivo de interface.
-
-## Posicionamento comercial
-
-A Virtuagil deve ser percebida como uma empresa que resolve problemas por blocos
-modulares.
-
-Exemplo de narrativa:
-
-- o cliente entra pelo modulo de temperatura
-- depois pode adicionar outros modulos
-- a empresa cresce sem precisar trocar toda a base da solucao
+O site institucional pode citar e direcionar para os produtos, mas não deve compartilhar a interface operacional deles.

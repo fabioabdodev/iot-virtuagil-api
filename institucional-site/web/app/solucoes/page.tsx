@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Soluções de Automação | Virtuagil',
     description:
-      'Atendente IA, automação de processos e soluções IoT para empresas que querem reduzir trabalho manual e operar melhor.',
+      'Assistente de IA, automação de processos e soluções IoT para empresas que querem reduzir trabalho manual e operar melhor.',
     url: 'https://www.virtuagil.com.br/solucoes',
   },
 };
@@ -21,7 +21,7 @@ const pillars = [
   {
     icon: Bot,
     title: 'Automação com IA',
-    text: 'Atendimento inteligente, qualificação e follow-up para transformar conversas em oportunidades.',
+    text: 'Assistente de IA no WhatsApp para responder, qualificar, fazer follow-up e encaminhar oportunidades.',
   },
   {
     icon: Workflow,

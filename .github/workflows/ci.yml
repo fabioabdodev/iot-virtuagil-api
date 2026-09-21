@@ -34,3 +34,28 @@ jobs:
 
       - name: E2E tests
         run: npm run test:e2e -- --runInBand
+
+
+  institutional-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: institucional-site/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: institucional-site/web/package-lock.json
+
+      - name: Install site dependencies
+        run: npm ci
+
+      - name: Build institutional site
+        run: npm run build

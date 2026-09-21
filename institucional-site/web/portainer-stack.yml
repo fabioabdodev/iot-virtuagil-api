@@ -15,7 +15,9 @@ services:
       - NEXT_PUBLIC_WHATSAPP_URL=${NEXT_PUBLIC_WHATSAPP_URL}
       - NEXT_PUBLIC_CONTACT_EMAIL=${NEXT_PUBLIC_CONTACT_EMAIL}
       - NEXT_PUBLIC_MONITOR_URL=${NEXT_PUBLIC_MONITOR_URL:-https://monitor.virtuagil.com.br}
-      - NEXT_PUBLIC_MERCADO_PAGO_PAYMENT_URL=${NEXT_PUBLIC_MERCADO_PAGO_PAYMENT_URL:-}
+      - NEXT_PUBLIC_ASSISTENTE_URL=${NEXT_PUBLIC_ASSISTENTE_URL:-https://atendente.virtuagil.com.br}
+      - VIRTUAGIL_INTERNAL_KEY=${VIRTUAGIL_INTERNAL_KEY:?VIRTUAGIL_INTERNAL_KEY must be set}
+      - N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL=${N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL:-https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-checkout-jade500}
     deploy:
       replicas: 1
       restart_policy:

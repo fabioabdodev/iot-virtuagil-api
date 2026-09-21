@@ -1,92 +1,74 @@
 # Estado Atual do Site Institucional
 
-## Situação em 2026-04-03
+## Referência — setembro de 2026
 
-O site institucional já existe como app real em:
+O site institucional está em:
 
-- `institucional-site/web`
+- repositório: `fabioabdodev/iot-virtuagil-api`
+- aplicação: `institucional-site/web`
+- domínio: `virtuagil.com.br` / `www.virtuagil.com.br`
+- stack própria: `virtuagil-site`
 
-Ele está separado visualmente do monitor e foi preparado para rodar em stack própria no `Portainer`, com `Traefik` e `Cloudflare`, usando o domínio:
+## Separação obrigatória
 
-- `www.virtuagil.com.br`
+- `virtuagil.com.br`: site institucional, marketing, vendas e contratação pública.
+- `atendente.virtuagil.com.br`: login, criação/recuperação de senha e dashboard do Assistente de IA.
+- `monitor.virtuagil.com.br`: produto IoT.
+- não mover a contratação pública para o subdomínio `atendente`.
 
-## O que já está implementado
+## Produto comercial padronizado
 
-- app institucional em `Next.js`
-- páginas:
-  - `/`
-  - `/solucoes`
-  - `/planos`
-  - `/contato`
-- home com direção comercial
-- header fixo
-- CTA da Jade
-- cards de venda dos módulos
-- uso de `framer-motion`
-- uso de `lucide-react`
-- componentes `ui` próprios no estilo `shadcn`
-- metadata institucional
-- favicon e logomarca em `public/`
+Nome público:
 
-## Infraestrutura adotada
+- **Assistente de IA**
 
-- stack separada no `Portainer`
-- rede pública do ambiente: `network_public`
-- proxy reverso: `Traefik`
-- DNS e borda: `Cloudflare`
-- imagem publicada no `GHCR`
+Nome Jade:
 
-## Arquivos principais desta fase
+- Jade continua sendo a assistente comercial da própria Virtuagil e pode ser usada em CTAs como **Falar com a Jade**.
+- não usar **Contratar Jade** como nome da oferta.
 
-- `institucional-site/web/app/page.tsx`
-- `institucional-site/web/app/layout.tsx`
-- `institucional-site/web/app/globals.css`
-- `institucional-site/web/components/site/home-page.tsx`
-- `institucional-site/web/components/site/hero-illustration.tsx`
-- `institucional-site/web/components/ui/button.tsx`
-- `institucional-site/web/components/ui/card.tsx`
-- `institucional-site/web/public/brand/logomarca.png`
-- `institucional-site/web/public/favicon.png`
-- `institucional-site/web/portainer-stack.yml`
-- `.github/workflows/deploy.yml`
+Oferta vigente:
 
-## O que já foi validado
+- R$ 1.794
+- 6 meses
+- até 500 atendimentos/mês
+- checkout Mercado Pago
+- até 6 parcelas, conforme checkout
 
-- build local do institucional: ok
-- stack no `Portainer`: subiu
-- domínio `www.virtuagil.com.br`: abriu
-- certificado/TLS: passou a responder depois do ajuste de imagem/stack
+## Compra direta
 
-## Ponto importante para o próximo agente
+Rota pública:
 
-Se o site publicado ainda parecer antigo, o problema mais provável não é código. Os pontos a checar são:
+- `/contratar-assistente-ia`
 
-1. se a `GitHub Action` terminou;
-2. se a imagem nova foi publicada no `GHCR`;
-3. se a stack `virtuagil-site` foi atualizada no `Portainer`;
-4. se o navegador ainda está com cache antigo.
+Fluxo:
 
-## Decisões já tomadas e que devem ser preservadas
+1. cliente informa empresa, responsável, WhatsApp e e-mail do dashboard;
+2. backend do site chama n8n com `VIRTUAGIL_INTERNAL_KEY`;
+3. n8n cria checkout Mercado Pago;
+4. pagamento aprovado segue pelo mesmo fluxo de provisionamento já usado pela Jade;
+5. Supabase envia convite;
+6. cliente cria a própria senha;
+7. cliente entra em `atendente.virtuagil.com.br`.
 
-- o institucional não deve parecer dashboard
-- a linguagem deve ser comercial, moderna e confiável
-- a Jade faz parte da experiência comercial
-- o texto-base da Jade no institucional pode usar a linha:
-  - `Como posso ajudar?`
-- o monitor e o institucional devem continuar separados, mesmo estando no mesmo repositório por enquanto
+## Direção visual
 
-## O que ainda merece evolução
+A versão atual adota:
 
-- deixar a home ainda mais premium e autoral
-- revisar visual de `/solucoes`, `/planos` e `/contato` no mesmo nível da home
-- incluir prova social, segmentos e casos de uso reais
-- revisar SEO e Open Graph com mais capricho
-- decidir se o projeto continua neste repositório ou migra depois para repo próprio
+- fundo escuro premium;
+- verde/emerald como acento principal;
+- azul como acento secundário;
+- tipografia Manrope + Sora;
+- glass cards discretos;
+- CTAs claros;
+- aparência comercial, não de dashboard.
 
-## Observação sobre a base da Jade
+## Deploy
 
-A pasta `docs/jade-knowledge/` foi revisada localmente para dar à Jade uma base mais ampla, direta e comercial. A versão mais útil para copiar em Google Docs está em:
+- GitHub Actions
+- GHCR
+- Docker Swarm
+- Traefik
+- Cloudflare
 
-- `docs/jade-knowledge/formatado/`
-
-Esses arquivos continuam fora do fluxo normal de Git do projeto atual. Se o próximo agente precisar publicar essa base, deve primeiro revisar a regra de versionamento dessa pasta.
+O institucional é compilado na CI e a imagem de produção é publicada com tag imutável por commit.
