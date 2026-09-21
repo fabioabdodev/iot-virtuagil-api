@@ -115,6 +115,11 @@ export default function ContratarAssistenteIaPage() {
               </p>
             </div>
 
+            <div className="mt-5 rounded-[24px] border border-amber-300/15 bg-amber-300/[0.045] p-5 text-xs leading-6 text-slate-400">
+              <strong className="text-slate-200">Estrutura simples:</strong> recomendamos uma linha exclusiva para o Assistente de IA. Você não precisa comprar um celular caro: pode usar um aparelho básico compatível ou, para economizar, colocar a nova linha em um celular dual SIM/eSIM que já utilize. Linha, chip/eSIM, plano da operadora e aparelho não estão incluídos. A Virtuagil orienta a configuração na implantação.
+              <div className="mt-2"><Link href="/termos-assistente-ia" className="font-semibold text-emerald-300 underline">Ver condições completas da contratação</Link></div>
+            </div>
+
             <div className="mt-5">
               <Button asChild variant="ghost">
                 <a href={whatsappUrl} target="_blank" rel="noreferrer">
