@@ -33,6 +33,7 @@ export function PaymentForm() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   function updateField(field: keyof FormState, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -44,6 +45,11 @@ export function PaymentForm() {
 
     const email = form.email_acesso.trim().toLowerCase();
     const confirmarEmail = form.confirmar_email.trim().toLowerCase();
+
+    if (!acceptedTerms) {
+      setError('Leia e aceite os Termos de Contratação e a Política de Privacidade para continuar.');
+      return;
+    }
 
     if (email !== confirmarEmail) {
       setError('Os e-mails informados não conferem.');
@@ -225,13 +231,20 @@ export function PaymentForm() {
         </div>
       </div>
 
+      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
+        <label className="flex cursor-pointer items-start gap-3 text-xs leading-6 text-slate-300">
+          <input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} className="mt-1 h-4 w-4" required />
+          <span>Li e aceito os <a href="/termos-assistente-ia" target="_blank" className="font-semibold text-emerald-300 underline">Termos de Contratação</a> e a <a href="/privacidade" target="_blank" className="font-semibold text-emerald-300 underline">Política de Privacidade</a>. Estou ciente de que 6x de R$ 299,00 corresponde ao parcelamento do plano semestral de R$ 1.794,00 e de que linha/chip, aparelho e plano da operadora não estão incluídos.</span>
+        </label>
+      </div>
+
       {error ? (
         <div className="rounded-2xl border border-red-400/20 bg-red-500/[0.08] px-4 py-3 text-sm leading-6 text-red-100">
           {error}
         </div>
       ) : null}
 
-      <Button type="submit" size="lg" disabled={loading} className="w-full">
+      <Button type="submit" size="lg" disabled={loading || !acceptedTerms} className="w-full">
         {loading ? (
           <>
             <LoaderCircle className="h-4 w-4 animate-spin" />
