@@ -13,7 +13,7 @@ Projeto:
 
 O site apresenta três frentes:
 
-1. **Assistente de IA**
+1. **Assistente de IA Virtuagil**
    - produto padronizado
    - contratação direta pelo site
    - Jade como canal opcional de demonstração e pré-venda
@@ -40,7 +40,7 @@ Oferta:
 - Mercado Pago
 - até 6 parcelas
 
-Depois do pagamento aprovado, o fluxo existente provisiona o usuário e o acesso fica em:
+Depois do pagamento aprovado, o fluxo existente provisiona o usuário e o acesso ao Painel Administrativo fica em:
 
 - `https://atendente.virtuagil.com.br`
 
@@ -54,5 +54,5 @@ O institucional deve continuar:
 - premium sem excesso de efeitos
 - comercial
 - responsivo
-- sem aparência de dashboard administrativo
+- sem aparência de sistema administrativo
 - com CTA claro para contratação e para conversa com a Jade
