@@ -29,7 +29,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/planos`,
       lastModified: now,
       changeFrequency: 'monthly',
-      priority: 0.6,
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/contratar-assistente-ia`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.95,
     },
   ];
 
