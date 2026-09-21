@@ -12,15 +12,16 @@ O site institucional está em:
 ## Separação obrigatória
 
 - `virtuagil.com.br`: site institucional, marketing, vendas e contratação pública.
-- `atendente.virtuagil.com.br`: login, criação/recuperação de senha e dashboard do Assistente de IA.
+- `atendente.virtuagil.com.br`: login, criação/recuperação de senha e Painel Administrativo do Assistente de IA.
 - `monitor.virtuagil.com.br`: produto IoT.
 - não mover a contratação pública para o subdomínio `atendente`.
 
 ## Produto comercial padronizado
 
-Nome público:
+Nome do produto:
 
-- **Assistente de IA**
+- nome oficial: **Assistente de IA Virtuagil**
+- forma curta: **Assistente de IA**
 
 Nome Jade:
 
@@ -43,7 +44,7 @@ Rota pública:
 
 Fluxo:
 
-1. cliente informa empresa, responsável, WhatsApp e e-mail do dashboard;
+1. cliente informa empresa, responsável, WhatsApp e e-mail de acesso ao Painel Administrativo;
 2. backend do site chama n8n com `VIRTUAGIL_INTERNAL_KEY`;
 3. n8n cria checkout Mercado Pago;
 4. pagamento aprovado segue pelo mesmo fluxo de provisionamento já usado pela Jade;
@@ -61,7 +62,7 @@ A versão atual adota:
 - tipografia Manrope + Sora;
 - glass cards discretos;
 - CTAs claros;
-- aparência comercial, não de dashboard.
+- aparência comercial, não de sistema administrativo.
 
 ## Deploy
 
