@@ -115,6 +115,11 @@ export default function ContratarAssistenteIaPage() {
               </p>
             </div>
 
+            <div className="mt-5 rounded-[24px] border border-amber-300/15 bg-amber-300/[0.045] p-5 text-xs leading-6 text-slate-400">
+              <strong className="text-slate-200">Antes de contratar:</strong> a solução exige um número exclusivo para o Assistente de IA e um aparelho compatível dedicado ou com dual SIM/eSIM. Linha, chip, plano da operadora e aparelho não estão incluídos. A ativação ocorre após a etapa de implantação e configuração.
+              <div className="mt-2"><Link href="/termos-assistente-ia" className="font-semibold text-emerald-300 underline">Ver condições completas da contratação</Link></div>
+            </div>
+
             <div className="mt-5">
               <Button asChild variant="ghost">
                 <a href={whatsappUrl} target="_blank" rel="noreferrer">
