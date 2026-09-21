@@ -34,7 +34,7 @@ const assistantItems = [
   'Qualificação de oportunidades',
   'Follow-up automático',
   'Transferência para atendimento humano',
-  'Dashboard de contatos, uso e resultados',
+  'Painel Administrativo de contatos, uso e resultados',
   'Implantação inicial assistida',
 ];
 
