@@ -1,16 +1,18 @@
-# Precificacao inicial do Atendente IA
+# Precificação pública
 
-Oferta de validacao para os primeiros 10 clientes:
+## Assistente de IA
 
-- Plano Fundador: R$ 249/mes
-- ate 500 atendimentos/mes
-- implantacao gratuita
-- 1 numero de WhatsApp
-- IA personalizada
-- follow-up automatico
-- transferencia para atendimento humano
-- dashboard e suporte
+Oferta vigente no site:
 
-Apos as 10 primeiras vagas, revisar preco com base em custo real, uso medio, suporte e conversao comercial. Faixa inicial sugerida para a proxima etapa: R$ 349 a R$ 397/mes.
+- **R$ 1.794**
+- período: **6 meses**
+- até **500 atendimentos por mês**
+- pagamento via Mercado Pago
+- Pix ou cartão
+- até **6 parcelas**, conforme disponibilidade apresentada pelo checkout
 
-Projetos IoT permanecem sob consulta por dependerem de hardware, instalacao, quantidade de pontos e escopo.
+O preço não deve ser recebido do navegador como fonte confiável. A cobrança é criada pelo fluxo seguro do n8n.
+
+## Outras soluções
+
+Automação de Processos e IoT permanecem **sob consulta**, porque o valor depende do escopo, integrações, quantidade de equipamentos/pontos, instalação e complexidade operacional.
