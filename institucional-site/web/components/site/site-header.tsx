@@ -13,6 +13,7 @@ import {
   PhoneCall,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 
 type SiteHeaderProps = {
@@ -37,6 +38,13 @@ export function SiteHeader({
   whatsappUrl,
 }: SiteHeaderProps) {
   const pathname = usePathname();
+  const mobileMenuRef = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    mobileMenuRef.current?.removeAttribute('open');
+  }, [pathname]);
+
+  const closeMobileMenu = () => mobileMenuRef.current?.removeAttribute('open');
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.07] bg-[#05080d]/82 backdrop-blur-2xl">
@@ -87,7 +95,7 @@ export function SiteHeader({
           </Button>
         </div>
 
-        <details className="relative ml-auto md:hidden">
+        <details ref={mobileMenuRef} className="relative ml-auto md:hidden">
           <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3.5 py-2 text-sm font-semibold text-white">
             <Menu className="h-4 w-4" />
             Menu
@@ -97,6 +105,7 @@ export function SiteHeader({
             <div className="grid gap-1 text-sm">
               <Link
                 href="/solucoes"
+                onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/[0.05] hover:text-white"
               >
                 <Boxes className="h-4 w-4 text-emerald-300" />
@@ -104,6 +113,7 @@ export function SiteHeader({
               </Link>
               <Link
                 href="/planos"
+                onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/[0.05] hover:text-white"
               >
                 <CreditCard className="h-4 w-4 text-emerald-300" />
@@ -111,6 +121,7 @@ export function SiteHeader({
               </Link>
               <Link
                 href="/contato"
+                onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/[0.05] hover:text-white"
               >
                 <PhoneCall className="h-4 w-4 text-emerald-300" />
@@ -118,15 +129,17 @@ export function SiteHeader({
               </Link>
               <a
                 href={whatsappUrl}
+                onClick={closeMobileMenu}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/[0.05] hover:text-white"
               >
                 <MessageCircleMore className="h-4 w-4 text-emerald-300" />
-                Falar com a Jade
+                WhatsApp
               </a>
               <a
                 href={monitorUrl}
+                onClick={closeMobileMenu}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/[0.05] hover:text-white"
@@ -138,13 +151,13 @@ export function SiteHeader({
 
             <div className="mt-3 grid gap-2 border-t border-white/[0.07] pt-3">
               <Button asChild size="sm">
-                <Link href="/contratar-assistente-ia">
+                <Link href="/contratar-assistente-ia" onClick={closeMobileMenu}>
                   <Bot className="h-4 w-4" />
                   Contratar Assistente de IA
                 </Link>
               </Button>
               <Button asChild size="sm" variant="secondary">
-                <a href={assistantUrl} target="_blank" rel="noreferrer">
+                <a href={assistantUrl} onClick={closeMobileMenu} target="_blank" rel="noreferrer">
                   <LogIn className="h-4 w-4" />
                   Área do cliente
                 </a>
