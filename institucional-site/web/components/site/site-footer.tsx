@@ -107,7 +107,7 @@ export function SiteFooter({
               className="inline-flex items-center gap-2 transition hover:text-white"
             >
               <ExternalLink className="h-4 w-4 text-emerald-300" />
-              Dashboard Assistente de IA
+              Painel Administrativo
             </a>
             <a
               href={monitorUrl}
