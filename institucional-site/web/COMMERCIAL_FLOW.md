@@ -1,27 +1,41 @@
 # Fluxo comercial do site institucional
 
-## Atendente IA
+## Assistente de IA
 
-1. O visitante conhece o produto e o preco no site.
-2. A oferta inicial e o Plano Fundador por R$ 249/mes, com ate 500 atendimentos/mes, implantacao gratuita e limite de 10 clientes.
-3. O CTA principal leva para a Jade no WhatsApp.
-4. A Jade apresenta o Atendente IA, responde duvidas e qualifica o interesse.
-5. A Virtuagil cria/confirma o codigo do cliente e prepara a ativacao.
-6. O cliente acessa `/pagamento`, informa codigo e e-mail e gera o checkout oficial do Mercado Pago.
-7. O valor nao vem do navegador: o backend do site define o preco fixo do plano.
-8. O pagamento confirmado pelo Mercado Pago e processado pelo n8n e ativa o plano do cliente.
-9. Enquanto houver poucos clientes, a renovacao mensal pode ser acompanhada manualmente antes de implementar recorrencia automatica.
+Oferta comercial atual:
 
-## Automacao de Processos
+- produto público: **Assistente de IA**
+- plano: semestral
+- valor: **R$ 1.794**
+- até 500 atendimentos por mês
+- pagamento via Mercado Pago
+- até 6 parcelas, conforme opções exibidas no checkout
 
-Automacoes sob medida continuam por avaliacao de escopo e proposta quando nao se encaixarem no produto padronizado Atendente IA.
+### Entrada 1 — compra direta pelo site
 
-## IoT
+1. O visitante conhece o Assistente de IA em `virtuagil.com.br`.
+2. O CTA **Contratar Assistente de IA** abre `/contratar-assistente-ia`.
+3. O cliente informa empresa, responsável, WhatsApp e e-mail de acesso ao dashboard.
+4. A rota server-side do site chama o webhook seguro do n8n usando `VIRTUAGIL_INTERNAL_KEY`.
+5. O n8n cria uma nova preferência de checkout no Mercado Pago.
+6. O cliente é redirecionado ao ambiente oficial do Mercado Pago.
+7. O webhook de pagamento aprovado atualiza o plano e executa o provisionamento já validado.
+8. O cliente recebe o convite por e-mail, cria a própria senha e acessa `atendente.virtuagil.com.br`.
 
-IoT permanece com preco sob consulta. O valor pode variar conforme hardware, quantidade de pontos, instalacao, conectividade e escopo da operacao.
+### Entrada 2 — venda conduzida pela Jade
 
-## Separacao de sistemas
+1. O interessado conversa com a Jade no WhatsApp.
+2. A Jade explica a solução, qualifica o interesse e confirma os dados necessários.
+3. Ao decidir concluir a contratação, a Jade solicita um novo checkout.
+4. A partir do Mercado Pago, o fluxo de aprovação e provisionamento é o mesmo da compra pelo site.
 
-- `virtuagil.com.br`: site institucional e comercial.
-- `monitor.virtuagil.com.br`: plataforma IoT. Nao alterar a partir deste projeto comercial.
-- `api.virtuagil.com.br`: API da plataforma IoT. Nao alterar a partir deste projeto comercial.
+## Separação de sistemas
+
+- `virtuagil.com.br`: site institucional, comercial e contratação pública.
+- `atendente.virtuagil.com.br`: autenticação, criação/recuperação de senha e dashboard do cliente.
+- `monitor.virtuagil.com.br`: plataforma IoT.
+- n8n: checkout, confirmação de pagamento, integrações e automações.
+
+## Automação de Processos e IoT
+
+Essas soluções continuam sob avaliação de escopo e proposta. Não publicar preço fixo sem uma decisão comercial específica.
