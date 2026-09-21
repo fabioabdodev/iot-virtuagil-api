@@ -234,7 +234,7 @@ export function PaymentForm() {
       <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
         <label className="flex cursor-pointer items-start gap-3 text-xs leading-6 text-slate-300">
           <input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} className="mt-1 h-4 w-4" required />
-          <span>Li e aceito os <a href="/termos-assistente-ia" target="_blank" className="font-semibold text-emerald-300 underline">Termos de Contratação</a> e a <a href="/privacidade" target="_blank" className="font-semibold text-emerald-300 underline">Política de Privacidade</a>. Estou ciente de que 6x de R$ 299,00 corresponde ao parcelamento do plano semestral de R$ 1.794,00 e de que linha/chip, aparelho e plano da operadora não estão incluídos.</span>
+          <span>Li e aceito os <a href="/termos-assistente-ia" target="_blank" className="font-semibold text-emerald-300 underline">Termos de Contratação</a> e a <a href="/privacidade" target="_blank" className="font-semibold text-emerald-300 underline">Política de Privacidade</a>. Estou ciente de que 6x de R$ 299,00 corresponde ao parcelamento do plano semestral de R$ 1.794,00 e de que linha/chip ou eSIM, aparelho e plano da operadora não estão incluídos. Li também os requisitos de uso do WhatsApp e implantação.</span>
         </label>
       </div>
 
