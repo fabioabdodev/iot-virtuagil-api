@@ -93,8 +93,6 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const whatsappUrl =
     process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
-  const contactEmail =
-    process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'contato@virtuagil.com.br';
   const monitorUrl =
     process.env.NEXT_PUBLIC_MONITOR_URL ?? 'https://monitor.virtuagil.com.br';
   const assistantUrl =
@@ -109,7 +107,6 @@ export default function RootLayout({
     logo: 'https://www.virtuagil.com.br/brand/logomarca.png',
     description:
       'Empresa de tecnologia especializada em automação com inteligência artificial, automação de processos e IoT.',
-    email: contactEmail,
     areaServed: [
       { '@type': 'Country', name: 'Brasil' },
       { '@type': 'City', name: 'Belo Horizonte' },
@@ -118,8 +115,7 @@ export default function RootLayout({
       {
         '@type': 'ContactPoint',
         contactType: 'sales',
-        telephone: `+${whatsappUrl.replace(/\D/g, '').replace(/^55/, '55')}`,
-        email: contactEmail,
+        url: whatsappUrl,
         availableLanguage: ['pt-BR'],
       },
     ],
@@ -140,7 +136,7 @@ export default function RootLayout({
           />
           <div className="flex-1 pt-[76px]">{children}</div>
           <SiteFooter
-            contactEmail={contactEmail}
+            contactEmail=""
             whatsappUrl={whatsappUrl}
             monitorUrl={monitorUrl}
             assistantUrl={assistantUrl}
