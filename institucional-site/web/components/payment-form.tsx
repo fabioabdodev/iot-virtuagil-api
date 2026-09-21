@@ -70,6 +70,9 @@ export function PaymentForm() {
           telefone: form.telefone,
           email_acesso: email,
           website_url: form.website_url,
+          aceite_termos: acceptedTerms,
+          termos_versao: '2026-09-21',
+          canal_aceite: 'site_virtuagil',
         }),
       });
 
