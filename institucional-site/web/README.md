@@ -6,10 +6,10 @@ Aplicação institucional e comercial da Virtuagil.
 
 - site público: `https://virtuagil.com.br`
 - site público: `https://www.virtuagil.com.br`
-- dashboard do Assistente de IA: `https://atendente.virtuagil.com.br`
+- Painel Administrativo do Assistente de IA: `https://atendente.virtuagil.com.br`
 - plataforma IoT: `https://monitor.virtuagil.com.br`
 
-O institucional fica em `institucional-site/web` e não deve compartilhar navegação autenticada ou aparência de dashboard.
+O institucional fica em `institucional-site/web` e não deve compartilhar navegação autenticada ou aparência de sistema administrativo.
 
 ## Stack
 
@@ -26,7 +26,7 @@ O institucional fica em `institucional-site/web` e não deve compartilhar navega
 
 - `/`
 - `/solucoes`
-- `/solucoes/atendente-ia` — URL mantida por compatibilidade; produto público = Assistente de IA
+- `/solucoes/atendente-ia` — URL mantida por compatibilidade; produto público = Assistente de IA Virtuagil (forma curta: Assistente de IA)
 - `/planos`
 - `/contato`
 - `/contratar-assistente-ia`
