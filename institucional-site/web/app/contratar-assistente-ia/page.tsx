@@ -19,7 +19,7 @@ const whatsappUrl =
 export const metadata: Metadata = {
   title: 'Contratar Assistente de IA',
   description:
-    'Contrate o Assistente de IA da Virtuagil. Plano semestral de R$ 1.794, até 500 atendimentos por mês e pagamento seguro via Mercado Pago.',
+    'Contrate o Assistente de IA da Virtuagil para atendimento inteligente no WhatsApp. Plano semestral, até 500 atendimentos por mês e pagamento seguro via Mercado Pago.',
   alternates: { canonical: '/contratar-assistente-ia' },
   openGraph: {
     title: 'Contratar Assistente de IA | Virtuagil',
@@ -105,13 +105,13 @@ export default function ContratarAssistenteIaPage() {
                   <div className="text-xs text-slate-500">Até 500 atendimentos por mês</div>
                 </div>
               </div>
-              <div className="mt-4 flex items-end gap-2">
-                <span className="font-display text-4xl font-semibold tracking-[-0.04em] text-white">
-                  R$ 1.794
-                </span>
+              <div className="mt-4 text-sm font-semibold text-emerald-200">Por apenas</div>
+              <div className="mt-1 flex items-end gap-2 text-white">
+                <span className="pb-1 text-base font-semibold">6x de</span>
+                <span className="font-display text-4xl font-semibold tracking-[-0.04em]">R$ 299</span>
               </div>
-              <p className="mt-2 text-xs leading-6 text-slate-400">
-                Pix ou cartão, com até 6 parcelas disponíveis no checkout.
+              <p className="mt-2 text-xs leading-6 text-slate-500">
+                Valor total do plano semestral: R$ 1.794,00. Pix ou cartão; parcelamento disponível no checkout.
               </p>
             </div>
 
