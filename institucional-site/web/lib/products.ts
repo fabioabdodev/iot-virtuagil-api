@@ -35,7 +35,7 @@ export const products: Product[] = [
     summary:
       'Atenda 24 horas, responda com base nas informações da sua empresa, identifique oportunidades, faça follow-up e transfira para uma pessoa quando necessário.',
     cardDescription:
-      'Uma operação de atendimento com IA para transformar conversas em oportunidades sem deixar o cliente esperando.'
+      'Uma operação de atendimento com IA para transformar conversas em oportunidades sem deixar o cliente esperando.',
     image: '/solucoes/atendente-ia.svg',
     icon: Bot,
     bullets: [
@@ -58,7 +58,7 @@ export const products: Product[] = [
       'Empresas que atendem e vendem pelo WhatsApp',
     ],
     detailIntro:
-      'O Assistente de IA da Virtuagil organiza o primeiro atendimento comercial, responde dúvidas, identifica interesse e acompanha oportunidades para sua equipe dedicar tempo ao que realmente precisa de uma pessoa.'
+      'O Assistente de IA da Virtuagil organiza o primeiro atendimento comercial, responde dúvidas, identifica interesse e acompanha oportunidades para sua equipe dedicar tempo ao que realmente precisa de uma pessoa.',
   },
   {
     slug: 'automacao-processos',
