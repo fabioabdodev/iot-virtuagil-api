@@ -31,7 +31,7 @@ export const products: Product[] = [
     shortLabel: 'Atendimento com IA',
     category: 'Automação com IA',
     subtitle:
-      'Assistente de IA no WhatsApp para responder, qualificar, acompanhar e encaminhar clientes',
+      'Assistente de IA no WhatsApp para responder, qualificar, acompanhar e encaminhar clientes.',
     summary:
       'Atenda 24 horas, responda com base nas informações da sua empresa, identifique oportunidades, faça follow-up e transfira para uma pessoa quando necessário.',
     cardDescription:
@@ -49,7 +49,7 @@ export const products: Product[] = [
       'Qualificação de interessados',
       'Follow-up automático',
       'Transferência para atendimento humano',
-      'Dashboard de contatos, uso e resultados',
+      'Painel Administrativo de contatos, uso e resultados',
     ],
     segments: [
       'Clínicas e consultórios',

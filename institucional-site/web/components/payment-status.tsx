@@ -20,7 +20,7 @@ const content = {
     icon: CircleCheckBig,
     eyebrow: 'Pagamento confirmado',
     title: 'Seu pagamento foi confirmado.',
-    text: 'A Virtuagil processa a ativação automaticamente. O e-mail informado na contratação receberá as instruções para criar a senha e acessar o dashboard.',
+    text: 'A Virtuagil processa a ativação automaticamente. O e-mail informado na contratação receberá as instruções para criar a senha e acessar o Painel Administrativo.',
     accent: 'text-emerald-300',
   },
   pending: {
@@ -34,7 +34,7 @@ const content = {
     icon: CircleAlert,
     eyebrow: 'Pagamento não concluído',
     title: 'O pagamento não foi finalizado.',
-    text: 'Você pode voltar à contratação e gerar um novo checkout ou falar com a Jade se precisar de ajuda.',
+    text: 'Você pode voltar à contratação e gerar um novo checkout ou falar com a Virtuagil pelo WhatsApp se precisar de ajuda.',
     accent: 'text-red-300',
   },
 } as const;
@@ -67,7 +67,7 @@ export function PaymentStatus({ status }: { status: Status }) {
             {status === 'success' ? (
               <div className="mx-auto mt-6 flex max-w-xl items-start gap-3 rounded-2xl border border-emerald-300/12 bg-emerald-300/[0.05] p-4 text-left text-xs leading-6 text-slate-300">
                 <MailCheck className="mt-1 h-4 w-4 flex-none text-emerald-300" />
-                Confira também a caixa de spam. O convite de acesso é enviado para o e-mail de dashboard informado na contratação.
+                Confira também a caixa de spam. O convite de acesso é enviado para o e-mail do Painel Administrativo informado na contratação.
               </div>
             ) : null}
 
@@ -91,7 +91,7 @@ export function PaymentStatus({ status }: { status: Status }) {
               <Button asChild variant="secondary">
                 <a href={whatsappUrl} target="_blank" rel="noreferrer">
                   <MessageCircleMore className="h-4 w-4" />
-                  Falar com a Jade
+                  Falar no WhatsApp
                 </a>
               </Button>
             </div>

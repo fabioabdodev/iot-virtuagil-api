@@ -2,7 +2,7 @@
 
 ## Oferta atual
 
-- produto: Assistente de IA
+- produto: Assistente de IA Virtuagil
 - ciclo: 6 meses
 - valor total: R$ 1.794
 - limite comercial: até 500 atendimentos por mês
@@ -20,7 +20,7 @@ O formulário coleta:
 - nome da empresa
 - nome do responsável
 - WhatsApp com DDD
-- e-mail de acesso ao dashboard
+- e-mail de acesso ao Painel Administrativo
 - confirmação do e-mail
 
 O navegador **não envia o preço** e não conhece a chave interna.
@@ -46,7 +46,7 @@ Após aprovação:
 1. o Mercado Pago notifica o n8n;
 2. o pagamento é consultado/validado;
 3. o plano do cliente é ativado;
-4. o dashboard é provisionado;
+4. o Painel Administrativo é provisionado;
 5. o Supabase envia o convite;
 6. o cliente cria a própria senha;
 7. o acesso acontece em `https://atendente.virtuagil.com.br`.

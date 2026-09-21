@@ -16,7 +16,7 @@ O site institucional:
 
 - vive em `institucional-site/web`
 - não reutiliza a shell do monitor
-- não deve parecer dashboard
+- não deve parecer sistema administrativo
 - não mistura menus administrativos
 - publica em stack própria
 
@@ -57,6 +57,8 @@ CTA secundário:
 
 O usuário não deve precisar conhecer `cliente_id`, códigos internos, nomes de workflow ou termos de infraestrutura.
 
+Na comunicação com clientes, usar **Painel Administrativo** em vez de `dashboard`.
+
 ## Segurança do checkout
 
 - preço nunca vem do navegador como fonte confiável
@@ -68,7 +70,7 @@ O usuário não deve precisar conhecer `cliente_id`, códigos internos, nomes de
 
 ## Produtos
 
-- Assistente de IA: oferta padronizada com compra direta
+- Assistente de IA Virtuagil: oferta padronizada com compra direta; forma curta pública: Assistente de IA
 - Automação de Processos: proposta sob medida
 - IoT: proposta conforme escopo/hardware
 

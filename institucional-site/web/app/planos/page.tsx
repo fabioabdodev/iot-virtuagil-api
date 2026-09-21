@@ -34,7 +34,7 @@ const assistantItems = [
   'Qualificação de oportunidades',
   'Follow-up automático',
   'Transferência para atendimento humano',
-  'Dashboard de contatos, uso e resultados',
+  'Painel Administrativo de contatos, uso e resultados',
   'Implantação inicial assistida',
 ];
 
@@ -90,11 +90,13 @@ export default function PlanosPage() {
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
                   Plano semestral
                 </div>
-                <div className="mt-3 font-display text-5xl font-semibold tracking-[-0.045em] text-white">
-                  R$ 1.794
+                <div className="mt-3 text-sm font-semibold text-emerald-200">Por apenas</div>
+                <div className="mt-1 flex items-end gap-2 text-white">
+                  <span className="pb-1 text-lg font-semibold">6x de</span>
+                  <span className="font-display text-5xl font-semibold tracking-[-0.045em]">R$ 299</span>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-slate-400">
-                  Pagamento único via Pix ou cartão, com até 6 parcelas disponíveis no checkout.
+                <p className="mt-2 text-xs leading-6 text-slate-500">
+                  Valor total do plano semestral: R$ 1.794,00. Pix ou cartão; parcelamento disponível no checkout.
                 </p>
 
                 <div className="mt-6 grid gap-3">
@@ -107,7 +109,7 @@ export default function PlanosPage() {
                   <Button asChild size="lg" variant="secondary" className="w-full">
                     <a href={whatsappUrl} target="_blank" rel="noreferrer">
                       <MessageCircleMore className="h-4 w-4" />
-                      Tirar dúvidas com a Jade
+                      Tirar dúvidas no WhatsApp
                     </a>
                   </Button>
                 </div>
@@ -203,7 +205,7 @@ export default function PlanosPage() {
                   Precisa conversar antes?
                 </div>
                 <h2 className="mt-3 font-display text-3xl font-semibold text-white">
-                  A Jade pode explicar o Assistente de IA antes da contratação.
+                  Tire suas dúvidas sobre o Assistente de IA antes da contratação.
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
                   Para projetos personalizados, a equipe da Virtuagil assume a conversa e avalia o

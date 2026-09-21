@@ -4,7 +4,7 @@
 
 Oferta comercial atual:
 
-- produto público: **Assistente de IA**
+- produto público: **Assistente de IA Virtuagil** (forma curta: **Assistente de IA**)
 - plano: semestral
 - valor: **R$ 1.794**
 - até 500 atendimentos por mês
@@ -15,7 +15,7 @@ Oferta comercial atual:
 
 1. O visitante conhece o Assistente de IA em `virtuagil.com.br`.
 2. O CTA **Contratar Assistente de IA** abre `/contratar-assistente-ia`.
-3. O cliente informa empresa, responsável, WhatsApp e e-mail de acesso ao dashboard.
+3. O cliente informa empresa, responsável, WhatsApp e e-mail de acesso ao Painel Administrativo.
 4. A rota server-side do site chama o webhook seguro do n8n usando `VIRTUAGIL_INTERNAL_KEY`.
 5. O n8n cria uma nova preferência de checkout no Mercado Pago.
 6. O cliente é redirecionado ao ambiente oficial do Mercado Pago.
@@ -32,7 +32,7 @@ Oferta comercial atual:
 ## Separação de sistemas
 
 - `virtuagil.com.br`: site institucional, comercial e contratação pública.
-- `atendente.virtuagil.com.br`: autenticação, criação/recuperação de senha e dashboard do cliente.
+- `atendente.virtuagil.com.br`: autenticação, criação/recuperação de senha e Painel Administrativo do cliente.
 - `monitor.virtuagil.com.br`: plataforma IoT.
 - n8n: checkout, confirmação de pagamento, integrações e automações.
 

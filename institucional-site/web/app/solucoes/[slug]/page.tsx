@@ -109,7 +109,7 @@ export default async function ProductDetailPage({
                   <Button asChild size="lg" variant="secondary">
                     <a href={whatsappUrl} target="_blank" rel="noreferrer">
                       <MessageCircleMore className="h-4 w-4" />
-                      Falar com a Jade
+                      Falar no WhatsApp
                     </a>
                   </Button>
                 </>
@@ -262,7 +262,7 @@ export default async function ProductDetailPage({
 
               <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300">
                 {isAssistenteIa
-                  ? 'O plano atual é semestral, inclui até 500 atendimentos por mês e pode ser contratado diretamente pelo site. Se preferir, converse antes com a Jade.'
+                  ? 'O plano atual é semestral, inclui até 500 atendimentos por mês e pode ser contratado diretamente pelo site. Se preferir, fale conosco pelo WhatsApp antes de contratar.'
                   : 'Conte o contexto da sua empresa e a Virtuagil avalia escopo, prioridade e o melhor formato para começar.'}
               </p>
 
@@ -294,7 +294,7 @@ export default async function ProductDetailPage({
                     </Button>
                     <Button asChild size="lg" variant="secondary">
                       <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                        Falar com a Jade
+                        Falar no WhatsApp
                       </a>
                     </Button>
                   </>

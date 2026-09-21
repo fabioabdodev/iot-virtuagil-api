@@ -114,7 +114,7 @@ export function PaymentForm() {
             'Até 500 atendimentos/mês',
             'Implantação inicial assistida',
             'Follow-up automático',
-            'Dashboard do cliente',
+            'Painel Administrativo do cliente',
           ].map((item) => (
             <span key={item} className="inline-flex items-start gap-2">
               <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-none text-emerald-300" />
@@ -176,7 +176,7 @@ export function PaymentForm() {
 
         <div className="grid gap-2 sm:col-span-2">
           <label htmlFor="email_acesso" className="text-sm font-semibold text-slate-200">
-            E-mail para acesso ao dashboard
+            E-mail para acesso ao Painel Administrativo
           </label>
           <input
             id="email_acesso"
@@ -190,7 +190,7 @@ export function PaymentForm() {
             required
           />
           <p className="text-xs leading-5 text-slate-500">
-            Este será o e-mail usado para criar o acesso ao painel depois que o
+            Este será o e-mail usado para criar o acesso ao Painel Administrativo depois que o
             pagamento for aprovado.
           </p>
         </div>

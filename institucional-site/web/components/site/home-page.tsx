@@ -51,7 +51,7 @@ const benefits = [
   },
   {
     icon: LayoutDashboard,
-    title: 'Visão no dashboard',
+    title: 'Visão no Painel Administrativo',
     text: 'Acompanhe contatos, uso, interesse comercial e resultados em um painel dedicado.',
   },
 ];
@@ -74,7 +74,7 @@ const steps = [
   },
 ];
 
-export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
+export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageProps) {
   return (
     <main className="relative overflow-hidden">
       <div className="glow-orb left-[-120px] top-[80px] h-[360px] w-[360px] bg-emerald-400/20" />
@@ -108,7 +108,7 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
               <Button asChild variant="secondary" size="lg">
                 <a href={whatsappUrl} target="_blank" rel="noreferrer">
                   <MessageCircleMore className="h-4 w-4" />
-                  Falar com a Jade
+                  Falar no WhatsApp
                 </a>
               </Button>
             </div>
@@ -178,7 +178,7 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                 <div className="flex items-center justify-between rounded-2xl border border-sky-400/10 bg-sky-400/[0.05] px-4 py-3">
                   <div className="flex items-center gap-3">
                     <LayoutDashboard className="h-4 w-4 text-sky-300" />
-                    <span className="text-xs text-slate-300">Dashboard atualizado em tempo real</span>
+                    <span className="text-xs text-slate-300">Painel Administrativo atualizado em tempo real</span>
                   </div>
                   <Zap className="h-4 w-4 text-emerald-300" />
                 </div>
@@ -346,7 +346,7 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                 </h2>
                 <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
                   Plano semestral com até 500 atendimentos por mês, implantação inicial e acesso
-                  ao dashboard. O checkout aceita Pix e cartão, com até 6 parcelas.
+                  ao Painel Administrativo. O checkout aceita Pix e cartão, com até 6 parcelas.
                 </p>
               </div>
 
@@ -354,10 +354,12 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-200/70">
                   Assistente de IA • 6 meses
                 </div>
-                <div className="mt-3 font-display text-5xl font-semibold tracking-[-0.04em] text-white">
-                  R$ 1.794
+                <div className="mt-3 text-sm font-semibold text-emerald-200">Por apenas</div>
+                <div className="mt-1 flex items-end gap-2 text-white">
+                  <span className="pb-1 text-lg font-semibold">6x de</span>
+                  <span className="font-display text-5xl font-semibold tracking-[-0.04em]">R$ 299</span>
                 </div>
-                <div className="mt-2 text-sm text-slate-400">Pagamento único ou até 6x no checkout.</div>
+                <div className="mt-2 text-xs text-slate-500">Valor total do plano semestral: R$ 1.794,00.</div>
                 <div className="mt-6 grid gap-3">
                   <Button asChild size="lg" className="w-full">
                     <Link href="/contratar-assistente-ia">
@@ -367,7 +369,7 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
                   </Button>
                   <Button asChild size="lg" variant="secondary" className="w-full">
                     <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                      Tirar dúvidas com a Jade
+                      Tirar dúvidas no WhatsApp
                     </a>
                   </Button>
                 </div>
@@ -394,9 +396,6 @@ export function HomePage({ whatsappUrl, contactEmail }: HomePageProps) {
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Button asChild variant="secondary">
                 <Link href="/contato">Falar com a equipe</Link>
-              </Button>
-              <Button asChild variant="ghost">
-                <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
               </Button>
             </div>
           </motion.div>

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bot, ExternalLink, Mail, Monitor, Phone } from 'lucide-react';
+import { Bot, ExternalLink, MessageCircleMore, Monitor } from 'lucide-react';
 
 type SiteFooterProps = {
   contactEmail: string;
@@ -9,25 +9,12 @@ type SiteFooterProps = {
   assistantUrl: string;
 };
 
-function formatPhoneFromWhatsapp(url: string) {
-  const digits = url.replace(/\D/g, '');
-  const phone = digits.startsWith('55') ? digits.slice(2) : digits;
-
-  if (phone.length === 11) {
-    return `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7)}`;
-  }
-
-  return phone || 'WhatsApp comercial';
-}
-
 export function SiteFooter({
-  contactEmail,
+  contactEmail: _contactEmail,
   whatsappUrl,
   monitorUrl,
   assistantUrl,
 }: SiteFooterProps) {
-  const phoneLabel = formatPhoneFromWhatsapp(whatsappUrl);
-
   return (
     <footer className="mt-16 border-t border-white/[0.07] bg-[#04070b]/86">
       <div className="section-shell grid gap-10 py-12 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
@@ -90,15 +77,8 @@ export function SiteFooter({
               rel="noreferrer"
               className="inline-flex items-center gap-2 transition hover:text-white"
             >
-              <Phone className="h-4 w-4 text-emerald-300" />
-              {phoneLabel}
-            </a>
-            <a
-              href={`mailto:${contactEmail}`}
-              className="inline-flex items-center gap-2 transition hover:text-white"
-            >
-              <Mail className="h-4 w-4 text-sky-300" />
-              {contactEmail}
+              <MessageCircleMore className="h-4 w-4 text-emerald-300" />
+              WhatsApp
             </a>
             <a
               href={assistantUrl}
@@ -107,7 +87,7 @@ export function SiteFooter({
               className="inline-flex items-center gap-2 transition hover:text-white"
             >
               <ExternalLink className="h-4 w-4 text-emerald-300" />
-              Dashboard Assistente de IA
+              Painel Administrativo
             </a>
             <a
               href={monitorUrl}

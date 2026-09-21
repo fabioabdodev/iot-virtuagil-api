@@ -19,12 +19,12 @@ const whatsappUrl =
 export const metadata: Metadata = {
   title: 'Contratar Assistente de IA',
   description:
-    'Contrate o Assistente de IA da Virtuagil. Plano semestral de R$ 1.794, até 500 atendimentos por mês e pagamento seguro via Mercado Pago.',
+    'Contrate o Assistente de IA da Virtuagil para atendimento inteligente no WhatsApp. Plano semestral, até 500 atendimentos por mês e pagamento seguro via Mercado Pago.',
   alternates: { canonical: '/contratar-assistente-ia' },
   openGraph: {
     title: 'Contratar Assistente de IA | Virtuagil',
     description:
-      'Plano semestral com atendimento no WhatsApp, qualificação, follow-up, transferência humana e dashboard.',
+      'Plano semestral com atendimento no WhatsApp, qualificação, follow-up, transferência humana e Painel Administrativo.',
     url: 'https://www.virtuagil.com.br/contratar-assistente-ia',
   },
 };
@@ -38,7 +38,7 @@ const afterPayment = [
   {
     icon: ShieldCheck,
     title: 'Acesso provisionado',
-    text: 'A Virtuagil cria o vínculo da empresa e prepara o acesso ao dashboard.',
+    text: 'A Virtuagil cria o vínculo da empresa e prepara o acesso ao Painel Administrativo.',
   },
   {
     icon: LayoutDashboard,
@@ -79,7 +79,7 @@ export default function ContratarAssistenteIaPage() {
 
             <p className="mt-6 max-w-xl text-base leading-8 text-slate-300">
               Preencha os dados da empresa e confirme o e-mail que será usado no
-              dashboard. Em seguida, você será direcionado ao checkout oficial do
+              Painel Administrativo. Em seguida, você será direcionado ao checkout oficial do
               Mercado Pago.
             </p>
 
@@ -88,7 +88,7 @@ export default function ContratarAssistenteIaPage() {
                 'Atendimento inteligente no WhatsApp',
                 'Qualificação e follow-up automático',
                 'Transferência para atendimento humano',
-                'Dashboard de contatos, uso e resultados',
+                'Painel Administrativo de contatos, uso e resultados',
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 flex-none text-emerald-300" />
@@ -105,13 +105,13 @@ export default function ContratarAssistenteIaPage() {
                   <div className="text-xs text-slate-500">Até 500 atendimentos por mês</div>
                 </div>
               </div>
-              <div className="mt-4 flex items-end gap-2">
-                <span className="font-display text-4xl font-semibold tracking-[-0.04em] text-white">
-                  R$ 1.794
-                </span>
+              <div className="mt-4 text-sm font-semibold text-emerald-200">Por apenas</div>
+              <div className="mt-1 flex items-end gap-2 text-white">
+                <span className="pb-1 text-base font-semibold">6x de</span>
+                <span className="font-display text-4xl font-semibold tracking-[-0.04em]">R$ 299</span>
               </div>
-              <p className="mt-2 text-xs leading-6 text-slate-400">
-                Pix ou cartão, com até 6 parcelas disponíveis no checkout.
+              <p className="mt-2 text-xs leading-6 text-slate-500">
+                Valor total do plano semestral: R$ 1.794,00. Pix ou cartão; parcelamento disponível no checkout.
               </p>
             </div>
 
@@ -149,7 +149,7 @@ export default function ContratarAssistenteIaPage() {
           <div className="mb-7 max-w-3xl">
             <div className="eyebrow">Depois do pagamento</div>
             <h2 className="mt-5 font-display text-3xl font-semibold tracking-[-0.03em] text-white md:text-4xl">
-              Da aprovação ao dashboard sem precisar criar senha para o cliente.
+              Da aprovação ao Painel Administrativo sem precisar criar senha para o cliente.
             </h2>
           </div>
 
