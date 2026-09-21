@@ -11,6 +11,9 @@ type CheckoutRequest = {
   telefone?: string;
   email_acesso?: string;
   website_url?: string;
+  aceite_termos?: boolean;
+  termos_versao?: string;
+  canal_aceite?: string;
 };
 
 function isValidEmail(value: string) {
@@ -67,6 +70,15 @@ export async function POST(request: NextRequest) {
   const nomeContato = String(payload.nome_contato ?? '').trim();
   const telefone = String(payload.telefone ?? '').replace(/\D/g, '');
   const emailAcesso = String(payload.email_acesso ?? '').trim().toLowerCase();
+  const aceiteTermos = payload.aceite_termos === true;
+  const termosVersao = String(payload.termos_versao ?? '').trim();
+
+  if (!aceiteTermos || termosVersao !== '2026-09-21') {
+    return NextResponse.json(
+      { ok: false, message: 'É necessário aceitar os Termos de Contratação e a Política de Privacidade.' },
+      { status: 400 },
+    );
+  }
 
   if (nomeEmpresa.length < 2 || nomeEmpresa.length > 120) {
     return NextResponse.json(
@@ -116,6 +128,10 @@ export async function POST(request: NextRequest) {
         telefone,
         email_acesso: emailAcesso,
         origem: 'site_virtuagil',
+        aceite_termos: true,
+        termos_versao: termosVersao,
+        canal_aceite: 'site_virtuagil',
+        aceite_em: new Date().toISOString(),
       }),
       cache: 'no-store',
       signal: controller.signal,
