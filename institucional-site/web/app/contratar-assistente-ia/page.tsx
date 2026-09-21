@@ -116,7 +116,7 @@ export default function ContratarAssistenteIaPage() {
             </div>
 
             <div className="mt-5 rounded-[24px] border border-amber-300/15 bg-amber-300/[0.045] p-5 text-xs leading-6 text-slate-400">
-              <strong className="text-slate-200">Antes de contratar:</strong> a solução exige um número exclusivo para o Assistente de IA e um aparelho compatível dedicado ou com dual SIM/eSIM. Linha, chip, plano da operadora e aparelho não estão incluídos. A ativação ocorre após a etapa de implantação e configuração.
+              <strong className="text-slate-200">Estrutura simples:</strong> recomendamos uma linha exclusiva para o Assistente de IA. Você não precisa comprar um celular caro: pode usar um aparelho básico compatível ou, para economizar, colocar a nova linha em um celular dual SIM/eSIM que já utilize. Linha, chip/eSIM, plano da operadora e aparelho não estão incluídos. A Virtuagil orienta a configuração na implantação.
               <div className="mt-2"><Link href="/termos-assistente-ia" className="font-semibold text-emerald-300 underline">Ver condições completas da contratação</Link></div>
             </div>
 
