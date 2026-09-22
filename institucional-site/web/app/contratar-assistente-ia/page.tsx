@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {
   ArrowLeft,
   Bot,
+  CalendarDays,
   CheckCircle2,
   Clock3,
   LayoutDashboard,
@@ -19,12 +20,12 @@ const whatsappUrl =
 export const metadata: Metadata = {
   title: 'Contratar Assistente de IA',
   description:
-    'Contrate o Assistente de IA da Virtuagil para atendimento inteligente no WhatsApp. Plano semestral, até 500 atendimentos por mês e pagamento seguro via Mercado Pago.',
+    'Contrate o Assistente de IA da Virtuagil para atendimento inteligente no WhatsApp. Plano semestral, até 500 contatos únicos atendidos por mês e pagamento seguro via Mercado Pago.',
   alternates: { canonical: '/contratar-assistente-ia' },
   openGraph: {
     title: 'Contratar Assistente de IA | Virtuagil',
     description:
-      'Plano semestral com atendimento no WhatsApp, qualificação, follow-up, transferência humana e Painel Administrativo.',
+      'Plano semestral com atendimento no WhatsApp, qualificação, follow-up, transferência humana e Painel Administrativo. Agenda disponível como módulo opcional.',
     url: 'https://www.virtuagil.com.br/contratar-assistente-ia',
   },
 };
@@ -89,6 +90,7 @@ export default function ContratarAssistenteIaPage() {
                 'Qualificação e follow-up automático',
                 'Transferência para atendimento humano',
                 'Painel Administrativo de contatos, uso e resultados',
+                'Agenda disponível como módulo opcional',
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 flex-none text-emerald-300" />
@@ -102,7 +104,7 @@ export default function ContratarAssistenteIaPage() {
                 <Clock3 className="h-5 w-5 text-sky-300" />
                 <div>
                   <div className="text-sm font-bold text-white">Plano semestral</div>
-                  <div className="text-xs text-slate-500">Até 500 atendimentos por mês</div>
+                  <div className="text-xs text-slate-500">Até 500 contatos únicos atendidos por mês</div>
                 </div>
               </div>
               <div className="mt-4 text-sm font-semibold text-emerald-200">Por apenas</div>
@@ -111,8 +113,21 @@ export default function ContratarAssistenteIaPage() {
                 <span className="font-display text-4xl font-semibold tracking-[-0.04em]">R$ 299</span>
               </div>
               <p className="mt-2 text-xs leading-6 text-slate-500">
-                Valor total do plano semestral: R$ 1.794,00. Pix ou cartão; parcelamento disponível no checkout.
+                Valor total do plano semestral: R$ 1.794,00. Pix ou cartão; parcelamento disponível no checkout. Agenda e integrações específicas não estão automaticamente incluídas neste valor.
               </p>
+            </div>
+
+            <div className="mt-5 rounded-[22px] border border-sky-300/12 bg-sky-300/[0.05] p-4">
+              <div className="flex items-start gap-3">
+                <CalendarDays className="mt-0.5 h-5 w-5 flex-none text-sky-300" />
+                <div>
+                  <div className="text-sm font-bold text-white">Sua empresa trabalha com horário marcado?</div>
+                  <p className="mt-1 text-xs leading-6 text-slate-400">
+                    O módulo Agenda pode ser ativado para disponibilidade, agendamento, reagendamento,
+                    cancelamento e acompanhamento no Painel Administrativo. A configuração é avaliada à parte.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="mt-5">
@@ -149,7 +164,7 @@ export default function ContratarAssistenteIaPage() {
           <div className="mb-7 max-w-3xl">
             <div className="eyebrow">Depois do pagamento</div>
             <h2 className="mt-5 font-display text-3xl font-semibold tracking-[-0.03em] text-white md:text-4xl">
-              Da aprovação ao Painel Administrativo sem precisar criar senha para o cliente.
+              Da aprovação ao Painel Administrativo com uma implantação assistida.
             </h2>
           </div>
 
