@@ -92,15 +92,15 @@ export default function SolucoesPage() {
             {products.map((product) => (
               <article
                 key={product.slug}
-                className="group relative min-h-[390px] overflow-hidden rounded-[32px] border border-white/[0.08] bg-[#0b1219] shadow-[0_30px_90px_rgba(0,0,0,0.24)] transition duration-300 hover:-translate-y-1 hover:border-emerald-300/20"
-                style={{
-                  backgroundImage: `url(${product.image}), linear-gradient(180deg,#15202c,#081017)`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
+                className="group relative min-h-[390px] overflow-hidden rounded-[32px] border border-white/[0.10] bg-[#081017] shadow-[0_30px_90px_rgba(0,0,0,0.28)] transition duration-300 hover:-translate-y-1 hover:border-emerald-300/30"
               >
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,12,0.08),rgba(4,8,12,0.92))]" />
-                <div className="relative flex min-h-[390px] flex-col justify-end p-7">
+                <div
+                  className="absolute inset-y-0 right-0 w-full bg-cover bg-center transition duration-500 group-hover:scale-[1.025] lg:w-[58%]"
+                  style={{ backgroundImage: `url(${product.image})` }}
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,14,0.99)_0%,rgba(3,10,14,0.97)_42%,rgba(3,10,14,0.72)_67%,rgba(3,10,14,0.30)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,8,12,0.08),rgba(2,8,12,0.42))]" />
+                <div className="relative flex min-h-[390px] max-w-[82%] flex-col justify-center p-7 md:max-w-[70%]">
                   <div className="inline-flex w-fit rounded-full border border-white/15 bg-black/30 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-white/85 backdrop-blur-md">
                     {product.category}
                   </div>
