@@ -39,51 +39,31 @@ export default function IotPage() {
 
       <section className="py-8 md:py-12">
         <div className="section-shell">
-          <div className="mb-8 max-w-3xl">
-            <div className="eyebrow">Soluções IoT</div>
-            <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white md:text-5xl">
-              Comece pelo ponto crítico da sua operação.
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-slate-400 md:text-base">
-              Cada projeto é avaliado conforme ambiente, equipamentos, sensores, conectividade e objetivo operacional.
-            </p>
+          <div className="mb-7 max-w-3xl">
+            <div className="eyebrow">Portfólio IoT</div>
+            <h2 className="mt-4 font-display text-4xl font-semibold tracking-[-0.035em] text-white md:text-5xl">Soluções prontas para começar e módulos para expandir.</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-400">Escolha a frente que resolve o ponto crítico da sua operação e expanda conforme a necessidade.</p>
           </div>
-
-          <div className="grid gap-5 lg:grid-cols-2">
-            {iotProducts.map((product) => (
-              <article
-                key={product.slug}
-                className="group relative min-h-[330px] overflow-hidden rounded-[26px] border border-white/[0.12] bg-[#061118] shadow-[0_24px_70px_rgba(0,0,0,0.30)] transition duration-300 hover:-translate-y-1 hover:border-sky-300/35"
-              >
-                <div
-                  className="absolute inset-y-0 right-0 w-[58%] bg-cover bg-center transition duration-500 group-hover:scale-[1.03] md:w-[54%]"
-                  style={{ backgroundImage: `url(${product.image})` }}
-                />
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,9,13,1)_0%,rgba(2,9,13,0.99)_43%,rgba(2,9,13,0.88)_58%,rgba(2,9,13,0.38)_78%,rgba(2,9,13,0.18)_100%)]" />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,8,12,0.08),rgba(2,8,12,0.42))]" />
-                <div className="relative flex min-h-[330px] max-w-[72%] flex-col justify-center p-6 md:max-w-[60%] md:p-7">
-                  <div className="inline-flex w-fit rounded-full border border-sky-300/20 bg-sky-300/[0.07] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-sky-200">
-                    IoT
+          <div className="grid gap-4 md:grid-cols-2">
+            {iotProducts.map((product, index) => {
+              const accents = ['border-sky-400/50','border-violet-400/50','border-red-400/50','border-emerald-400/50'];
+              const dots = ['bg-sky-300','bg-violet-300','bg-red-300','bg-emerald-300'];
+              return (
+                <article key={product.slug} className={`group relative min-h-[300px] overflow-hidden rounded-[24px] border bg-[#071018] shadow-[0_22px_70px_rgba(0,0,0,.3)] transition hover:-translate-y-1 ${accents[index % accents.length]}`}>
+                  <div className="absolute inset-y-0 right-0 w-[54%] bg-cover bg-center transition duration-500 group-hover:scale-[1.035]" style={{backgroundImage:`url(${product.image})`}} />
+                  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,14,1)_0%,rgba(3,10,14,.99)_43%,rgba(3,10,14,.76)_63%,rgba(3,10,14,.18)_100%)]" />
+                  <div className="relative flex min-h-[300px] max-w-[65%] flex-col justify-center p-6">
+                    <div className="w-fit rounded-full border border-white/15 bg-black/30 px-2.5 py-1 text-[10px] font-black uppercase tracking-[.15em] text-white/80">IoT</div>
+                    <h3 className="mt-3 font-display text-3xl font-semibold text-white">{product.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-200">{product.summary}</p>
+                    <ul className="mt-4 grid gap-2 text-xs text-slate-200">
+                      {product.bullets.map(b => <li key={b} className="flex gap-2"><span className={`mt-1.5 h-1.5 w-1.5 flex-none rounded-full ${dots[index % dots.length]}`}/>{b}</li>)}
+                    </ul>
+                    <Link href={`/solucoes/${product.slug}`} className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-white">Conhecer solução <ArrowRight className="h-3.5 w-3.5"/></Link>
                   </div>
-                  <h3 className="mt-4 font-display text-3xl font-semibold text-white md:text-4xl">{product.title}</h3>
-                  <p className="mt-3 max-w-[40ch] text-sm leading-6 text-slate-200">{product.summary}</p>
-                  <ul className="mt-5 grid gap-2 text-sm text-slate-200">
-                    {product.bullets.map((bullet) => (
-                      <li key={bullet} className="flex items-start gap-2">
-                        <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-sky-300" />
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-6">
-                    <Link href={`/solucoes/${product.slug}`} className="inline-flex items-center gap-2 text-sm font-semibold text-sky-300 transition group-hover:gap-3">
-                      Conhecer solução
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>

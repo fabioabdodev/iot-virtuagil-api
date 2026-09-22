@@ -230,67 +230,38 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
       </section>
 
 
-      <section className="py-12 md:py-20">
+      <section className="pb-10 pt-4 md:pb-16 md:pt-8">
         <div className="section-shell">
-          <motion.div
-            {...rise}
-            className="relative overflow-hidden rounded-[34px] border border-emerald-300/15 bg-[linear-gradient(135deg,rgba(14,55,44,0.92),rgba(8,21,29,0.98)_58%,rgba(8,25,38,0.98))] p-7 shadow-[0_34px_110px_rgba(0,0,0,0.32)] md:p-10"
-          >
-            <div className="absolute right-[-80px] top-[-100px] h-[280px] w-[280px] rounded-full bg-emerald-300/10 blur-3xl" />
-            <div className="relative grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
-              <div>
-                <div className="eyebrow border-white/10 bg-white/[0.05] text-emerald-100">Plano atual</div>
-                <h2 className="mt-5 max-w-[14ch] font-display text-4xl font-semibold leading-tight tracking-[-0.035em] text-white md:text-5xl">
-                  Comece com o Assistente de IA pronto para operar.
-                </h2>
-                <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
-                  Plano semestral com até 500 contatos únicos atendidos por mês, implantação inicial
-                  e acesso ao Painel Administrativo. Agenda e integrações específicas são módulos
-                  adicionais avaliados conforme a operação.
-                </p>
+          <motion.div {...rise} className="overflow-hidden rounded-[28px] border border-emerald-300/30 bg-[#031612] shadow-[0_28px_100px_rgba(0,0,0,.34)]">
+            <div className="px-6 pt-6 text-center">
+              <div className="text-[10px] font-black uppercase tracking-[.2em] text-emerald-300">Seu plano</div>
+              <h2 className="mt-1 font-display text-3xl font-semibold text-white md:text-4xl">Vamos preparar seu checkout.</h2>
+              <p className="mt-1 text-xs text-slate-400">Revise abaixo os detalhes do seu plano. O pagamento é processado com segurança pelo Mercado Pago.</p>
+            </div>
+            <div className="grid gap-4 p-5 md:p-6 lg:grid-cols-[.95fr_1.05fr]">
+              <div className="rounded-[22px] border border-emerald-300/25 bg-black/20 p-5">
+                <div className="inline-flex rounded-full border border-emerald-300/25 px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-emerald-300">Assistente de IA</div>
+                <div className="mt-4 font-display text-4xl font-semibold text-white">6 MESES</div>
+                <div className="text-sm uppercase tracking-[.08em] text-slate-300">de atendimento inteligente</div>
+                <div className="mt-5 grid gap-2.5 text-sm text-slate-200">
+                  {['Até 500 contatos únicos/mês','Implantação inicial assistida','Follow-up automático','Painel Administrativo do cliente','Agenda e integrações conforme o escopo'].map(item => <span key={item} className="flex gap-2"><CheckCircle2 className="h-4 w-4 flex-none text-emerald-300"/>{item}</span>)}
+                </div>
+                <div className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">Atende também no WhatsApp • 24 horas por dia • Mais vendas</div>
               </div>
-
-              <div className="rounded-[26px] border border-white/10 bg-black/20 p-6">
-                <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-200/70">
-                  Assistente de IA • 6 meses
-                </div>
-                <div className="mt-3 text-sm font-semibold text-emerald-200">Por apenas</div>
-                <div className="mt-1 flex items-end gap-2 text-white">
-                  <span className="pb-1 text-lg font-semibold">6x de</span>
-                  <span className="font-display text-5xl font-semibold tracking-[-0.04em]">R$ 299</span>
-                </div>
-                <div className="mt-2 text-xs text-slate-500">Valor total do plano semestral: R$ 1.794,00.</div>
-                <div className="mt-6 grid gap-3">
-                  <Button asChild size="lg" className="w-full">
-                    <Link href="/contratar-assistente-ia">
-                      <CreditCard className="h-4 w-4" />
-                      Contratar Assistente de IA
-                    </Link>
-                  </Button>
-                </div>
-                <div className="mt-4 flex items-start gap-2 text-xs leading-6 text-slate-400">
-                  <ShieldCheck className="mt-1 h-4 w-4 flex-none text-emerald-300" />
-                  Pagamento processado no ambiente seguro do Mercado Pago.
-                </div>
+              <div className="relative flex flex-col justify-center rounded-[22px] border border-emerald-300/25 bg-[linear-gradient(135deg,#07342b,#06161a)] p-5 md:p-6">
+                <div className="absolute right-0 top-0 rounded-bl-xl bg-emerald-300 px-4 py-2 text-[10px] font-black text-[#02110d]">SEM JUROS</div>
+                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-slate-500">Por apenas</div>
+                <div className="mt-1 flex items-end gap-3"><span className="pb-2 text-3xl font-black text-white">6x de</span><span className="font-display text-5xl font-semibold tracking-[-.05em] text-emerald-300 md:text-6xl">R$ 299</span></div>
+                <div className="text-center text-xs text-slate-300">sem juros no cartão</div>
+                <div className="mt-4 border-t border-white/10 pt-4 text-xs text-slate-400">▣ Ou R$ 1.794,00 à vista no Pix ou cartão</div>
+                <Button asChild size="lg" className="mt-4 w-full"><Link href="/contratar-assistente-ia"><CreditCard className="h-4 w-4"/>Contratar Assistente de IA<ArrowRight className="h-4 w-4"/></Link></Button>
+                <div className="mt-3 text-center text-[11px] text-slate-500">🛡 Pagamento seguro via Mercado Pago</div>
               </div>
+            </div>
+            <div className="grid border-t border-white/[.07] bg-black/20 sm:grid-cols-3">
+              {['Compra 100% segura • Seus dados protegidos','Pagamento processado pelo Mercado Pago','Suporte na implantação e durante todo o plano'].map(x => <div key={x} className="px-5 py-4 text-center text-xs text-slate-400">{x}</div>)}
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      <section className="pb-10 md:pb-16">
-        <div className="section-shell grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            ['24h', 'de disponibilidade para o primeiro atendimento'],
-            ['500', 'contatos únicos atendidos por mês no plano atual'],
-            ['6x', 'de R$ 299 no plano semestral'],
-            ['1 painel', 'para acompanhar contatos, uso e resultados'],
-          ].map(([value, label]) => (
-            <div key={value} className="rounded-[24px] border border-white/[0.07] bg-white/[0.025] px-6 py-5">
-              <div className="font-display text-3xl font-semibold text-white">{value}</div>
-              <div className="mt-1 text-sm leading-6 text-slate-400">{label}</div>
-            </div>
-          ))}
         </div>
       </section>
 
