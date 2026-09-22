@@ -53,21 +53,21 @@ export default function IotPage() {
             {iotProducts.map((product) => (
               <article
                 key={product.slug}
-                className="group relative min-h-[390px] overflow-hidden rounded-[32px] border border-white/[0.10] bg-[#081017] shadow-[0_30px_90px_rgba(0,0,0,0.28)] transition duration-300 hover:-translate-y-1 hover:border-sky-300/30"
+                className="group relative min-h-[330px] overflow-hidden rounded-[26px] border border-white/[0.12] bg-[#061118] shadow-[0_24px_70px_rgba(0,0,0,0.30)] transition duration-300 hover:-translate-y-1 hover:border-sky-300/35"
               >
                 <div
-                  className="absolute inset-y-0 right-0 w-full bg-cover bg-center transition duration-500 group-hover:scale-[1.025] lg:w-[58%]"
+                  className="absolute inset-y-0 right-0 w-[58%] bg-cover bg-center transition duration-500 group-hover:scale-[1.03] md:w-[54%]"
                   style={{ backgroundImage: `url(${product.image})` }}
                 />
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,14,0.99)_0%,rgba(3,10,14,0.97)_42%,rgba(3,10,14,0.72)_67%,rgba(3,10,14,0.30)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,9,13,1)_0%,rgba(2,9,13,0.99)_43%,rgba(2,9,13,0.88)_58%,rgba(2,9,13,0.38)_78%,rgba(2,9,13,0.18)_100%)]" />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,8,12,0.08),rgba(2,8,12,0.42))]" />
-                <div className="relative flex min-h-[390px] max-w-[82%] flex-col justify-center p-7 md:max-w-[70%]">
+                <div className="relative flex min-h-[330px] max-w-[72%] flex-col justify-center p-6 md:max-w-[60%] md:p-7">
                   <div className="inline-flex w-fit rounded-full border border-sky-300/20 bg-sky-300/[0.07] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-sky-200">
                     IoT
                   </div>
                   <h3 className="mt-4 font-display text-3xl font-semibold text-white md:text-4xl">{product.title}</h3>
-                  <p className="mt-3 max-w-[44ch] text-sm leading-7 text-white/80">{product.summary}</p>
-                  <ul className="mt-5 grid gap-2 text-sm text-white/80">
+                  <p className="mt-3 max-w-[40ch] text-sm leading-6 text-slate-200">{product.summary}</p>
+                  <ul className="mt-5 grid gap-2 text-sm text-slate-200">
                     {product.bullets.map((bullet) => (
                       <li key={bullet} className="flex items-start gap-2">
                         <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-sky-300" />
