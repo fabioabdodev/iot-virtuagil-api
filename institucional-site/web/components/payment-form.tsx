@@ -101,7 +101,7 @@ export function PaymentForm() {
               R$ 1.794
             </div>
             <p className="mt-2 text-xs leading-6 text-slate-400">
-              Pix ou cartão, com até 6 parcelas disponíveis no checkout.
+              Pix ou cartão, com até 6 parcelas disponíveis no checkout. Agenda e integrações adicionais são contratadas conforme o escopo.
             </p>
           </div>
           <div className="grid h-11 w-11 flex-none place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.08]">
@@ -111,7 +111,7 @@ export function PaymentForm() {
 
         <div className="mt-4 grid gap-2 border-t border-white/[0.07] pt-4 text-xs text-slate-300 sm:grid-cols-2">
           {[
-            'Até 500 atendimentos/mês',
+            'Até 500 contatos únicos/mês',
             'Implantação inicial assistida',
             'Follow-up automático',
             'Painel Administrativo do cliente',

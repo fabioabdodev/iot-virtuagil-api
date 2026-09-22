@@ -29,8 +29,8 @@ export function SiteFooter({
             />
           </Link>
           <p className="mt-5 max-w-lg text-sm leading-7 text-slate-400">
-            Inteligência artificial, automação de processos e IoT aplicados a
-            problemas reais de operação, atendimento e crescimento.
+            Inteligência artificial, Agenda integrada, automação de processos e IoT aplicados a
+            problemas reais de atendimento, operação e crescimento.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-500">
             <span className="rounded-full border border-white/[0.07] px-3 py-1.5">
@@ -51,7 +51,7 @@ export function SiteFooter({
               Soluções
             </Link>
             <Link href="/planos" className="transition hover:text-white">
-              Planos
+              Planos e Agenda
             </Link>
             <Link href="/contato" className="transition hover:text-white">
               Contato

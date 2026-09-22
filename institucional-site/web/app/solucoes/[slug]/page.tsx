@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Bot,
+  CalendarDays,
   CheckCircle2,
   ChevronLeft,
   MessageCircleMore,
@@ -146,46 +147,93 @@ export default async function ProductDetailPage({
       </section>
 
       {isAssistenteIa && (
-        <section className="py-8 md:py-12">
-          <div className="section-shell">
-            <div className="mb-7 max-w-3xl">
-              <div className="eyebrow">Como funciona</div>
-              <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white md:text-5xl">
-                Da primeira mensagem ao atendimento humano quando necessário.
-              </h2>
-            </div>
+        <>
+          <section className="py-8 md:py-12">
+            <div className="section-shell">
+              <div className="mb-7 max-w-3xl">
+                <div className="eyebrow">Como funciona</div>
+                <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white md:text-5xl">
+                  Da primeira mensagem ao atendimento humano quando necessário.
+                </h2>
+              </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  icon: MessageCircleMore,
-                  title: 'Responde e orienta',
-                  text: 'Atende no WhatsApp com base nas informações, produtos, serviços e regras da sua empresa.',
-                },
-                {
-                  icon: UserCheck,
-                  title: 'Identifica oportunidades',
-                  text: 'Reconhece interesse, registra o contato e conduz follow-up quando fizer sentido.',
-                },
-                {
-                  icon: ShieldCheck,
-                  title: 'Chama uma pessoa',
-                  text: 'Quando o cliente pedir atendimento humano ou a situação exigir, a conversa é transferida.',
-                },
-              ].map(({ icon: Icon, title, text }) => (
-                <Card key={title} className="h-full">
-                  <CardContent className="h-full">
-                    <div className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.07]">
-                      <Icon className="h-5 w-5 text-emerald-300" />
-                    </div>
-                    <h3 className="mt-5 text-xl font-bold text-white">{title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
-                  </CardContent>
-                </Card>
-              ))}
+              <div className="grid gap-4 md:grid-cols-3">
+                {[
+                  {
+                    icon: MessageCircleMore,
+                    title: 'Responde e orienta',
+                    text: 'Atende no WhatsApp com base nas informações, produtos, serviços e regras da sua empresa.',
+                  },
+                  {
+                    icon: UserCheck,
+                    title: 'Identifica oportunidades',
+                    text: 'Reconhece interesse, registra o contato e conduz follow-up quando fizer sentido.',
+                  },
+                  {
+                    icon: ShieldCheck,
+                    title: 'Chama uma pessoa',
+                    text: 'Quando o cliente pedir atendimento humano ou a situação exigir, a conversa é transferida com contexto.',
+                  },
+                ].map(({ icon: Icon, title, text }) => (
+                  <Card key={title} className="h-full">
+                    <CardContent className="h-full">
+                      <div className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.07]">
+                        <Icon className="h-5 w-5 text-emerald-300" />
+                      </div>
+                      <h3 className="mt-5 text-xl font-bold text-white">{title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          <section className="py-8 md:py-12">
+            <div className="section-shell">
+              <div className="relative overflow-hidden rounded-[30px] border border-sky-300/15 bg-[linear-gradient(135deg,rgba(8,31,46,0.96),rgba(7,19,28,0.98))] p-7 md:p-9">
+                <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+                  <div>
+                    <div className="eyebrow">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      Agenda opcional
+                    </div>
+                    <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white">
+                      Atendimento que pode terminar com horário marcado.
+                    </h2>
+                    <p className="mt-4 text-sm leading-7 text-slate-300">
+                      O módulo Agenda conecta a conversa à disponibilidade real da empresa. É indicado
+                      para clínicas, consultórios, odontologia, estética, salões e outros serviços com
+                      agendamento.
+                    </p>
+                    <p className="mt-4 text-xs leading-6 text-slate-500">
+                      O módulo é configurado por empresa e não está automaticamente incluído no preço
+                      base do Assistente de IA.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {[
+                      'Serviços, duração e profissionais',
+                      'Horários, intervalos e bloqueios',
+                      'Disponibilidade real sem inventar horários',
+                      'Prevenção de conflito de agendamento',
+                      'Agendamento após confirmação do cliente',
+                      'Consulta e reagendamento',
+                      'Cancelamento e confirmação',
+                      'Histórico de concluído, cancelado e faltou',
+                    ].map((item) => (
+                      <div key={item} className="flex items-start gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 text-sm leading-6 text-slate-300">
+                        <CheckCircle2 className="mt-1 h-4 w-4 flex-none text-sky-300" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
       )}
 
       <section className="py-10 md:py-14">
@@ -198,9 +246,7 @@ export default async function ProductDetailPage({
               <h2 className="mt-3 font-display text-3xl font-semibold text-white">
                 O que essa solução resolve
               </h2>
-              <p className="mt-5 text-sm leading-8 text-slate-400">
-                {product.detailIntro}
-              </p>
+              <p className="mt-5 text-sm leading-8 text-slate-400">{product.detailIntro}</p>
               <p className="mt-4 text-sm leading-8 text-slate-400">{product.summary}</p>
             </CardContent>
           </Card>
@@ -262,7 +308,7 @@ export default async function ProductDetailPage({
 
               <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300">
                 {isAssistenteIa
-                  ? 'O plano atual é semestral, inclui até 500 atendimentos por mês e pode ser contratado diretamente pelo site. Se preferir, fale conosco pelo WhatsApp antes de contratar.'
+                  ? 'O plano atual é semestral, inclui até 500 contatos únicos atendidos por mês e pode ser contratado diretamente pelo site. Agenda e integrações específicas são avaliadas separadamente.'
                   : 'Conte o contexto da sua empresa e a Virtuagil avalia escopo, prioridade e o melhor formato para começar.'}
               </p>
 
@@ -271,9 +317,7 @@ export default async function ProductDetailPage({
                   <div className="flex items-center gap-3">
                     <Bot className="h-5 w-5 text-emerald-300" />
                     <div>
-                      <div className="text-xs uppercase tracking-[0.16em] text-slate-500">
-                        Plano semestral
-                      </div>
+                      <div className="text-xs uppercase tracking-[0.16em] text-slate-500">Plano semestral</div>
                       <div className="mt-1 text-2xl font-bold text-white">R$ 1.794</div>
                     </div>
                   </div>
@@ -293,9 +337,7 @@ export default async function ProductDetailPage({
                       </Link>
                     </Button>
                     <Button asChild size="lg" variant="secondary">
-                      <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                        Falar no WhatsApp
-                      </a>
+                      <a href={whatsappUrl} target="_blank" rel="noreferrer">Falar no WhatsApp</a>
                     </Button>
                   </>
                 ) : (

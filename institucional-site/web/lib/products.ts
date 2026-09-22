@@ -31,17 +31,17 @@ export const products: Product[] = [
     shortLabel: 'Atendimento com IA',
     category: 'Automação com IA',
     subtitle:
-      'Assistente de IA no WhatsApp para responder, qualificar, acompanhar e encaminhar clientes.',
+      'Assistente de IA no WhatsApp para responder, qualificar, acompanhar, agendar quando o módulo estiver ativo e encaminhar clientes.',
     summary:
-      'Atenda 24 horas, responda com base nas informações da sua empresa, identifique oportunidades, faça follow-up e transfira para uma pessoa quando necessário.',
+      'Atenda 24 horas, responda com base nas informações da sua empresa, identifique oportunidades, faça follow-up e transfira para uma pessoa quando necessário. Operações com horário marcado podem adicionar o módulo Agenda.',
     cardDescription:
-      'Uma operação de atendimento com IA para transformar conversas em oportunidades sem deixar o cliente esperando.',
+      'Uma operação de atendimento com IA para transformar conversas em próximos passos sem deixar o cliente esperando.',
     image: '/solucoes/atendente-ia.svg',
     icon: Bot,
     bullets: [
-      'Atendimento 24 horas no WhatsApp',
-      'Qualificação e follow-up automático',
-      'Transferência para atendimento humano',
+      'Atendimento e qualificação no WhatsApp',
+      'Follow-up e transferência humana',
+      'Agenda integrada como módulo opcional',
     ],
     deliverables: [
       'Assistente de IA configurado para o seu negócio',
@@ -50,15 +50,16 @@ export const products: Product[] = [
       'Follow-up automático',
       'Transferência para atendimento humano',
       'Painel Administrativo de contatos, uso e resultados',
+      'Módulo Agenda opcional conforme escopo',
     ],
     segments: [
-      'Clínicas e consultórios',
+      'Clínicas, consultórios e odontologia',
+      'Estética, salões e serviços com horário marcado',
       'Escritórios e prestadores de serviço',
-      'Comércio e lojas',
-      'Empresas que atendem e vendem pelo WhatsApp',
+      'Comércio e empresas que atendem pelo WhatsApp',
     ],
     detailIntro:
-      'O Assistente de IA da Virtuagil organiza o primeiro atendimento comercial, responde dúvidas, identifica interesse e acompanha oportunidades para sua equipe dedicar tempo ao que realmente precisa de uma pessoa.',
+      'O Assistente de IA da Virtuagil organiza o primeiro atendimento, responde dúvidas, identifica interesse, acompanha oportunidades e pode conectar a conversa à agenda da operação quando esse módulo estiver ativado.',
   },
   {
     slug: 'automacao-processos',
@@ -139,7 +140,7 @@ export const products: Product[] = [
       'Um módulo para padronizar resposta operacional e reduzir dependência de memória ou improviso.',
     image: '/solucoes/acionamento.jpg',
     icon: Power,
-    bullets: ['Acionamentos registrados', 'Mais padrão na rotina', 'Valor percebido maior'],
+    bullets: ['Acionamentos registrados', 'Mais padrão na rotina', 'Base para automações futuras'],
     deliverables: [
       'Controle de acionamentos',
       'Registro de comandos executados',

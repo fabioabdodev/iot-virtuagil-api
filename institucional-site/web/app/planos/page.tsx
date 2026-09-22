@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Bot,
+  CalendarDays,
   CheckCircle2,
   Cpu,
   MessageCircleMore,
@@ -18,24 +19,33 @@ const whatsappUrl =
 export const metadata: Metadata = {
   title: 'Planos e Contratação',
   description:
-    'Contrate o Assistente de IA da Virtuagil no plano semestral ou fale com a equipe sobre automação de processos e projetos IoT.',
+    'Contrate o Assistente de IA da Virtuagil no plano semestral e conheça módulos opcionais como Agenda, além de automação de processos e projetos IoT.',
   alternates: { canonical: '/planos' },
   openGraph: {
     title: 'Planos e Contratação | Virtuagil',
     description:
-      'Assistente de IA com contratação direta pelo site e soluções sob medida de automação e IoT.',
+      'Assistente de IA com contratação direta, Agenda opcional e soluções sob medida de automação e IoT.',
     url: 'https://www.virtuagil.com.br/planos',
   },
 };
 
 const assistantItems = [
-  'Até 500 atendimentos por mês',
+  'Até 500 contatos únicos atendidos por mês',
   'Atendimento no WhatsApp com IA',
   'Qualificação de oportunidades',
   'Follow-up automático',
   'Transferência para atendimento humano',
   'Painel Administrativo de contatos, uso e resultados',
   'Implantação inicial assistida',
+];
+
+const agendaItems = [
+  'Serviços e durações configuráveis',
+  'Profissionais e vínculos por serviço',
+  'Horários, intervalos e bloqueios',
+  'Disponibilidade real com prevenção de conflito',
+  'Agendamento, consulta, reagendamento e cancelamento',
+  'Confirmação e histórico de status no Painel Administrativo',
 ];
 
 export default function PlanosPage() {
@@ -46,11 +56,11 @@ export default function PlanosPage() {
         <div className="section-shell">
           <div className="eyebrow">Planos e contratação</div>
           <h1 className="mt-5 max-w-[14ch] font-display text-5xl font-semibold leading-[0.96] tracking-[-0.04em] text-white md:text-6xl">
-            Comece com uma solução pronta ou monte a automação certa para sua operação.
+            Comece pelo atendimento e expanda a automação conforme a operação pedir.
           </h1>
           <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
-            O Assistente de IA possui contratação direta pelo site. Projetos de automação de
-            processos e IoT são dimensionados conforme escopo, integrações, hardware e operação.
+            O Assistente de IA possui contratação direta pelo site. Agenda, integrações específicas,
+            automação de processos e IoT são dimensionados conforme o escopo da empresa.
           </p>
         </div>
       </section>
@@ -72,8 +82,8 @@ export default function PlanosPage() {
                 </h2>
 
                 <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
-                  Plano semestral para empresas que querem responder melhor, organizar oportunidades e
-                  reduzir trabalho repetitivo no WhatsApp.
+                  Plano semestral para empresas que querem responder melhor, organizar oportunidades
+                  e reduzir trabalho repetitivo no WhatsApp.
                 </p>
 
                 <ul className="mt-7 grid gap-3 sm:grid-cols-2">
@@ -123,11 +133,61 @@ export default function PlanosPage() {
                 </div>
               </div>
             </div>
+
+            <div className="relative mt-7 rounded-2xl border border-white/[0.08] bg-black/15 px-5 py-4 text-xs leading-6 text-slate-400">
+              <strong className="text-slate-200">Como é contado o limite:</strong> no plano atual, um
+              atendimento mensal corresponde a um contato único atendido pelo Assistente dentro do mês.
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-12 md:py-18">
+      <section className="py-12 md:py-16">
+        <div className="section-shell">
+          <div className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
+            <div>
+              <div className="eyebrow">
+                <CalendarDays className="h-3.5 w-3.5" />
+                Módulo opcional
+              </div>
+              <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white md:text-5xl">
+                Agenda integrada para negócios com hora marcada.
+              </h2>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400 md:text-base">
+                A Agenda não está incluída automaticamente no preço base acima. Ela é ativada e
+                configurada conforme serviços, profissionais, horários e regras da empresa.
+              </p>
+              <div className="mt-6">
+                <Button asChild variant="secondary">
+                  <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                    Conversar sobre Agenda
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            <Card>
+              <CardContent>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {agendaItems.map((item) => (
+                    <div key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+                      <CheckCircle2 className="mt-1 h-4 w-4 flex-none text-sky-300" />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6 rounded-2xl border border-sky-300/10 bg-sky-300/[0.05] p-4 text-xs leading-6 text-slate-400">
+                  Integrações com Google Calendar, ERP, agenda externa ou sistema proprietário
+                  dependem de avaliação técnica. Não são presumidas como parte do módulo padrão.
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 md:py-16">
         <div className="section-shell">
           <div className="mb-7 max-w-3xl">
             <div className="eyebrow">Projetos sob medida</div>
@@ -147,22 +207,14 @@ export default function PlanosPage() {
                 icon: Workflow,
                 title: 'Automação de Processos',
                 text: 'Integrações entre sistemas, APIs, notificações e rotinas para eliminar tarefas manuais e reduzir erros.',
-                bullets: [
-                  'Mapeamento do processo',
-                  'Integrações e APIs',
-                  'Fluxos e notificações automáticas',
-                ],
+                bullets: ['Mapeamento do processo', 'Integrações e APIs', 'Fluxos e notificações automáticas'],
                 href: '/solucoes/automacao-processos',
               },
               {
                 icon: Cpu,
                 title: 'IoT e operação conectada',
                 text: 'Monitoramento e controle de equipamentos, ambientes, consumo e utilidades conforme a necessidade da operação.',
-                bullets: [
-                  'Monitoramento remoto',
-                  'Histórico e alertas',
-                  'Módulos expansíveis por operação',
-                ],
+                bullets: ['Monitoramento remoto', 'Histórico e alertas', 'Módulos expansíveis por operação'],
                 href: '/solucoes',
               },
             ].map(({ icon: Icon, title, text, bullets, href }) => (
@@ -193,33 +245,6 @@ export default function PlanosPage() {
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="py-8 md:py-12">
-        <div className="section-shell">
-          <Card className="border-emerald-300/12 bg-[linear-gradient(135deg,rgba(12,38,32,0.92),rgba(9,18,26,0.96))]">
-            <CardContent className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
-              <div>
-                <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-                  Precisa conversar antes?
-                </div>
-                <h2 className="mt-3 font-display text-3xl font-semibold text-white">
-                  Tire suas dúvidas sobre o Assistente de IA antes da contratação.
-                </h2>
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
-                  Para projetos personalizados, a equipe da Virtuagil assume a conversa e avalia o
-                  escopo.
-                </p>
-              </div>
-              <Button asChild size="lg" variant="secondary">
-                <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                  Falar no WhatsApp
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </section>
     </main>
