@@ -139,36 +139,28 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
             </div>
 
             <h1 className="mt-6 max-w-[14ch] font-display text-5xl font-semibold leading-[0.96] tracking-[-0.045em] text-white sm:text-6xl lg:text-[72px]">
-              Atendimento que responde, acompanha e pode até agendar.
+              Alguém te chama no WhatsApp. Sua IA responde.
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
-              A Virtuagil conecta Assistente de IA no WhatsApp, follow-up, atendimento humano,
-              Agenda opcional, automação de processos e IoT para reduzir tarefas manuais e dar
-              mais continuidade à operação.
+              O Assistente de IA da Virtuagil atende seus contatos, responde dúvidas, agenda e
+              identifica oportunidades automaticamente.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8">
               <Button asChild size="lg">
                 <Link href="/contratar-assistente-ia">
                   Contratar Assistente de IA
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="secondary" size="lg">
-                <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                  <MessageCircleMore className="h-4 w-4" />
-                  Falar no WhatsApp
-                </a>
-              </Button>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-400">
               {[
-                'Implantação assistida',
-                'Até 500 atendimentos/mês',
-                'Transferência para humano',
-                'Pagamento seguro via Mercado Pago',
+                'Atendimento 24h',
+                'Respostas rápidas',
+                'Mais oportunidades',
               ].map((item) => (
                 <span key={item} className="inline-flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-300" />
@@ -471,9 +463,6 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
                       <CreditCard className="h-4 w-4" />
                       Contratar Assistente de IA
                     </Link>
-                  </Button>
-                  <Button asChild size="lg" variant="secondary" className="w-full">
-                    <a href={whatsappUrl} target="_blank" rel="noreferrer">Tirar dúvidas no WhatsApp</a>
                   </Button>
                 </div>
                 <div className="mt-4 flex items-start gap-2 text-xs leading-6 text-slate-400">
