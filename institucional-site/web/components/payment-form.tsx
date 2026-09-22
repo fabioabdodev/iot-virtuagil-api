@@ -91,36 +91,51 @@ export function PaymentForm() {
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-5">
-      <div className="rounded-[22px] border border-emerald-300/15 bg-emerald-300/[0.055] p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-200/70">
-              Assistente de IA • 6 meses
+      <div className="relative overflow-hidden rounded-[26px] border border-emerald-300/25 bg-[linear-gradient(135deg,rgba(16,185,129,0.10),rgba(6,78,59,0.12),rgba(15,23,42,0.32))] p-6 md:p-7">
+        <div className="absolute right-[-70px] top-[-80px] h-52 w-52 rounded-full bg-emerald-300/10 blur-3xl" />
+        <div className="relative">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-200/75">
+                Assistente de IA • 6 meses
+              </div>
+              <div className="mt-4 flex flex-wrap items-end gap-x-3 gap-y-1 text-white">
+                <span className="pb-1 text-2xl font-semibold">6x de</span>
+                <span className="font-display text-5xl font-semibold tracking-[-0.05em] text-emerald-300 md:text-6xl">
+                  R$ 299
+                </span>
+              </div>
+              <div className="mt-1 text-sm font-semibold text-emerald-100">sem juros no cartão</div>
             </div>
-            <div className="mt-2 font-display text-4xl font-semibold tracking-[-0.04em] text-white">
-              R$ 1.794
+            <div className="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-200">
+              Plano atual
             </div>
-            <p className="mt-2 text-xs leading-6 text-slate-400">
-              Pix ou cartão, com até 6 parcelas disponíveis no checkout. Agenda e integrações adicionais são contratadas conforme o escopo.
-            </p>
           </div>
-          <div className="grid h-11 w-11 flex-none place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.08]">
-            <CreditCard className="h-5 w-5 text-emerald-300" />
-          </div>
-        </div>
 
-        <div className="mt-4 grid gap-2 border-t border-white/[0.07] pt-4 text-xs text-slate-300 sm:grid-cols-2">
-          {[
-            'Até 500 contatos únicos/mês',
-            'Implantação inicial assistida',
-            'Follow-up automático',
-            'Painel Administrativo do cliente',
-          ].map((item) => (
-            <span key={item} className="inline-flex items-start gap-2">
-              <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-none text-emerald-300" />
-              {item}
-            </span>
-          ))}
+          <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-300">
+            Plano semestral com até 500 contatos únicos atendidos por mês, implantação inicial
+            assistida e acesso ao Painel Administrativo. Agenda e integrações adicionais são
+            módulos contratados conforme a operação.
+          </p>
+
+          <div className="mt-5 grid gap-3 border-t border-white/[0.08] pt-5 text-sm text-slate-200 sm:grid-cols-2">
+            {[
+              'Até 500 contatos únicos/mês',
+              'Implantação inicial assistida',
+              'Follow-up automático',
+              'Painel Administrativo do cliente',
+            ].map((item) => (
+              <span key={item} className="inline-flex items-start gap-2.5">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-none text-emerald-300" />
+                {item}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-5 flex items-center gap-2 text-xs text-slate-400">
+            <CreditCard className="h-4 w-4 text-emerald-300" />
+            <span>Valor total do plano: R$ 1.794,00. Pagamento processado com segurança pelo Mercado Pago.</span>
+          </div>
         </div>
       </div>
 
