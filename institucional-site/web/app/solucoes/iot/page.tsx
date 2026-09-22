@@ -1,0 +1,109 @@
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import { ArrowLeft, ArrowRight, Cpu } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { products } from '@/lib/products';
+
+export const metadata: Metadata = {
+  title: 'Soluções de Automação IoT',
+  description:
+    'Conheça as soluções IoT da Virtuagil para temperatura, acionamento, consumo e monitoramento de gases.',
+  alternates: { canonical: '/solucoes/iot' },
+};
+
+const iotProducts = products.filter((product) => product.category === 'IoT');
+
+export default function IotPage() {
+  return (
+    <main className="pb-20">
+      <section className="relative py-14 md:py-20">
+        <div className="glow-orb right-[-120px] top-[20px] h-[320px] w-[320px] bg-sky-400/10" />
+        <div className="section-shell">
+          <Link href="/solucoes" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 transition hover:text-white">
+            <ArrowLeft className="h-4 w-4" />
+            Todas as soluções
+          </Link>
+          <div className="mt-7 inline-flex items-center gap-2 rounded-full border border-sky-300/15 bg-sky-300/[0.06] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-sky-200">
+            <Cpu className="h-4 w-4" />
+            Automação IoT
+          </div>
+          <h1 className="mt-5 max-w-[15ch] font-display text-5xl font-semibold leading-[0.96] tracking-[-0.04em] text-white md:text-6xl">
+            Monitore, controle e automatize sua operação.
+          </h1>
+          <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
+            Soluções para conectar equipamentos, ambientes e utilidades, transformando leituras e eventos
+            físicos em informação, alertas e ações operacionais.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-8 md:py-12">
+        <div className="section-shell">
+          <div className="mb-8 max-w-3xl">
+            <div className="eyebrow">Soluções IoT</div>
+            <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white md:text-5xl">
+              Comece pelo ponto crítico da sua operação.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400 md:text-base">
+              Cada projeto é avaliado conforme ambiente, equipamentos, sensores, conectividade e objetivo operacional.
+            </p>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            {iotProducts.map((product) => (
+              <article
+                key={product.slug}
+                className="group relative min-h-[390px] overflow-hidden rounded-[32px] border border-white/[0.10] bg-[#081017] shadow-[0_30px_90px_rgba(0,0,0,0.28)] transition duration-300 hover:-translate-y-1 hover:border-sky-300/30"
+              >
+                <div
+                  className="absolute inset-y-0 right-0 w-full bg-cover bg-center transition duration-500 group-hover:scale-[1.025] lg:w-[58%]"
+                  style={{ backgroundImage: `url(${product.image})` }}
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,14,0.99)_0%,rgba(3,10,14,0.97)_42%,rgba(3,10,14,0.72)_67%,rgba(3,10,14,0.30)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,8,12,0.08),rgba(2,8,12,0.42))]" />
+                <div className="relative flex min-h-[390px] max-w-[82%] flex-col justify-center p-7 md:max-w-[70%]">
+                  <div className="inline-flex w-fit rounded-full border border-sky-300/20 bg-sky-300/[0.07] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-sky-200">
+                    IoT
+                  </div>
+                  <h3 className="mt-4 font-display text-3xl font-semibold text-white md:text-4xl">{product.title}</h3>
+                  <p className="mt-3 max-w-[44ch] text-sm leading-7 text-white/80">{product.summary}</p>
+                  <ul className="mt-5 grid gap-2 text-sm text-white/80">
+                    {product.bullets.map((bullet) => (
+                      <li key={bullet} className="flex items-start gap-2">
+                        <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-sky-300" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6">
+                    <Link href={`/solucoes/${product.slug}`} className="inline-flex items-center gap-2 text-sm font-semibold text-sky-300 transition group-hover:gap-3">
+                      Conhecer solução
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-8 md:py-12">
+        <div className="section-shell">
+          <div className="rounded-[30px] border border-sky-300/15 bg-[linear-gradient(135deg,rgba(8,48,73,0.75),rgba(7,19,28,0.98))] p-7 md:p-9">
+            <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-[0.18em] text-sky-100/60">Projeto IoT</div>
+                <h2 className="mt-3 font-display text-3xl font-semibold text-white">Tem um equipamento ou ambiente que precisa monitorar?</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">Conte o cenário e avaliamos sensores, conectividade, alertas e automações adequadas.</p>
+              </div>
+              <Button asChild size="lg" variant="secondary">
+                <Link href="/contato">Falar com a Virtuagil<ArrowRight className="h-4 w-4" /></Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
