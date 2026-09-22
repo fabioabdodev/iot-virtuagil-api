@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { products } from '@/lib/products';
 
 const rise = {
   initial: { opacity: 0, y: 22 },
@@ -262,6 +263,35 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
               {['Compra 100% segura • Seus dados protegidos','Pagamento processado pelo Mercado Pago','Suporte na implantação e durante todo o plano'].map(x => <div key={x} className="px-5 py-4 text-center text-xs text-slate-400">{x}</div>)}
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      <section className="py-10 md:py-16">
+        <div className="section-shell">
+          <motion.div {...rise} className="mb-7 max-w-3xl">
+            <div className="eyebrow">Portfólio</div>
+            <h2 className="mt-4 max-w-[18ch] font-display text-4xl font-semibold leading-[.98] tracking-[-.04em] text-white md:text-5xl">Soluções prontas para começar e módulos para expandir.</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">O Assistente de IA possui contratação direta. Automação de processos e IoT são avaliados conforme escopo. A Agenda é um módulo opcional do Assistente para operações com horário marcado.</p>
+          </motion.div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {products.map((product, index) => {
+              const tones = ['border-emerald-400/45','border-amber-400/45','border-sky-400/45','border-violet-400/45','border-red-400/45','border-emerald-300/45'];
+              const dots = ['bg-emerald-300','bg-amber-300','bg-sky-300','bg-violet-300','bg-red-300','bg-emerald-300'];
+              return (
+                <motion.article key={product.slug} {...rise} transition={{ ...rise.transition, delay: (index % 2) * 0.04 }} className={`group relative min-h-[315px] overflow-hidden rounded-[26px] border bg-[#071018] shadow-[0_22px_70px_rgba(0,0,0,.34)] transition duration-300 hover:-translate-y-1 ${tones[index]}`}>
+                  <div className="absolute inset-y-0 right-0 w-[56%] bg-cover bg-center transition duration-500 group-hover:scale-[1.035]" style={{ backgroundImage: `url(${product.image})` }} />
+                  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,9,13,1)_0%,rgba(3,9,13,.99)_42%,rgba(3,9,13,.82)_59%,rgba(3,9,13,.34)_78%,rgba(3,9,13,.10)_100%)]" />
+                  <div className="relative flex min-h-[315px] max-w-[68%] flex-col justify-center p-6 md:max-w-[62%]">
+                    <div className="w-fit rounded-full border border-white/15 bg-black/30 px-2.5 py-1 text-[9px] font-black uppercase tracking-[.16em] text-white/80">{product.category}</div>
+                    <h3 className="mt-3 font-display text-3xl font-semibold leading-none text-white">{product.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-200">{product.summary}</p>
+                    <ul className="mt-4 grid gap-2 text-xs leading-5 text-slate-200">{product.bullets.map((bullet) => <li key={bullet} className="flex items-start gap-2"><span className={`mt-1.5 h-1.5 w-1.5 flex-none rounded-full ${dots[index]}`} /><span>{bullet}</span></li>)}</ul>
+                    <Link href={`/solucoes/${product.slug}`} className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-white">Conhecer solução <ArrowRight className="h-3.5 w-3.5" /></Link>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
