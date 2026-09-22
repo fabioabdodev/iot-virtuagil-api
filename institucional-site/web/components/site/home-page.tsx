@@ -229,6 +229,55 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
         </div>
       </section>
 
+
+      <section className="py-12 md:py-20">
+        <div className="section-shell">
+          <motion.div
+            {...rise}
+            className="relative overflow-hidden rounded-[34px] border border-emerald-300/15 bg-[linear-gradient(135deg,rgba(14,55,44,0.92),rgba(8,21,29,0.98)_58%,rgba(8,25,38,0.98))] p-7 shadow-[0_34px_110px_rgba(0,0,0,0.32)] md:p-10"
+          >
+            <div className="absolute right-[-80px] top-[-100px] h-[280px] w-[280px] rounded-full bg-emerald-300/10 blur-3xl" />
+            <div className="relative grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
+              <div>
+                <div className="eyebrow border-white/10 bg-white/[0.05] text-emerald-100">Plano atual</div>
+                <h2 className="mt-5 max-w-[14ch] font-display text-4xl font-semibold leading-tight tracking-[-0.035em] text-white md:text-5xl">
+                  Comece com o Assistente de IA pronto para operar.
+                </h2>
+                <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
+                  Plano semestral com até 500 contatos únicos atendidos por mês, implantação inicial
+                  e acesso ao Painel Administrativo. Agenda e integrações específicas são módulos
+                  adicionais avaliados conforme a operação.
+                </p>
+              </div>
+
+              <div className="rounded-[26px] border border-white/10 bg-black/20 p-6">
+                <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-200/70">
+                  Assistente de IA • 6 meses
+                </div>
+                <div className="mt-3 text-sm font-semibold text-emerald-200">Por apenas</div>
+                <div className="mt-1 flex items-end gap-2 text-white">
+                  <span className="pb-1 text-lg font-semibold">6x de</span>
+                  <span className="font-display text-5xl font-semibold tracking-[-0.04em]">R$ 299</span>
+                </div>
+                <div className="mt-2 text-xs text-slate-500">Valor total do plano semestral: R$ 1.794,00.</div>
+                <div className="mt-6 grid gap-3">
+                  <Button asChild size="lg" className="w-full">
+                    <Link href="/contratar-assistente-ia">
+                      <CreditCard className="h-4 w-4" />
+                      Contratar Assistente de IA
+                    </Link>
+                  </Button>
+                </div>
+                <div className="mt-4 flex items-start gap-2 text-xs leading-6 text-slate-400">
+                  <ShieldCheck className="mt-1 h-4 w-4 flex-none text-emerald-300" />
+                  Pagamento processado no ambiente seguro do Mercado Pago.
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       <section className="pb-10 md:pb-16">
         <div className="section-shell grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -427,53 +476,6 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
         </div>
       </section>
 
-      <section className="py-12 md:py-20">
-        <div className="section-shell">
-          <motion.div
-            {...rise}
-            className="relative overflow-hidden rounded-[34px] border border-emerald-300/15 bg-[linear-gradient(135deg,rgba(14,55,44,0.92),rgba(8,21,29,0.98)_58%,rgba(8,25,38,0.98))] p-7 shadow-[0_34px_110px_rgba(0,0,0,0.32)] md:p-10"
-          >
-            <div className="absolute right-[-80px] top-[-100px] h-[280px] w-[280px] rounded-full bg-emerald-300/10 blur-3xl" />
-            <div className="relative grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
-              <div>
-                <div className="eyebrow border-white/10 bg-white/[0.05] text-emerald-100">Plano atual</div>
-                <h2 className="mt-5 max-w-[14ch] font-display text-4xl font-semibold leading-tight tracking-[-0.035em] text-white md:text-5xl">
-                  Comece com o Assistente de IA pronto para operar.
-                </h2>
-                <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
-                  Plano semestral com até 500 contatos únicos atendidos por mês, implantação inicial
-                  e acesso ao Painel Administrativo. Agenda e integrações específicas são módulos
-                  adicionais avaliados conforme a operação.
-                </p>
-              </div>
-
-              <div className="rounded-[26px] border border-white/10 bg-black/20 p-6">
-                <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-200/70">
-                  Assistente de IA • 6 meses
-                </div>
-                <div className="mt-3 text-sm font-semibold text-emerald-200">Por apenas</div>
-                <div className="mt-1 flex items-end gap-2 text-white">
-                  <span className="pb-1 text-lg font-semibold">6x de</span>
-                  <span className="font-display text-5xl font-semibold tracking-[-0.04em]">R$ 299</span>
-                </div>
-                <div className="mt-2 text-xs text-slate-500">Valor total do plano semestral: R$ 1.794,00.</div>
-                <div className="mt-6 grid gap-3">
-                  <Button asChild size="lg" className="w-full">
-                    <Link href="/contratar-assistente-ia">
-                      <CreditCard className="h-4 w-4" />
-                      Contratar Assistente de IA
-                    </Link>
-                  </Button>
-                </div>
-                <div className="mt-4 flex items-start gap-2 text-xs leading-6 text-slate-400">
-                  <ShieldCheck className="mt-1 h-4 w-4 flex-none text-emerald-300" />
-                  Pagamento processado no ambiente seguro do Mercado Pago.
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
       <section className="py-12 md:py-20">
         <div className="section-shell">
