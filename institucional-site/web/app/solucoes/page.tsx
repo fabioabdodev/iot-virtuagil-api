@@ -106,7 +106,7 @@ export default function SolucoesPage() {
                     ))}
                   </div>
                   <div className="mt-auto pt-9">
-                    <Button asChild size="lg" variant={isAi ? 'default' : 'secondary'} className="w-full sm:w-auto">
+                    <Button asChild size="lg" variant={isAi ? 'primary' : 'secondary'} className="w-full sm:w-auto">
                       <Link href={solution.href}>
                         {solution.cta}
                         <ArrowRight className="h-4 w-4" />
