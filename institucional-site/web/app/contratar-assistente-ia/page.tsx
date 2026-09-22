@@ -4,19 +4,11 @@ import {
   ArrowLeft,
   Bot,
   CreditCard,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
   LayoutDashboard,
   MailCheck,
-  MessageCircleMore,
   ShieldCheck,
 } from 'lucide-react';
 import { PaymentForm } from '@/components/payment-form';
-import { Button } from '@/components/ui/button';
-
-const whatsappUrl =
-  process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
 
 export const metadata: Metadata = {
   title: 'Contratar Assistente de IA',
