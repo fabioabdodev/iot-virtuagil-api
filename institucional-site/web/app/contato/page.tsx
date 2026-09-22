@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Bot,
+  CalendarDays,
   MessageCircleMore,
   Phone,
   Workflow,
@@ -16,12 +17,12 @@ const whatsappUrl =
 export const metadata: Metadata = {
   title: 'Contato',
   description:
-    'Fale com a Virtuagil sobre Assistente de IA, automação de processos e projetos IoT para sua empresa.',
+    'Fale com a Virtuagil sobre Assistente de IA, Agenda integrada, automação de processos e projetos IoT para sua empresa.',
   alternates: { canonical: '/contato' },
   openGraph: {
     title: 'Contato | Virtuagil',
     description:
-      'Converse com a Virtuagil sobre o Assistente de IA, automação de processos e projetos IoT.',
+      'Converse com a Virtuagil sobre Assistente de IA, Agenda, automação de processos e projetos IoT.',
     url: 'https://www.virtuagil.com.br/contato',
   },
 };
@@ -35,12 +36,12 @@ export default function ContatoPage() {
           <div>
             <div className="eyebrow">Contato comercial</div>
             <h1 className="mt-5 max-w-[12ch] font-display text-5xl font-semibold leading-[0.96] tracking-[-0.04em] text-white md:text-6xl">
-              Conte o que sua empresa precisa automatizar.
+              Conte o que hoje mais toma tempo da sua equipe.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
-              Para conhecer o Assistente de IA, fale com a Virtuagil pelo WhatsApp e veja como a automação funciona.
-              Para integrações de processos ou IoT, nossa equipe avalia o contexto e prepara o
-              próximo passo.
+              Atendimento no WhatsApp, agendamentos, follow-up, integrações ou monitoramento:
+              começamos entendendo o processo atual para indicar o próximo passo sem prometer
+              uma solução que não combina com a operação.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -49,6 +50,9 @@ export default function ContatoPage() {
                   <MessageCircleMore className="h-4 w-4" />
                   Falar no WhatsApp
                 </a>
+              </Button>
+              <Button asChild size="lg" variant="secondary">
+                <Link href="/solucoes">Ver soluções</Link>
               </Button>
             </div>
           </div>
@@ -59,11 +63,11 @@ export default function ContatoPage() {
                 <Bot className="h-5 w-5 text-emerald-300" />
               </div>
               <h2 className="mt-5 font-display text-3xl font-semibold text-white">
-                Quer contratar o Assistente de IA?
+                Quer começar pelo Assistente de IA?
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-400">
-                Você pode contratar diretamente pelo site. Se quiser entender melhor antes,
-                você pode tirar suas dúvidas pelo WhatsApp.
+                O plano base pode ser contratado diretamente pelo site. Agenda e integrações
+                adicionais são avaliadas conforme a necessidade da empresa.
               </p>
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <Button asChild>
@@ -73,9 +77,7 @@ export default function ContatoPage() {
                   </Link>
                 </Button>
                 <Button asChild variant="secondary">
-                  <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                    Tirar dúvidas
-                  </a>
+                  <a href={whatsappUrl} target="_blank" rel="noreferrer">Tirar dúvidas</a>
                 </Button>
               </div>
             </CardContent>
@@ -84,7 +86,7 @@ export default function ContatoPage() {
       </section>
 
       <section className="py-8 md:py-12">
-        <div className="section-shell grid gap-4 md:grid-cols-3">
+        <div className="section-shell grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[
             {
               icon: Bot,
@@ -93,6 +95,14 @@ export default function ContatoPage() {
               action: 'Ver solução',
               href: '/solucoes/atendente-ia',
               external: false,
+            },
+            {
+              icon: CalendarDays,
+              title: 'Agenda',
+              text: 'Módulo opcional para disponibilidade, agendamento, reagendamento e controle administrativo.',
+              action: 'Conversar sobre Agenda',
+              href: whatsappUrl,
+              external: true,
             },
             {
               icon: Workflow,
@@ -144,7 +154,6 @@ export default function ContatoPage() {
           ))}
         </div>
       </section>
-
     </main>
   );
 }
