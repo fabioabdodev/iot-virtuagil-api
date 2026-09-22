@@ -23,11 +23,13 @@ export const metadata: Metadata = {
     template: '%s | Virtuagil',
   },
   description:
-    'Automação com inteligência artificial, processos integrados e IoT para empresas que querem atender melhor, reduzir tarefas manuais e ganhar controle da operação.',
+    'Assistente de IA no WhatsApp com follow-up, atendimento humano e Agenda opcional, além de automação de processos e IoT para empresas.',
   keywords: [
     'assistente de IA para empresas',
     'automação com inteligência artificial',
     'atendimento com IA no WhatsApp',
+    'agenda integrada WhatsApp',
+    'agendamento com inteligência artificial',
     'automação empresarial',
     'automação de processos',
     'integração de sistemas',
@@ -65,7 +67,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtuagil | Automação com IA, Processos e IoT',
     description:
-      'Assistente de IA para WhatsApp, automação de processos e soluções IoT para empresas que querem operar melhor.',
+      'Assistente de IA para WhatsApp com Agenda opcional, automação de processos e soluções IoT para empresas que querem operar melhor.',
     url: 'https://www.virtuagil.com.br',
     siteName: 'Virtuagil',
     images: [
@@ -83,7 +85,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Virtuagil | Automação com IA, Processos e IoT',
     description:
-      'Automação inteligente para atendimento, processos e operações empresariais.',
+      'Automação inteligente para atendimento, agendamentos, processos e operações empresariais.',
     images: ['/brand/logomarca.png'],
   },
 };
@@ -106,7 +108,7 @@ export default function RootLayout({
     url: 'https://www.virtuagil.com.br',
     logo: 'https://www.virtuagil.com.br/brand/logomarca.png',
     description:
-      'Empresa de tecnologia especializada em automação com inteligência artificial, automação de processos e IoT.',
+      'Empresa de tecnologia especializada em Assistente de IA para WhatsApp, Agenda integrada, automação de processos e IoT.',
     areaServed: [
       { '@type': 'Country', name: 'Brasil' },
       { '@type': 'City', name: 'Belo Horizonte' },
@@ -128,13 +130,19 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
+        <a
+          href="#conteudo"
+          className="skip-link"
+        >
+          Pular para o conteúdo
+        </a>
         <div className="flex min-h-screen flex-col">
           <SiteHeader
             monitorUrl={monitorUrl}
             assistantUrl={assistantUrl}
             whatsappUrl={whatsappUrl}
           />
-          <div className="flex-1 pt-[76px]">{children}</div>
+          <div id="conteudo" className="flex-1 pt-[76px]">{children}</div>
           <SiteFooter
             contactEmail=""
             whatsappUrl={whatsappUrl}
