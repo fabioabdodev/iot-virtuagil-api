@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import {
   ArrowRight,
   Bot,
@@ -13,6 +14,12 @@ import {
   Headphones,
   LayoutDashboard,
   MessageCircleMore,
+  Mic,
+  Paperclip,
+  Phone,
+  Search,
+  Smile,
+  Video,
   RefreshCw,
   ShieldCheck,
   Sparkles,
@@ -30,6 +37,183 @@ const rise = {
   viewport: { once: true, amount: 0.18 },
   transition: { duration: 0.5, ease: 'easeOut' as const },
 };
+
+
+function WhatsAppDemo() {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const delays = [850, 2450, 3900, 6000, 7300, 9300, 10800, 13200];
+    const timers = delays.map((delay, index) => window.setTimeout(() => setStep(index + 1), delay));
+    const reset = window.setTimeout(() => setStep(0), 16800);
+    return () => {
+      timers.forEach(window.clearTimeout);
+      window.clearTimeout(reset);
+    };
+  }, [step === 0]);
+
+  const typing = step === 2 || step === 5 || step === 7;
+
+  const bubbleMotion = {
+    initial: { opacity: 0, y: 10, scale: 0.985 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -4 },
+    transition: { duration: 0.28, ease: 'easeOut' as const },
+  };
+
+  const TypingBubble = () => (
+    <motion.div
+      {...bubbleMotion}
+      className="ml-auto flex w-fit items-center gap-1 rounded-[8px] rounded-tr-[2px] bg-[#005c4b] px-3 py-2.5 shadow-[0_1px_1px_rgba(0,0,0,.2)]"
+    >
+      {[0, 1, 2].map((dot) => (
+        <motion.span
+          key={dot}
+          className="h-1.5 w-1.5 rounded-full bg-[#d9fdd3]/80"
+          animate={{ y: [0, -3, 0], opacity: [0.45, 1, 0.45] }}
+          transition={{ duration: 0.85, repeat: Infinity, delay: dot * 0.14 }}
+        />
+      ))}
+    </motion.div>
+  );
+
+  return (
+    <div className="surface-strong relative overflow-hidden rounded-[34px] p-3 sm:p-5">
+      <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-emerald-300/60 to-transparent" />
+
+      <div className="overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#0b141a] shadow-[0_20px_60px_rgba(0,0,0,.35)]">
+        <div className="flex items-center justify-between bg-[#202c33] px-3 py-2.5 sm:px-4">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="grid h-9 w-9 flex-none place-items-center rounded-full bg-[#00a884] text-white">
+              <Bot className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="truncate text-[12px] font-semibold text-[#e9edef]">Assistente Virtuagil</div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={typing ? 'typing' : 'online'}
+                  initial={{ opacity: 0, y: 2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -2 }}
+                  className="text-[10px] text-[#8696a0]"
+                >
+                  {typing ? 'digitando...' : 'online'}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 text-[#aebac1]">
+            <Video className="h-3.5 w-3.5" />
+            <Phone className="h-3.5 w-3.5" />
+            <Search className="hidden h-3.5 w-3.5 sm:block" />
+            <span className="text-base leading-none">⋮</span>
+          </div>
+        </div>
+
+        <div
+          className="relative min-h-[300px] overflow-hidden px-3 py-4 sm:min-h-[320px] sm:px-4"
+          style={{
+            backgroundColor: '#0b141a',
+            backgroundImage:
+              'radial-gradient(circle at 18px 18px, rgba(255,255,255,.035) 1.2px, transparent 1.3px), radial-gradient(circle at 8px 28px, rgba(255,255,255,.02) 1px, transparent 1.1px)',
+            backgroundSize: '34px 34px',
+          }}
+        >
+          <div className="mb-3 text-center">
+            <span className="rounded-md bg-[#182229] px-2.5 py-1 text-[9px] font-medium text-[#8696a0] shadow">HOJE</span>
+          </div>
+
+          <div className="grid gap-2.5">
+            <AnimatePresence>
+              {step >= 1 && (
+                <motion.div {...bubbleMotion} className="max-w-[84%] rounded-[8px] rounded-tl-[2px] bg-[#202c33] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#e9edef] shadow-[0_1px_1px_rgba(0,0,0,.2)]">
+                  Quero marcar um horário para quinta à tarde. Tem disponibilidade?
+                  <div className="ml-3 inline whitespace-nowrap text-[9px] text-[#8696a0]">10:42</div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>{step === 2 && <TypingBubble />}</AnimatePresence>
+
+            <AnimatePresence>
+              {step >= 3 && (
+                <motion.div {...bubbleMotion} className="ml-auto max-w-[88%] rounded-[8px] rounded-tr-[2px] bg-[#005c4b] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#e9edef] shadow-[0_1px_1px_rgba(0,0,0,.2)]">
+                  Claro! Consultei a agenda e tenho <strong>14h e 16h</strong> disponíveis. Qual horário você prefere?
+                  <span className="ml-2 inline whitespace-nowrap text-[9px] text-[#a7c5bd]">10:42 <span className="text-[#53bdeb]">✓✓</span></span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {step >= 4 && (
+                <motion.div {...bubbleMotion} className="max-w-[58%] rounded-[8px] rounded-tl-[2px] bg-[#202c33] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#e9edef] shadow-[0_1px_1px_rgba(0,0,0,.2)]">
+                  Pode ser às 16h.
+                  <span className="ml-2 inline whitespace-nowrap text-[9px] text-[#8696a0]">10:43</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>{step === 5 && <TypingBubble />}</AnimatePresence>
+
+            <AnimatePresence>
+              {step >= 6 && (
+                <motion.div {...bubbleMotion} className="ml-auto max-w-[88%] rounded-[8px] rounded-tr-[2px] bg-[#005c4b] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#e9edef] shadow-[0_1px_1px_rgba(0,0,0,.2)]">
+                  Perfeito! Seu horário ficou reservado para <strong>quinta-feira às 16h</strong>. ✅
+                  <span className="ml-2 inline whitespace-nowrap text-[9px] text-[#a7c5bd]">10:43 <span className="text-[#53bdeb]">✓✓</span></span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {step >= 7 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="mx-auto mt-1 rounded-full border border-[#00a884]/25 bg-[#111b21]/95 px-3 py-1.5 text-[9px] font-medium text-[#00a884] shadow"
+                >
+                  ✓ Agendamento confirmado
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 bg-[#0b141a] px-2.5 pb-2.5">
+          <div className="flex flex-1 items-center gap-2.5 rounded-full bg-[#202c33] px-3 py-2.5 text-[#8696a0]">
+            <Smile className="h-4 w-4 flex-none" />
+            <span className="flex-1 text-[10px]">Mensagem</span>
+            <Paperclip className="h-4 w-4 flex-none" />
+          </div>
+          <motion.div
+            className="grid h-9 w-9 place-items-center rounded-full bg-[#00a884] text-white"
+            animate={step === 1 || step === 4 ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+            transition={{ duration: 0.35 }}
+          >
+            <Mic className="h-4 w-4" />
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-emerald-300/10 bg-emerald-300/[0.045] px-4 py-3">
+        <div className="text-[11px] font-semibold text-slate-300">
+          Enquanto a conversa acontece, a Virtuagil trabalha nos bastidores.
+        </div>
+        <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-slate-400">
+          {['Interesse identificado', 'Agenda consultada', 'Humano quando precisar'].map((item, index) => (
+            <motion.span
+              key={item}
+              className="rounded-full border border-white/[0.08] bg-black/20 px-2.5 py-1"
+              animate={step >= [3, 3, 6][index] ? { borderColor: 'rgba(52,211,153,.35)', color: 'rgb(167 243 208)' } : {}}
+              transition={{ duration: 0.35 }}
+            >
+              {item}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 type HomePageProps = {
   whatsappUrl: string;
@@ -176,80 +360,7 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
             transition={{ ...rise.transition, delay: 0.08 }}
             className="relative"
           >
-            <div className="surface-strong relative overflow-hidden rounded-[34px] p-3 sm:p-5">
-              <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-emerald-300/60 to-transparent" />
-
-              <div className="overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#0b141a] shadow-[0_20px_60px_rgba(0,0,0,.35)]">
-                <div className="flex items-center justify-between bg-[#202c33] px-4 py-3.5 sm:px-5">
-                  <div className="flex items-center gap-3">
-                    <div className="grid h-10 w-10 place-items-center rounded-full bg-emerald-500/15 text-emerald-300">
-                      <Bot className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-[#e9edef]">Assistente Virtuagil</div>
-                      <div className="text-[11px] text-[#8696a0]">online</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 text-[#aebac1]">
-                    <MessageCircleMore className="h-4 w-4" />
-                    <span className="text-lg leading-none">⋮</span>
-                  </div>
-                </div>
-
-                <div
-                  className="relative grid gap-2.5 px-3 py-5 sm:px-4"
-                  style={{
-                    backgroundColor: '#0b141a',
-                    backgroundImage:
-                      'radial-gradient(circle at 18px 18px, rgba(255,255,255,.035) 1.2px, transparent 1.3px), radial-gradient(circle at 8px 28px, rgba(255,255,255,.02) 1px, transparent 1.1px)',
-                    backgroundSize: '34px 34px',
-                  }}
-                >
-                  <div className="max-w-[84%] rounded-[9px] rounded-tl-[3px] bg-[#202c33] px-3 py-2 text-[13px] leading-5 text-[#e9edef] shadow">
-                    Quero marcar um horário para quinta à tarde. Tem disponibilidade?
-                    <div className="mt-1 text-right text-[10px] leading-none text-[#8696a0]">10:42</div>
-                  </div>
-
-                  <div className="ml-auto max-w-[88%] rounded-[9px] rounded-tr-[3px] bg-[#005c4b] px-3 py-2 text-[13px] leading-5 text-[#e9edef] shadow">
-                    Claro! Consultei a agenda e tenho <strong>14h e 16h</strong> disponíveis. Qual horário você prefere?
-                    <div className="mt-1 text-right text-[10px] leading-none text-[#a7c5bd]">10:42 <span className="text-[#53bdeb]">✓✓</span></div>
-                  </div>
-
-                  <div className="max-w-[58%] rounded-[9px] rounded-tl-[3px] bg-[#202c33] px-3 py-2 text-[13px] leading-5 text-[#e9edef] shadow">
-                    Pode ser às 16h.
-                    <div className="mt-1 text-right text-[10px] leading-none text-[#8696a0]">10:43</div>
-                  </div>
-
-                  <div className="ml-auto max-w-[88%] rounded-[9px] rounded-tr-[3px] bg-[#005c4b] px-3 py-2 text-[13px] leading-5 text-[#e9edef] shadow">
-                    Perfeito! Seu horário ficou reservado para <strong>quinta-feira às 16h</strong>. ✅
-                    <div className="mt-1 text-right text-[10px] leading-none text-[#a7c5bd]">10:43 <span className="text-[#53bdeb]">✓✓</span></div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 bg-[#0b141a] px-3 pb-3">
-                  <div className="flex flex-1 items-center gap-3 rounded-full bg-[#202c33] px-4 py-3 text-xs text-[#8696a0]">
-                    <span className="text-base">☺</span>
-                    <span>Mensagem</span>
-                  </div>
-                  <div className="grid h-10 w-10 place-items-center rounded-full bg-[#00a884] text-white">
-                    <span className="text-sm">➤</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 rounded-2xl border border-emerald-300/10 bg-emerald-300/[0.045] px-4 py-3">
-                <div className="text-[11px] font-semibold text-slate-300">
-                  Enquanto a conversa acontece, a Virtuagil trabalha nos bastidores.
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-slate-400">
-                  {['Interesse identificado', 'Agenda consultada', 'Humano quando precisar'].map((item) => (
-                    <span key={item} className="rounded-full border border-white/[0.08] bg-black/20 px-2.5 py-1">
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <WhatsAppDemo />
           </motion.div>
         </div>
       </section>
