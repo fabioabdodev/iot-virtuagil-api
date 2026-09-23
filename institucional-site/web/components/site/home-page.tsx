@@ -176,53 +176,77 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
             transition={{ ...rise.transition, delay: 0.08 }}
             className="relative"
           >
-            <div className="surface-strong relative overflow-hidden rounded-[34px] p-4 sm:p-6">
+            <div className="surface-strong relative overflow-hidden rounded-[34px] p-3 sm:p-5">
               <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-emerald-300/60 to-transparent" />
-              <div className="rounded-[26px] border border-white/[0.07] bg-[#071019] p-4 sm:p-5">
-                <div className="flex items-center justify-between border-b border-white/[0.07] pb-4">
+
+              <div className="overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#0b141a] shadow-[0_20px_60px_rgba(0,0,0,.35)]">
+                <div className="flex items-center justify-between bg-[#202c33] px-4 py-3.5 sm:px-5">
                   <div className="flex items-center gap-3">
-                    <div className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-400/10 text-emerald-300">
+                    <div className="grid h-10 w-10 place-items-center rounded-full bg-emerald-500/15 text-emerald-300">
                       <Bot className="h-5 w-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white">Assistente de IA</div>
-                      <div className="text-xs text-slate-500">Atendimento ativo • WhatsApp</div>
+                      <div className="text-sm font-bold text-[#e9edef]">Assistente Virtuagil</div>
+                      <div className="text-[11px] text-[#8696a0]">online</div>
                     </div>
                   </div>
-                  <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-300">
-                    online
-                  </span>
+                  <div className="flex items-center gap-4 text-[#aebac1]">
+                    <MessageCircleMore className="h-4 w-4" />
+                    <span className="text-lg leading-none">⋮</span>
+                  </div>
                 </div>
 
-                <div className="grid gap-4 py-5">
-                  <div className="max-w-[84%] rounded-2xl rounded-tl-md bg-white/[0.06] p-4 text-sm leading-6 text-slate-300">
+                <div
+                  className="relative grid gap-2.5 px-3 py-5 sm:px-4"
+                  style={{
+                    backgroundColor: '#0b141a',
+                    backgroundImage:
+                      'radial-gradient(circle at 18px 18px, rgba(255,255,255,.035) 1.2px, transparent 1.3px), radial-gradient(circle at 8px 28px, rgba(255,255,255,.02) 1px, transparent 1.1px)',
+                    backgroundSize: '34px 34px',
+                  }}
+                >
+                  <div className="max-w-[84%] rounded-[9px] rounded-tl-[3px] bg-[#202c33] px-3 py-2 text-[13px] leading-5 text-[#e9edef] shadow">
                     Quero marcar um horário para quinta à tarde. Tem disponibilidade?
+                    <div className="mt-1 text-right text-[10px] leading-none text-[#8696a0]">10:42</div>
                   </div>
 
-                  <div className="ml-auto max-w-[88%] rounded-2xl rounded-tr-md border border-emerald-400/10 bg-emerald-400/[0.08] p-4 text-sm leading-6 text-slate-200">
-                    Posso consultar a agenda. Tenho 14h e 16h disponíveis. Qual horário você prefere?
+                  <div className="ml-auto max-w-[88%] rounded-[9px] rounded-tr-[3px] bg-[#005c4b] px-3 py-2 text-[13px] leading-5 text-[#e9edef] shadow">
+                    Claro! Consultei a agenda e tenho <strong>14h e 16h</strong> disponíveis. Qual horário você prefere?
+                    <div className="mt-1 text-right text-[10px] leading-none text-[#a7c5bd]">10:42 <span className="text-[#53bdeb]">✓✓</span></div>
                   </div>
 
-                  <div className="grid gap-2 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 sm:grid-cols-3">
-                    {[
-                      ['Interesse', 'Identificado'],
-                      ['Agenda', 'Disponível'],
-                      ['Humano', 'Quando precisar'],
-                    ].map(([label, value]) => (
-                      <div key={label} className="rounded-xl bg-black/20 p-3">
-                        <div className="text-[10px] uppercase tracking-[0.16em] text-slate-500">{label}</div>
-                        <div className="mt-1 text-sm font-semibold text-white">{value}</div>
-                      </div>
-                    ))}
+                  <div className="max-w-[58%] rounded-[9px] rounded-tl-[3px] bg-[#202c33] px-3 py-2 text-[13px] leading-5 text-[#e9edef] shadow">
+                    Pode ser às 16h.
+                    <div className="mt-1 text-right text-[10px] leading-none text-[#8696a0]">10:43</div>
+                  </div>
+
+                  <div className="ml-auto max-w-[88%] rounded-[9px] rounded-tr-[3px] bg-[#005c4b] px-3 py-2 text-[13px] leading-5 text-[#e9edef] shadow">
+                    Perfeito! Seu horário ficou reservado para <strong>quinta-feira às 16h</strong>. ✅
+                    <div className="mt-1 text-right text-[10px] leading-none text-[#a7c5bd]">10:43 <span className="text-[#53bdeb]">✓✓</span></div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between rounded-2xl border border-sky-400/10 bg-sky-400/[0.05] px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <LayoutDashboard className="h-4 w-4 text-sky-300" />
-                    <span className="text-xs text-slate-300">Painel Administrativo para acompanhar a operação</span>
+                <div className="flex items-center gap-2 bg-[#0b141a] px-3 pb-3">
+                  <div className="flex flex-1 items-center gap-3 rounded-full bg-[#202c33] px-4 py-3 text-xs text-[#8696a0]">
+                    <span className="text-base">☺</span>
+                    <span>Mensagem</span>
                   </div>
-                  <Zap className="h-4 w-4 text-emerald-300" />
+                  <div className="grid h-10 w-10 place-items-center rounded-full bg-[#00a884] text-white">
+                    <span className="text-sm">➤</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-emerald-300/10 bg-emerald-300/[0.045] px-4 py-3">
+                <div className="text-[11px] font-semibold text-slate-300">
+                  Enquanto a conversa acontece, a Virtuagil trabalha nos bastidores.
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-slate-400">
+                  {['Interesse identificado', 'Agenda consultada', 'Humano quando precisar'].map((item) => (
+                    <span key={item} className="rounded-full border border-white/[0.08] bg-black/20 px-2.5 py-1">
+                      {item}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -235,9 +259,9 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
         <div className="section-shell">
           <motion.div {...rise} className="overflow-hidden rounded-[28px] border border-emerald-300/30 bg-[#031612] shadow-[0_28px_100px_rgba(0,0,0,.34)]">
             <div className="px-6 pt-6 text-center">
-              <div className="text-[10px] font-black uppercase tracking-[.2em] text-emerald-300">Seu plano</div>
-              <h2 className="mt-1 font-display text-3xl font-semibold text-white md:text-4xl">Vamos preparar seu checkout.</h2>
-              <p className="mt-1 text-xs text-slate-400">Revise abaixo os detalhes do seu plano. O pagamento é processado com segurança pelo Mercado Pago.</p>
+              <div className="text-[10px] font-black uppercase tracking-[.2em] text-emerald-300">Pronto para começar?</div>
+              <h2 className="mt-1 font-display text-3xl font-semibold text-white md:text-4xl">Contrate seu Assistente de IA</h2>
+              <p className="mt-1 text-xs text-slate-400">Atendimento inteligente no WhatsApp, 24 horas por dia.</p>
             </div>
             <div className="grid gap-4 p-5 md:p-6 lg:grid-cols-[.95fr_1.05fr]">
               <div className="rounded-[22px] border border-emerald-300/25 bg-black/20 p-5">
@@ -247,7 +271,7 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
                 <div className="mt-5 grid gap-2.5 text-sm text-slate-200">
                   {['Até 500 contatos únicos/mês','Implantação inicial assistida','Follow-up automático','Painel Administrativo do cliente','Agenda e integrações conforme o escopo'].map(item => <span key={item} className="flex gap-2"><CheckCircle2 className="h-4 w-4 flex-none text-emerald-300"/>{item}</span>)}
                 </div>
-                <div className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">Atende também no WhatsApp • 24 horas por dia • Mais vendas</div>
+                <div className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">Atendimento no WhatsApp • 24 horas por dia • Mais oportunidades</div>
               </div>
               <div className="relative flex flex-col justify-center rounded-[22px] border border-emerald-300/25 bg-[linear-gradient(135deg,#07342b,#06161a)] p-5 md:p-6">
                 <div className="absolute right-0 top-0 rounded-bl-xl bg-emerald-300 px-4 py-2 text-[10px] font-black text-[#02110d]">SEM JUROS</div>
@@ -255,8 +279,26 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
                 <div className="mt-1 flex items-end gap-3"><span className="pb-2 text-3xl font-black text-white">6x de</span><span className="font-display text-5xl font-semibold tracking-[-.05em] text-emerald-300 md:text-6xl">R$ 299</span></div>
                 <div className="text-center text-xs text-slate-300">sem juros no cartão</div>
                 <div className="mt-4 border-t border-white/10 pt-4 text-xs text-slate-400">▣ Ou R$ 1.794,00 à vista no Pix ou cartão</div>
-                <Button asChild size="lg" className="mt-4 w-full"><Link href="/contratar-assistente-ia"><CreditCard className="h-4 w-4"/>Contratar Assistente de IA<ArrowRight className="h-4 w-4"/></Link></Button>
+                <Button asChild size="lg" className="mt-4 w-full"><Link href="/contratar-assistente-ia"><CreditCard className="h-4 w-4"/>Quero meu Assistente de IA<ArrowRight className="h-4 w-4"/></Link></Button>
                 <div className="mt-3 text-center text-[11px] text-slate-500">🛡 Pagamento seguro via Mercado Pago</div>
+
+                <div className="mt-4 border-t border-white/10 pt-3">
+                  <div className="text-center text-[9px] font-bold uppercase tracking-[.16em] text-slate-500">Cartões e Pix</div>
+                  <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+                    <span className="grid h-7 min-w-12 place-items-center rounded-md bg-white px-2 text-[10px] font-black italic tracking-tight text-[#1a1f71]">VISA</span>
+                    <span className="flex h-7 min-w-12 items-center justify-center rounded-md bg-white px-2" aria-label="Mastercard">
+                      <span className="h-4 w-4 rounded-full bg-[#eb001b]" />
+                      <span className="-ml-1.5 h-4 w-4 rounded-full bg-[#f79e1b] opacity-90" />
+                    </span>
+                    <span className="grid h-7 min-w-12 place-items-center rounded-md bg-[#111] px-2 text-[10px] font-black lowercase text-white">elo</span>
+                    <span className="grid h-7 min-w-12 place-items-center rounded-md bg-[#2e77bb] px-2 text-[9px] font-black text-white">AMEX</span>
+                    <span className="grid h-7 min-w-14 place-items-center rounded-md bg-[#b3131b] px-2 text-[8px] font-black text-white">HIPERCARD</span>
+                    <span className="flex h-7 min-w-12 items-center justify-center gap-1.5 rounded-md border border-emerald-300/25 bg-emerald-300/10 px-2 text-[10px] font-bold text-emerald-200">
+                      <span className="h-2.5 w-2.5 rotate-45 rounded-[2px] border border-emerald-300" />
+                      Pix
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="grid border-t border-white/[.07] bg-black/20 sm:grid-cols-3">
@@ -269,29 +311,50 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
       <section className="py-10 md:py-16">
         <div className="section-shell">
           <motion.div {...rise} className="mb-7 max-w-3xl">
-            <div className="eyebrow">Portfólio</div>
-            <h2 className="mt-4 max-w-[18ch] font-display text-4xl font-semibold leading-[.98] tracking-[-.04em] text-white md:text-5xl">Soluções prontas para começar e módulos para expandir.</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">O Assistente de IA possui contratação direta. Automação de processos e IoT são avaliados conforme escopo. A Agenda é um módulo opcional do Assistente para operações com horário marcado.</p>
+            <div className="eyebrow">Internet das Coisas • IoT</div>
+            <h2 className="mt-4 max-w-[20ch] font-display text-4xl font-semibold leading-[.98] tracking-[-.04em] text-white md:text-5xl">Monitoramento inteligente para ambientes, equipamentos e operações.</h2>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">Sensores conectados transformam dados do ambiente em informação para acompanhar sua operação, identificar alterações e apoiar decisões em tempo real. A Virtuagil desenvolve soluções IoT conforme a necessidade de cada projeto.</p>
           </motion.div>
           <div className="grid gap-4 md:grid-cols-2">
-            {products.map((product, index) => {
-              const tones = ['border-emerald-400/45','border-amber-400/45','border-sky-400/45','border-violet-400/45','border-red-400/45','border-emerald-300/45'];
-              const dots = ['bg-emerald-300','bg-amber-300','bg-sky-300','bg-violet-300','bg-red-300','bg-emerald-300'];
-              return (
-                <motion.article key={product.slug} {...rise} transition={{ ...rise.transition, delay: (index % 2) * 0.04 }} className={`group relative min-h-[315px] overflow-hidden rounded-[26px] border bg-[#071018] shadow-[0_22px_70px_rgba(0,0,0,.34)] transition duration-300 hover:-translate-y-1 ${tones[index]}`}>
-                  <div className="absolute inset-y-0 right-0 w-[56%] bg-cover bg-center transition duration-500 group-hover:scale-[1.035]" style={{ backgroundImage: `url(${product.image})` }} />
-                  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,9,13,1)_0%,rgba(3,9,13,.99)_42%,rgba(3,9,13,.82)_59%,rgba(3,9,13,.34)_78%,rgba(3,9,13,.10)_100%)]" />
-                  <div className="relative flex min-h-[315px] max-w-[68%] flex-col justify-center p-6 md:max-w-[62%]">
-                    <div className="w-fit rounded-full border border-white/15 bg-black/30 px-2.5 py-1 text-[9px] font-black uppercase tracking-[.16em] text-white/80">{product.category}</div>
-                    <h3 className="mt-3 font-display text-3xl font-semibold leading-none text-white">{product.title}</h3>
-                    <p className="mt-3 text-sm leading-6 text-slate-200">{product.summary}</p>
-                    <ul className="mt-4 grid gap-2 text-xs leading-5 text-slate-200">{product.bullets.map((bullet) => <li key={bullet} className="flex items-start gap-2"><span className={`mt-1.5 h-1.5 w-1.5 flex-none rounded-full ${dots[index]}`} /><span>{bullet}</span></li>)}</ul>
-                    <Link href={`/solucoes/${product.slug}`} className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-white">Conhecer solução <ArrowRight className="h-3.5 w-3.5" /></Link>
-                  </div>
-                </motion.article>
-              );
-            })}
+            {products
+              .filter((product) => product.category === 'IoT')
+              .sort(
+                (a, b) =>
+                  ['temperatura', 'gases', 'consumo', 'acionamento'].indexOf(a.slug) -
+                  ['temperatura', 'gases', 'consumo', 'acionamento'].indexOf(b.slug),
+              )
+              .map((product, index) => {
+                const tones = ['border-sky-400/45','border-emerald-300/45','border-amber-400/45','border-violet-400/45'];
+                const dots = ['bg-sky-300','bg-emerald-300','bg-amber-300','bg-violet-300'];
+                const displayTitle = product.slug === 'consumo' ? 'Energia e Consumo' : product.title;
+                const displaySummary = product.slug === 'consumo'
+                  ? 'Acompanhe consumo elétrico, corrente e tensão para identificar desperdícios, anomalias e apoiar decisões com mais clareza.'
+                  : product.summary;
+                return (
+                  <motion.article key={product.slug} {...rise} transition={{ ...rise.transition, delay: (index % 2) * 0.04 }} className={`group relative min-h-[315px] overflow-hidden rounded-[26px] border bg-[#071018] shadow-[0_22px_70px_rgba(0,0,0,.34)] transition duration-300 hover:-translate-y-1 ${tones[index]}`}>
+                    <div className="absolute inset-y-0 right-0 w-[56%] bg-cover bg-center transition duration-500 group-hover:scale-[1.035]" style={{ backgroundImage: `url(${product.image})` }} />
+                    <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,9,13,1)_0%,rgba(3,9,13,.99)_42%,rgba(3,9,13,.82)_59%,rgba(3,9,13,.34)_78%,rgba(3,9,13,.10)_100%)]" />
+                    <div className="relative flex min-h-[315px] max-w-[68%] flex-col justify-center p-6 md:max-w-[62%]">
+                      <div className="w-fit rounded-full border border-white/15 bg-black/30 px-2.5 py-1 text-[9px] font-black uppercase tracking-[.16em] text-white/80">IoT</div>
+                      <h3 className="mt-3 font-display text-3xl font-semibold leading-none text-white">{displayTitle}</h3>
+                      <p className="mt-3 text-sm leading-6 text-slate-200">{displaySummary}</p>
+                      <ul className="mt-4 grid gap-2 text-xs leading-5 text-slate-200">{product.bullets.map((bullet) => <li key={bullet} className="flex items-start gap-2"><span className={`mt-1.5 h-1.5 w-1.5 flex-none rounded-full ${dots[index]}`} /><span>{bullet}</span></li>)}</ul>
+                      <Link href={`/solucoes/${product.slug}`} className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-white">Conhecer solução <ArrowRight className="h-3.5 w-3.5" /></Link>
+                    </div>
+                  </motion.article>
+                );
+              })}
           </div>
+
+          <motion.div {...rise} className="mt-4 flex flex-col gap-4 rounded-[24px] border border-emerald-300/15 bg-emerald-300/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="text-xs font-bold uppercase tracking-[.14em] text-emerald-300">Projeto IoT sob medida</div>
+              <p className="mt-1 text-sm text-slate-300">Precisa medir, monitorar ou controlar outra variável? Conte sua necessidade para a Virtuagil.</p>
+            </div>
+            <Button asChild variant="secondary" className="shrink-0">
+              <Link href="/contato">Falar sobre meu projeto <ArrowRight className="h-4 w-4" /></Link>
+            </Button>
+          </motion.div>
         </div>
       </section>
 
