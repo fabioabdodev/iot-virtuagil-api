@@ -199,8 +199,8 @@ const benefits = [
   },
   {
     icon: CalendarDays,
-    title: 'Agenda integrada',
-    text: 'Como módulo opcional, o Assistente pode consultar disponibilidade, agendar, reagendar, cancelar e confirmar horários.',
+    title: 'Plano 500 + Agenda',
+    text: 'No plano com Agenda, o Assistente consulta disponibilidade, agenda, reagenda, cancela e confirma horários pelo WhatsApp.',
   },
   {
     icon: Headphones,
