@@ -30,6 +30,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { products } from '@/lib/products';
+import { commercialPlans, formatBrl } from '@/lib/plans';
 
 const rise = {
   initial: { opacity: 0, y: 22 },
@@ -251,16 +252,16 @@ const faqs = [
     a: 'Não. A proposta é automatizar o trabalho repetitivo e deixar sua equipe entrar nas conversas que precisam de decisão, negociação ou cuidado humano.',
   },
   {
-    q: 'A Agenda está incluída no plano de R$ 1.794?',
-    a: 'O plano divulgado no site é do Assistente de IA. A Agenda é um módulo opcional, configurado conforme a operação e a condição comercial definida para o projeto.',
+    q: 'Qual plano inclui a Agenda?',
+    a: 'A Virtuagil oferece dois planos: Plano 500 por R$ 1.794 no semestre e Plano 500 + Agenda por R$ 2.388 no semestre. O segundo inclui a operação de agendamentos pelo WhatsApp.',
   },
   {
     q: 'O cliente pode falar com uma pessoa?',
     a: 'Sim. Quando o atendimento humano for solicitado ou necessário, a conversa pode ser transferida para a equipe da empresa.',
   },
   {
-    q: 'O que significa até 500 atendimentos por mês?',
-    a: 'Para o plano atual, o uso mensal considera contatos únicos atendidos pelo Assistente dentro do mês.',
+    q: 'O que significa até 500 contatos únicos por mês?',
+    a: 'Cada número de telefone é contabilizado uma única vez no mês, mesmo que envie várias mensagens ou inicie novas conversas. A contagem reinicia a cada mês.',
   },
   {
     q: 'Vocês integram com outros sistemas?',
@@ -287,8 +288,8 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
-              O Assistente de IA da Virtuagil atende seus contatos, responde dúvidas, agenda e
-              identifica oportunidades automaticamente.
+              O Assistente de IA da Virtuagil atende seus contatos, responde dúvidas e identifica
+              oportunidades. No Plano 500 + Agenda, também conduz agendamentos pelo WhatsApp.
             </p>
 
             <div className="mt-8">
@@ -357,52 +358,64 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
 
       <section className="pb-10 pt-4 md:pb-16 md:pt-8">
         <div className="section-shell">
-          <motion.div {...rise} className="overflow-hidden rounded-[28px] border border-emerald-300/30 bg-[#031612] shadow-[0_28px_100px_rgba(0,0,0,.34)]">
-            <div className="px-6 pt-6 text-center">
+          <motion.div {...rise} className="overflow-hidden rounded-[28px] border border-emerald-300/30 bg-[#031612] p-5 shadow-[0_28px_100px_rgba(0,0,0,.34)] md:p-6">
+            <div className="text-center">
               <div className="text-[10px] font-black uppercase tracking-[.2em] text-emerald-300">Pronto para começar?</div>
-              <h2 className="mt-1 font-display text-3xl font-semibold text-white md:text-4xl">Contrate seu Assistente de IA</h2>
-              <p className="mt-1 text-xs text-slate-400">Atendimento inteligente no WhatsApp, 24 horas por dia.</p>
+              <h2 className="mt-1 font-display text-3xl font-semibold text-white md:text-4xl">Escolha seu plano de Assistente de IA</h2>
+              <p className="mt-2 text-xs leading-6 text-slate-400">Os dois planos são semestrais, incluem implantação assistida e até 500 contatos únicos por mês.</p>
             </div>
-            <div className="grid gap-4 p-5 md:p-6 lg:grid-cols-[.95fr_1.05fr]">
-              <div className="rounded-[22px] border border-emerald-300/25 bg-black/20 p-5">
-                <div className="inline-flex rounded-full border border-emerald-300/25 px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-emerald-300">Assistente de IA</div>
-                <div className="mt-4 font-display text-4xl font-semibold text-white">6 MESES</div>
-                <div className="text-sm uppercase tracking-[.08em] text-slate-300">de atendimento inteligente</div>
-                <div className="mt-5 grid gap-2.5 text-sm text-slate-200">
-                  {['Até 500 contatos únicos/mês','Implantação inicial assistida','Follow-up automático','Painel Administrativo do cliente','Agenda e integrações conforme o escopo'].map(item => <span key={item} className="flex gap-2"><CheckCircle2 className="h-4 w-4 flex-none text-emerald-300"/>{item}</span>)}
-                </div>
-                <div className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">Atendimento no WhatsApp • 24 horas por dia • Mais oportunidades</div>
-              </div>
-              <div className="relative flex flex-col justify-center rounded-[22px] border border-emerald-300/25 bg-[linear-gradient(135deg,#07342b,#06161a)] p-5 md:p-6">
-                <div className="absolute right-0 top-0 rounded-bl-xl bg-emerald-300 px-4 py-2 text-[10px] font-black text-[#02110d]">SEM JUROS</div>
-                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-slate-500">Por apenas</div>
-                <div className="mt-1 flex items-end gap-3"><span className="pb-2 text-3xl font-black text-white">6x de</span><span className="font-display text-5xl font-semibold tracking-[-.05em] text-emerald-300 md:text-6xl">R$ 299</span></div>
-                <div className="text-center text-xs text-slate-300">sem juros no cartão</div>
-                <div className="mt-4 border-t border-white/10 pt-4 text-xs text-slate-400">▣ Ou R$ 1.794,00 à vista no Pix ou cartão</div>
-                <Button asChild size="lg" className="mt-4 w-full"><Link href="/contratar-assistente-ia"><CreditCard className="h-4 w-4"/>Quero meu Assistente de IA<ArrowRight className="h-4 w-4"/></Link></Button>
-                <div className="mt-3 text-center text-[11px] text-slate-500">🛡 Pagamento seguro via Mercado Pago</div>
 
-                <div className="mt-4 border-t border-white/10 pt-3">
-                  <div className="text-center text-[9px] font-bold uppercase tracking-[.16em] text-slate-500">Cartões e Pix</div>
-                  <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
-                    <span className="grid h-7 min-w-12 place-items-center rounded-md bg-white px-2 text-[10px] font-black italic tracking-tight text-[#1a1f71]">VISA</span>
-                    <span className="flex h-7 min-w-12 items-center justify-center rounded-md bg-white px-2" aria-label="Mastercard">
-                      <span className="h-4 w-4 rounded-full bg-[#eb001b]" />
-                      <span className="-ml-1.5 h-4 w-4 rounded-full bg-[#f79e1b] opacity-90" />
-                    </span>
-                    <span className="grid h-7 min-w-12 place-items-center rounded-md bg-[#111] px-2 text-[10px] font-black lowercase text-white">elo</span>
-                    <span className="grid h-7 min-w-12 place-items-center rounded-md bg-[#2e77bb] px-2 text-[9px] font-black text-white">AMEX</span>
-                    <span className="grid h-7 min-w-14 place-items-center rounded-md bg-[#b3131b] px-2 text-[8px] font-black text-white">HIPERCARD</span>
-                    <span className="flex h-7 min-w-12 items-center justify-center gap-1.5 rounded-md border border-emerald-300/25 bg-emerald-300/10 px-2 text-[10px] font-bold text-emerald-200">
-                      <span className="h-2.5 w-2.5 rotate-45 rounded-[2px] border border-emerald-300" />
-                      Pix
+            <div className="mt-6 grid gap-4 lg:grid-cols-2">
+              {Object.values(commercialPlans).map((plan) => (
+                <article
+                  key={plan.code}
+                  className={`relative rounded-[24px] border p-5 ${
+                    plan.includesAgenda
+                      ? 'border-sky-300/30 bg-[linear-gradient(135deg,#0a2733,#06161a)]'
+                      : 'border-emerald-300/25 bg-black/20'
+                  }`}
+                >
+                  {plan.includesAgenda ? (
+                    <div className="absolute right-0 top-0 rounded-bl-xl bg-sky-300 px-3 py-2 text-[9px] font-black uppercase tracking-[.08em] text-[#041319]">
+                      Com Agenda
+                    </div>
+                  ) : null}
+                  <div className="text-[10px] font-bold uppercase tracking-[.16em] text-emerald-300">{plan.badge}</div>
+                  <h3 className="mt-2 font-display text-3xl font-semibold text-white">{plan.name}</h3>
+                  <p className="mt-2 pr-16 text-xs leading-6 text-slate-400">{plan.description}</p>
+
+                  <div className="mt-5 flex items-end gap-2">
+                    <span className="pb-1 text-xl font-black text-white">{plan.installments}x de</span>
+                    <span className="font-display text-4xl font-semibold tracking-[-.05em] text-emerald-300 md:text-5xl">
+                      {formatBrl(plan.installmentValue).replace(',00', '')}
                     </span>
                   </div>
-                </div>
-              </div>
+                  <div className="mt-1 text-xs text-slate-300">sem juros no cartão</div>
+                  <div className="mt-2 text-[11px] text-slate-500">Total semestral: {formatBrl(plan.total)}</div>
+
+                  <div className="mt-5 grid gap-2.5 text-sm text-slate-200">
+                    {plan.features.slice(0, 5).map((item) => (
+                      <span key={item} className="flex gap-2">
+                        <CheckCircle2 className="h-4 w-4 flex-none text-emerald-300" />
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+
+                  <Button asChild size="lg" className="mt-5 w-full">
+                    <Link href={`/contratar-assistente-ia?plano=${plan.code}`}>
+                      <CreditCard className="h-4 w-4" />
+                      Contratar {plan.name}
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <div className="mt-3 text-center text-[10px] text-slate-500">Pagamento seguro via Mercado Pago</div>
+                </article>
+              ))}
             </div>
-            <div className="grid border-t border-white/[.07] bg-black/20 sm:grid-cols-3">
-              {['Compra 100% segura • Seus dados protegidos','Pagamento processado pelo Mercado Pago','Suporte na implantação e durante todo o plano'].map(x => <div key={x} className="px-5 py-4 text-center text-xs text-slate-400">{x}</div>)}
+
+            <div className="mt-5 grid border-t border-white/[.07] pt-4 sm:grid-cols-3">
+              {['Compra segura • Seus dados protegidos','Pagamento processado pelo Mercado Pago','Suporte na implantação e durante todo o plano'].map(x => <div key={x} className="px-5 py-2 text-center text-xs text-slate-400">{x}</div>)}
             </div>
           </motion.div>
         </div>
@@ -467,8 +480,8 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
                   ))}
                 </div>
                 <p className="mt-6 text-xs leading-6 text-slate-500">
-                  A Agenda é um módulo opcional. Integrações com agendas externas, ERP ou sistemas
-                  proprietários dependem de avaliação técnica.
+                  A Agenda está incluída no Plano 500 + Agenda, por R$ 2.388 no semestre. Integrações
+                  com agendas externas, ERP ou sistemas proprietários dependem de avaliação técnica.
                 </p>
               </div>
 
