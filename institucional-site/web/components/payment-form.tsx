@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
+import Link from 'next/link';
 import {
   ArrowRight,
   CalendarDays,
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CardBrands } from '@/components/card-brands';
+import { CONTRACT_PATH, CONTRACT_VERSION, PRIVACY_PATH } from '@/lib/legal';
 import {
   commercialPlans,
   type CommercialPlanCode,
@@ -48,6 +50,7 @@ export function PaymentForm({
   const [planCode, setPlanCode] = useState<CommercialPlanCode>(initialPlan);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const plan = commercialPlans[planCode];
 
   function updateField(field: keyof FormState, value: string) {
@@ -66,6 +69,11 @@ export function PaymentForm({
       return;
     }
 
+    if (!acceptedTerms) {
+      setError('Para continuar, leia e aceite os Termos de Contratação e a Política de Privacidade.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -81,6 +89,8 @@ export function PaymentForm({
           email_acesso: email,
           website_url: form.website_url,
           plano_codigo: plan.code,
+          aceite_termos: true,
+          termos_versao: CONTRACT_VERSION,
         }),
       });
 
@@ -203,7 +213,7 @@ export function PaymentForm({
               <CreditCard className="h-4 w-4 text-emerald-300" />
               Ou {formatBrl(plan.total)} no plano semestral
             </div>
-            <Button type="submit" size="lg" disabled={loading} className="mt-5 w-full">
+            <Button type="submit" size="lg" disabled={loading || !acceptedTerms} className="mt-5 w-full">
               {loading ? (
                 <>
                   <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -325,6 +335,28 @@ export function PaymentForm({
           />
         </div>
       </div>
+
+      <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.045] p-4 text-sm leading-6 text-slate-300">
+        <input
+          type="checkbox"
+          checked={acceptedTerms}
+          onChange={(event) => setAcceptedTerms(event.target.checked)}
+          className="mt-1 h-4 w-4 flex-none accent-emerald-400"
+          required
+        />
+        <span>
+          Li e aceito os{' '}
+          <Link href={CONTRACT_PATH} target="_blank" className="font-semibold text-emerald-300 underline underline-offset-2">
+            Termos de Contratação
+          </Link>{' '}
+          e a{' '}
+          <Link href={PRIVACY_PATH} target="_blank" className="font-semibold text-emerald-300 underline underline-offset-2">
+            Política de Privacidade
+          </Link>
+          . Declaro estar de acordo com as condições do plano selecionado.
+          <span className="mt-1 block text-[11px] text-slate-500">Versão dos Termos: {CONTRACT_VERSION}</span>
+        </span>
+      </label>
 
       {error ? (
         <div className="rounded-2xl border border-red-400/20 bg-red-500/[0.08] px-4 py-3 text-sm leading-6 text-red-100">
