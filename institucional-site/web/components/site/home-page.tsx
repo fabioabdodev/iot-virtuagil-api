@@ -105,9 +105,9 @@ function WhatsAppDemo() {
   };
 
   const TypingBubble = () => (
-    <motion.div {...bubbleMotion} className="ml-auto flex w-fit items-center gap-1 rounded-[8px] rounded-tr-[2px] bg-[#005c4b] px-3 py-2.5 shadow-[0_1px_1px_rgba(0,0,0,.2)]">
+    <motion.div {...bubbleMotion} className="ml-auto flex w-fit items-center gap-1 rounded-[8px] rounded-tr-[2px] bg-[#d9fdd3] px-3 py-2.5 shadow-[0_1px_1px_rgba(0,0,0,.2)]">
       {[0, 1, 2].map((dot) => (
-        <motion.span key={dot} className="h-1.5 w-1.5 rounded-full bg-[#d9fdd3]/80" animate={{ y: [0, -3, 0], opacity: [0.45, 1, 0.45] }} transition={{ duration: 0.85, repeat: Infinity, delay: dot * 0.14 }} />
+        <motion.span key={dot} className="h-1.5 w-1.5 rounded-full bg-[#00a884]/70" animate={{ y: [0, -3, 0], opacity: [0.45, 1, 0.45] }} transition={{ duration: 0.85, repeat: Infinity, delay: dot * 0.14 }} />
       ))}
     </motion.div>
   );
@@ -122,37 +122,37 @@ function WhatsAppDemo() {
         <div className="absolute -left-[10px] top-[151px] h-16 w-[3px] rounded-l bg-[#27343b]" />
         <div className="absolute -right-[10px] top-[126px] h-20 w-[3px] rounded-r bg-[#27343b]" />
 
-        <div className="overflow-hidden rounded-[36px] border border-white/[0.06] bg-[#0b141a]">
-          <div className="flex items-center justify-between bg-[#202c33] px-3 pb-2.5 pt-8">
+        <div className="overflow-hidden rounded-[36px] border border-white/[0.06] bg-[#efeae2]">
+          <div className="flex items-center justify-between bg-[#f0f2f5] px-3 pb-2.5 pt-8">
             <div className="flex min-w-0 items-center gap-2.5">
               <div className="grid h-9 w-9 flex-none place-items-center rounded-full bg-[#00a884] text-white"><Bot className="h-4 w-4" /></div>
               <div className="min-w-0">
-                <div className="truncate text-[12px] font-semibold text-[#e9edef]">Assistente Virtuagil</div>
-                <AnimatePresence mode="wait"><motion.div key={typing ? 'typing' : 'online'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-[10px] text-[#8696a0]">{typing ? 'digitando...' : 'online'}</motion.div></AnimatePresence>
+                <div className="truncate text-[12px] font-semibold text-[#111b21]">Assistente Virtuagil</div>
+                <AnimatePresence mode="wait"><motion.div key={typing ? 'typing' : 'online'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-[10px] text-[#667781]">{typing ? 'digitando...' : 'online'}</motion.div></AnimatePresence>
               </div>
             </div>
-            <div className="flex items-center gap-3 text-[#aebac1]"><Video className="h-3.5 w-3.5" /><Phone className="h-3.5 w-3.5" /><span className="text-base leading-none">⋮</span></div>
+            <div className="flex items-center gap-3 text-[#54656f]"><Video className="h-3.5 w-3.5" /><Phone className="h-3.5 w-3.5" /><span className="text-base leading-none">⋮</span></div>
           </div>
 
-          <div className="relative min-h-[390px] overflow-hidden px-3 py-3" style={{ backgroundColor:'#0b141a', backgroundImage:'radial-gradient(circle at 18px 18px, rgba(255,255,255,.035) 1.2px, transparent 1.3px), radial-gradient(circle at 8px 28px, rgba(255,255,255,.02) 1px, transparent 1.1px)', backgroundSize:'34px 34px' }}>
+          <div className="relative min-h-[390px] overflow-hidden px-3 py-3" style={{ backgroundColor:'#efeae2', backgroundImage:'radial-gradient(circle at 18px 18px, rgba(17,27,33,.055) 1.2px, transparent 1.3px), radial-gradient(circle at 8px 28px, rgba(17,27,33,.035) 1px, transparent 1.1px)', backgroundSize:'34px 34px' }}>
             <AnimatePresence mode="wait">
               <motion.div key={scenario.label} initial={{opacity:0,y:-4}} animate={{opacity:1,y:0}} exit={{opacity:0}} className="mb-3 text-center">
-                <span className="rounded-md bg-[#182229] px-2.5 py-1 text-[9px] font-medium text-[#9eabb3] shadow">{scenario.label}</span>
+                <span className="rounded-md bg-white/90 px-2.5 py-1 text-[9px] font-medium text-[#667781] shadow">{scenario.label}</span>
               </motion.div>
             </AnimatePresence>
             <div className="grid gap-2.5">
-              <AnimatePresence>{step >= 1 && <motion.div {...bubbleMotion} className="max-w-[86%] rounded-[8px] rounded-tl-[2px] bg-[#202c33] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#e9edef] shadow">{scenario.customer}<span className="ml-2 whitespace-nowrap text-[9px] text-[#8696a0]">10:42</span></motion.div>}</AnimatePresence>
+              <AnimatePresence>{step >= 1 && <motion.div {...bubbleMotion} className="max-w-[86%] rounded-[8px] rounded-tl-[2px] bg-[#f0f2f5] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#111b21] shadow">{scenario.customer}<span className="ml-2 whitespace-nowrap text-[9px] text-[#667781]">10:42</span></motion.div>}</AnimatePresence>
               <AnimatePresence>{step === 2 && <TypingBubble />}</AnimatePresence>
-              <AnimatePresence>{step >= 3 && <motion.div {...bubbleMotion} className="ml-auto max-w-[89%] rounded-[8px] rounded-tr-[2px] bg-[#005c4b] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#e9edef] shadow">{scenario.assistant}<span className="ml-2 whitespace-nowrap text-[9px] text-[#a7c5bd]">10:42 <span className="text-[#53bdeb]">✓✓</span></span></motion.div>}</AnimatePresence>
-              <AnimatePresence>{step >= 4 && <motion.div {...bubbleMotion} className="max-w-[72%] rounded-[8px] rounded-tl-[2px] bg-[#202c33] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#e9edef] shadow">{scenario.reply}<span className="ml-2 whitespace-nowrap text-[9px] text-[#8696a0]">10:43</span></motion.div>}</AnimatePresence>
+              <AnimatePresence>{step >= 3 && <motion.div {...bubbleMotion} className="ml-auto max-w-[89%] rounded-[8px] rounded-tr-[2px] bg-[#d9fdd3] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#111b21] shadow">{scenario.assistant}<span className="ml-2 whitespace-nowrap text-[9px] text-[#667781]">10:42 <span className="text-[#53bdeb]">✓✓</span></span></motion.div>}</AnimatePresence>
+              <AnimatePresence>{step >= 4 && <motion.div {...bubbleMotion} className="max-w-[72%] rounded-[8px] rounded-tl-[2px] bg-[#f0f2f5] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#111b21] shadow">{scenario.reply}<span className="ml-2 whitespace-nowrap text-[9px] text-[#667781]">10:43</span></motion.div>}</AnimatePresence>
               <AnimatePresence>{step === 5 && <TypingBubble />}</AnimatePresence>
-              <AnimatePresence>{step >= 6 && <motion.div {...bubbleMotion} className="ml-auto max-w-[89%] rounded-[8px] rounded-tr-[2px] bg-[#005c4b] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#e9edef] shadow">{scenario.final}<span className="ml-2 whitespace-nowrap text-[9px] text-[#a7c5bd]">10:43 <span className="text-[#53bdeb]">✓✓</span></span></motion.div>}</AnimatePresence>
-              <AnimatePresence>{step >= 7 && <motion.div initial={{opacity:0,scale:.96}} animate={{opacity:1,scale:1}} className="mx-auto mt-1 rounded-full border border-[#00a884]/25 bg-[#111b21]/95 px-3 py-1.5 text-[9px] font-medium text-[#00a884] shadow">{scenario.action}</motion.div>}</AnimatePresence>
+              <AnimatePresence>{step >= 6 && <motion.div {...bubbleMotion} className="ml-auto max-w-[89%] rounded-[8px] rounded-tr-[2px] bg-[#d9fdd3] px-2.5 py-1.5 text-[12px] leading-[18px] text-[#111b21] shadow">{scenario.final}<span className="ml-2 whitespace-nowrap text-[9px] text-[#667781]">10:43 <span className="text-[#53bdeb]">✓✓</span></span></motion.div>}</AnimatePresence>
+              <AnimatePresence>{step >= 7 && <motion.div initial={{opacity:0,scale:.96}} animate={{opacity:1,scale:1}} className="mx-auto mt-1 rounded-full border border-[#00a884]/25 bg-white/95 px-3 py-1.5 text-[9px] font-medium text-[#00a884] shadow">{scenario.action}</motion.div>}</AnimatePresence>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-[#0b141a] px-2.5 pb-3">
-            <div className="flex flex-1 items-center gap-2.5 rounded-full bg-[#202c33] px-3 py-2.5 text-[#8696a0]"><Smile className="h-4 w-4" /><span className="flex-1 text-[10px]">Mensagem</span><Paperclip className="h-4 w-4" /></div>
+          <div className="flex items-center gap-2 bg-[#efeae2] px-2.5 pb-3">
+            <div className="flex flex-1 items-center gap-2.5 rounded-full bg-[#f0f2f5] px-3 py-2.5 text-[#667781]"><Smile className="h-4 w-4" /><span className="flex-1 text-[10px]">Mensagem</span><Paperclip className="h-4 w-4" /></div>
             <div className="grid h-9 w-9 place-items-center rounded-full bg-[#00a884] text-white"><Mic className="h-4 w-4" /></div>
           </div>
         </div>
