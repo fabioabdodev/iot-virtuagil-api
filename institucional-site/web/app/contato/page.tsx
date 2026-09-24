@@ -66,13 +66,13 @@ export default function ContatoPage() {
                 Quer começar pelo Assistente de IA?
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-400">
-                O plano base pode ser contratado diretamente pelo site. Agenda e integrações
-                adicionais são avaliadas conforme a necessidade da empresa.
+                O Plano 500 e o Plano 500 + Agenda podem ser contratados diretamente pelo site.
+                Integrações adicionais continuam sujeitas a avaliação técnica.
               </p>
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <Button asChild>
-                  <Link href="/contratar-assistente-ia">
-                    Contratar agora
+                  <Link href="/planos">
+                    Ver planos
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
@@ -98,11 +98,11 @@ export default function ContatoPage() {
             },
             {
               icon: CalendarDays,
-              title: 'Agenda',
-              text: 'Módulo opcional para disponibilidade, agendamento, reagendamento e controle administrativo.',
-              action: 'Conversar sobre Agenda',
-              href: whatsappUrl,
-              external: true,
+              title: 'Plano 500 + Agenda',
+              text: 'Assistente de IA com disponibilidade, agendamento, reagendamento, cancelamento e controle administrativo.',
+              action: 'Ver plano com Agenda',
+              href: '/planos',
+              external: false,
             },
             {
               icon: Workflow,
