@@ -336,27 +336,43 @@ export function PaymentForm({
         </div>
       </div>
 
-      <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.045] p-4 text-sm leading-6 text-slate-300">
-        <input
-          type="checkbox"
-          checked={acceptedTerms}
-          onChange={(event) => setAcceptedTerms(event.target.checked)}
-          className="mt-1 h-4 w-4 flex-none accent-emerald-400"
-          required
-        />
-        <span>
-          Li e aceito os{' '}
-          <Link href={CONTRACT_PATH} target="_blank" className="font-semibold text-emerald-300 underline underline-offset-2">
-            Termos de Contratação
-          </Link>{' '}
-          e a{' '}
-          <Link href={PRIVACY_PATH} target="_blank" className="font-semibold text-emerald-300 underline underline-offset-2">
-            Política de Privacidade
+      <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.045] p-4">
+        <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 text-slate-200">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(event) => setAcceptedTerms(event.target.checked)}
+            className="mt-1 h-4 w-4 flex-none accent-emerald-400"
+            required
+          />
+          <span className="font-semibold">
+            Li e aceito os termos da contratação e declaro estar de acordo com as condições do plano selecionado.
+          </span>
+        </label>
+
+        <div className="ml-7 mt-3 flex flex-wrap gap-2">
+          <Link
+            href={CONTRACT_PATH}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded-lg border border-emerald-300/35 bg-emerald-300/[0.10] px-3 py-2 text-xs font-bold text-emerald-200 underline decoration-emerald-300/70 underline-offset-2 transition hover:bg-emerald-300/[0.16]"
+          >
+            Ler Termos de Contratação
           </Link>
-          . Declaro estar de acordo com as condições do plano selecionado.
-          <span className="mt-1 block text-[11px] text-slate-500">Versão dos Termos: {CONTRACT_VERSION}</span>
-        </span>
-      </label>
+          <Link
+            href={PRIVACY_PATH}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded-lg border border-emerald-300/35 bg-emerald-300/[0.10] px-3 py-2 text-xs font-bold text-emerald-200 underline decoration-emerald-300/70 underline-offset-2 transition hover:bg-emerald-300/[0.16]"
+          >
+            Ler Política de Privacidade
+          </Link>
+        </div>
+
+        <div className="ml-7 mt-2 text-[11px] text-slate-500">
+          Os documentos abrem em uma nova aba • Versão dos Termos: {CONTRACT_VERSION}
+        </div>
+      </div>
 
       {error ? (
         <div className="rounded-2xl border border-red-400/20 bg-red-500/[0.08] px-4 py-3 text-sm leading-6 text-red-100">
