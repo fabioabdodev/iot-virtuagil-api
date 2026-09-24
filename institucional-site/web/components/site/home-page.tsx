@@ -31,6 +31,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { products } from '@/lib/products';
 import { commercialPlans, formatBrl } from '@/lib/plans';
+import { CardBrands } from '@/components/card-brands';
 
 const rise = {
   initial: { opacity: 0, y: 22 },
@@ -390,8 +391,11 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
                       {formatBrl(plan.installmentValue).replace(',00', '')}
                     </span>
                   </div>
-                  <div className="mt-1 text-xs text-slate-300">sem juros no cartão</div>
+                  <div className="mt-3 inline-flex rounded-lg border border-emerald-300/30 bg-emerald-300/[0.09] px-3 py-1.5 text-sm font-black uppercase tracking-[0.06em] text-emerald-200">
+                    SEM JUROS NO CARTÃO
+                  </div>
                   <div className="mt-2 text-[11px] text-slate-500">Total semestral: {formatBrl(plan.total)}</div>
+                  <CardBrands className="mt-4" />
 
                   <div className="mt-5 grid gap-2.5 text-sm text-slate-200">
                     {plan.features.slice(0, 5).map((item) => (
