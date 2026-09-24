@@ -37,13 +37,12 @@ A rota legada `/pagamento` redireciona para a contratação atual.
 
 Oferta pública vigente:
 
-- R$ 1.794
-- 6 meses
-- até 500 atendimentos por mês
-- Mercado Pago
-- até 6 parcelas conforme checkout
+- **Plano 500** — R$ 1.794 por 6 meses; até 6x de R$ 299 sem juros
+- **Plano 500 + Agenda** — R$ 2.388 por 6 meses; até 6x de R$ 398 sem juros
+- ambos com até **500 contatos únicos por mês**
+- pagamento via Mercado Pago
 
-O site nunca envia o preço como fonte confiável para o n8n. O backend do site envia apenas os dados comerciais e autentica a chamada com `VIRTUAGIL_INTERNAL_KEY`.
+O navegador envia o código do plano escolhido, nunca um preço confiável. O backend valida o código, chama o n8n com `VIRTUAGIL_INTERNAL_KEY` e só aceita o checkout quando código e valor retornados correspondem exatamente ao plano solicitado.
 
 ## Ambiente de produção
 

@@ -14,6 +14,7 @@ import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getProductBySlug, products } from '@/lib/products';
+import { commercialPlans, formatBrl } from '@/lib/plans';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
@@ -67,6 +68,18 @@ export default async function ProductDetailPage({
       url: 'https://www.virtuagil.com.br',
     },
     url: `https://www.virtuagil.com.br/solucoes/${product.slug}`,
+    ...(isAssistenteIa
+      ? {
+          offers: Object.values(commercialPlans).map((plan) => ({
+            '@type': 'Offer',
+            name: plan.publicName,
+            priceCurrency: 'BRL',
+            price: plan.total.toFixed(2),
+            availability: 'https://schema.org/InStock',
+            url: `https://www.virtuagil.com.br/contratar-assistente-ia?plano=${plan.code}`,
+          })),
+        }
+      : {}),
   };
 
   return (
@@ -102,8 +115,8 @@ export default async function ProductDetailPage({
               {isAssistenteIa ? (
                 <>
                   <Button asChild size="lg">
-                    <Link href="/contratar-assistente-ia">
-                      Contratar Assistente de IA
+                    <Link href="/planos">
+                      Ver planos e contratar
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
@@ -196,7 +209,7 @@ export default async function ProductDetailPage({
                   <div>
                     <div className="eyebrow">
                       <CalendarDays className="h-3.5 w-3.5" />
-                      Agenda opcional
+                      Plano 500 + Agenda
                     </div>
                     <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white">
                       Atendimento que pode terminar com horário marcado.
@@ -207,8 +220,8 @@ export default async function ProductDetailPage({
                       agendamento.
                     </p>
                     <p className="mt-4 text-xs leading-6 text-slate-500">
-                      O módulo é configurado por empresa e não está automaticamente incluído no preço
-                      base do Assistente de IA.
+                      A Agenda está incluída no Plano 500 + Agenda. Integrações com agendas externas,
+                      ERP ou sistemas proprietários continuam sujeitas a avaliação técnica.
                     </p>
                   </div>
 
@@ -308,22 +321,30 @@ export default async function ProductDetailPage({
 
               <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300">
                 {isAssistenteIa
-                  ? 'O plano atual é semestral, inclui até 500 contatos únicos atendidos por mês e pode ser contratado diretamente pelo site. Agenda e integrações específicas são avaliadas separadamente.'
+                  ? 'A Virtuagil oferece dois planos semestrais, ambos com até 500 contatos únicos por mês: Plano 500 e Plano 500 + Agenda. Integrações externas ou específicas continuam sujeitas a avaliação técnica.'
                   : 'Conte o contexto da sua empresa e a Virtuagil avalia escopo, prioridade e o melhor formato para começar.'}
               </p>
 
               {isAssistenteIa && (
-                <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
-                  <div className="flex items-center gap-3">
-                    <Bot className="h-5 w-5 text-emerald-300" />
-                    <div>
-                      <div className="text-xs uppercase tracking-[0.16em] text-slate-500">Plano semestral</div>
-                      <div className="mt-1 text-2xl font-bold text-white">R$ 1.794</div>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {Object.values(commercialPlans).map((plan) => (
+                    <div key={plan.code} className="rounded-2xl border border-white/10 bg-black/20 p-5">
+                      <div className="flex items-center gap-3">
+                        {plan.includesAgenda ? (
+                          <CalendarDays className="h-5 w-5 text-sky-300" />
+                        ) : (
+                          <Bot className="h-5 w-5 text-emerald-300" />
+                        )}
+                        <div>
+                          <div className="text-xs uppercase tracking-[0.16em] text-slate-500">{plan.name}</div>
+                          <div className="mt-1 text-2xl font-bold text-white">{formatBrl(plan.total)}</div>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-sm text-slate-400">
+                        {plan.installments}x de {formatBrl(plan.installmentValue)} sem juros • até 500 contatos únicos/mês.
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-3 text-sm text-slate-400">
-                    Até 500 atendimentos/mês • Pix ou cartão • até 6x no checkout.
-                  </div>
+                  ))}
                 </div>
               )}
 
@@ -331,8 +352,8 @@ export default async function ProductDetailPage({
                 {isAssistenteIa ? (
                   <>
                     <Button asChild size="lg">
-                      <Link href="/contratar-assistente-ia">
-                        Contratar Assistente de IA
+                      <Link href="/planos">
+                        Ver planos e contratar
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>

@@ -14,9 +14,9 @@ Projeto:
 O site apresenta três frentes:
 
 1. **Assistente de IA Virtuagil**
-   - produto padronizado
+   - produto padronizado em dois planos: 500 e 500 + Agenda
    - contratação direta pelo site
-   - Jade como canal opcional de demonstração e pré-venda
+   - Jade como persona/canal de atendimento e pré-venda
 
 2. **Automação de Processos**
    - projetos sob medida
@@ -34,11 +34,10 @@ Rota:
 
 Oferta:
 
-- R$ 1.794
-- 6 meses
-- até 500 atendimentos/mês
+- **Plano 500** — R$ 1.794 por 6 meses, até 6x de R$ 299 sem juros
+- **Plano 500 + Agenda** — R$ 2.388 por 6 meses, até 6x de R$ 398 sem juros
+- ambos com até **500 contatos únicos/mês**
 - Mercado Pago
-- até 6 parcelas
 
 Depois do pagamento aprovado, o fluxo existente provisiona o usuário e o acesso ao Painel Administrativo fica em:
 

@@ -31,7 +31,7 @@ export const products: Product[] = [
     shortLabel: 'Atendimento com IA',
     category: 'Automação com IA',
     subtitle:
-      'Assistente de IA no WhatsApp para responder, qualificar, acompanhar, agendar quando o módulo estiver ativo e encaminhar clientes.',
+      'Assistente de IA no WhatsApp para responder, qualificar, acompanhar e encaminhar clientes, com Agenda integrada no Plano 500 + Agenda.',
     summary:
       'Atenda 24 horas, responda com base nas informações da sua empresa, identifique oportunidades, faça follow-up e transfira para uma pessoa quando necessário. Operações com horário marcado podem adicionar o módulo Agenda.',
     cardDescription:
@@ -41,7 +41,7 @@ export const products: Product[] = [
     bullets: [
       'Atendimento e qualificação no WhatsApp',
       'Follow-up e transferência humana',
-      'Agenda integrada como módulo opcional',
+      'Plano 500 + Agenda para operações com horário marcado',
     ],
     deliverables: [
       'Assistente de IA configurado para o seu negócio',
@@ -50,7 +50,7 @@ export const products: Product[] = [
       'Follow-up automático',
       'Transferência para atendimento humano',
       'Painel Administrativo de contatos, uso e resultados',
-      'Módulo Agenda opcional conforme escopo',
+      'Agenda integrada no Plano 500 + Agenda',
     ],
     segments: [
       'Clínicas, consultórios e odontologia',

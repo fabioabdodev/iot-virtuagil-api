@@ -1,65 +1,52 @@
-# Pagamentos — Assistente de IA
+# Pagamentos — Assistente de IA Virtuagil
 
 ## Oferta atual
 
-- produto: Assistente de IA Virtuagil
-- ciclo: 6 meses
-- valor total: R$ 1.794
-- limite comercial: até 500 atendimentos por mês
-- checkout: Mercado Pago
-- parcelamento: até 6 parcelas, conforme exibido pelo Mercado Pago
+| Plano | Código | Valor total | Parcelamento | Limite |
+| --- | --- | ---: | ---: | --- |
+| Plano 500 | `jade_500_semestral` | R$ 1.794 | até 6x de R$ 299 sem juros | 500 contatos únicos/mês |
+| Plano 500 + Agenda | `jade_500_agenda_semestral` | R$ 2.388 | até 6x de R$ 398 sem juros | 500 contatos únicos/mês |
 
 ## Compra pelo site
 
-A página pública é:
+Página pública:
 
 - `/contratar-assistente-ia`
+- o plano pode ser pré-selecionado por `?plano=<codigo>`
 
-O formulário coleta:
+O formulário coleta nome da empresa, responsável, WhatsApp com DDD, e-mail de acesso, confirmação do e-mail e o código do plano escolhido.
 
-- nome da empresa
-- nome do responsável
-- WhatsApp com DDD
-- e-mail de acesso ao Painel Administrativo
-- confirmação do e-mail
+O navegador não define preço. A rota server-side `POST /api/pagamentos/criar-cobranca` valida o código contra a lista permitida e chama o webhook seguro do n8n com `VIRTUAGIL_INTERNAL_KEY`.
 
-O navegador **não envia o preço** e não conhece a chave interna.
+Antes de redirecionar ao Mercado Pago, o site exige que o n8n retorne:
 
-A rota server-side:
+- `plano_codigo` exatamente igual ao plano solicitado;
+- `valor_total` exatamente igual ao valor definido no servidor;
+- `checkout_url` em domínio oficial do Mercado Pago.
 
-- `POST /api/pagamentos/criar-cobranca`
-
-chama:
-
-- `https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-checkout-jade500`
-
-com o header privado:
-
-- `x-virtuagil-key`
-
-A chave vem de `VIRTUAGIL_INTERNAL_KEY` no runtime do container e nunca deve usar prefixo `NEXT_PUBLIC_`.
+Isso impede que o Plano 500 + Agenda seja cobrado pelo preço do plano base caso o backend esteja desatualizado.
 
 ## Pós-pagamento
 
 Após aprovação:
 
 1. o Mercado Pago notifica o n8n;
-2. o pagamento é consultado/validado;
-3. o plano do cliente é ativado;
-4. o Painel Administrativo é provisionado;
-5. o Supabase envia o convite;
-6. o cliente cria a própria senha;
-7. o acesso acontece em `https://atendente.virtuagil.com.br`.
+2. assinatura e pagamento são validados;
+3. o pagamento é registrado;
+4. o plano do cliente é ativado;
+5. o Painel Administrativo é provisionado;
+6. o usuário recebe convite por e-mail;
+7. a implantação assistida é concluída.
 
 ## Segurança
 
-- dados de cartão não passam pelo site Virtuagil;
-- o checkout é hospedado pelo Mercado Pago;
-- preço e regras comerciais são definidos pelo backend/n8n;
-- tokens e chaves ficam em variáveis de ambiente;
-- o site valida se a URL retornada pertence ao domínio do Mercado Pago;
-- o e-mail de acesso é confirmado antes da criação do checkout.
+- dados do cartão não passam pelo site Virtuagil;
+- checkout hospedado pelo Mercado Pago;
+- plano e preço validados no servidor;
+- tokens e chaves em variáveis de ambiente;
+- `VIRTUAGIL_INTERNAL_KEY` nunca usa prefixo `NEXT_PUBLIC_`;
+- checkout criado não equivale a pagamento aprovado.
 
 ## Legado
 
-A rota antiga `/pagamento` redireciona para `/contratar-assistente-ia`. O fluxo antigo de código de cliente e Plano Fundador de R$ 249 não faz mais parte da oferta pública.
+A rota `/pagamento` redireciona para `/contratar-assistente-ia`. O antigo Plano Fundador de R$ 249 não faz parte da oferta pública atual.

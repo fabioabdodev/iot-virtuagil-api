@@ -23,11 +23,14 @@ export const metadata: Metadata = {
     template: '%s | Virtuagil',
   },
   description:
-    'Assistente de IA no WhatsApp com follow-up, atendimento humano e Agenda opcional, além de automação de processos e IoT para empresas.',
+    'Assistente de IA no WhatsApp nos planos 500 e 500 + Agenda, com follow-up, atendimento humano e até 500 contatos únicos por mês, além de automação de processos e IoT.',
   keywords: [
     'assistente de IA para empresas',
     'automação com inteligência artificial',
     'atendimento com IA no WhatsApp',
+    'assistente de IA WhatsApp preço',
+    'IA para atendimento WhatsApp',
+    'plano de atendimento IA',
     'agenda integrada WhatsApp',
     'agendamento com inteligência artificial',
     'automação empresarial',
@@ -67,7 +70,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtuagil | Automação com IA, Processos e IoT',
     description:
-      'Assistente de IA para WhatsApp com Agenda opcional, automação de processos e soluções IoT para empresas que querem operar melhor.',
+      'Assistente de IA para WhatsApp nos planos 500 e 500 + Agenda, automação de processos e soluções IoT para empresas que querem operar melhor.',
     url: 'https://www.virtuagil.com.br',
     siteName: 'Virtuagil',
     images: [
@@ -85,7 +88,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Virtuagil | Automação com IA, Processos e IoT',
     description:
-      'Automação inteligente para atendimento, agendamentos, processos e operações empresariais.',
+      'Assistente de IA para WhatsApp com Plano 500 e Plano 500 + Agenda, além de automação de processos e IoT.',
     images: ['/brand/logomarca.png'],
   },
 };
@@ -108,7 +111,7 @@ export default function RootLayout({
     url: 'https://www.virtuagil.com.br',
     logo: 'https://www.virtuagil.com.br/brand/logomarca.png',
     description:
-      'Empresa de tecnologia especializada em Assistente de IA para WhatsApp, Agenda integrada, automação de processos e IoT.',
+      'Empresa de tecnologia especializada em Assistente de IA para WhatsApp, com Plano 500 e Plano 500 + Agenda, automação de processos e IoT.',
     areaServed: [
       { '@type': 'Country', name: 'Brasil' },
       { '@type': 'City', name: 'Belo Horizonte' },
