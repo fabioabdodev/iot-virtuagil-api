@@ -43,6 +43,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.95,
     },
+    {
+      url: `${baseUrl}/termos-de-contratacao`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.45,
+    },
+    {
+      url: `${baseUrl}/politica-de-privacidade`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.45,
+    },
   ];
 
   const productPages: MetadataRoute.Sitemap = products.map((product) => ({

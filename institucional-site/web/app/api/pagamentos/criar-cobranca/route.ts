@@ -4,6 +4,7 @@ import {
   defaultCommercialPlanCode,
   isCommercialPlanCode,
 } from '@/lib/plans';
+import { CONTRACT_VERSION } from '@/lib/legal';
 
 export const runtime = 'nodejs';
 
@@ -17,6 +18,8 @@ type CheckoutRequest = {
   email_acesso?: string;
   website_url?: string;
   plano_codigo?: string;
+  aceite_termos?: boolean;
+  termos_versao?: string;
 };
 
 function isValidEmail(value: string) {
@@ -84,6 +87,15 @@ export async function POST(request: NextRequest) {
   }
 
   const requestedPlan = commercialPlans[requestedPlanCode];
+  const termsAccepted =
+    payload.aceite_termos === true && payload.termos_versao === CONTRACT_VERSION;
+
+  if (!termsAccepted) {
+    return NextResponse.json(
+      { ok: false, message: 'É necessário aceitar a versão vigente dos Termos de Contratação.' },
+      { status: 400 },
+    );
+  }
 
   if (nomeEmpresa.length < 2 || nomeEmpresa.length > 120) {
     return NextResponse.json(
@@ -133,6 +145,10 @@ export async function POST(request: NextRequest) {
         telefone,
         email_acesso: emailAcesso,
         plano_codigo: requestedPlan.code,
+        aceite_termos: true,
+        termos_versao: CONTRACT_VERSION,
+        termos_aceite_em: new Date().toISOString(),
+        termos_origem: 'checkout_site_virtuagil',
         origem: 'site_virtuagil',
       }),
       cache: 'no-store',
