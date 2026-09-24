@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  commercialPlans,
+  defaultCommercialPlanCode,
+  isCommercialPlanCode,
+} from '@/lib/plans';
 
 export const runtime = 'nodejs';
 
@@ -11,6 +16,7 @@ type CheckoutRequest = {
   telefone?: string;
   email_acesso?: string;
   website_url?: string;
+  plano_codigo?: string;
 };
 
 function isValidEmail(value: string) {
@@ -58,7 +64,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Honeypot: bots costumam preencher este campo invisível.
   if (String(payload.website_url ?? '').trim()) {
     return NextResponse.json({ ok: true }, { status: 200 });
   }
@@ -67,6 +72,18 @@ export async function POST(request: NextRequest) {
   const nomeContato = String(payload.nome_contato ?? '').trim();
   const telefone = String(payload.telefone ?? '').replace(/\D/g, '');
   const emailAcesso = String(payload.email_acesso ?? '').trim().toLowerCase();
+  const requestedPlanCode = String(
+    payload.plano_codigo ?? defaultCommercialPlanCode,
+  ).trim();
+
+  if (!isCommercialPlanCode(requestedPlanCode)) {
+    return NextResponse.json(
+      { ok: false, message: 'Selecione um plano válido.' },
+      { status: 400 },
+    );
+  }
+
+  const requestedPlan = commercialPlans[requestedPlanCode];
 
   if (nomeEmpresa.length < 2 || nomeEmpresa.length > 120) {
     return NextResponse.json(
@@ -91,7 +108,7 @@ export async function POST(request: NextRequest) {
 
   if (!isValidEmail(emailAcesso)) {
     return NextResponse.json(
-      { ok: false, message: 'Informe um e-mail válido para acesso ao dashboard.' },
+      { ok: false, message: 'Informe um e-mail válido para acesso ao painel.' },
       { status: 400 },
     );
   }
@@ -115,6 +132,7 @@ export async function POST(request: NextRequest) {
         nome_contato: nomeContato,
         telefone,
         email_acesso: emailAcesso,
+        plano_codigo: requestedPlan.code,
         origem: 'site_virtuagil',
       }),
       cache: 'no-store',
@@ -127,6 +145,8 @@ export async function POST(request: NextRequest) {
           ok?: boolean;
           checkout_url?: string;
           preference_id?: string;
+          plano_codigo?: string;
+          valor_total?: number;
           message?: string;
           error?: string;
         }
@@ -138,21 +158,35 @@ export async function POST(request: NextRequest) {
       data = null;
     }
 
+    const responsePlanCode = String(data?.plano_codigo ?? '');
+    const responseTotal = Number(data?.valor_total);
+    const planMatches =
+      responsePlanCode === requestedPlan.code &&
+      Number.isFinite(responseTotal) &&
+      Math.abs(responseTotal - requestedPlan.total) < 0.001;
+
     if (
       !response.ok ||
       data?.ok !== true ||
       !data.checkout_url ||
-      !isMercadoPagoCheckout(data.checkout_url)
+      !isMercadoPagoCheckout(data.checkout_url) ||
+      !planMatches
     ) {
       console.error('[assistente-checkout] Falha ao criar checkout', {
         status: response.status,
         error: data?.error,
+        requestedPlan: requestedPlan.code,
+        responsePlan: responsePlanCode,
+        responseTotal,
       });
 
       return NextResponse.json(
         {
           ok: false,
-          message: 'Não foi possível gerar o checkout agora. Tente novamente.',
+          message:
+            requestedPlan.includesAgenda && !planMatches
+              ? 'O checkout do plano com Agenda está sendo atualizado. Fale com a equipe da Virtuagil para concluir a contratação.'
+              : 'Não foi possível gerar o checkout agora. Tente novamente.',
         },
         { status: 502 },
       );
@@ -163,6 +197,8 @@ export async function POST(request: NextRequest) {
         ok: true,
         checkout_url: data.checkout_url,
         preference_id: data.preference_id,
+        plano_codigo: responsePlanCode,
+        valor_total: responseTotal,
       },
       {
         headers: {
