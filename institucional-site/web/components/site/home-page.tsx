@@ -429,7 +429,7 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
               Um fluxo contínuo, sem jogar o cliente de ferramenta em ferramenta.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-7 text-slate-400 md:text-base">
-              Atendimento, regras de negócio, follow-up, agenda opcional e suporte humano trabalham
+              Atendimento, regras de negócio, follow-up e suporte humano trabalham
               dentro da mesma jornada.
             </p>
           </motion.div>
@@ -588,7 +588,7 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
               {
                 icon: Bot,
                 title: 'Assistente de IA',
-                text: 'Atendimento, qualificação, follow-up, agenda opcional e transferência humana no WhatsApp.',
+                text: 'Atendimento, qualificação, follow-up e transferência humana no WhatsApp, com Agenda no Plano 500 + Agenda.',
                 href: '/solucoes/atendente-ia',
               },
               {
