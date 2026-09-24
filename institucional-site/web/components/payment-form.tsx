@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CardBrands } from '@/components/card-brands';
 import {
   commercialPlans,
   type CommercialPlanCode,
@@ -194,7 +195,10 @@ export function PaymentForm({
                 {formatBrl(plan.installmentValue).replace(',00', '')}
               </span>
             </div>
-            <div className="mt-1 text-sm text-slate-300">sem juros no cartão</div>
+            <div className="mt-3 inline-flex w-fit rounded-lg border border-emerald-300/30 bg-emerald-300/[0.09] px-3 py-1.5 text-sm font-black uppercase tracking-[0.06em] text-emerald-200">
+              SEM JUROS NO CARTÃO
+            </div>
+            <CardBrands className="mt-4" />
             <div className="mt-5 flex items-center gap-2 border-t border-white/[0.08] pt-4 text-xs text-slate-400">
               <CreditCard className="h-4 w-4 text-emerald-300" />
               Ou {formatBrl(plan.total)} no plano semestral
