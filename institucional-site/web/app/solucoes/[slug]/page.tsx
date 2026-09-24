@@ -209,7 +209,7 @@ export default async function ProductDetailPage({
                   <div>
                     <div className="eyebrow">
                       <CalendarDays className="h-3.5 w-3.5" />
-                      Agenda opcional
+                      Plano 500 + Agenda
                     </div>
                     <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.035em] text-white">
                       Atendimento que pode terminar com horário marcado.
