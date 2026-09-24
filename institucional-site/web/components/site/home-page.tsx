@@ -274,7 +274,7 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
       <div className="glow-orb left-[-120px] top-[80px] h-[360px] w-[360px] bg-emerald-400/20" />
       <div className="glow-orb right-[-160px] top-[220px] h-[420px] w-[420px] bg-sky-400/15" />
 
-      <section className="relative py-14 md:py-24">
+<section className="relative py-14 md:py-24">
         <div className="section-shell grid items-center gap-12 lg:grid-cols-[1.02fr_0.98fr]">
           <motion.div {...rise}>
             <div className="eyebrow">
@@ -324,6 +324,36 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
         </div>
       </section>
 
+      <section className="py-12 md:py-20">
+        <div className="section-shell">
+          <motion.div {...rise} className="max-w-3xl">
+            <div className="eyebrow">Assistente de IA</div>
+            <h2 className="mt-5 font-display text-4xl font-semibold leading-tight tracking-[-0.035em] text-white md:text-5xl">
+              Menos conversa perdida. Mais continuidade do primeiro contato ao próximo passo.
+            </h2>
+            <p className="mt-5 text-base leading-8 text-slate-400">
+              O objetivo não é substituir sua equipe. É automatizar o que é repetitivo, organizar
+              oportunidades e entregar a conversa para uma pessoa quando realmente fizer sentido.
+            </p>
+          </motion.div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {benefits.map(({ icon: Icon, title, text }, index) => (
+              <motion.div key={title} {...rise} transition={{ ...rise.transition, delay: index * 0.04 }}>
+                <Card className="h-full">
+                  <CardContent className="h-full">
+                    <div className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.07]">
+                      <Icon className="h-5 w-5 text-emerald-300" />
+                    </div>
+                    <h3 className="mt-5 text-lg font-bold text-white">{title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="pb-10 pt-4 md:pb-16 md:pt-8">
         <div className="section-shell">
@@ -375,87 +405,6 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
               {['Compra 100% segura • Seus dados protegidos','Pagamento processado pelo Mercado Pago','Suporte na implantação e durante todo o plano'].map(x => <div key={x} className="px-5 py-4 text-center text-xs text-slate-400">{x}</div>)}
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      <section className="py-10 md:py-16">
-        <div className="section-shell">
-          <motion.div {...rise} className="mb-7 max-w-3xl">
-            <div className="eyebrow">Internet das Coisas • IoT</div>
-            <h2 className="mt-4 max-w-[20ch] font-display text-4xl font-semibold leading-[.98] tracking-[-.04em] text-white md:text-5xl">Monitoramento inteligente para ambientes, equipamentos e operações.</h2>
-            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">Sensores conectados transformam dados do ambiente em informação para acompanhar sua operação, identificar alterações e apoiar decisões em tempo real. A Virtuagil desenvolve soluções IoT conforme a necessidade de cada projeto.</p>
-          </motion.div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {products
-              .filter((product) => product.category === 'IoT')
-              .sort(
-                (a, b) =>
-                  ['temperatura', 'gases', 'consumo', 'acionamento'].indexOf(a.slug) -
-                  ['temperatura', 'gases', 'consumo', 'acionamento'].indexOf(b.slug),
-              )
-              .map((product, index) => {
-                const tones = ['border-sky-400/45','border-emerald-300/45','border-amber-400/45','border-violet-400/45'];
-                const dots = ['bg-sky-300','bg-emerald-300','bg-amber-300','bg-violet-300'];
-                const displayTitle = product.slug === 'consumo' ? 'Energia e Consumo' : product.title;
-                const displaySummary = product.slug === 'consumo'
-                  ? 'Acompanhe consumo elétrico, corrente e tensão para identificar desperdícios, anomalias e apoiar decisões com mais clareza.'
-                  : product.summary;
-                return (
-                  <motion.article key={product.slug} {...rise} transition={{ ...rise.transition, delay: (index % 2) * 0.04 }} className={`group relative min-h-[315px] overflow-hidden rounded-[26px] border bg-[#071018] shadow-[0_22px_70px_rgba(0,0,0,.34)] transition duration-300 hover:-translate-y-1 ${tones[index]}`}>
-                    <div className="absolute inset-y-0 right-0 w-[56%] bg-cover bg-center transition duration-500 group-hover:scale-[1.035]" style={{ backgroundImage: `url(${product.image})` }} />
-                    <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,9,13,1)_0%,rgba(3,9,13,.99)_42%,rgba(3,9,13,.82)_59%,rgba(3,9,13,.34)_78%,rgba(3,9,13,.10)_100%)]" />
-                    <div className="relative flex min-h-[315px] max-w-[68%] flex-col justify-center p-6 md:max-w-[62%]">
-                      <div className="w-fit rounded-full border border-white/15 bg-black/30 px-2.5 py-1 text-[9px] font-black uppercase tracking-[.16em] text-white/80">IoT</div>
-                      <h3 className="mt-3 font-display text-3xl font-semibold leading-none text-white">{displayTitle}</h3>
-                      <p className="mt-3 text-sm leading-6 text-slate-200">{displaySummary}</p>
-                      <ul className="mt-4 grid gap-2 text-xs leading-5 text-slate-200">{product.bullets.map((bullet) => <li key={bullet} className="flex items-start gap-2"><span className={`mt-1.5 h-1.5 w-1.5 flex-none rounded-full ${dots[index]}`} /><span>{bullet}</span></li>)}</ul>
-                      <Link href={`/solucoes/${product.slug}`} className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-white">Conhecer solução <ArrowRight className="h-3.5 w-3.5" /></Link>
-                    </div>
-                  </motion.article>
-                );
-              })}
-          </div>
-
-          <motion.div {...rise} className="mt-4 flex flex-col gap-4 rounded-[24px] border border-emerald-300/15 bg-emerald-300/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="text-xs font-bold uppercase tracking-[.14em] text-emerald-300">Projeto IoT sob medida</div>
-              <p className="mt-1 text-sm text-slate-300">Precisa medir, monitorar ou controlar outra variável? Conte sua necessidade para a Virtuagil.</p>
-            </div>
-            <Button asChild variant="secondary" className="shrink-0">
-              <Link href="/contato">Falar sobre meu projeto <ArrowRight className="h-4 w-4" /></Link>
-            </Button>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-20">
-        <div className="section-shell">
-          <motion.div {...rise} className="max-w-3xl">
-            <div className="eyebrow">Assistente de IA</div>
-            <h2 className="mt-5 font-display text-4xl font-semibold leading-tight tracking-[-0.035em] text-white md:text-5xl">
-              Menos conversa perdida. Mais continuidade do primeiro contato ao próximo passo.
-            </h2>
-            <p className="mt-5 text-base leading-8 text-slate-400">
-              O objetivo não é substituir sua equipe. É automatizar o que é repetitivo, organizar
-              oportunidades e entregar a conversa para uma pessoa quando realmente fizer sentido.
-            </p>
-          </motion.div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {benefits.map(({ icon: Icon, title, text }, index) => (
-              <motion.div key={title} {...rise} transition={{ ...rise.transition, delay: index * 0.04 }}>
-                <Card className="h-full">
-                  <CardContent className="h-full">
-                    <div className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.07]">
-                      <Icon className="h-5 w-5 text-emerald-300" />
-                    </div>
-                    <h3 className="mt-5 text-lg font-bold text-white">{title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -556,6 +505,56 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
         </div>
       </section>
 
+      <section className="py-10 md:py-16">
+        <div className="section-shell">
+          <motion.div {...rise} className="mb-7 max-w-3xl">
+            <div className="eyebrow">Internet das Coisas • IoT</div>
+            <h2 className="mt-4 max-w-[20ch] font-display text-4xl font-semibold leading-[.98] tracking-[-.04em] text-white md:text-5xl">Monitoramento inteligente para ambientes, equipamentos e operações.</h2>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">Sensores conectados transformam dados do ambiente em informação para acompanhar sua operação, identificar alterações e apoiar decisões em tempo real. A Virtuagil desenvolve soluções IoT conforme a necessidade de cada projeto.</p>
+          </motion.div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {products
+              .filter((product) => product.category === 'IoT')
+              .sort(
+                (a, b) =>
+                  ['temperatura', 'gases', 'consumo', 'acionamento'].indexOf(a.slug) -
+                  ['temperatura', 'gases', 'consumo', 'acionamento'].indexOf(b.slug),
+              )
+              .map((product, index) => {
+                const tones = ['border-sky-400/45','border-emerald-300/45','border-amber-400/45','border-violet-400/45'];
+                const dots = ['bg-sky-300','bg-emerald-300','bg-amber-300','bg-violet-300'];
+                const displayTitle = product.slug === 'consumo' ? 'Energia e Consumo' : product.title;
+                const displaySummary = product.slug === 'consumo'
+                  ? 'Acompanhe consumo elétrico, corrente e tensão para identificar desperdícios, anomalias e apoiar decisões com mais clareza.'
+                  : product.summary;
+                return (
+                  <motion.article key={product.slug} {...rise} transition={{ ...rise.transition, delay: (index % 2) * 0.04 }} className={`group relative min-h-[315px] overflow-hidden rounded-[26px] border bg-[#071018] shadow-[0_22px_70px_rgba(0,0,0,.34)] transition duration-300 hover:-translate-y-1 ${tones[index]}`}>
+                    <div className="absolute inset-y-0 right-0 w-[56%] bg-cover bg-center transition duration-500 group-hover:scale-[1.035]" style={{ backgroundImage: `url(${product.image})` }} />
+                    <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,9,13,1)_0%,rgba(3,9,13,.99)_42%,rgba(3,9,13,.82)_59%,rgba(3,9,13,.34)_78%,rgba(3,9,13,.10)_100%)]" />
+                    <div className="relative flex min-h-[315px] max-w-[68%] flex-col justify-center p-6 md:max-w-[62%]">
+                      <div className="w-fit rounded-full border border-white/15 bg-black/30 px-2.5 py-1 text-[9px] font-black uppercase tracking-[.16em] text-white/80">IoT</div>
+                      <h3 className="mt-3 font-display text-3xl font-semibold leading-none text-white">{displayTitle}</h3>
+                      <p className="mt-3 text-sm leading-6 text-slate-200">{displaySummary}</p>
+                      <ul className="mt-4 grid gap-2 text-xs leading-5 text-slate-200">{product.bullets.map((bullet) => <li key={bullet} className="flex items-start gap-2"><span className={`mt-1.5 h-1.5 w-1.5 flex-none rounded-full ${dots[index]}`} /><span>{bullet}</span></li>)}</ul>
+                      <Link href={`/solucoes/${product.slug}`} className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-white">Conhecer solução <ArrowRight className="h-3.5 w-3.5" /></Link>
+                    </div>
+                  </motion.article>
+                );
+              })}
+          </div>
+
+          <motion.div {...rise} className="mt-4 flex flex-col gap-4 rounded-[24px] border border-emerald-300/15 bg-emerald-300/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="text-xs font-bold uppercase tracking-[.14em] text-emerald-300">Projeto IoT sob medida</div>
+              <p className="mt-1 text-sm text-slate-300">Precisa medir, monitorar ou controlar outra variável? Conte sua necessidade para a Virtuagil.</p>
+            </div>
+            <Button asChild variant="secondary" className="shrink-0">
+              <Link href="/contato">Falar sobre meu projeto <ArrowRight className="h-4 w-4" /></Link>
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
       <section className="py-12 md:py-20">
         <div className="section-shell">
           <motion.div {...rise} className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
@@ -609,7 +608,6 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
           </div>
         </div>
       </section>
-
 
       <section className="py-12 md:py-20">
         <div className="section-shell">
