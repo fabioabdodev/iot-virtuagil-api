@@ -27,7 +27,7 @@ const solutionLines = [
     icon: Bot,
     features: [
       { icon: MessageCircleMore, text: 'Atendimento e qualificação no WhatsApp' },
-      { icon: CalendarDays, text: 'Agenda como módulo adicional' },
+      { icon: CalendarDays, text: 'Plano 500 + Agenda para negócios com hora marcada' },
       { icon: Bot, text: 'Follow-up, transferência humana e painel' },
     ],
     accent: 'emerald',
