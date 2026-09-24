@@ -2,6 +2,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ArrowRight, Bot, Cpu, CalendarDays, MessageCircleMore, RadioTower, Gauge, Power, Thermometer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CardBrands } from '@/components/card-brands';
+import { commercialPlans, formatBrl } from '@/lib/plans';
 
 export const metadata: Metadata = {
   title: 'Soluções | Virtuagil',
@@ -105,8 +107,35 @@ export default function SolucoesPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="mt-auto pt-9">
-                    <Button asChild size="lg" variant={isAi ? 'primary' : 'secondary'} className="w-full sm:w-auto">
+                  {isAi ? (
+                    <div className="mt-7 grid gap-3">
+                      {Object.values(commercialPlans).map((plan) => (
+                        <div key={plan.code} className="rounded-2xl border border-white/[0.09] bg-black/20 p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="text-sm font-bold text-white">{plan.name}</div>
+                              <div className="mt-1 text-xs text-slate-400">
+                                {plan.installments}x de <strong className="text-emerald-300">{formatBrl(plan.installmentValue)}</strong>
+                              </div>
+                            </div>
+                            {plan.includesAgenda ? <CalendarDays className="h-4 w-4 flex-none text-sky-300" /> : <Bot className="h-4 w-4 flex-none text-emerald-300" />}
+                          </div>
+                          <div className="mt-3 inline-flex rounded-md border border-emerald-300/25 bg-emerald-300/[0.08] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.06em] text-emerald-200">
+                            Sem juros no cartão
+                          </div>
+                          <CardBrands compact className="mt-3" />
+                          <Button asChild size="sm" className="mt-4 w-full">
+                            <Link href={`/contratar-assistente-ia?plano=${plan.code}`}>
+                              Contratar {plan.name}
+                              <ArrowRight className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                  <div className="mt-auto pt-7">
+                    <Button asChild size="lg" variant={isAi ? 'secondary' : 'secondary'} className="w-full sm:w-auto">
                       <Link href={solution.href}>
                         {solution.cta}
                         <ArrowRight className="h-4 w-4" />
