@@ -7,54 +7,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/solucoes`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/solucoes/iot`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contato`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/planos`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/contratar-assistente-ia`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.95,
-    },
-    {
-      url: `${baseUrl}/termos-de-contratacao`,
-      lastModified: now,
-      changeFrequency: 'yearly',
-      priority: 0.45,
-    },
-    {
-      url: `${baseUrl}/politica-de-privacidade`,
-      lastModified: now,
-      changeFrequency: 'yearly',
-      priority: 0.45,
-    },
+    { url: `${baseUrl}/`, lastModified: now, changeFrequency: 'weekly', priority: 1 },
+    { url: `${baseUrl}/solucoes`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${baseUrl}/solucoes/iot`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/contato`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/planos`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${baseUrl}/contratar-assistente-ia`, lastModified: now, changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${baseUrl}/termos-de-contratacao`, lastModified: now, changeFrequency: 'yearly', priority: 0.45 },
+    { url: `${baseUrl}/politica-de-privacidade`, lastModified: now, changeFrequency: 'yearly', priority: 0.45 },
+    { url: `${baseUrl}/exclusao-de-dados`, lastModified: now, changeFrequency: 'yearly', priority: 0.4 },
   ];
 
   const productPages: MetadataRoute.Sitemap = products.map((product) => ({
