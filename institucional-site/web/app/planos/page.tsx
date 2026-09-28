@@ -19,14 +19,14 @@ const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
 
 export const metadata: Metadata = {
-  title: 'Planos do Assistente de IA | Plano 500 e 500 + Agenda',
+  title: 'Planos do Assistente de IA | Virtuagil',
   description:
-    'Compare os dois planos do Assistente de IA Virtuagil: Plano 500 por R$ 1.794/semestre e Plano 500 + Agenda por R$ 2.388/semestre. Até 500 contatos únicos por mês.',
+    'Compare os três planos do Assistente de IA Virtuagil: Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem. Até 500 contatos únicos por mês.',
   alternates: { canonical: '/planos' },
   openGraph: {
     title: 'Planos do Assistente de IA | Virtuagil',
     description:
-      'Plano 500 e Plano 500 + Agenda para atendimento inteligente no WhatsApp, com implantação assistida.',
+      'Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem para atendimento inteligente no WhatsApp, com implantação assistida.',
     url: 'https://www.virtuagil.com.br/planos',
   },
 };
@@ -39,7 +39,7 @@ export default function PlanosPage() {
     '@type': 'Product',
     name: 'Assistente de IA Virtuagil',
     description:
-      'Assistente de IA para atendimento no WhatsApp com follow-up, transferência humana e opção de Agenda integrada.',
+      'Assistente de IA para atendimento no WhatsApp com follow-up, transferência humana e módulos especializados de Agenda ou Hospedagem.',
     brand: {
       '@type': 'Brand',
       name: 'Virtuagil',
@@ -66,23 +66,22 @@ export default function PlanosPage() {
         <div className="section-shell">
           <div className="eyebrow">Planos e contratação</div>
           <h1 className="mt-5 max-w-[16ch] font-display text-5xl font-semibold leading-[0.96] tracking-[-0.04em] text-white md:text-6xl">
-            Escolha o Assistente de IA com ou sem Agenda integrada.
+            Escolha o Assistente de IA ideal para sua operação.
           </h1>
           <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
-            Os dois planos são semestrais, incluem até 500 contatos únicos por mês e
-            implantação assistida. A diferença é a operação de agendamentos pelo WhatsApp.
+            Os três planos são semestrais, incluem até 500 contatos únicos por mês e implantação assistida. Agenda e Hospedagem são módulos especializados independentes.
           </p>
         </div>
       </section>
 
       <section className="py-6 md:py-10">
         <div className="section-shell">
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid gap-5 lg:grid-cols-3">
             {planList.map((plan) => (
               <article
                 key={plan.code}
                 className={`relative overflow-hidden rounded-[32px] border p-6 shadow-[0_30px_90px_rgba(0,0,0,0.3)] md:p-8 ${
-                  plan.includesAgenda
+                  (plan.includesAgenda || plan.includesHospedagem)
                     ? 'border-sky-300/25 bg-[linear-gradient(135deg,rgba(7,38,52,.96),rgba(5,20,27,.98))]'
                     : 'border-emerald-300/25 bg-[linear-gradient(135deg,rgba(13,58,45,.96),rgba(7,19,28,.98))]'
                 }`}
@@ -90,7 +89,7 @@ export default function PlanosPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white">
-                      {plan.includesAgenda ? (
+                      {plan.includesAgenda || plan.includesHospedagem ? (
                         <CalendarDays className="h-4 w-4 text-sky-300" />
                       ) : (
                         <Bot className="h-4 w-4 text-emerald-300" />
@@ -104,9 +103,9 @@ export default function PlanosPage() {
                       {plan.description}
                     </p>
                   </div>
-                  {plan.includesAgenda ? (
+                  {plan.includesAgenda || plan.includesHospedagem ? (
                     <span className="rounded-full bg-sky-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.12em] text-sky-200">
-                      Com Agenda
+                      {plan.includesAgenda ? 'Com Agenda' : 'Com Hospedagem'}
                     </span>
                   ) : null}
                 </div>
@@ -137,7 +136,7 @@ export default function PlanosPage() {
                     <li key={item} className="flex items-start gap-3">
                       <CheckCircle2
                         className={`mt-1 h-4 w-4 flex-none ${
-                          plan.includesAgenda ? 'text-sky-300' : 'text-emerald-300'
+                          plan.includesAgenda || plan.includesHospedagem ? 'text-sky-300' : 'text-emerald-300'
                         }`}
                       />
                       <span>{item}</span>
@@ -195,8 +194,7 @@ export default function PlanosPage() {
                 conduz agendamentos, reagendamentos, cancelamentos e confirmações pelo WhatsApp.
               </p>
               <p className="mt-4 text-sm text-slate-400">
-                O adicional da Agenda é de <strong className="text-white">R$ 594 por semestre</strong>,
-                levando o plano completo a <strong className="text-white">R$ 2.388</strong>.
+                O módulo Agenda leva o plano completo a <strong className="text-white">R$ 2.394</strong>, em até 6x de R$ 399 sem juros.
               </p>
             </div>
 
