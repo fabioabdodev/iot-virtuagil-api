@@ -5,7 +5,8 @@
 | Plano | Código | Valor total | Parcelamento | Limite |
 | --- | --- | ---: | ---: | --- |
 | Plano 500 | `jade_500_semestral` | R$ 1.794 | até 6x de R$ 299 sem juros | 500 contatos únicos/mês |
-| Plano 500 + Agenda | `jade_500_agenda_semestral` | R$ 2.388 | até 6x de R$ 398 sem juros | 500 contatos únicos/mês |
+| Plano 500 + Agenda | `jade_500_agenda_semestral` | R$ 2.394 | até 6x de R$ 399 sem juros | 500 contatos únicos/mês |
+| Plano 500 + Hospedagem | `jade_500_hospedagem_semestral` | R$ 2.394 | até 6x de R$ 399 sem juros | 500 contatos únicos/mês |
 
 ## Compra pelo site
 
@@ -24,7 +25,7 @@ Antes de redirecionar ao Mercado Pago, o site exige que o n8n retorne:
 - `valor_total` exatamente igual ao valor definido no servidor;
 - `checkout_url` em domínio oficial do Mercado Pago.
 
-Isso impede que o Plano 500 + Agenda seja cobrado pelo preço do plano base caso o backend esteja desatualizado.
+Isso impede que qualquer módulo especializado seja cobrado pelo preço do plano base caso o backend esteja desatualizado.
 
 ## Pós-pagamento
 
