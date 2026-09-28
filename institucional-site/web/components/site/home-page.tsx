@@ -199,8 +199,8 @@ const benefits = [
   },
   {
     icon: CalendarDays,
-    title: 'Plano 500 + Agenda',
-    text: 'No plano com Agenda, o Assistente consulta disponibilidade, agenda, reagenda, cancela e confirma horários pelo WhatsApp.',
+    title: 'Módulos especializados',
+    text: 'Agenda atende negócios com hora marcada; Hospedagem atende pousadas e operações de estadia com disponibilidade por período.',
   },
   {
     icon: Headphones,
@@ -290,7 +290,7 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
               O Assistente de IA da Virtuagil atende seus contatos, responde dúvidas e identifica
-              oportunidades. No Plano 500 + Agenda, também conduz agendamentos pelo WhatsApp.
+              oportunidades. Com módulos especializados, também atende operações de Agenda e Hospedagem.
             </p>
 
             <div className="mt-8">
