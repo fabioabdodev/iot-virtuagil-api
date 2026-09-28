@@ -1,6 +1,6 @@
 export type CommercialPlanCode =
   | 'jade_500_semestral'
-  | 'jade_500_agenda_semestral';
+  | 'jade_500_agenda_semestral'\n  | 'jade_500_hospedagem_semestral';
 
 export type CommercialPlan = {
   code: CommercialPlanCode;
@@ -11,7 +11,7 @@ export type CommercialPlan = {
   installments: number;
   installmentValue: number;
   contactsPerMonth: number;
-  includesAgenda: boolean;
+  includesAgenda: boolean;\n  includesHospedagem: boolean;
   description: string;
   features: string[];
 };
@@ -26,7 +26,7 @@ export const commercialPlans: Record<CommercialPlanCode, CommercialPlan> = {
     installments: 6,
     installmentValue: 299,
     contactsPerMonth: 500,
-    includesAgenda: false,
+    includesAgenda: false,\n    includesHospedagem: false,
     description:
       'Atendimento inteligente no WhatsApp com follow-up, transferência humana e Painel Administrativo.',
     features: [
@@ -44,11 +44,11 @@ export const commercialPlans: Record<CommercialPlanCode, CommercialPlan> = {
     name: 'Plano 500 + Agenda',
     publicName: 'Assistente de IA Virtuagil — Plano 500 + Agenda',
     badge: 'Assistente de IA + Agenda',
-    total: 2388,
+    total: 2394,
     installments: 6,
-    installmentValue: 398,
+    installmentValue: 399,
     contactsPerMonth: 500,
-    includesAgenda: true,
+    includesAgenda: true,\n    includesHospedagem: false,
     description:
       'Tudo do Plano 500 com Agenda integrada para disponibilidade, agendamento, reagendamento, cancelamento e confirmação.',
     features: [
