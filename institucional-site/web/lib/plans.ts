@@ -1,6 +1,7 @@
 export type CommercialPlanCode =
   | 'jade_500_semestral'
-  | 'jade_500_agenda_semestral'\n  | 'jade_500_hospedagem_semestral';
+  | 'jade_500_agenda_semestral'
+  | 'jade_500_hospedagem_semestral';
 
 export type CommercialPlan = {
   code: CommercialPlanCode;
@@ -11,7 +12,8 @@ export type CommercialPlan = {
   installments: number;
   installmentValue: number;
   contactsPerMonth: number;
-  includesAgenda: boolean;\n  includesHospedagem: boolean;
+  includesAgenda: boolean;
+  includesHospedagem: boolean;
   description: string;
   features: string[];
 };
@@ -26,7 +28,8 @@ export const commercialPlans: Record<CommercialPlanCode, CommercialPlan> = {
     installments: 6,
     installmentValue: 299,
     contactsPerMonth: 500,
-    includesAgenda: false,\n    includesHospedagem: false,
+    includesAgenda: false,
+    includesHospedagem: false,
     description:
       'Atendimento inteligente no WhatsApp com follow-up, transferência humana e Painel Administrativo.',
     features: [
@@ -48,7 +51,8 @@ export const commercialPlans: Record<CommercialPlanCode, CommercialPlan> = {
     installments: 6,
     installmentValue: 399,
     contactsPerMonth: 500,
-    includesAgenda: true,\n    includesHospedagem: false,
+    includesAgenda: true,
+    includesHospedagem: false,
     description:
       'Tudo do Plano 500 com Agenda integrada para disponibilidade, agendamento, reagendamento, cancelamento e confirmação.',
     features: [
@@ -59,6 +63,29 @@ export const commercialPlans: Record<CommercialPlanCode, CommercialPlan> = {
       'Agendamento após confirmação do cliente',
       'Reagendamento, cancelamento e confirmação',
       'Gestão da Agenda no Painel Administrativo',
+    ],
+  },
+  jade_500_hospedagem_semestral: {
+    code: 'jade_500_hospedagem_semestral',
+    name: 'Plano 500 + Hospedagem',
+    publicName: 'Assistente de IA Virtuagil — Plano 500 + Hospedagem',
+    badge: 'Assistente de IA + Hospedagem',
+    total: 2394,
+    installments: 6,
+    installmentValue: 399,
+    contactsPerMonth: 500,
+    includesAgenda: false,
+    includesHospedagem: true,
+    description:
+      'Tudo do Plano 500 com módulo especializado para pousadas e hospedagens, com consulta de disponibilidade, acomodações, tarifas e apoio ao atendimento de reservas.',
+    features: [
+      'Tudo do Plano 500',
+      'Até 500 contatos únicos por mês',
+      'Módulo especializado em hospedagem',
+      'Consulta de disponibilidade por período',
+      'Acomodações e tarifas da operação',
+      'Apoio ao atendimento de reservas',
+      'Gestão da Hospedagem no Painel Administrativo',
     ],
   },
 };
