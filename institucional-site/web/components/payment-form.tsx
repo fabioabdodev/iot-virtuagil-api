@@ -122,7 +122,7 @@ export function PaymentForm({
         <div className="mb-3 text-sm font-semibold text-slate-200">
           Escolha seu plano
         </div>
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-3">
           {Object.values(commercialPlans).map((option) => {
             const selected = option.code === planCode;
             return (
@@ -143,7 +143,9 @@ export function PaymentForm({
                     <div className="mt-1 text-xs text-slate-400">
                       {option.includesAgenda
                         ? 'Assistente de IA + Agenda integrada'
-                        : 'Assistente de IA'}
+                        : option.includesHospedagem
+                          ? 'Assistente de IA + Hospedagem'
+                          : 'Assistente de IA'}
                     </div>
                   </div>
                   {selected ? (
@@ -170,7 +172,7 @@ export function PaymentForm({
         <div className="relative grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="flex flex-col rounded-[24px] border border-white/[0.06] bg-black/15 p-5">
             <div className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-300/25 bg-emerald-300/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200">
-              {plan.includesAgenda ? <CalendarDays className="h-3.5 w-3.5" /> : null}
+              {plan.includesAgenda || plan.includesHospedagem ? <CalendarDays className="h-3.5 w-3.5" /> : null}
               {plan.badge}
             </div>
             <div className="mt-5 font-display text-4xl font-semibold tracking-[-0.04em] text-white">
