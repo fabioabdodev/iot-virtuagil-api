@@ -15,14 +15,14 @@ import {
 } from '@/lib/plans';
 
 export const metadata: Metadata = {
-  title: 'Contratar Assistente de IA | Planos 500 e 500 + Agenda',
+  title: 'Contratar Assistente de IA | Planos Virtuagil',
   description:
-    'Contrate o Assistente de IA Virtuagil no Plano 500 ou Plano 500 + Agenda. Até 500 contatos únicos por mês, implantação assistida e pagamento seguro via Mercado Pago.',
+    'Contrate o Assistente de IA Virtuagil no Plano 500, Plano 500 + Agenda ou Plano 500 + Hospedagem. Até 500 contatos únicos por mês, implantação assistida e pagamento seguro via Mercado Pago.',
   alternates: { canonical: '/contratar-assistente-ia' },
   openGraph: {
     title: 'Contratar Assistente de IA | Virtuagil',
     description:
-      'Escolha entre o Plano 500 e o Plano 500 + Agenda para atendimento inteligente no WhatsApp.',
+      'Escolha entre Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem para atendimento inteligente no WhatsApp.',
     url: 'https://www.virtuagil.com.br/contratar-assistente-ia',
   },
 };
@@ -87,7 +87,7 @@ export default async function ContratarAssistenteIaPage({
                 Vamos preparar seu checkout.
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
-                Selecione o Plano 500 ou o Plano 500 + Agenda. O pagamento é
+                Selecione o Plano 500, o Plano 500 + Agenda ou o Plano 500 + Hospedagem. O pagamento é
                 processado com segurança pelo Mercado Pago.
               </p>
             </div>
