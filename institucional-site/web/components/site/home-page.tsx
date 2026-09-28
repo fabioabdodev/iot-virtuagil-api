@@ -254,7 +254,7 @@ const faqs = [
   },
   {
     q: 'Qual plano inclui a Agenda?',
-    a: 'A Virtuagil oferece dois planos: Plano 500 por R$ 1.794 no semestre e Plano 500 + Agenda por R$ 2.388 no semestre. O segundo inclui a operação de agendamentos pelo WhatsApp.',
+    a: 'A Virtuagil oferece o Plano 500 por R$ 1.794 no semestre e os planos com módulo especializado — Agenda ou Hospedagem — por R$ 2.394 no semestre.',
   },
   {
     q: 'O cliente pode falar com uma pessoa?',
@@ -363,10 +363,10 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
             <div className="text-center">
               <div className="text-[10px] font-black uppercase tracking-[.2em] text-emerald-300">Pronto para começar?</div>
               <h2 className="mt-1 font-display text-3xl font-semibold text-white md:text-4xl">Escolha seu plano de Assistente de IA</h2>
-              <p className="mt-2 text-xs leading-6 text-slate-400">Os dois planos são semestrais, incluem implantação assistida e até 500 contatos únicos por mês.</p>
+              <p className="mt-2 text-xs leading-6 text-slate-400">Os planos são semestrais, incluem implantação assistida e até 500 contatos únicos por mês.</p>
             </div>
 
-            <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            <div className="mt-6 grid gap-4 lg:grid-cols-3">
               {Object.values(commercialPlans).map((plan) => (
                 <article
                   key={plan.code}
