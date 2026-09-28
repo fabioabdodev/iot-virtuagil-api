@@ -29,7 +29,7 @@ const solutionLines = [
     icon: Bot,
     features: [
       { icon: MessageCircleMore, text: 'Atendimento e qualificação no WhatsApp' },
-      { icon: CalendarDays, text: 'Plano 500 + Agenda para negócios com hora marcada' },
+      { icon: CalendarDays, text: 'Módulos Agenda e Hospedagem para operações especializadas' },
       { icon: Bot, text: 'Follow-up, transferência humana e painel' },
     ],
     accent: 'emerald',
@@ -118,7 +118,7 @@ export default function SolucoesPage() {
                                 {plan.installments}x de <strong className="text-emerald-300">{formatBrl(plan.installmentValue)}</strong>
                               </div>
                             </div>
-                            {plan.includesAgenda ? <CalendarDays className="h-4 w-4 flex-none text-sky-300" /> : <Bot className="h-4 w-4 flex-none text-emerald-300" />}
+                            {plan.includesAgenda || plan.includesHospedagem ? <CalendarDays className="h-4 w-4 flex-none text-sky-300" /> : <Bot className="h-4 w-4 flex-none text-emerald-300" />}
                           </div>
                           <div className="mt-3 inline-flex rounded-md border border-emerald-300/25 bg-emerald-300/[0.08] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.06em] text-emerald-200">
                             Sem juros no cartão
