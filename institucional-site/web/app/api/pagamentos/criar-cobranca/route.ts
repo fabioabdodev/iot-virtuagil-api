@@ -20,6 +20,7 @@ type CheckoutRequest = {
   plano_codigo?: string;
   aceite_termos?: boolean;
   termos_versao?: string;
+  origem_compra?: 'whatsapp_jade' | 'site_virtuagil';
 };
 
 function isValidEmail(value: string) {
@@ -87,6 +88,9 @@ export async function POST(request: NextRequest) {
   }
 
   const requestedPlan = commercialPlans[requestedPlanCode];
+  const termosOrigem = payload.origem_compra === 'whatsapp_jade'
+    ? 'checkout_site_via_whatsapp_jade'
+    : 'checkout_site_virtuagil';
   const termsAccepted =
     payload.aceite_termos === true && payload.termos_versao === CONTRACT_VERSION;
 
@@ -148,8 +152,8 @@ export async function POST(request: NextRequest) {
         aceite_termos: true,
         termos_versao: CONTRACT_VERSION,
         termos_aceite_em: new Date().toISOString(),
-        termos_origem: 'checkout_site_virtuagil',
-        origem: 'site_virtuagil',
+        termos_origem: termosOrigem,
+        origem: payload.origem_compra === 'whatsapp_jade' ? 'whatsapp_jade' : 'site_virtuagil',
       }),
       cache: 'no-store',
       signal: controller.signal,

@@ -46,7 +46,7 @@ const afterPayment = [
 ];
 
 type ContratarPageProps = {
-  searchParams: Promise<{ plano?: string | string[] }>;
+  searchParams: Promise<{ plano?: string | string[]; origem?: string | string[] }>;
 };
 
 export default async function ContratarAssistenteIaPage({
@@ -54,6 +54,8 @@ export default async function ContratarAssistenteIaPage({
 }: ContratarPageProps) {
   const params = await searchParams;
   const rawPlan = Array.isArray(params.plano) ? params.plano[0] : params.plano;
+  const rawOrigin = Array.isArray(params.origem) ? params.origem[0] : params.origem;
+  const returnToWhatsapp = rawOrigin === 'jade';
   const initialPlan =
     rawPlan && isCommercialPlanCode(rawPlan)
       ? rawPlan
@@ -87,12 +89,11 @@ export default async function ContratarAssistenteIaPage({
                 Vamos preparar seu checkout.
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
-                Selecione o Plano 500, o Plano 500 + Agenda ou o Plano 500 + Hospedagem. O pagamento é
-                processado com segurança pelo Mercado Pago.
+                Selecione o Plano 500, o Plano 500 + Agenda ou o Plano 500 + Hospedagem. Se você veio da Jade, após confirmar o contrato poderá voltar ao WhatsApp com o link de pagamento preparado. O pagamento é processado pelo Mercado Pago.
               </p>
             </div>
 
-            <PaymentForm initialPlan={initialPlan} />
+            <PaymentForm initialPlan={initialPlan} returnToWhatsapp={returnToWhatsapp} />
           </div>
 
           <div className="mx-auto mt-6 grid max-w-4xl gap-3 text-sm text-slate-400 sm:grid-cols-3">
