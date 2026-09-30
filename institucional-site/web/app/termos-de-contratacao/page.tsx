@@ -142,6 +142,12 @@ export default function TermosDeContratacaoPage() {
               Ao marcar o aceite no checkout, o contratante declara que leu e concorda com estes Termos.
             </p>
 
+            <p className="mt-3 text-xs text-slate-500">
+              Contratações anteriores: <Link href="/termos-de-contratacao/v1" className="underline underline-offset-2 hover:text-slate-300">
+                consultar versão 2026-09-24-v1
+              </Link>.
+            </p>
+
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {Object.values(commercialPlans).map((plan) => (
                 <div key={plan.code} className="rounded-2xl border border-white/[0.08] bg-black/20 p-4">
