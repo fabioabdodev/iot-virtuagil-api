@@ -1,4 +1,4 @@
-export const CONTRACT_VERSION = '2026-09-24-v1';
+export const CONTRACT_VERSION = '2026-09-30-v2';
 export const CONTRACT_PATH = '/termos-de-contratacao';
 export const PRIVACY_PATH = '/politica-de-privacidade';
 
