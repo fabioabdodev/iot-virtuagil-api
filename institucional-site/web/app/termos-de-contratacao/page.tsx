@@ -7,7 +7,7 @@ import { CONTRACT_FORUM_CLAUSE, CONTRACT_VERSION } from '@/lib/legal';
 export const metadata: Metadata = {
   title: 'Termos de Contratação do Assistente de IA',
   description:
-    'Termos de contratação dos planos do Assistente de IA Virtuagil, incluindo Plano 500 e Plano 500 + Agenda.',
+    'Termos de contratação dos planos do Assistente de IA Virtuagil, incluindo Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem.',
   alternates: { canonical: '/termos-de-contratacao' },
 };
 
@@ -22,8 +22,8 @@ const sections = [
   {
     title: '2. Planos, prazo e limite de uso',
     paragraphs: [
-      'A contratação é semestral. O Plano 500 custa R$ 1.794,00 e pode ser apresentado comercialmente em até 6 parcelas de R$ 299,00 sem juros. O Plano 500 + Agenda custa R$ 2.388,00 e pode ser apresentado comercialmente em até 6 parcelas de R$ 398,00 sem juros.',
-      'Ambos incluem até 500 contatos únicos por mês. Cada número de telefone é contabilizado uma única vez no mês, independentemente da quantidade de mensagens ou conversas, e a contagem reinicia mensalmente.',
+      `A contratação é semestral. O Plano 500 custa ${formatBrl(commercialPlans.jade_500_semestral.total)}, em até 6 parcelas de ${formatBrl(commercialPlans.jade_500_semestral.installmentValue)} sem juros. O Plano 500 + Agenda custa ${formatBrl(commercialPlans.jade_500_agenda_semestral.total)}, em até 6 parcelas de ${formatBrl(commercialPlans.jade_500_agenda_semestral.installmentValue)} sem juros. O Plano 500 + Hospedagem custa ${formatBrl(commercialPlans.jade_500_hospedagem_semestral.total)}, em até 6 parcelas de ${formatBrl(commercialPlans.jade_500_hospedagem_semestral.installmentValue)} sem juros.`,
+      'Todos os planos incluem até 500 contatos únicos por mês. Cada número de telefone é contabilizado uma única vez no mês, independentemente da quantidade de mensagens ou conversas, e a contagem reinicia mensalmente.',
       'Condições de pagamento, parcelamento e meios disponíveis são confirmados no checkout do Mercado Pago.',
     ],
   },
@@ -41,7 +41,15 @@ const sections = [
     ],
   },
   {
-    title: '5. Implantação e obrigações do CONTRATANTE',
+    title: '5. Escopo do Plano 500 + Hospedagem',
+    paragraphs: [
+      'Inclui todos os recursos do Plano 500 e o módulo especializado em hospedagem, com apresentação de acomodações, tarifas cadastradas, consultas de disponibilidade por período, cotações e apoio ao processo de solicitação e confirmação de reservas.',
+      'A confirmação de disponibilidade, a aprovação das reservas e as condições de pagamento seguem o processo operacional configurado para cada estabelecimento. Uma mensagem do hóspede afirmando que pagou não comprova o recebimento pela pousada.',
+      'A integração automática com Booking.com, outros canais externos de venda, ERPs ou sistemas de reservas não integra automaticamente o plano padrão e depende de análise técnica e eventual contratação adicional.',
+    ],
+  },
+  {
+    title: '6. Implantação e obrigações do CONTRATANTE',
     paragraphs: [
       'O CONTRATANTE deverá fornecer informações corretas sobre sua empresa, produtos, serviços, preços, políticas, horários, profissionais, regras de atendimento e demais conteúdos necessários à configuração.',
       'Também deverá disponibilizar, quando aplicável, número de WhatsApp, acessos, credenciais, e-mails dos atendentes e autorizações necessárias para integrações. Atrasos ou impossibilidades decorrentes da ausência desses elementos não serão considerados falha da Virtuagil.',
@@ -49,7 +57,7 @@ const sections = [
     ],
   },
   {
-    title: '6. Inteligência artificial e atendimento humano',
+    title: '7. Inteligência artificial e atendimento humano',
     paragraphs: [
       'O Assistente utiliza inteligência artificial e automações. Embora configurado para seguir a base de conhecimento e as regras do CONTRATANTE, respostas automatizadas podem apresentar limitações inerentes à tecnologia.',
       'Situações que exijam decisão humana, exceção comercial, análise profissional ou atendimento sensível podem ser encaminhadas para atendimento humano conforme a configuração contratada.',
@@ -57,14 +65,14 @@ const sections = [
     ],
   },
   {
-    title: '7. Serviços e plataformas de terceiros',
+    title: '8. Serviços e plataformas de terceiros',
     paragraphs: [
       'A solução pode depender de serviços de terceiros, como WhatsApp, provedores de inteligência artificial, Mercado Pago, Chatwoot, hospedagem, bancos de dados e APIs. Indisponibilidades, bloqueios, alterações de política ou limitações originadas exclusivamente nesses terceiros podem afetar temporariamente funcionalidades.',
       'O CONTRATANTE deverá observar as políticas das plataformas que utilizar e manter seus próprios cadastros e contas em situação regular quando isso for necessário à operação.',
     ],
   },
   {
-    title: '8. Proteção de dados e confidencialidade',
+    title: '9. Proteção de dados e confidencialidade',
     paragraphs: [
       'As partes comprometem-se a observar a legislação aplicável à proteção de dados pessoais, inclusive a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018), de acordo com os papéis e responsabilidades efetivamente exercidos em cada operação de tratamento.',
       'Quando tratar dados pessoais em nome e segundo instruções do CONTRATANTE na prestação do serviço, a Virtuagil atuará nos limites necessários à execução contratual, adotando medidas técnicas e administrativas compatíveis com a natureza da operação.',
@@ -73,41 +81,41 @@ const sections = [
     ],
   },
   {
-    title: '9. Disponibilidade, suporte e segurança',
+    title: '10. Disponibilidade, suporte e segurança',
     paragraphs: [
       'A Virtuagil empregará esforços técnicos razoáveis para manter o serviço disponível e seguro, podendo ocorrer manutenções, atualizações, falhas de infraestrutura ou indisponibilidades de terceiros.',
       'O suporte cobre o funcionamento do serviço contratado. Novos fluxos, integrações, funcionalidades ou mudanças substanciais de escopo poderão ser objeto de avaliação e contratação adicional.',
     ],
   },
   {
-    title: '10. Propriedade intelectual',
+    title: '11. Propriedade intelectual',
     paragraphs: [
       'A plataforma, fluxos, software, componentes, modelos de automação, identidade técnica, documentação e demais ativos desenvolvidos ou licenciados pela Virtuagil permanecem de titularidade de seus respectivos proprietários.',
       'Os dados, marcas, documentos e conteúdos fornecidos pelo CONTRATANTE permanecem sob sua responsabilidade e titularidade, sem transferência de propriedade à Virtuagil.',
     ],
   },
   {
-    title: '11. Pagamento, vigência e suspensão',
+    title: '12. Pagamento, vigência e suspensão',
     paragraphs: [
       'O plano possui vigência de 6 meses conforme a contratação confirmada pelo pagamento. A ativação e o provisionamento ocorrem após a confirmação do pagamento e a conclusão das etapas técnicas necessárias.',
       'Fraude, uso ilícito, violação de segurança, descumprimento material destes Termos ou situação que coloque a infraestrutura ou terceiros em risco poderá justificar suspensão preventiva, sem prejuízo da análise do caso e das medidas cabíveis.',
     ],
   },
   {
-    title: '12. Cancelamento e encerramento',
+    title: '13. Cancelamento e encerramento',
     paragraphs: [
       'Solicitações de cancelamento ou não continuidade deverão ser encaminhadas pelos canais oficiais da Virtuagil. Valores, estornos e obrigações eventualmente aplicáveis observarão a modalidade de pagamento, o estágio de execução do serviço e a legislação aplicável.',
       'No encerramento, acessos poderão ser desativados e dados poderão ser mantidos pelo período necessário ao cumprimento de obrigações legais, regulatórias, segurança, prevenção a fraudes e exercício regular de direitos, sendo posteriormente eliminados ou anonimizados quando aplicável.',
     ],
   },
   {
-    title: '13. Alterações e versão contratual',
+    title: '14. Alterações e versão contratual',
     paragraphs: [
       'A versão aceita no momento da contratação permanece registrada como referência daquela contratação. Alterações materiais aplicáveis a nova contratação serão publicadas em nova versão dos Termos.',
     ],
   },
   {
-    title: '14. Foro e legislação aplicável',
+    title: '15. Foro e legislação aplicável',
     paragraphs: [CONTRACT_FORUM_CLAUSE],
   },
 ];
@@ -130,7 +138,7 @@ export default function TermosDeContratacaoPage() {
               Termos de Contratação do Assistente de IA Virtuagil
             </h1>
             <p className="mt-5 text-sm leading-7 text-slate-400">
-              Instrumento eletrônico aplicável à contratação do Plano 500 e do Plano 500 + Agenda.
+              Instrumento eletrônico aplicável ao Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem.
               Ao marcar o aceite no checkout, o contratante declara que leu e concorda com estes Termos.
             </p>
 
@@ -162,7 +170,7 @@ export default function TermosDeContratacaoPage() {
             <div className="mt-10 flex items-start gap-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.05] p-5 text-sm leading-7 text-slate-300">
               <ShieldCheck className="mt-1 h-5 w-5 flex-none text-emerald-300" />
               <span>
-                Estes Termos integram a contratação eletrônica realizada no site da Virtuagil. A versão, o plano e a data/hora do aceite são enviados com a solicitação de checkout para registro da contratação.
+                Estes Termos integram a contratação eletrônica realizada pelo site da Virtuagil, inclusive quando iniciada pela assistente Jade no WhatsApp. O aceite é feito nesta página e sua versão, plano e data/hora são encaminhados com a solicitação de checkout.
               </span>
             </div>
           </div>
