@@ -41,16 +41,19 @@ const initialForm: FormState = {
 
 type PaymentFormProps = {
   initialPlan?: CommercialPlanCode;
+  returnToWhatsapp?: boolean;
 };
 
 export function PaymentForm({
   initialPlan = defaultCommercialPlanCode,
+  returnToWhatsapp = false,
 }: PaymentFormProps) {
   const [form, setForm] = useState<FormState>(initialForm);
   const [planCode, setPlanCode] = useState<CommercialPlanCode>(initialPlan);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [checkoutReturn, setCheckoutReturn] = useState<{ checkoutUrl: string; whatsappUrl: string } | null>(null);
   const plan = commercialPlans[planCode];
 
   function updateField(field: keyof FormState, value: string) {
@@ -91,6 +94,7 @@ export function PaymentForm({
           plano_codigo: plan.code,
           aceite_termos: true,
           termos_versao: CONTRACT_VERSION,
+          origem_compra: returnToWhatsapp ? 'whatsapp_jade' : 'site_virtuagil',
         }),
       });
 
@@ -106,6 +110,22 @@ export function PaymentForm({
         return;
       }
 
+      if (returnToWhatsapp) {
+        // O aceite foi verificado pelo site e a preferência foi criada pelo backend.
+        // O cliente volta ao WhatsApp com o próprio link de pagamento pronto.
+        // Uma opção de pagamento direto permanece disponível como alternativa.
+        const whatsappBase =
+          process.env.NEXT_PUBLIC_WHATSAPP_URL || 'https://wa.me/553171029727';
+        const whatsapp = new URL(whatsappBase);
+        whatsapp.searchParams.set(
+          'text',
+          `Jade, aceitei os Termos de Contratação (versão ${CONTRACT_VERSION}) para o ${plan.name}. Meu link de pagamento seguro é: ${data.checkout_url}`,
+        );
+        const whatsappUrl = whatsapp.toString();
+        setCheckoutReturn({ checkoutUrl: data.checkout_url, whatsappUrl });
+        window.location.assign(whatsappUrl);
+        return;
+      }
       window.location.assign(data.checkout_url);
     } catch {
       setError(
@@ -114,6 +134,28 @@ export function PaymentForm({
     } finally {
       setLoading(false);
     }
+  }
+
+  if (checkoutReturn) {
+    return (
+      <section role="status" className="grid gap-4 rounded-[28px] border border-emerald-300/35 bg-emerald-300/[0.05] p-6">
+        <div className="flex items-center gap-2 text-emerald-200">
+          <CheckCircle2 className="h-6 w-6" />
+          <h2 className="text-xl font-bold">Contrato aceito e pagamento preparado</h2>
+        </div>
+        <p className="text-sm leading-7 text-slate-200">
+          Seu aceite foi registrado na solicitação de checkout. Volte para a mesma conversa
+          com a Jade e envie a mensagem já preenchida para continuar.
+        </p>
+        <a className="rounded-xl bg-emerald-400 px-4 py-3 text-center font-bold text-slate-950" href={checkoutReturn.whatsappUrl}>
+          Voltar à conversa com a Jade
+        </a>
+        <a className="rounded-xl border border-emerald-300/40 px-4 py-3 text-center text-sm font-semibold text-emerald-200"
+           href={checkoutReturn.checkoutUrl} rel="noopener noreferrer">
+          Ou concluir o pagamento agora pelo Mercado Pago
+        </a>
+      </section>
+    );
   }
 
   return (
@@ -224,7 +266,7 @@ export function PaymentForm({
               ) : (
                 <>
                   <LockKeyhole className="h-4 w-4" />
-                  Contratar {plan.name}
+                  {returnToWhatsapp ? 'Aceitar contrato e voltar à Jade' : `Contratar ${plan.name}`}
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
@@ -352,28 +394,47 @@ export function PaymentForm({
           </span>
         </label>
 
-        <div className="ml-7 mt-3 flex flex-wrap gap-2">
-          <Link
-            href={CONTRACT_PATH}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center rounded-lg border border-emerald-300/35 bg-emerald-300/[0.10] px-3 py-2 text-xs font-bold text-emerald-200 underline decoration-emerald-300/70 underline-offset-2 transition hover:bg-emerald-300/[0.16]"
-          >
-            Ler Termos de Contratação
-          </Link>
-          <Link
-            href={PRIVACY_PATH}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center rounded-lg border border-emerald-300/35 bg-emerald-300/[0.10] px-3 py-2 text-xs font-bold text-emerald-200 underline decoration-emerald-300/70 underline-offset-2 transition hover:bg-emerald-300/[0.16]"
-          >
-            Ler Política de Privacidade
-          </Link>
-        </div>
-
-        <div className="ml-7 mt-2 text-[11px] text-slate-500">
-          Os documentos abrem em uma nova aba • Versão dos Termos: {CONTRACT_VERSION}
-        </div>
+        {returnToWhatsapp ? (
+          <div className="mt-4 grid gap-3">
+            <p className="text-xs text-slate-300">
+              Leia os documentos aqui mesmo, sem abrir outra aba ou sair da conversa.
+            </p>
+            <details className="rounded-xl border border-emerald-300/25 bg-black/20 p-3">
+              <summary className="cursor-pointer text-sm font-bold text-emerald-200">
+                Ler Termos de Contratação (versão {CONTRACT_VERSION})
+              </summary>
+              <iframe title="Termos de Contratação" src={CONTRACT_PATH} loading="lazy"
+                className="mt-3 h-80 w-full rounded-lg bg-slate-950" />
+            </details>
+            <details className="rounded-xl border border-emerald-300/25 bg-black/20 p-3">
+              <summary className="cursor-pointer text-sm font-bold text-emerald-200">
+                Ler Política de Privacidade
+              </summary>
+              <iframe title="Política de Privacidade" src={PRIVACY_PATH} loading="lazy"
+                className="mt-3 h-80 w-full rounded-lg bg-slate-950" />
+            </details>
+            <p className="text-[11px] text-slate-400">
+              Após o aceite, retornaremos ao WhatsApp com o link do Mercado Pago preparado.
+              Caso seu celular não abra o WhatsApp, haverá um botão de retorno.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="ml-7 mt-3 flex flex-wrap gap-2">
+              <Link href={CONTRACT_PATH} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center rounded-lg border border-emerald-300/35 bg-emerald-300/[0.10] px-3 py-2 text-xs font-bold text-emerald-200 underline decoration-emerald-300/70 underline-offset-2 transition hover:bg-emerald-300/[0.16]">
+                Ler Termos de Contratação
+              </Link>
+              <Link href={PRIVACY_PATH} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center rounded-lg border border-emerald-300/35 bg-emerald-300/[0.10] px-3 py-2 text-xs font-bold text-emerald-200 underline decoration-emerald-300/70 underline-offset-2 transition hover:bg-emerald-300/[0.16]">
+                Ler Política de Privacidade
+              </Link>
+            </div>
+            <div className="ml-7 mt-2 text-[11px] text-slate-500">
+              Os documentos abrem em uma nova aba • Versão dos Termos: {CONTRACT_VERSION}
+            </div>
+          </>
+        )}
       </div>
 
       {error ? (
