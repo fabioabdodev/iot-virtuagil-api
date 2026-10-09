@@ -7,9 +7,9 @@ import { formatBrl } from '@/lib/plans';
 import { loadCommercialPlans } from '@/lib/live-plans';
 
 export const metadata: Metadata = {
-  title: 'Soluções | Virtuagil',
+  title: 'Soluções de IA e IoT',
   description:
-    'Conheça as duas linhas de soluções da Virtuagil: Assistente de IA para atendimento e Automação IoT para monitoramento e controle.',
+    'Conheça a Jade, nossa assistente de IA para WhatsApp com Agenda e Hospedagem, e soluções Virtuagil de automação IoT para monitoramento e controle.',
   alternates: { canonical: '/solucoes' },
   openGraph: {
     title: 'Soluções | Virtuagil',
