@@ -109,8 +109,10 @@ export default async function SolucoesPage() {
                       </div>
                     ))}
                   </div>
+                  {isAi && !livePlans && (
+                    <p className="mt-5 text-xs text-amber-200">Preços temporariamente indisponíveis. Consulte a Virtuagil.</p>
+                  )}
                   {isAi ? (
-                    {!livePlans && <p className="mt-5 text-xs text-amber-200">Preços temporariamente indisponíveis. Consulte a Virtuagil.</p>}
                     <div className="mt-7 grid gap-3">
                       {Object.values(livePlans || {}).map((plan) => (
                         <div key={plan.code} className="rounded-2xl border border-white/[0.09] bg-black/20 p-4">
