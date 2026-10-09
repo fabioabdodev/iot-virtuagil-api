@@ -368,6 +368,11 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans }
               <p className="mt-2 text-xs leading-6 text-slate-400">Os planos são semestrais, incluem implantação assistida e até 500 contatos únicos por mês.</p>
             </div>
 
+            {!livePlans && (
+              <p role="status" className="mt-5 rounded-xl border border-amber-300/25 bg-amber-300/10 p-4 text-center text-sm text-amber-100">
+                Planos temporariamente indisponíveis. Fale com a Virtuagil para receber uma proposta atualizada.
+              </p>
+            )}
             <div className="mt-6 grid gap-4 lg:grid-cols-3">
               {Object.values(livePlans || {}).map((plan) => (
                 <article
