@@ -20,31 +20,33 @@ async function main() {
   }
   const sUrls=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1])
   if(sUrls.length!==new Set(sUrls).size)throw Error("URLs duplicadas no sitemap")
+  const issues=[]
   let checked=0
   for(const path of pages){
     const html=await read(path)
     const title=html.match(/<title>([^<]+)<\/title>/i)?.[1]||""
-    if(!title.includes("Virtuagil"))throw Error("Title sem marca: "+path+" => "+JSON.stringify(title.slice(0,180)))
-    if(!/<meta[^>]+name="description"/i.test(html))throw Error("Description ausente: "+path)
+    if(!title.includes("Virtuagil"))issues.push("Title sem marca: "+path+" => "+JSON.stringify(title.slice(0,120)))
+    if(!/<meta[^>]+name="description"/i.test(html))issues.push("Description ausente: "+path)
     if(!/<h1[\s>]/i.test(html))throw Error("H1 ausente: "+path)
     const canonical=html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i)?.[1]||
       html.match(/<link[^>]+href="([^"]+)"[^>]+rel="canonical"/i)?.[1]||""
-    if(canonical!==origin+path)throw Error("Canonical diferente: "+path)
+    if(canonical!==origin+path)issues.push("Canonical diferente: "+path+" => "+canonical)
     checked++
     console.log("SEO_OK "+path+" — title/canonical/description/H1")
   }
   const home=await read("/")
   if(!home.includes("Falar com a Jade") || !home.includes("wa.me/")) {
-    throw Error("CTA da Jade não encontrado na Home")
+    issues.push("CTA da Jade não encontrado na Home")
   }
-  if(!home.includes("Agenda") || !home.includes("Hospedagem"))throw Error("Módulos faltando na Home")
+  if(!home.includes("Agenda") || !home.includes("Hospedagem"))issues.push("Módulos faltando na Home")
   for(const path of ["/pagamento/sucesso","/pagamento/pendente","/pagamento/erro"]){
     const html=await read(path)
     if(!/<meta[^>]+name="robots"[^>]+content="[^"]*noindex/i.test(html) &&
        !/<meta[^>]+content="[^"]*noindex[^"]*"[^>]+name="robots"/i.test(html)) {
-      throw Error("Página de pagamento indexável: "+path)
+      issues.push("Página de pagamento indexável: "+path)
     }
   }
+  if(issues.length)throw Error(issues.join(" | "))
   console.log("SEO_AUDIT_OK: "+checked+" páginas, 3 retornos não indexáveis, sitemap único, Jade visível. Sem pagamento/contato enviado.")
 }
 main().catch(err=>{console.error("SEO_AUDIT_FAILED: "+String(err.message));process.exitCode=1})
