@@ -112,3 +112,11 @@ test("segmentos têm páginas únicas, úteis e estrutura reutilizável", () => 
     assert.ok(home.includes("'/segmentos/"+slug+"'"), slug)
   }
 })
+
+test("Schema Product e Service têm imagens, provedor e metadados úteis", () => {
+  const planos = read("app/planos/page.tsx")
+  const product = read("app/solucoes/[slug]/page.tsx")
+  assert.ok(planos.includes("image: ['https://www.virtuagil.com.br/solucoes/atendente-ia.svg']"))
+  assert.ok(product.includes("logo: 'https://www.virtuagil.com.br/brand/logomarca.png'"))
+  assert.ok(product.includes("product.slug === 'atendente-ia'"))
+})
