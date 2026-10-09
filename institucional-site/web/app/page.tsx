@@ -8,7 +8,7 @@ const contactEmail =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'contato@virtuagil.com.br';
 
 export const metadata: Metadata = {
-  title: 'Jade: Assistente de IA para WhatsApp, Agenda e Hospedagem',
+  title: 'Jade: Assistente de IA para WhatsApp, Agenda e Hospedagem | Virtuagil',
   description:
     'Conheça a Jade, assistente de IA da Virtuagil para WhatsApp. Atendimento, follow-up, suporte humano, Agenda e Hospedagem. Converse com a Jade e veja os planos.',
   alternates: { canonical: '/' },
