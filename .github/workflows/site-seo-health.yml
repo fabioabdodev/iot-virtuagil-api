@@ -16,7 +16,14 @@ jobs:
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - name: Verificar script SEO
         run: node --check institucional-site/web/scripts/seo-health.mjs
       - name: Auditar site publicado, indexacao e Jade
         run: node institucional-site/web/scripts/seo-health.mjs
+      - name: Notificar URLs atualizadas ao Bing e buscadores IndexNow (gratuito)
+        continue-on-error: true
+        run: |
+          node --check institucional-site/web/scripts/indexnow.mjs
+          node institucional-site/web/scripts/indexnow.mjs
