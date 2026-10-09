@@ -8,9 +8,29 @@ const pages = [
 ]
 const abort = () => AbortSignal.timeout(18000)
 async function read(path) {
-  const res=await fetch(origin+path,{redirect:"follow",signal:abort(),cache:"no-store"})
-  if(!res.ok)throw Error("HTTP "+res.status+" "+path)
-  return res.text()
+  // Durante rollout do Swarm/Traefik pode haver 404/502 transitórios.
+  // Repetir apenas falhas temporárias; erro persistente continua falhando o CI.
+  let lastError
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const res = await fetch(origin + path, {
+        redirect: "follow", signal: abort(), cache: "no-store",
+        headers: { "Cache-Control": "no-cache", "Pragma": "no-cache" },
+      })
+      if (res.ok) return res.text()
+      const error = Error("HTTP " + res.status + " " + path)
+      if (![404, 429, 502, 503, 504].includes(res.status)) throw error
+      lastError = error
+    } catch (error) {
+      if (error.message && /^HTTP (?!404|429|502|503|504)/.test(error.message)) throw error
+      lastError = error
+    }
+    if (attempt < 4) {
+      console.log("SEO_RETRY " + path + " tentativa " + (attempt + 2))
+      await new Promise(resolve => setTimeout(resolve, 2500 * (attempt + 1)))
+    }
+  }
+  throw lastError || Error("Erro de rede " + path)
 }
 async function main() {
   const sitemap=await read("/sitemap.xml")
