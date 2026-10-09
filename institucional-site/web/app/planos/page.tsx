@@ -35,7 +35,9 @@ export const metadata: Metadata = {
 };
 
 export default async function PlanosPage() {
-  const planList = Object.values(await loadCommercialPlans() || {});
+  const livePlans = await loadCommercialPlans();
+  const planList = Object.values(livePlans || {});
+  const agendaPlan = livePlans?.jade_500_agenda_semestral;
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -201,9 +203,11 @@ export default async function PlanosPage() {
                 No Plano 500 + Agenda, o Assistente consulta disponibilidade real e
                 conduz agendamentos, reagendamentos, cancelamentos e confirmações pelo WhatsApp.
               </p>
-              <p className="mt-4 text-sm text-slate-400">
-                O módulo Agenda leva o plano completo a <strong className="text-white">R$ 2.394</strong>, em até 6x de R$ 399 sem juros.
-              </p>
+              {agendaPlan && (
+                <p className="mt-4 text-sm text-slate-400">
+                  O módulo Agenda leva o plano completo a <strong className="text-white">{formatBrl(agendaPlan.total)}</strong>, em até {agendaPlan.installments}x de {formatBrl(agendaPlan.installmentValue)} sem juros.
+                </p>
+              )}
             </div>
 
             <Card>
