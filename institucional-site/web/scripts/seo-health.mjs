@@ -24,7 +24,7 @@ async function main() {
   for(const path of pages){
     const html=await read(path)
     const title=html.match(/<title>([^<]+)<\/title>/i)?.[1]||""
-    if(!title.includes("Virtuagil"))throw Error("Title sem marca: "+path)
+    if(!title.includes("Virtuagil"))throw Error("Title sem marca: "+path+" => "+JSON.stringify(title.slice(0,180)))
     if(!/<meta[^>]+name="description"/i.test(html))throw Error("Description ausente: "+path)
     if(!/<h1[\s>]/i.test(html))throw Error("H1 ausente: "+path)
     const canonical=html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i)?.[1]||
