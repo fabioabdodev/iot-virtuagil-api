@@ -9,6 +9,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { PaymentForm } from '@/components/payment-form';
+import { loadCommercialPlans } from '@/lib/live-plans';
 import {
   defaultCommercialPlanCode,
   isCommercialPlanCode,
@@ -56,6 +57,7 @@ export default async function ContratarAssistenteIaPage({
   const rawPlan = Array.isArray(params.plano) ? params.plano[0] : params.plano;
   const rawOrigin = Array.isArray(params.origem) ? params.origem[0] : params.origem;
   const returnToWhatsapp = rawOrigin === 'jade';
+  const livePlans = await loadCommercialPlans();
   const initialPlan =
     rawPlan && isCommercialPlanCode(rawPlan)
       ? rawPlan
@@ -93,7 +95,7 @@ export default async function ContratarAssistenteIaPage({
               </p>
             </div>
 
-            <PaymentForm initialPlan={initialPlan} returnToWhatsapp={returnToWhatsapp} />
+            <PaymentForm initialPlan={initialPlan} returnToWhatsapp={returnToWhatsapp} plans={livePlans || {}} />
           </div>
 
           <div className="mx-auto mt-6 grid max-w-4xl gap-3 text-sm text-slate-400 sm:grid-cols-3">
