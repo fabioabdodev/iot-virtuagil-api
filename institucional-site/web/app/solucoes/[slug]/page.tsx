@@ -14,7 +14,8 @@ import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getProductBySlug, products } from '@/lib/products';
-import { commercialPlans, formatBrl } from '@/lib/plans';
+import { formatBrl } from '@/lib/plans';
+import { loadCommercialPlans } from '@/lib/live-plans';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
@@ -57,6 +58,7 @@ export default async function ProductDetailPage({
   if (!product) notFound();
 
   const isAssistenteIa = product.slug === 'atendente-ia';
+  const livePlans = isAssistenteIa ? await loadCommercialPlans() : null;
   const serviceJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -70,7 +72,7 @@ export default async function ProductDetailPage({
     url: `https://www.virtuagil.com.br/solucoes/${product.slug}`,
     ...(isAssistenteIa
       ? {
-          offers: Object.values(commercialPlans).map((plan) => ({
+          offers: Object.values(livePlans || {}).map((plan) => ({
             '@type': 'Offer',
             name: plan.publicName,
             priceCurrency: 'BRL',
@@ -327,7 +329,7 @@ export default async function ProductDetailPage({
 
               {isAssistenteIa && (
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {Object.values(commercialPlans).map((plan) => (
+                  {Object.values(livePlans || {}).map((plan) => (
                     <div key={plan.code} className="rounded-2xl border border-white/10 bg-black/20 p-5">
                       <div className="flex items-center gap-3">
                         {plan.includesAgenda ? (
