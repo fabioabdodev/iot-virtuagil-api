@@ -21,7 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const productPages: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${baseUrl}/solucoes/${product.slug}`,
-    lastModified: now,
+
     changeFrequency: 'monthly',
     priority: product.slug === 'atendente-ia' ? 0.95 : 0.75,
   }));
