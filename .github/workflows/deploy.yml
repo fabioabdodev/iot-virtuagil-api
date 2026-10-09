@@ -5,6 +5,12 @@ on:
   push:
     branches: ['main']
 
+# Evita corrida entre publicações: uma revisão mais antiga não deve
+# substituir outra mais nova depois do fim do build.
+concurrency:
+  group: virtuagil-site-deploy-main
+  cancel-in-progress: false
+
 permissions:
   contents: read
   packages: write
