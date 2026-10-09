@@ -66,7 +66,7 @@ test("guias práticos têm sitemap, entrada navegável e metadados próprios", (
   assert.match(index, /<h1/)
   assert.match(detail, /Article/)
   assert.match(detail, /BreadcrumbList/)
-  assert.match(nav, /href="\\/guias"/)
+  assert.ok(nav.includes('href="/guias"'))
   for (const slug of [
     "assistente-ia-whatsapp-pequenas-empresas",
     "agendamento-automatico-whatsapp",
@@ -77,9 +77,9 @@ test("guias práticos têm sitemap, entrada navegável e metadados próprios", (
 test("IndexNow envia só URLs de conteúdo alterado após SEO em produção", () => {
   const script = read("scripts/indexnow.mjs")
   const workflow = read("../../.github/workflows/site-seo-health.yml")
-  assert.match(script, /indexnow\\.org\\/indexnow/)
+  assert.ok(script.includes('api.indexnow.org/indexnow'))
   assert.match(script, /INDEXNOW_IGNORADO/)
   assert.match(script, /keyLocation/)
-  assert.match(workflow, /indexnow\\.mjs/)
+  assert.ok(workflow.includes('indexnow.mjs'))
   assert.match(workflow, /continue-on-error: true/)
 })
