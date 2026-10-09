@@ -43,6 +43,7 @@ export default async function PlanosPage() {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: 'Assistente de IA Virtuagil',
+    image: ['https://www.virtuagil.com.br/solucoes/atendente-ia.svg'],
     description:
       'Assistente de IA para atendimento no WhatsApp com follow-up, transferência humana e módulos especializados de Agenda ou Hospedagem.',
     brand: {
