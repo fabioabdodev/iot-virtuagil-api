@@ -21,18 +21,32 @@ async function main() {
   const sUrls=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1])
   if(sUrls.length!==new Set(sUrls).size)throw Error("URLs duplicadas no sitemap")
   const issues=[]
+  const warnings=[]
+  const sitemapPaths=sUrls.filter(url=>url.startsWith(origin+"/"))
+    .map(url=>new URL(url).pathname)
+  // Inclui TODAS as páginas indexáveis (inclusive detalhes de produtos).
+  const allPages=[...new Set([...pages,...sitemapPaths])]
+  const titles=new Map()
   let checked=0
-  for(const path of pages){
+  for(const path of allPages){
     const html=await read(path)
     const title=html.match(/<title>([^<]+)<\/title>/i)?.[1]||""
     if(!title.includes("Virtuagil"))issues.push("Title sem marca: "+path+" => "+JSON.stringify(title.slice(0,120)))
+    if(titles.has(title))warnings.push("Title repetido: "+path+" / "+titles.get(title))
+    else titles.set(title,path)
+    if(title.length>70)warnings.push("Title muito longo ("+title.length+"): "+path)
     if(!/<meta[^>]+name="description"/i.test(html))issues.push("Description ausente: "+path)
+    if(!/<meta[^>]+property="og:title"/i.test(html))warnings.push("OpenGraph título ausente: "+path)
+    if(!/<meta[^>]+property="og:image"/i.test(html))warnings.push("OpenGraph imagem ausente: "+path)
+    if(!/<html[^>]+lang="pt-BR"/i.test(html))issues.push("Idioma pt-BR ausente: "+path)
+    const h1s=(html.match(/<h1(?:\s|>)/gi)||[]).length
+    if(h1s!==1)issues.push("H1 deve ser único, encontrados "+h1s+": "+path)
     if(!/<h1[\s>]/i.test(html))throw Error("H1 ausente: "+path)
     const canonical=html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i)?.[1]||
       html.match(/<link[^>]+href="([^"]+)"[^>]+rel="canonical"/i)?.[1]||""
     if(canonical!==origin+path)issues.push("Canonical diferente: "+path+" => "+canonical)
     checked++
-    console.log("SEO_OK "+path+" — title/canonical/description/H1")
+    console.log("SEO_OK "+path+" — title/canonical/description/H1/idioma")
   }
   const home=await read("/")
   if(!home.includes("Falar com a Jade") || !home.includes("wa.me/")) {
@@ -46,7 +60,14 @@ async function main() {
       issues.push("Página de pagamento indexável: "+path)
     }
   }
+  // Captura oportunidade comercial nas três entradas de maior intenção.
+  for(const path of ["/","/planos","/contato"]) {
+    const html=await read(path)
+    if(!html.includes("Falar com a Jade") || !/wa\.me\//.test(html))
+      issues.push("CTA Jade ausente em "+path)
+  }
+  for(const warning of warnings)console.log("SEO_AVISO "+warning)
   if(issues.length)throw Error(issues.join(" | "))
-  console.log("SEO_AUDIT_OK: "+checked+" páginas, 3 retornos não indexáveis, sitemap único, Jade visível. Sem pagamento/contato enviado.")
+  console.log("SEO_AUDIT_OK: "+checked+" páginas (todas do sitemap), 3 retornos não indexáveis, CTA Jade, "+warnings.length+" avisos. Sem operações reais.")
 }
 main().catch(err=>{console.error("SEO_AUDIT_FAILED: "+String(err.message));process.exitCode=1})
