@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     'Fale com a Virtuagil sobre Assistente de IA, Agenda integrada, automação de processos e projetos IoT para sua empresa.',
   alternates: { canonical: '/contato' },
   openGraph: {
+    images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
     title: 'Contato | Virtuagil',
     description:
       'Converse com a Virtuagil sobre Assistente de IA, Agenda, automação de processos e projetos IoT.',
