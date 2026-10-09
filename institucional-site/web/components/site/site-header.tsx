@@ -76,6 +76,12 @@ export function SiteHeader({
             Planos
           </Link>
           <Link
+            href="/guias"
+            className={navLinkClass(matches(pathname, '/guias'))}
+          >
+            Guias
+          </Link>
+          <Link
             href="/contato"
             className={navLinkClass(matches(pathname, '/contato'))}
           >
@@ -121,6 +127,10 @@ export function SiteHeader({
               >
                 <CreditCard className="h-4 w-4 text-emerald-300" />
                 Planos
+              </Link>
+              <Link href="/guias" onClick={closeMobileMenu} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/[0.05] hover:text-white">
+                <Boxes className="h-4 w-4 text-emerald-300" />
+                Guias gratuitos
               </Link>
               <Link
                 href="/contato"

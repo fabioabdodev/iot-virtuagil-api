@@ -39,6 +39,12 @@ async function main() {
     if(!/<meta[^>]+property="og:title"/i.test(html))warnings.push("OpenGraph título ausente: "+path)
     if(!/<meta[^>]+property="og:image"/i.test(html))warnings.push("OpenGraph imagem ausente: "+path)
     if(!/<html[^>]+lang="pt-BR"/i.test(html))issues.push("Idioma pt-BR ausente: "+path)
+    if(path.startsWith("/guias/") && !html.includes('"@type":"Article"'))
+      issues.push("Article JSON-LD ausente: "+path)
+    if(path.startsWith("/guias/") && !html.includes('"@type":"BreadcrumbList"'))
+      issues.push("BreadcrumbList JSON-LD ausente: "+path)
+    if(path==="/solucoes/atendente-ia" && !html.includes('"@type":"SoftwareApplication"'))
+      warnings.push("SoftwareApplication não encontrado (checar se catálogo de preços está disponível).")
     const h1s=(html.match(/<h1(?:\s|>)/gi)||[]).length
     if(h1s!==1)issues.push("H1 deve ser único, encontrados "+h1s+": "+path)
     if(!/<h1[\s>]/i.test(html))throw Error("H1 ausente: "+path)

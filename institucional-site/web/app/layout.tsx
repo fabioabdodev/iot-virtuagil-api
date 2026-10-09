@@ -104,6 +104,16 @@ export default function RootLayout({
   const assistantUrl =
     process.env.NEXT_PUBLIC_ASSISTENTE_URL ?? 'https://atendente.virtuagil.com.br';
 
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://www.virtuagil.com.br/#website',
+    name: 'Virtuagil',
+    url: 'https://www.virtuagil.com.br/',
+    inLanguage: 'pt-BR',
+    publisher: { '@id': 'https://www.virtuagil.com.br/#organization' },
+  };
+
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -133,6 +143,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         <a
           href="#conteudo"

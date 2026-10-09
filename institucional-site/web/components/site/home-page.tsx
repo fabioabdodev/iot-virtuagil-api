@@ -667,6 +667,23 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans }
         </div>
       </section>
 
+      <section className="py-10 md:py-14">
+        <div className="section-shell">
+          <div className="rounded-[28px] border border-white/10 bg-white/[0.035] p-7 md:p-10">
+            <div className="eyebrow">Aprenda antes de contratar</div>
+            <h2 className="mt-4 font-display text-3xl font-semibold text-white md:text-4xl">Guias gratuitos para automatizar com segurança</h2>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">Como funciona um assistente de IA para WhatsApp? Como evitar conflitos de horário ou reservas duplicadas? Reunimos respostas objetivas para empresas.</p>
+            <div className="mt-6 flex flex-wrap gap-4 text-sm font-semibold text-emerald-300">
+              <Link href="/guias/assistente-ia-whatsapp-pequenas-empresas">IA no WhatsApp →</Link>
+              <Link href="/guias/agendamento-automatico-whatsapp">Agenda →</Link>
+              <Link href="/guias/whatsapp-para-pousadas-reservas">Pousadas →</Link>
+              <Link href="/guias/monitoramento-iot-temperatura-energia-gases">IoT →</Link>
+            </div>
+            <Link href="/guias" className="mt-6 inline-flex font-semibold text-white underline decoration-emerald-300 underline-offset-4">Ver todos os guias</Link>
+          </div>
+        </div>
+      </section>
+
       <section className="pb-8 pt-8 md:pb-12 md:pt-14">
         <div className="section-shell text-center">
           <motion.div {...rise}>

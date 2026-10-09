@@ -39,11 +39,18 @@ export async function generateMetadata({
   const canonical = `/solucoes/${product.slug}`;
 
   return {
-    title: product.title,
+    title: ({
+      'atendente-ia': 'Assistente de IA para WhatsApp: Atendimento e Vendas',
+      'automacao-processos': 'Automação de Processos e Integração de Sistemas',
+      'temperatura': 'Monitoramento de Temperatura com Sensores IoT',
+      'acionamento': 'Acionamento Remoto e Automação IoT',
+      'consumo': 'Monitoramento de Consumo de Energia com IoT',
+      'gases': 'Monitoramento Ambiental e Sensores de Gases IoT',
+    } as Record<string, string>)[product.slug] || product.title,
     description: product.summary,
     alternates: { canonical },
     openGraph: {
-    images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
+      images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
       title: `${product.title} | Virtuagil`,
       description: product.summary,
       url: `https://www.virtuagil.com.br${canonical}`,
@@ -86,12 +93,45 @@ export default async function ProductDetailPage({
       : {}),
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://www.virtuagil.com.br/' },
+      { '@type': 'ListItem', position: 2, name: 'Soluções', item: 'https://www.virtuagil.com.br/solucoes' },
+      { '@type': 'ListItem', position: 3, name: product.title, item: 'https://www.virtuagil.com.br/solucoes/' + product.slug },
+    ],
+  };
+  const softwareJsonLd = isAssistenteIa && livePlans && Object.values(livePlans).length > 0
+    ? {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'Jade — Assistente de IA Virtuagil',
+      description: product.summary,
+      operatingSystem: 'Web',
+      applicationCategory: 'BusinessApplication',
+      url: 'https://www.virtuagil.com.br/solucoes/atendente-ia',
+      publisher: { '@id': 'https://www.virtuagil.com.br/#organization' },
+      offers: Object.values(livePlans).map(plan => ({
+        '@type': 'Offer',
+        name: plan.publicName,
+        priceCurrency: 'BRL',
+        price: plan.total.toFixed(2),
+        url: 'https://www.virtuagil.com.br/contratar-assistente-ia?plano=' + plan.code,
+      })),
+    }
+    : null;
+
   return (
     <main className="pb-16 md:pb-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
+      <script type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {softwareJsonLd && <script type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }} />}
 
       <section className="relative py-14 md:py-20">
         <div className="glow-orb right-[-120px] top-[10px] h-[320px] w-[320px] bg-emerald-400/10" />

@@ -55,3 +55,31 @@ test("preço da Agenda em todas as seções usa o catálogo ativo", () => {
   assert.match(planos, /agendaPlan\.installmentValue/)
   assert.doesNotMatch(planos, /R\$ 2\.394|R\$ 399/)
 })
+
+test("guias práticos têm sitemap, entrada navegável e metadados próprios", () => {
+  const sitemap=read("app/sitemap.ts")
+  const index=read("app/guias/page.tsx")
+  const detail=read("app/guias/[slug]/page.tsx")
+  const guides=read("lib/guides.ts")
+  const nav=read("components/site/site-header.tsx")
+  assert.match(sitemap, /guidePages/)
+  assert.match(index, /<h1/)
+  assert.match(detail, /Article/)
+  assert.match(detail, /BreadcrumbList/)
+  assert.ok(nav.includes('href="/guias"'))
+  for (const slug of [
+    "assistente-ia-whatsapp-pequenas-empresas",
+    "agendamento-automatico-whatsapp",
+    "whatsapp-para-pousadas-reservas",
+    "monitoramento-iot-temperatura-energia-gases",
+  ]) assert.ok(guides.includes(slug))
+})
+test("IndexNow envia só URLs de conteúdo alterado após SEO em produção", () => {
+  const script = read("scripts/indexnow.mjs")
+  const workflow = read("../../.github/workflows/site-seo-health.yml")
+  assert.ok(script.includes('api.indexnow.org/indexnow'))
+  assert.match(script, /INDEXNOW_IGNORADO/)
+  assert.match(script, /keyLocation/)
+  assert.ok(workflow.includes('indexnow.mjs'))
+  assert.match(workflow, /continue-on-error: true/)
+})

@@ -54,6 +54,9 @@ export function SiteFooter({
             <Link href="/planos" className="transition hover:text-white">
               Planos e Agenda
             </Link>
+            <Link href="/guias" className="transition hover:text-white">
+              Guias de IA, Agenda, Hospedagem e IoT
+            </Link>
             <Link href="/contato" className="transition hover:text-white">
               Contato
             </Link>
