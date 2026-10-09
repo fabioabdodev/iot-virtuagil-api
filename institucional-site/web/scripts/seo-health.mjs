@@ -44,7 +44,9 @@ async function main() {
     if(!/<h1[\s>]/i.test(html))throw Error("H1 ausente: "+path)
     const canonical=html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i)?.[1]||
       html.match(/<link[^>]+href="([^"]+)"[^>]+rel="canonical"/i)?.[1]||""
-    if(canonical!==origin+path)issues.push("Canonical diferente: "+path+" => "+canonical)
+    const canonicalUrl=canonical ? new URL(canonical) : null
+    if(!canonicalUrl || canonicalUrl.origin!==origin || canonicalUrl.pathname!==path || canonicalUrl.search || canonicalUrl.hash)
+      issues.push("Canonical diferente: "+path+" => "+canonical)
     checked++
     console.log("SEO_OK "+path+" — title/canonical/description/H1/idioma")
   }
