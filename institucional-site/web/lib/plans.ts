@@ -18,16 +18,15 @@ export type CommercialPlan = {
   features: string[];
 };
 
-export const commercialPlans: Record<CommercialPlanCode, CommercialPlan> = {
+// Apenas textos e características. Preços, parcelas e limite vêm exclusivamente do Supabase.
+export type CommercialPlanTemplate = Omit<CommercialPlan, 'total' | 'installments' | 'installmentValue' | 'contactsPerMonth'>;
+
+export const commercialPlans: Record<CommercialPlanCode, CommercialPlanTemplate> = {
   jade_500_semestral: {
     code: 'jade_500_semestral',
     name: 'Plano 500',
     publicName: 'Assistente de IA Virtuagil — Plano 500',
     badge: 'Assistente de IA',
-    total: 1794,
-    installments: 6,
-    installmentValue: 299,
-    contactsPerMonth: 500,
     includesAgenda: false,
     includesHospedagem: false,
     description:
@@ -47,10 +46,6 @@ export const commercialPlans: Record<CommercialPlanCode, CommercialPlan> = {
     name: 'Plano 500 + Agenda',
     publicName: 'Assistente de IA Virtuagil — Plano 500 + Agenda',
     badge: 'Assistente de IA + Agenda',
-    total: 2394,
-    installments: 6,
-    installmentValue: 399,
-    contactsPerMonth: 500,
     includesAgenda: true,
     includesHospedagem: false,
     description:
@@ -70,10 +65,6 @@ export const commercialPlans: Record<CommercialPlanCode, CommercialPlan> = {
     name: 'Plano 500 + Hospedagem',
     publicName: 'Assistente de IA Virtuagil — Plano 500 + Hospedagem',
     badge: 'Assistente de IA + Hospedagem',
-    total: 2394,
-    installments: 6,
-    installmentValue: 399,
-    contactsPerMonth: 500,
     includesAgenda: false,
     includesHospedagem: true,
     description:
