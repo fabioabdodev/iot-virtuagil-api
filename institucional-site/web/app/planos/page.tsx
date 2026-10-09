@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { commercialPlans, formatBrl } from '@/lib/plans';
+import { formatBrl } from '@/lib/plans';
+import { loadCommercialPlans } from '@/lib/live-plans';
 import { CardBrands } from '@/components/card-brands';
 
 const whatsappUrl =
@@ -31,8 +32,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PlanosPage() {
-  const planList = Object.values(commercialPlans);
+export default async function PlanosPage() {
+  const planList = Object.values(await loadCommercialPlans() || {});
 
   const productJsonLd = {
     '@context': 'https://schema.org',
