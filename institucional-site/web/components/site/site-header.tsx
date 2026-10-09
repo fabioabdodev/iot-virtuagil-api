@@ -62,7 +62,7 @@ export function SiteHeader({
           />
         </Link>
 
-        <nav className="hidden items-center justify-center gap-7 text-sm font-semibold md:flex">
+        <nav className="hidden items-center justify-center gap-7 text-sm font-semibold xl:flex">
           <Link
             href="/solucoes"
             className={navLinkClass(matches(pathname, '/solucoes'))}
@@ -92,7 +92,7 @@ export function SiteHeader({
           </Link>
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 xl:flex">
           <Button asChild variant="ghost" size="sm">
             <a href={assistantUrl} target="_blank" rel="noreferrer">
               <LogIn className="h-4 w-4" />
@@ -107,7 +107,7 @@ export function SiteHeader({
           </Button>
         </div>
 
-        <details ref={mobileMenuRef} className="relative ml-auto md:hidden">
+        <details ref={mobileMenuRef} className="relative ml-auto xl:hidden">
           <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3.5 py-2 text-sm font-semibold text-white">
             <Menu className="h-4 w-4" />
             Menu
