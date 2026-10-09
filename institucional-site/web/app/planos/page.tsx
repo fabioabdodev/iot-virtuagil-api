@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     'Compare os três planos do Assistente de IA Virtuagil: Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem. Até 500 contatos únicos por mês.',
   alternates: { canonical: '/planos' },
   openGraph: {
+    images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
     title: 'Planos do Assistente de IA | Virtuagil',
     description:
       'Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem para atendimento inteligente no WhatsApp, com implantação assistida.',
