@@ -60,5 +60,8 @@ jobs:
       - name: Testar catálogo de preços do site
         run: node --test tests/*.test.cjs
 
+      - name: Validar catalogo de precos vivo no Dashboard
+        run: node scripts/check-live-prices.mjs
+
       - name: Build institutional site
         run: npm run build
