@@ -47,7 +47,9 @@ export async function generateMetadata({
       'consumo': 'Monitoramento de Consumo de Energia com IoT',
       'gases': 'Monitoramento Ambiental e Sensores de Gases IoT',
     } as Record<string, string>)[product.slug] || product.title,
-    description: product.summary,
+    description: product.slug === 'atendente-ia'
+      ? 'Assistente de IA para WhatsApp: atendimento, vendas, follow-up, transferência humana e Agenda opcional. Conheça os planos da Jade Virtuagil.'
+      : product.summary,
     alternates: { canonical },
     openGraph: {
       images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
@@ -75,8 +77,10 @@ export default async function ProductDetailPage({
     description: product.summary,
     provider: {
       '@type': 'Organization',
+      '@id': 'https://www.virtuagil.com.br/#organization',
       name: 'Virtuagil',
       url: 'https://www.virtuagil.com.br',
+      logo: 'https://www.virtuagil.com.br/brand/logomarca.png',
     },
     url: `https://www.virtuagil.com.br/solucoes/${product.slug}`,
     ...(isAssistenteIa
