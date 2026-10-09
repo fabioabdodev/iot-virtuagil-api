@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     'Contrate o Assistente de IA da Virtuagil com atendimento da Jade. Planos 500, Agenda ou Hospedagem, até 500 contatos únicos por mês e checkout seguro no Mercado Pago.',
   alternates: { canonical: '/contratar-assistente-ia' },
   openGraph: {
+    images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
     title: 'Contratar Assistente de IA | Virtuagil',
     description:
       'Escolha entre Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem para atendimento inteligente no WhatsApp.',
