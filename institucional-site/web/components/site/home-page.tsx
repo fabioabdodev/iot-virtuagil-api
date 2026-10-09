@@ -33,6 +33,7 @@ import { products } from '@/lib/products';
 import { formatBrl } from '@/lib/plans';
 import type { LiveCommercialPlans } from '@/lib/live-plans';
 import { CardBrands } from '@/components/card-brands';
+import { jadeWhatsappUrl } from '@/lib/jade-contact';
 
 const rise = {
   initial: { opacity: 0, y: 22 },
@@ -291,18 +292,27 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans }
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
-              O Assistente de IA da Virtuagil atende seus contatos, responde dúvidas e identifica
+              A Jade mostra como seu Assistente de IA pode atender contatos, responder dúvidas e identificar
               oportunidades. Com módulos especializados, também atende operações de Agenda e Hospedagem.
             </p>
 
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button asChild size="lg">
-                <Link href="/contratar-assistente-ia">
-                  Contratar Assistente de IA
+                <a href={jadeWhatsappUrl(whatsappUrl)} target="_blank" rel="noopener noreferrer">
+                  <MessageCircleMore className="h-4 w-4" />
+                  Falar com a Jade
+                </a>
+              </Button>
+              <Button asChild size="lg" variant="secondary">
+                <Link href="/planos">
+                  Ver planos e preços
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
             </div>
+            <p className="mt-3 max-w-lg text-xs leading-5 text-slate-400">
+              Nossa assistente virtual tira dúvidas, ajuda a escolher seu plano e orienta a contratação pelo WhatsApp.
+            </p>
 
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-400">
               {[
