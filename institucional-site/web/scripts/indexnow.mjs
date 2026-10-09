@@ -48,7 +48,7 @@ async function main() {
       includePrefix('/solucoes/');
     } else if (file.startsWith('app/') && file.endsWith('/page.tsx')) {
       const path = file.replace(/^app\//, '/').replace(/\/page\.tsx$/, '');
-      include(path === '/page.tsx' ? '/' : path);
+      include(path || '/');
     } else if (file === 'app/page.tsx' || file === 'components/site/home-page.tsx') {
       include('/');
     } else if (file.startsWith('components/site/') || file.startsWith('public/brand/')) {
