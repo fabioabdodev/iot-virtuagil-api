@@ -36,3 +36,15 @@ test("auditor SEO confere canonical, sitemap, noindex e CTA", () => {
     assert.ok(audit.includes(mark), mark)
   }
 })
+
+test("canonical da Home aceita URL normalizada e páginas OG têm imagem", () => {
+  const audit = read("scripts/seo-health.mjs")
+  assert.match(audit, /canonicalUrl\.pathname!==path/)
+  for (const path of [
+    "app/page.tsx", "app/planos/page.tsx", "app/contato/page.tsx",
+    "app/solucoes/page.tsx", "app/contratar-assistente-ia/page.tsx",
+    "app/solucoes/[slug]/page.tsx",
+  ]) {
+    assert.match(read(path), /images:\s*\[\{\s*url: '\/brand\/logomarca.png'/)
+  }
+})
