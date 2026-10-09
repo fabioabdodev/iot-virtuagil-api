@@ -1,0 +1,22 @@
+name: SEO e Conversao Jade - Producao
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["deploy"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  seo:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar script SEO
+        run: node --check institucional-site/web/scripts/seo-health.mjs
+      - name: Auditar site publicado, indexacao e Jade
+        run: node institucional-site/web/scripts/seo-health.mjs

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { jadeWhatsappUrl } from '@/lib/jade-contact';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
@@ -46,9 +47,9 @@ export default function ContatoPage() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                <a href={jadeWhatsappUrl(whatsappUrl, 'contato')} target="_blank" rel="noreferrer">
                   <MessageCircleMore className="h-4 w-4" />
-                  Falar no WhatsApp
+                  Falar com a Jade
                 </a>
               </Button>
               <Button asChild size="lg" variant="secondary">
@@ -66,7 +67,7 @@ export default function ContatoPage() {
                 Quer começar pelo Assistente de IA?
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-400">
-                O Plano 500 e o Plano 500 + Agenda podem ser contratados diretamente pelo site.
+                A Jade apresenta os planos 500, 500 + Agenda e 500 + Hospedagem, tira dúvidas e orienta a contratação.
                 Integrações adicionais continuam sujeitas a avaliação técnica.
               </p>
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -77,7 +78,7 @@ export default function ContatoPage() {
                   </Link>
                 </Button>
                 <Button asChild variant="secondary">
-                  <a href={whatsappUrl} target="_blank" rel="noreferrer">Tirar dúvidas</a>
+                  <a href={whatsappUrl} target="_blank" rel="noreferrer">Perguntar à Jade</a>
                 </Button>
               </div>
             </CardContent>

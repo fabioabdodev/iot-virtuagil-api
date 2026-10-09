@@ -15,6 +15,7 @@ import {
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
+import { jadeWhatsappUrl } from '@/lib/jade-contact';
 
 type SiteHeaderProps = {
   monitorUrl: string;
@@ -38,6 +39,7 @@ export function SiteHeader({
   whatsappUrl,
 }: SiteHeaderProps) {
   const pathname = usePathname();
+  const jadeUrl = jadeWhatsappUrl(whatsappUrl);
   const mobileMenuRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
@@ -89,9 +91,10 @@ export function SiteHeader({
             </a>
           </Button>
           <Button asChild size="sm">
-            <Link href="/contratar-assistente-ia">
-              Contratar Assistente de IA
-            </Link>
+            <a href={jadeUrl} target="_blank" rel="noopener noreferrer" aria-label="Falar com a Jade, assistente de IA Virtuagil, pelo WhatsApp">
+              <MessageCircleMore className="h-4 w-4" />
+              Falar com a Jade
+            </a>
           </Button>
         </div>
 
@@ -127,16 +130,7 @@ export function SiteHeader({
                 <PhoneCall className="h-4 w-4 text-emerald-300" />
                 Contato
               </Link>
-              <a
-                href={whatsappUrl}
-                onClick={closeMobileMenu}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/[0.05] hover:text-white"
-              >
-                <MessageCircleMore className="h-4 w-4 text-emerald-300" />
-                WhatsApp
-              </a>
+
               <a
                 href={monitorUrl}
                 onClick={closeMobileMenu}
@@ -151,9 +145,15 @@ export function SiteHeader({
 
             <div className="mt-3 grid gap-2 border-t border-white/[0.07] pt-3">
               <Button asChild size="sm">
+                <a href={jadeUrl} onClick={closeMobileMenu} target="_blank" rel="noopener noreferrer">
+                  <MessageCircleMore className="h-4 w-4" />
+                  Falar com a Jade
+                </a>
+              </Button>
+              <Button asChild size="sm" variant="secondary">
                 <Link href="/contratar-assistente-ia" onClick={closeMobileMenu}>
                   <Bot className="h-4 w-4" />
-                  Contratar Assistente de IA
+                  Contratar pelo site
                 </Link>
               </Button>
               <Button asChild size="sm" variant="secondary">

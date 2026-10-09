@@ -16,9 +16,9 @@ import {
 } from '@/lib/plans';
 
 export const metadata: Metadata = {
-  title: 'Contratar Assistente de IA | Planos Virtuagil',
+  title: 'Contratar Assistente de IA',
   description:
-    'Contrate o Assistente de IA Virtuagil no Plano 500, Plano 500 + Agenda ou Plano 500 + Hospedagem. Até 500 contatos únicos por mês, implantação assistida e pagamento seguro via Mercado Pago.',
+    'Contrate o Assistente de IA da Virtuagil com atendimento da Jade. Planos 500, Agenda ou Hospedagem, até 500 contatos únicos por mês e checkout seguro no Mercado Pago.',
   alternates: { canonical: '/contratar-assistente-ia' },
   openGraph: {
     title: 'Contratar Assistente de IA | Virtuagil',

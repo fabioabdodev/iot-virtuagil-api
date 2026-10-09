@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { getProductBySlug, products } from '@/lib/products';
 import { formatBrl } from '@/lib/plans';
 import { loadCommercialPlans } from '@/lib/live-plans';
+import { jadeWhatsappUrl } from '@/lib/jade-contact';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
@@ -118,14 +119,14 @@ export default async function ProductDetailPage({
                 <>
                   <Button asChild size="lg">
                     <Link href="/planos">
-                      Ver planos e contratar
+                      Comparar planos e preços
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="secondary">
-                    <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                    <a href={jadeWhatsappUrl(whatsappUrl)} target="_blank" rel="noreferrer">
                       <MessageCircleMore className="h-4 w-4" />
-                      Falar no WhatsApp
+                      Falar com a Jade
                     </a>
                   </Button>
                 </>

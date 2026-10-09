@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Manrope, Sora } from 'next/font/google';
 import { SiteHeader } from '@/components/site/site-header';
 import { SiteFooter } from '@/components/site/site-footer';
+import { JadeMobileContact } from '@/components/site/jade-mobile-contact';
 import './globals.css';
 
 const manrope = Manrope({
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     template: '%s | Virtuagil',
   },
   description:
-    'Assistente de IA no WhatsApp nos planos 500 e 500 + Agenda, com follow-up, atendimento humano e até 500 contatos únicos por mês, além de automação de processos e IoT.',
+    'Assistente de IA Jade para WhatsApp: atendimento, follow-up, transferência humana e módulos Agenda ou Hospedagem. Converse com a Jade e conheça os planos Virtuagil.',
   keywords: [
     'assistente de IA para empresas',
     'automação com inteligência artificial',
@@ -70,7 +71,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtuagil | Automação com IA, Processos e IoT',
     description:
-      'Assistente de IA para WhatsApp nos planos 500 e 500 + Agenda, automação de processos e soluções IoT para empresas que querem operar melhor.',
+      'Conheça a Jade: assistente de IA da Virtuagil para WhatsApp, vendas, Agenda e Hospedagem. Converse, tire dúvidas e conheça nossos planos.',
     url: 'https://www.virtuagil.com.br',
     siteName: 'Virtuagil',
     images: [
@@ -88,7 +89,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Virtuagil | Automação com IA, Processos e IoT',
     description:
-      'Assistente de IA para WhatsApp com Plano 500 e Plano 500 + Agenda, além de automação de processos e IoT.',
+      'Jade, assistente de IA para WhatsApp com planos 500, Agenda e Hospedagem, além de automação de processos e IoT.',
     images: ['/brand/logomarca.png'],
   },
 };
@@ -111,7 +112,7 @@ export default function RootLayout({
     url: 'https://www.virtuagil.com.br',
     logo: 'https://www.virtuagil.com.br/brand/logomarca.png',
     description:
-      'Empresa de tecnologia especializada em Assistente de IA para WhatsApp, com Plano 500 e Plano 500 + Agenda, automação de processos e IoT.',
+      'Virtuagil: assistente de IA Jade para WhatsApp, planos 500 com Agenda ou Hospedagem, automação de processos e IoT.',
     areaServed: [
       { '@type': 'Country', name: 'Brasil' },
       { '@type': 'City', name: 'Belo Horizonte' },
@@ -139,6 +140,7 @@ export default function RootLayout({
         >
           Pular para o conteúdo
         </a>
+        <JadeMobileContact whatsappUrl={whatsappUrl} />
         <div className="flex min-h-screen flex-col">
           <SiteHeader
             monitorUrl={monitorUrl}

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Bot, ExternalLink, MessageCircleMore, Monitor } from 'lucide-react';
+import { jadeWhatsappUrl } from '@/lib/jade-contact';
 
 type SiteFooterProps = {
   contactEmail: string;
@@ -29,7 +30,7 @@ export function SiteFooter({
             />
           </Link>
           <p className="mt-5 max-w-lg text-sm leading-7 text-slate-400">
-            Inteligência artificial, Agenda integrada, automação de processos e IoT aplicados a
+            Jade: atendimento com IA no WhatsApp, Agenda, Hospedagem, automação de processos e IoT aplicados a
             problemas reais de atendimento, operação e crescimento.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-500">
@@ -78,13 +79,13 @@ export function SiteFooter({
           </div>
           <div className="mt-4 grid gap-3 text-sm text-slate-300">
             <a
-              href={whatsappUrl}
+              href={jadeWhatsappUrl(whatsappUrl)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 transition hover:text-white"
             >
               <MessageCircleMore className="h-4 w-4 text-emerald-300" />
-              WhatsApp
+              Falar com a Jade no WhatsApp
             </a>
             <a
               href={assistantUrl}

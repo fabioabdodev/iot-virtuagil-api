@@ -15,12 +15,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { formatBrl } from '@/lib/plans';
 import { loadCommercialPlans } from '@/lib/live-plans';
 import { CardBrands } from '@/components/card-brands';
+import { jadeWhatsappUrl } from '@/lib/jade-contact';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
 
 export const metadata: Metadata = {
-  title: 'Planos do Assistente de IA | Virtuagil',
+  title: 'Planos e Preços do Assistente de IA para WhatsApp',
   description:
     'Compare os três planos do Assistente de IA Virtuagil: Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem. Até 500 contatos únicos por mês.',
   alternates: { canonical: '/planos' },
@@ -70,7 +71,7 @@ export default async function PlanosPage() {
             Escolha o Assistente de IA ideal para sua operação.
           </h1>
           <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
-            Os três planos são semestrais, incluem até 500 contatos únicos por mês e implantação assistida. Agenda e Hospedagem são módulos especializados independentes.
+            Os três planos são semestrais, incluem até 500 contatos únicos por mês e implantação assistida. A Jade pode ajudar você a escolher entre atendimento, Agenda e Hospedagem.
           </p>
         </div>
       </section>
@@ -158,9 +159,9 @@ export default async function PlanosPage() {
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="secondary" className="w-full">
-                    <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                    <a href={jadeWhatsappUrl(whatsappUrl, 'planos')} target="_blank" rel="noreferrer">
                       <MessageCircleMore className="h-4 w-4" />
-                      Tirar dúvidas
+                      Perguntar à Jade
                     </a>
                   </Button>
                 </div>
