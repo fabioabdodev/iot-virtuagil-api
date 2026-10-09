@@ -18,8 +18,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const guide = getGuide(slug);
   if (!guide) return { robots: { index: false } };
   const canonical = '/guias/' + guide.slug;
+  // H1 continua completo; o título de busca cabe melhor no espaço disponível.
+  const shortTitles: Record<string, string> = {
+    'assistente-ia-whatsapp-pequenas-empresas': 'Assistente de IA no WhatsApp: Guia para Empresas',
+    'agendamento-automatico-whatsapp': 'Agendamento Automático pelo WhatsApp: Guia',
+    'whatsapp-para-pousadas-reservas': 'WhatsApp para Pousadas: Reservas sem Conflitos',
+    'monitoramento-iot-temperatura-energia-gases': 'Sensores IoT: Temperatura, Energia e Gases',
+  };
   return {
-    title: guide.title,
+    title: shortTitles[guide.slug] || guide.title,
     description: guide.description,
     alternates: { canonical },
     openGraph: {
