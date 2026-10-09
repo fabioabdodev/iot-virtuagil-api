@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 2
       - name: Verificar script SEO
         run: node --check institucional-site/web/scripts/seo-health.mjs
       - name: Auditar site publicado, indexacao e Jade
