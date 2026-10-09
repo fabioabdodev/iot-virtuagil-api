@@ -77,6 +77,11 @@ export default async function PlanosPage() {
 
       <section className="py-6 md:py-10">
         <div className="section-shell">
+          {planList.length === 0 && (
+            <div role="status" className="rounded-xl border border-amber-300/30 p-5 text-sm text-amber-100">
+              Não foi possível consultar os valores atuais. Nenhuma cobrança será iniciada até que os planos estejam disponíveis.
+            </div>
+          )}
           <div className="grid gap-5 lg:grid-cols-3">
             {planList.map((plan) => (
               <article
