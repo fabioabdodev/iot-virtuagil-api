@@ -48,3 +48,10 @@ test("canonical da Home aceita URL normalizada e páginas OG têm imagem", () =>
     assert.match(read(path), /images:\s*\[\{\s*url: '\/brand\/logomarca.png'/)
   }
 })
+
+test("preço da Agenda em todas as seções usa o catálogo ativo", () => {
+  const planos = read("app/planos/page.tsx")
+  assert.match(planos, /agendaPlan\.total/)
+  assert.match(planos, /agendaPlan\.installmentValue/)
+  assert.doesNotMatch(planos, /R\$ 2\.394|R\$ 399/)
+})
