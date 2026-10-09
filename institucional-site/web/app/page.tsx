@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     'Conheça a Jade, assistente de IA da Virtuagil para WhatsApp. Atendimento, follow-up, suporte humano, Agenda e Hospedagem. Converse com a Jade e veja os planos.',
   alternates: { canonical: '/' },
   openGraph: {
+    images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
     title: 'Virtuagil | Assistente de IA, Automação e IoT',
     description:
       'Converse com a Jade, assistente de IA Virtuagil para WhatsApp: tira dúvidas, apresenta planos e orienta sua contratação. Agenda, Hospedagem e IoT.',

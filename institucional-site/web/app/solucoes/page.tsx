@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     'Conheça a Jade, nossa assistente de IA para WhatsApp com Agenda e Hospedagem, e soluções Virtuagil de automação IoT para monitoramento e controle.',
   alternates: { canonical: '/solucoes' },
   openGraph: {
+    images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
     title: 'Soluções | Virtuagil',
     description:
       'Escolha entre Assistente de IA para atendimento e Automação IoT para monitoramento e controle de operações.',

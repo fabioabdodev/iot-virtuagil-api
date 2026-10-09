@@ -43,6 +43,7 @@ export async function generateMetadata({
     description: product.summary,
     alternates: { canonical },
     openGraph: {
+    images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
       title: `${product.title} | Virtuagil`,
       description: product.summary,
       url: `https://www.virtuagil.com.br${canonical}`,
@@ -324,7 +325,7 @@ export default async function ProductDetailPage({
 
               <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300">
                 {isAssistenteIa
-                  ? 'A Virtuagil oferece dois planos semestrais, ambos com até 500 contatos únicos por mês: Plano 500 e Plano 500 + Agenda. Integrações externas ou específicas continuam sujeitas a avaliação técnica.'
+                  ? 'A Virtuagil oferece três planos semestrais, com até 500 contatos únicos por mês: Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem. Integrações externas ou específicas continuam sujeitas a avaliação técnica.'
                   : 'Conte o contexto da sua empresa e a Virtuagil avalia escopo, prioridade e o melhor formato para começar.'}
               </p>
 
