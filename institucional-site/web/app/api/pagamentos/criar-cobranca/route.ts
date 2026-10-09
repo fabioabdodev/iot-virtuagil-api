@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  commercialPlans,
   defaultCommercialPlanCode,
   isCommercialPlanCode,
 } from '@/lib/plans';
+import { loadCommercialPlans } from '@/lib/live-plans';
 import { CONTRACT_VERSION } from '@/lib/legal';
 
 export const runtime = 'nodejs';
@@ -87,7 +87,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const requestedPlan = commercialPlans[requestedPlanCode];
+  // Preço, parcelas e limite SEMPRE vêm de public.planos_virtuagil.
+  // Se o banco não responder, bloquear cobrança em vez de usar valor antigo.
+  const livePlans = await loadCommercialPlans();
+  if (!livePlans) {
+    return NextResponse.json(
+      { ok: false, message: 'Planos temporariamente indisponíveis. Tente novamente em instantes.' },
+      { status: 503 },
+    );
+  }
+  const requestedPlan = livePlans[requestedPlanCode];
+  if (!requestedPlan) {
+    return NextResponse.json(
+      { ok: false, message: 'Este plano não está disponível para contratação.' },
+      { status: 409 },
+    );
+  }
   const termosOrigem = payload.origem_compra === 'whatsapp_jade'
     ? 'checkout_site_via_whatsapp_jade'
     : 'checkout_site_virtuagil';
