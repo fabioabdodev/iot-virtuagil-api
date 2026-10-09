@@ -30,7 +30,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { products } from '@/lib/products';
-import { commercialPlans, formatBrl } from '@/lib/plans';
+import { formatBrl } from '@/lib/plans';
+import type { LiveCommercialPlans } from '@/lib/live-plans';
 import { CardBrands } from '@/components/card-brands';
 
 const rise = {
@@ -177,6 +178,7 @@ function WhatsAppDemo() {
 }
 
 type HomePageProps = {
+  livePlans: LiveCommercialPlans | null;
   whatsappUrl: string;
   contactEmail: string;
 };
@@ -254,7 +256,7 @@ const faqs = [
   },
   {
     q: 'Qual plano inclui a Agenda?',
-    a: 'A Virtuagil oferece o Plano 500 por R$ 1.794 no semestre e os planos com módulo especializado — Agenda ou Hospedagem — por R$ 2.394 no semestre.',
+    a: 'Oferecemos três planos semestrais: Plano 500, Plano 500 + Agenda e Plano 500 + Hospedagem. Os valores atualizados aparecem na seção Planos.',
   },
   {
     q: 'O cliente pode falar com uma pessoa?',
@@ -270,7 +272,7 @@ const faqs = [
   },
 ];
 
-export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageProps) {
+export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans }: HomePageProps) {
   return (
     <main className="relative overflow-hidden">
       <div className="glow-orb left-[-120px] top-[80px] h-[360px] w-[360px] bg-emerald-400/20" />
@@ -366,8 +368,13 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail }: HomePageP
               <p className="mt-2 text-xs leading-6 text-slate-400">Os planos são semestrais, incluem implantação assistida e até 500 contatos únicos por mês.</p>
             </div>
 
+            {!livePlans && (
+              <p role="status" className="mt-5 rounded-xl border border-amber-300/25 bg-amber-300/10 p-4 text-center text-sm text-amber-100">
+                Planos temporariamente indisponíveis. Fale com a Virtuagil para receber uma proposta atualizada.
+              </p>
+            )}
             <div className="mt-6 grid gap-4 lg:grid-cols-3">
-              {Object.values(commercialPlans).map((plan) => (
+              {Object.values(livePlans || {}).map((plan) => (
                 <article
                   key={plan.code}
                   className={`relative rounded-[24px] border p-5 ${

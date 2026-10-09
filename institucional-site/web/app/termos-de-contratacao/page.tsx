@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, FileText, ShieldCheck } from 'lucide-react';
-import { commercialPlans, formatBrl } from '@/lib/plans';
+import { formatBrl } from '@/lib/plans';
+import { loadCommercialPlans, type LiveCommercialPlans } from '@/lib/live-plans';
 import { CONTRACT_FORUM_CLAUSE, CONTRACT_VERSION } from '@/lib/legal';
 
 export const metadata: Metadata = {
@@ -11,7 +12,17 @@ export const metadata: Metadata = {
   alternates: { canonical: '/termos-de-contratacao' },
 };
 
-const sections = [
+function priceClause(plans: LiveCommercialPlans | null): string {
+  const basic = plans?.jade_500_semestral;
+  const agenda = plans?.jade_500_agenda_semestral;
+  const hospedagem = plans?.jade_500_hospedagem_semestral;
+  if (!basic || !agenda || !hospedagem) {
+    return 'A contratação é semestral. Os valores e condições vigentes são apresentados antes da contratação no site e confirmados no checkout do Mercado Pago.';
+  }
+  return `A contratação é semestral. O Plano 500 custa ${formatBrl(basic.total)}, em até ${basic.installments} parcelas sem juros. O Plano 500 + Agenda custa ${formatBrl(agenda.total)}, em até ${agenda.installments} parcelas sem juros. O Plano 500 + Hospedagem custa ${formatBrl(hospedagem.total)}, em até ${hospedagem.installments} parcelas sem juros.`;
+}
+
+const sections = (plans: LiveCommercialPlans | null) => [
   {
     title: '1. Objeto',
     paragraphs: [
@@ -22,7 +33,7 @@ const sections = [
   {
     title: '2. Planos, prazo e limite de uso',
     paragraphs: [
-      `A contratação é semestral. O Plano 500 custa ${formatBrl(commercialPlans.jade_500_semestral.total)}, em até 6 parcelas de ${formatBrl(commercialPlans.jade_500_semestral.installmentValue)} sem juros. O Plano 500 + Agenda custa ${formatBrl(commercialPlans.jade_500_agenda_semestral.total)}, em até 6 parcelas de ${formatBrl(commercialPlans.jade_500_agenda_semestral.installmentValue)} sem juros. O Plano 500 + Hospedagem custa ${formatBrl(commercialPlans.jade_500_hospedagem_semestral.total)}, em até 6 parcelas de ${formatBrl(commercialPlans.jade_500_hospedagem_semestral.installmentValue)} sem juros.`,
+      priceClause(plans),
       'Todos os planos incluem até 500 contatos únicos por mês. Cada número de telefone é contabilizado uma única vez no mês, independentemente da quantidade de mensagens ou conversas, e a contagem reinicia mensalmente.',
       'Condições de pagamento, parcelamento e meios disponíveis são confirmados no checkout do Mercado Pago.',
     ],
@@ -120,7 +131,8 @@ const sections = [
   },
 ];
 
-export default function TermosDeContratacaoPage() {
+export default async function TermosDeContratacaoPage() {
+  const livePlans = await loadCommercialPlans();
   return (
     <main className="pb-20">
       <section className="py-12 md:py-16">
@@ -149,7 +161,7 @@ export default function TermosDeContratacaoPage() {
             </p>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              {Object.values(commercialPlans).map((plan) => (
+              {Object.values(livePlans || {}).map((plan) => (
                 <div key={plan.code} className="rounded-2xl border border-white/[0.08] bg-black/20 p-4">
                   <div className="font-bold text-white">{plan.name}</div>
                   <div className="mt-1 text-sm text-slate-300">{formatBrl(plan.total)} / 6 meses</div>
@@ -161,7 +173,7 @@ export default function TermosDeContratacaoPage() {
             </div>
 
             <div className="mt-10 grid gap-9">
-              {sections.map((section) => (
+              {sections(livePlans).map((section) => (
                 <section key={section.title}>
                   <h2 className="text-xl font-bold text-white">{section.title}</h2>
                   <div className="mt-3 grid gap-3">

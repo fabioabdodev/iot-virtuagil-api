@@ -15,11 +15,11 @@ import { Button } from '@/components/ui/button';
 import { CardBrands } from '@/components/card-brands';
 import { CONTRACT_PATH, CONTRACT_VERSION, PRIVACY_PATH } from '@/lib/legal';
 import {
-  commercialPlans,
   type CommercialPlanCode,
   defaultCommercialPlanCode,
   formatBrl,
 } from '@/lib/plans';
+import type { LiveCommercialPlans } from '@/lib/live-plans';
 
 type FormState = {
   nome_empresa: string;
@@ -40,11 +40,13 @@ const initialForm: FormState = {
 };
 
 type PaymentFormProps = {
+  plans: LiveCommercialPlans;
   initialPlan?: CommercialPlanCode;
   returnToWhatsapp?: boolean;
 };
 
 export function PaymentForm({
+  plans,
   initialPlan = defaultCommercialPlanCode,
   returnToWhatsapp = false,
 }: PaymentFormProps) {
@@ -54,7 +56,7 @@ export function PaymentForm({
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [checkoutReturn, setCheckoutReturn] = useState<{ checkoutUrl: string; whatsappUrl: string } | null>(null);
-  const plan = commercialPlans[planCode];
+  const plan = plans[planCode] ?? Object.values(plans)[0];
 
   function updateField(field: keyof FormState, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -63,6 +65,10 @@ export function PaymentForm({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    if (!plan) {
+      setError('Planos temporariamente indisponíveis. Tente novamente mais tarde.');
+      return;
+    }
 
     const email = form.email_acesso.trim().toLowerCase();
     const confirmarEmail = form.confirmar_email.trim().toLowerCase();
@@ -136,6 +142,10 @@ export function PaymentForm({
     }
   }
 
+  if (!plan) {
+    return <p role="alert" className="text-sm text-amber-200">Preços temporariamente indisponíveis. Nenhuma cobrança será iniciada. Tente novamente mais tarde ou fale com a Virtuagil.</p>;
+  }
+
   if (checkoutReturn) {
     return (
       <section role="status" className="grid gap-4 rounded-[28px] border border-emerald-300/35 bg-emerald-300/[0.05] p-6">
@@ -165,8 +175,8 @@ export function PaymentForm({
           Escolha seu plano
         </div>
         <div className="grid gap-3 md:grid-cols-3">
-          {Object.values(commercialPlans).map((option) => {
-            const selected = option.code === planCode;
+          {Object.values(plans).map((option) => {
+            const selected = option.code === plan.code;
             return (
               <button
                 key={option.code}

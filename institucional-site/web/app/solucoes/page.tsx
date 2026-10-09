@@ -3,7 +3,8 @@ import type { Metadata } from 'next';
 import { ArrowRight, Bot, Cpu, CalendarDays, MessageCircleMore, RadioTower, Gauge, Power, Thermometer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CardBrands } from '@/components/card-brands';
-import { commercialPlans, formatBrl } from '@/lib/plans';
+import { formatBrl } from '@/lib/plans';
+import { loadCommercialPlans } from '@/lib/live-plans';
 
 export const metadata: Metadata = {
   title: 'Soluções | Virtuagil',
@@ -51,7 +52,8 @@ const solutionLines = [
   },
 ] as const;
 
-export default function SolucoesPage() {
+export default async function SolucoesPage() {
+  const livePlans = await loadCommercialPlans();
   return (
     <main className="pb-20">
       <section className="relative py-16 md:py-24">
@@ -107,9 +109,12 @@ export default function SolucoesPage() {
                       </div>
                     ))}
                   </div>
+                  {isAi && !livePlans && (
+                    <p className="mt-5 text-xs text-amber-200">Preços temporariamente indisponíveis. Consulte a Virtuagil.</p>
+                  )}
                   {isAi ? (
                     <div className="mt-7 grid gap-3">
-                      {Object.values(commercialPlans).map((plan) => (
+                      {Object.values(livePlans || {}).map((plan) => (
                         <div key={plan.code} className="rounded-2xl border border-white/[0.09] bg-black/20 p-4">
                           <div className="flex items-start justify-between gap-3">
                             <div>
