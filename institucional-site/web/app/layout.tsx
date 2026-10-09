@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: '%s | Virtuagil',
   },
   description:
-    'Assistente de IA Jade para WhatsApp: atendimento, follow-up, transferência humana e módulos Agenda ou Hospedagem. Converse com a Jade e conheça os planos Virtuagil.',
+    'Jade é uma assistente de IA no WhatsApp para clínicas, salões, lojas, profissionais liberais e serviços. Atendimento, vendas, follow-up, Agenda e suporte humano.',
   keywords: [
     'assistente de IA para empresas',
     'automação com inteligência artificial',

@@ -38,10 +38,13 @@ async function main() {
     }
   }
   for (const file of files) {
-    if (/^(app\/layout\.tsx|app\/robots\.ts|app\/sitemap\.ts|lib\/guides\.ts)$/.test(file)) {
+    if (/^(app\/layout\.tsx|app\/robots\.ts|app\/sitemap\.ts|lib\/guides\.ts|lib\/segments\.ts)$/.test(file)) {
       // Mudança global de metadados ou inventário: todas as URLs podem ter mudado.
       if (file === 'lib/guides.ts') includePrefix('/guias');
+      else if (file === 'lib/segments.ts') includePrefix('/segmentos');
       else sitemapUrls.forEach(url => impacted.add(url));
+    } else if (file === 'app/segmentos/[slug]/page.tsx') {
+      includePrefix('/segmentos/');
     } else if (/^app\/guias\/\[slug\]\/page\.tsx$/.test(file)) {
       includePrefix('/guias/');
     } else if (/^app\/solucoes\/\[slug\]\/page\.tsx$/.test(file) || file === 'lib/products.ts') {

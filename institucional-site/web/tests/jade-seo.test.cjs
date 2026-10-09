@@ -83,3 +83,32 @@ test("IndexNow envia só URLs de conteúdo alterado após SEO em produção", ()
   assert.ok(workflow.includes('indexnow.mjs'))
   assert.match(workflow, /continue-on-error: true/)
 })
+
+test("segmentos têm páginas únicas, úteis e estrutura reutilizável", () => {
+  const sitemap = read("app/sitemap.ts")
+  const catalog = read("lib/segments.ts")
+  const listing = read("app/segmentos/page.tsx")
+  const detail = read("app/segmentos/[slug]/page.tsx")
+  const home = read("components/site/home-page.tsx")
+  const nav = read("components/site/site-header.tsx")
+  const indexnow = read("scripts/indexnow.mjs")
+  assert.match(sitemap, /segmentPages/)
+  assert.ok(sitemap.includes("segments.map"))
+  assert.ok(listing.includes("<h1"))
+  assert.ok(detail.includes("<h1"))
+  assert.ok(detail.includes("generateStaticParams"))
+  assert.ok(detail.includes("BreadcrumbList"))
+  assert.ok(detail.includes("getSegment"))
+  assert.ok(detail.includes("s.precautions"))
+  assert.ok(nav.includes('href="/segmentos"'))
+  assert.ok(indexnow.includes("lib/segments.ts"))
+  assert.ok(indexnow.includes("includePrefix('/segmentos')"))
+  for (const slug of [
+    "clinicas-estetica", "odontologia", "saloes-beleza",
+    "lojas-comercio", "profissionais-liberais", "clinicas-consultorios",
+    "prestadores-servicos",
+  ]) {
+    assert.ok(catalog.includes("slug: '"+slug+"'"), slug)
+    assert.ok(home.includes("'/segmentos/"+slug+"'"), slug)
+  }
+})

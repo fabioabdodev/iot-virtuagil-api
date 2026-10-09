@@ -645,6 +645,39 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans }
 
       <section className="py-12 md:py-20">
         <div className="section-shell">
+          <div className="eyebrow">Jade para diferentes segmentos</div>
+          <h2 className="mt-4 max-w-4xl font-display text-3xl font-semibold text-white md:text-5xl">
+            Sua empresa atende pelo WhatsApp? A Jade pode se adaptar ao seu negócio.
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300 md:text-base">
+            Da recepção de clínicas aos orçamentos de lojas e prestadores de serviços:
+            configuramos informações, perguntas e encaminhamentos por empresa, com Agenda e suporte humano conforme a necessidade.
+          </p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { label: 'Clínicas de estética', path: '/segmentos/clinicas-estetica' },
+              { label: 'Odontologia', path: '/segmentos/odontologia' },
+              { label: 'Salões e barbearias', path: '/segmentos/saloes-beleza' },
+              { label: 'Lojas e comércio', path: '/segmentos/lojas-comercio' },
+              { label: 'Profissionais liberais', path: '/segmentos/profissionais-liberais' },
+              { label: 'Clínicas e consultórios', path: '/segmentos/clinicas-consultorios' },
+              { label: 'Prestadores de serviços', path: '/segmentos/prestadores-servicos' },
+            ].map(segment => (
+              <Link key={segment.path} href={segment.path}
+                className="group flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.035] px-5 py-4 text-sm font-semibold text-slate-200 transition hover:border-emerald-300/30 hover:text-emerald-300">
+                {segment.label}<ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-1" />
+              </Link>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap items-center gap-6">
+            <Link href="/segmentos" className="font-semibold text-emerald-300 hover:text-emerald-200">Ver aplicações por segmento →</Link>
+            <Link href="/planos" className="font-semibold text-white hover:text-emerald-300">Conhecer planos da Jade →</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 md:py-20">
+        <div className="section-shell">
           <motion.div {...rise} className="mx-auto max-w-4xl">
             <div className="text-center">
               <div className="eyebrow">Dúvidas frequentes</div>

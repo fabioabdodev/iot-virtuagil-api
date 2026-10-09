@@ -8,15 +8,15 @@ const contactEmail =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'contato@virtuagil.com.br';
 
 export const metadata: Metadata = {
-  title: 'Jade: Assistente de IA para WhatsApp, Agenda e Hospedagem | Virtuagil',
+  title: 'IA para WhatsApp: Atendimento, Vendas e Agenda | Virtuagil',
   description:
-    'Conheça a Jade, assistente de IA da Virtuagil para WhatsApp. Atendimento, follow-up, suporte humano, Agenda e Hospedagem. Converse com a Jade e veja os planos.',
+    'Jade é uma assistente IA para WhatsApp de clínicas, salões, lojas e prestadores: atendimento, oportunidades de venda, suporte humano e Agenda opcional.',
   alternates: { canonical: '/' },
   openGraph: {
     images: [{ url: '/brand/logomarca.png', alt: 'Virtuagil — Assistente Jade e automação empresarial' }],
     title: 'Virtuagil | Assistente de IA, Automação e IoT',
     description:
-      'Converse com a Jade, assistente de IA Virtuagil para WhatsApp: tira dúvidas, apresenta planos e orienta sua contratação. Agenda, Hospedagem e IoT.',
+      'Assistente de IA no WhatsApp para clínicas, salões, lojas e serviços. Atendimento, vendas e agendamento com a Jade Virtuagil.',
     url: 'https://www.virtuagil.com.br/',
   },
 };

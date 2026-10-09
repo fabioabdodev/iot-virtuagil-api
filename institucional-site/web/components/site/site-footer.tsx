@@ -54,6 +54,9 @@ export function SiteFooter({
             <Link href="/planos" className="transition hover:text-white">
               Planos e Agenda
             </Link>
+            <Link href="/segmentos" className="transition hover:text-white">
+              IA para clínicas, salões, lojas e serviços
+            </Link>
             <Link href="/guias" className="transition hover:text-white">
               Guias de IA, Agenda, Hospedagem e IoT
             </Link>

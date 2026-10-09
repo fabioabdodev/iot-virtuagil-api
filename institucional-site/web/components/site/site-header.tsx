@@ -69,6 +69,9 @@ export function SiteHeader({
           >
             Soluções
           </Link>
+          <Link href="/segmentos" className={navLinkClass(matches(pathname, '/segmentos'))}>
+            Para quem é
+          </Link>
           <Link
             href="/planos"
             className={navLinkClass(matches(pathname, '/planos'))}
@@ -119,6 +122,10 @@ export function SiteHeader({
               >
                 <Boxes className="h-4 w-4 text-emerald-300" />
                 Soluções
+              </Link>
+              <Link href="/segmentos" onClick={closeMobileMenu} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/[0.05] hover:text-white">
+                <Boxes className="h-4 w-4 text-emerald-300" />
+                Para quem é a Jade
               </Link>
               <Link
                 href="/planos"
