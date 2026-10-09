@@ -150,7 +150,7 @@ export function SiteHeader({
                   Falar com a Jade
                 </a>
               </Button>
-              <Button asChild size="sm" variant="outline">
+              <Button asChild size="sm" variant="secondary">
                 <Link href="/contratar-assistente-ia" onClick={closeMobileMenu}>
                   <Bot className="h-4 w-4" />
                   Contratar pelo site
