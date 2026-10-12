@@ -13,7 +13,8 @@ test("Jade é a chamada principal no cabeçalho e na Home", () => {
 })
 test("CTA mobile aparece fora do checkout e preserva contato", () => {
   const mobile=read("components/site/jade-mobile-contact.tsx")
-  assert.match(mobile, /md:hidden/)
+  assert.match(mobile, /xl:hidden/)
+  assert.doesNotMatch(mobile, /md:hidden/)
   assert.match(mobile, /startsWith\('\/contratar-assistente-ia'\)/)
   assert.match(mobile, /startsWith\('\/pagamento'\)/)
   assert.match(mobile, /aria-label/)
@@ -119,4 +120,14 @@ test("Schema Product e Service têm imagens, provedor e metadados úteis", () =>
   assert.ok(planos.includes("image: ['https://www.virtuagil.com.br/solucoes/atendente-ia.svg']"))
   assert.ok(product.includes("logo: 'https://www.virtuagil.com.br/brand/logomarca.png'"))
   assert.ok(product.includes("product.slug === 'atendente-ia'"))
+})
+
+test("retorno do Mercado Pago não declara pagamento aprovado sem webhook", () => {
+  const component=read("components/payment-status.tsx")
+  const success=read("app/pagamento/sucesso/page.tsx")
+  const first=component.slice(component.indexOf("  success: {"),component.indexOf("  pending: {"))
+  assert.ok(first.includes("Aguardando confirmação"))
+  assert.ok(first.includes("aprovação será confirmada"))
+  assert.doesNotMatch(first, /Seu pagamento foi confirmado|Pagamento confirmado/i)
+  assert.match(success, /Pagamento em confirmação/)
 })

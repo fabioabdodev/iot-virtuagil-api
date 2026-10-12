@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PaymentStatus } from '@/components/payment-status';
 
 export const metadata: Metadata = {
-  title: 'Pagamento confirmado',
+  title: 'Pagamento em confirmação',
   robots: { index: false, follow: false },
 };
 

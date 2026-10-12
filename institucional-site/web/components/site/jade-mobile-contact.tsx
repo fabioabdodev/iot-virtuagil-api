@@ -15,7 +15,7 @@ export function JadeMobileContact({ whatsappUrl }: { whatsappUrl: string }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar com a Jade no WhatsApp para tirar dúvidas e contratar"
-      className="fixed bottom-5 right-4 z-40 inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-500 px-4 py-3 text-sm font-extrabold text-slate-950 shadow-[0_12px_40px_rgba(0,0,0,.35)] transition hover:bg-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300 md:hidden"
+      className="fixed bottom-5 right-4 z-40 inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-500 px-4 py-3 text-sm font-extrabold text-slate-950 shadow-[0_12px_40px_rgba(0,0,0,.35)] transition hover:bg-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300 xl:hidden"
     >
       <MessageCircleMore className="h-5 w-5" />
       Falar com a Jade

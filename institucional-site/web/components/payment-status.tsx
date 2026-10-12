@@ -18,9 +18,9 @@ type Status = 'success' | 'pending' | 'error';
 const content = {
   success: {
     icon: CircleCheckBig,
-    eyebrow: 'Pagamento confirmado',
-    title: 'Seu pagamento foi confirmado.',
-    text: 'A Virtuagil processa a ativação automaticamente. O e-mail informado na contratação receberá as instruções para criar a senha e acessar o Painel Administrativo.',
+    eyebrow: 'Aguardando confirmação',
+    title: 'Vamos confirmar seu pagamento.',
+    text: 'Se você concluiu o pagamento no Mercado Pago, a aprovação será confirmada diretamente pelo sistema de pagamentos. Após essa confirmação, a Virtuagil inicia a ativação e envia as instruções de acesso ao e-mail informado na contratação.',
     accent: 'text-emerald-300',
   },
   pending: {
@@ -67,7 +67,7 @@ export function PaymentStatus({ status }: { status: Status }) {
             {status === 'success' ? (
               <div className="mx-auto mt-6 flex max-w-xl items-start gap-3 rounded-2xl border border-emerald-300/12 bg-emerald-300/[0.05] p-4 text-left text-xs leading-6 text-slate-300">
                 <MailCheck className="mt-1 h-4 w-4 flex-none text-emerald-300" />
-                Confira também a caixa de spam. O convite de acesso é enviado para o e-mail do Painel Administrativo informado na contratação.
+                Quando o pagamento for aprovado e o acesso estiver preparado, confira o e-mail informado na contratação e também a caixa de spam.
               </div>
             ) : null}
 
