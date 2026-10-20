@@ -1,0 +1,55 @@
+name: Hotfix compativel de dependencias IoT
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/security-hotfix-iot.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: virtuagil-iot-hotfix-once
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Aplicar somente patches compativeis na API
+        run: |
+          npm ci --ignore-scripts --no-fund --no-audit
+          npm audit fix --ignore-scripts --no-fund --no-audit || true
+          npm ci --no-fund --no-audit
+          npx prisma generate
+      - name: Validar API e testes existentes
+        run: |
+          npm run build
+          npm test -- --runInBand
+      - name: Corrigir dependencias do Monitor Next.js
+        working-directory: apps/web
+        run: |
+          npm ci --ignore-scripts --no-fund --no-audit
+          npm install --ignore-scripts --no-fund --save-exact next@15.5.28 react@19.2.9 react-dom@19.2.9
+          npm pkg set "overrides.postcss=8.5.31"
+          npm audit fix --ignore-scripts --no-fund --no-audit || true
+          npm install --package-lock-only --ignore-scripts --no-fund --no-audit
+          npm audit --omit=dev --audit-level=high
+          npm ci --no-fund --no-audit
+          npm run build
+      - name: Commitar apenas manifests auditados com testes aprovados
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package.json package-lock.json apps/web/package.json apps/web/package-lock.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'security(deps): corrigir Nest e Monitor sem migrar Prisma major'
+          git push origin HEAD:main
