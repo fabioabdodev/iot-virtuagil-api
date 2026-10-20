@@ -1,3 +1,4 @@
+import { SafeJsonLd } from '@/components/safe-json-ld';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
@@ -128,14 +129,9 @@ export default async function ProductDetailPage({
 
   return (
     <main className="pb-16 md:pb-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
-      />
-      <script type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
-      {softwareJsonLd && <script type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }} />}
+      <SafeJsonLd data={serviceJsonLd} />
+      <SafeJsonLd data={breadcrumbJsonLd} />
+      {softwareJsonLd && <SafeJsonLd data={softwareJsonLd} />}
 
       <section className="relative py-14 md:py-20">
         <div className="glow-orb right-[-120px] top-[10px] h-[320px] w-[320px] bg-emerald-400/10" />

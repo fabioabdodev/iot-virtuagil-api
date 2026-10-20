@@ -1,3 +1,4 @@
+import { SafeJsonLd } from '@/components/safe-json-ld';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -64,7 +65,7 @@ export default async function SegmentDetailPage({ params }: Props) {
   };
   return (
     <main className="pb-20">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }} />
+      <SafeJsonLd data={graph} />
       <article className="section-shell max-w-5xl pt-12 md:pt-20">
         <nav aria-label="Trilha de navegação" className="text-sm text-slate-400">
           <Link href="/" className="hover:text-white">Início</Link>
