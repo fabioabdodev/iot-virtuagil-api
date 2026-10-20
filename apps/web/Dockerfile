@@ -22,10 +22,12 @@ ENV PORT=3000
 ENV NEXT_PUBLIC_API_BASE_URL=https://api-monitor.virtuagil.com.br
 ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
+COPY --chown=node:node --from=deps /app/node_modules ./node_modules
+COPY --chown=node:node --from=builder /app/package*.json ./
+COPY --chown=node:node --from=builder /app/.next ./.next
+COPY --chown=node:node --from=builder /app/public ./public
+
+USER node
 
 EXPOSE 3000
 

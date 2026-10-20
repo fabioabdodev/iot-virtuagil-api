@@ -1,7 +1,7 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
-COPY package.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 
 FROM node:22-alpine AS builder
 WORKDIR /app
@@ -26,8 +26,9 @@ ENV NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/5531999990000
 ENV NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
 ENV NEXT_PUBLIC_MONITOR_URL=https://monitor.virtuagil.com.br
 ENV NEXT_PUBLIC_MERCADO_PAGO_PAYMENT_URL=
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./app/.next/static
-COPY --from=builder /app/public ./app/public
+COPY --chown=node:node --from=builder /app/.next/standalone ./
+COPY --chown=node:node --from=builder /app/.next/static ./app/.next/static
+COPY --chown=node:node --from=builder /app/public ./app/public
+USER node
 EXPOSE 3000
 CMD ["node", "app/server.js"]

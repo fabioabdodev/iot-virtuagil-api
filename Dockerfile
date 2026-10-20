@@ -20,12 +20,14 @@ RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --chown=node:node --from=builder /app/dist ./dist
+COPY --chown=node:node --from=builder /app/prisma ./prisma
+COPY --chown=node:node --from=builder /app/scripts ./scripts
+COPY --chown=node:node --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --chown=node:node --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --chown=node:node --from=builder /app/node_modules/prisma ./node_modules/prisma
+
+USER node
 
 EXPOSE 3000
 
