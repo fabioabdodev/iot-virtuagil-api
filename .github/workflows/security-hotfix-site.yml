@@ -1,0 +1,48 @@
+name: Hotfix controlado de dependencias Site Virtuagil
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/security-hotfix-site.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: virtuagil-site-hotfix-once
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: institucional-site/web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: institucional-site/web/package-lock.json
+      - name: Atualizar Next e React para patches de seguranca
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm install --ignore-scripts --no-fund --save-exact next@15.5.28 react@19.1.10 react-dom@19.1.10
+          npm audit fix --ignore-scripts --no-fund || true
+      - name: Validar funcionalidades comerciais e compilacao
+        run: |
+          node --test tests/*.test.cjs
+          npx tsc --noEmit
+          npm run build
+      - name: Commitar apenas os arquivos de dependencias aprovados
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package.json package-lock.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'security(deps): atualizar Next React e lockfile do site'
+          git push origin HEAD:main
