@@ -46,6 +46,9 @@ jobs:
           # PostCSS e dependencia direta: override com versao diferente gera EOVERRIDE.
           # Atualiza-la no devDependencies em vez de forcá-la por overrides.
           npm install --ignore-scripts --no-fund --save-dev --save-exact postcss@8.5.31
+          # Next 15 inclui uma copia aninhada vulneravel de PostCSS.
+          # Substituir apenas o transitive do Next, sem fazer upgrade major para Next 16.
+          npm pkg set "overrides.next.postcss=8.5.31"
           npm audit fix --ignore-scripts --no-fund --no-audit || true
           npm install --package-lock-only --ignore-scripts --no-fund --no-audit
           npm audit --omit=dev --audit-level=high
