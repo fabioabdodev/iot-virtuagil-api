@@ -9,3 +9,6 @@ Este repositorio recebeu o hotfix de seguranca do site comercial:
 
 O dashboard Virtuagil foi auditado no repositorio irmao `fabioabdodev/virtuagil-atendente`.
 Nenhum pagamento nem webhook financeiro foi disparado durante esta atualizacao.
+
+- PostCSS 8.5.31 fixado via overrides, validado por npm audit sem alertas altos/criticos na etapa de hotfix.
+- Revisao publicada novamente para executar CI e deploy com os lockfiles atualizados (commit com token do GitHub Actions nao dispara novo pipeline sozinho).
