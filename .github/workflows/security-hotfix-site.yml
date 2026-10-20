@@ -33,8 +33,11 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm install --ignore-scripts --no-fund --save-exact next@15.5.28 react@19.1.10 react-dom@19.1.10
           npm audit fix --ignore-scripts --no-fund || true
+          npm pkg set "overrides.postcss=8.5.31"
+          npm install --package-lock-only --ignore-scripts --no-fund
       - name: Validar funcionalidades comerciais e compilacao
         run: |
+          npm audit --omit=dev --audit-level=high
           node --test tests/*.test.cjs
           npx tsc --noEmit
           npm run build
