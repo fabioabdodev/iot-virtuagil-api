@@ -28,6 +28,7 @@ jobs:
         run: |
           npm ci --ignore-scripts --no-fund --no-audit
           npm audit fix --ignore-scripts --no-fund --no-audit || true
+          npm audit --omit=dev --audit-level=high
           npm ci --no-fund --no-audit
           npx prisma generate
       - name: Validar API e testes existentes
@@ -39,7 +40,9 @@ jobs:
         run: |
           npm ci --ignore-scripts --no-fund --no-audit
           npm install --ignore-scripts --no-fund --save-exact next@15.5.28 react@19.2.9 react-dom@19.2.9
-          npm pkg set "overrides.postcss=8.5.31"
+          # PostCSS e dependencia direta: override com versao diferente gera EOVERRIDE.
+          # Atualiza-la no devDependencies em vez de forcá-la por overrides.
+          npm install --ignore-scripts --no-fund --save-dev --save-exact postcss@8.5.31
           npm audit fix --ignore-scripts --no-fund --no-audit || true
           npm install --package-lock-only --ignore-scripts --no-fund --no-audit
           npm audit --omit=dev --audit-level=high
@@ -52,4 +55,5 @@ jobs:
           git add package.json package-lock.json apps/web/package.json apps/web/package-lock.json
           git diff --cached --quiet && exit 0
           git commit -m 'security(deps): corrigir Nest e Monitor sem migrar Prisma major'
-          git push origin HEAD:main
+          # Publica em branch de verificacao para revisar diffs e CVEs antes de alterar main.
+          git push origin HEAD:refs/heads/security/iot-deps-20261020
