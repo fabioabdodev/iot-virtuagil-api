@@ -15,6 +15,17 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
+      - name: Exibir apenas a chave publica SSH para autorizar nova VPS
+        env:
+          DEPLOY_KEY_PRIVATE: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -e
+          umask 077
+          printf '%s\n' "$DEPLOY_KEY_PRIVATE" > "$RUNNER_TEMP/migration_deploy_key"
+          echo "DEPLOY_PUBKEY_BEGIN"
+          ssh-keygen -y -f "$RUNNER_TEMP/migration_deploy_key" | awk '{print $1 " " $2}'
+          echo "DEPLOY_PUBKEY_END"
+          rm -f "$RUNNER_TEMP/migration_deploy_key"
       - name: Conferir servidor SSH antes de liberar deploys
         uses: appleboy/ssh-action@v1.2.0
         with:
