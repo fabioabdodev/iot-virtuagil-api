@@ -164,6 +164,11 @@ jobs:
           envs: STACK_PROD_YML_BASE64,SITE_STACK_YML_BASE64
           script: |
             set -e
+            # Bloqueia deploy na VPS antiga caso VPS_HOST ainda nao tenha sido atualizado.
+            if [ "$(hostname -s)" != "srv2080409" ]; then
+              echo "ERRO: conexao SSH nao chegou a nova VPS srv2080409. Deploy cancelado."
+              exit 1
+            fi
             mkdir -p /opt/iot-virtuagil-api/deploy/swarm
             printf '%s' "$STACK_PROD_YML_BASE64" | base64 -d > /opt/iot-virtuagil-api/deploy/swarm/stack.prod.yml
             mkdir -p /opt/virtuagil-site
