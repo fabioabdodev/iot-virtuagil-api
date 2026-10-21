@@ -18,7 +18,7 @@ jobs:
       - name: Conferir servidor SSH antes de liberar deploys
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: 200.141.18.214
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
