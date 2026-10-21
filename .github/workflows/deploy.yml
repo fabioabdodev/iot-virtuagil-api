@@ -4,6 +4,12 @@ on:
   workflow_dispatch:
   push:
     branches: ['main']
+    # Mudancas so de workflow/documentacao nao justificam reconstruir
+    # tres imagens e atualizar stacks inteiras depois da migracao.
+    paths-ignore:
+      - '.github/workflows/**'
+      - '**/*.md'
+      - 'docs/**'
 
 # Evita corrida entre publicações: uma revisão mais antiga não deve
 # substituir outra mais nova depois do fim do build.
@@ -157,13 +163,18 @@ jobs:
           STACK_PROD_YML_BASE64: ${{ steps.stack_payload.outputs.stack_b64 }}
           SITE_STACK_YML_BASE64: ${{ steps.site_stack_payload.outputs.stack_b64 }}
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: 200.141.18.214
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           envs: STACK_PROD_YML_BASE64,SITE_STACK_YML_BASE64
           script: |
             set -e
+            # Bloqueia deploy na VPS antiga caso VPS_HOST ainda nao tenha sido atualizado.
+            if [ "$(hostname -s)" != "srv2080409" ]; then
+              echo "ERRO: conexao SSH nao chegou a nova VPS srv2080409. Deploy cancelado."
+              exit 1
+            fi
             mkdir -p /opt/iot-virtuagil-api/deploy/swarm
             printf '%s' "$STACK_PROD_YML_BASE64" | base64 -d > /opt/iot-virtuagil-api/deploy/swarm/stack.prod.yml
             mkdir -p /opt/virtuagil-site

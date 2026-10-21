@@ -1,0 +1,41 @@
+name: Verificar VPS de destino (somente leitura)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy.yml"
+      - ".github/workflows/verify-vps-target.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verificar-destino:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conferir servidor SSH antes de liberar deploys
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 200.141.18.214
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            set -e
+            DESTINO="$(hostname -s)"
+            echo "Servidor conectado: $DESTINO"
+            if [ "$DESTINO" != "srv2080409" ]; then
+              echo "ERRO: VPS_HOST ainda nao aponta a nova VPS srv2080409."
+              exit 1
+            fi
+            echo "OK: VPS_HOST aponta para a VPS nova."
+            if docker info --format '{{.Swarm.LocalNodeState}}' | grep -qx active; then
+              echo "Docker Swarm: ativo"
+              docker service ls --format '{{.Name}}|{{.Replicas}}' |
+                awk -F '|' 'BEGIN{n=0;falhas=0} {n++;if($2 ~ /^[0-9]+\/[0-9]+$/){split($2,r,"/");if(r[1]!=r[2])falhas++}} END{print "Servicos:",n,"| Contagem de replicas divergentes:",falhas; if(falhas>0) exit 2}'
+            else
+              echo "ERRO: Docker Swarm nao esta ativo."
+              exit 2
+            fi
