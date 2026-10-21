@@ -4,6 +4,12 @@ on:
   workflow_dispatch:
   push:
     branches: ['main']
+    # Mudancas so de workflow/documentacao nao justificam reconstruir
+    # tres imagens e atualizar stacks inteiras depois da migracao.
+    paths-ignore:
+      - '.github/workflows/**'
+      - '**/*.md'
+      - 'docs/**'
 
 # Evita corrida entre publicações: uma revisão mais antiga não deve
 # substituir outra mais nova depois do fim do build.
