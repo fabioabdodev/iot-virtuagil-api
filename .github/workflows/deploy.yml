@@ -163,7 +163,7 @@ jobs:
           STACK_PROD_YML_BASE64: ${{ steps.stack_payload.outputs.stack_b64 }}
           SITE_STACK_YML_BASE64: ${{ steps.site_stack_payload.outputs.stack_b64 }}
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: 200.141.18.214
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
