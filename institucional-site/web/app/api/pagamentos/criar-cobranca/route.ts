@@ -5,6 +5,7 @@ import {
 } from '@/lib/plans';
 import { loadCommercialPlans } from '@/lib/live-plans';
 import { CONTRACT_VERSION } from '@/lib/legal';
+import { allowCheckoutAttempt } from '@/lib/checkout-rate-limit';
 
 export const runtime = 'nodejs';
 
@@ -60,7 +61,11 @@ export async function POST(request: NextRequest) {
   let payload: CheckoutRequest;
 
   try {
-    payload = (await request.json()) as CheckoutRequest;
+    const parsed: unknown = await request.json();
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      throw new Error('INVALID_PAYLOAD');
+    }
+    payload = parsed as CheckoutRequest;
   } catch {
     return NextResponse.json(
       { ok: false, message: 'Dados da contratação inválidos.' },
@@ -87,22 +92,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Preço, parcelas e limite SEMPRE vêm de public.planos_virtuagil.
-  // Se o banco não responder, bloquear cobrança em vez de usar valor antigo.
-  const livePlans = await loadCommercialPlans();
-  if (!livePlans) {
-    return NextResponse.json(
-      { ok: false, message: 'Planos temporariamente indisponíveis. Tente novamente em instantes.' },
-      { status: 503 },
-    );
-  }
-  const requestedPlan = livePlans[requestedPlanCode];
-  if (!requestedPlan) {
-    return NextResponse.json(
-      { ok: false, message: 'Este plano não está disponível para contratação.' },
-      { status: 409 },
-    );
-  }
   const termosOrigem = payload.origem_compra === 'whatsapp_jade'
     ? 'checkout_site_via_whatsapp_jade'
     : 'checkout_site_virtuagil';
@@ -137,10 +126,34 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!isValidEmail(emailAcesso)) {
+  if (emailAcesso.length > 254 || !isValidEmail(emailAcesso)) {
     return NextResponse.json(
       { ok: false, message: 'Informe um e-mail válido para acesso ao painel.' },
       { status: 400 },
+    );
+  }
+
+  if (!allowCheckoutAttempt(emailAcesso)) {
+    return NextResponse.json(
+      { ok: false, message: 'Muitas tentativas. Aguarde um minuto antes de tentar novamente.' },
+      { status: 429, headers: { 'Retry-After': '60', 'Cache-Control': 'no-store' } },
+    );
+  }
+
+  // Preço, parcelas e limite SEMPRE vêm de public.planos_virtuagil.
+  // Validar a entrada e o limite antes de consumir o catálogo/automação.
+  const livePlans = await loadCommercialPlans();
+  if (!livePlans) {
+    return NextResponse.json(
+      { ok: false, message: 'Planos temporariamente indisponíveis. Tente novamente em instantes.' },
+      { status: 503 },
+    );
+  }
+  const requestedPlan = livePlans[requestedPlanCode];
+  if (!requestedPlan) {
+    return NextResponse.json(
+      { ok: false, message: 'Este plano não está disponível para contratação.' },
+      { status: 409 },
     );
   }
 
@@ -172,6 +185,7 @@ export async function POST(request: NextRequest) {
       }),
       cache: 'no-store',
       signal: controller.signal,
+      redirect: 'error',
     });
 
     const text = await response.text();

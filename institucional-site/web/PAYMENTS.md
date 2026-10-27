@@ -48,6 +48,31 @@ Após aprovação:
 - `VIRTUAGIL_INTERNAL_KEY` nunca usa prefixo `NEXT_PUBLIC_`;
 - checkout criado não equivale a pagamento aprovado.
 
+## Proteção de tentativas e limites da idempotência
+
+`POST /api/pagamentos/criar-cobranca` valida objeto JSON, campos e aceite antes
+de consultar o catálogo. Há proteção local com memória limitada, sem polling:
+até 3 tentativas por e-mail normalizado por minuto e 30 tentativas globais por
+processo por minuto. Os identificadores de e-mail ficam apenas como hash na
+memória; não são registrados em log. A resposta 429 inclui `Retry-After: 60`.
+
+Esse controle **não é distribuído**: reinícios e múltiplas réplicas exigem
+limite compartilhado na borda ou infraestrutura existente. O endpoint não
+confia em cabeçalhos arbitrários de IP enviados pelo cliente.
+
+Idempotência financeira continua pendente de revisão do workflow n8n vigente:
+deve haver uma referência única por intenção de compra, com snapshot de
+oferta/preço/moeda/termos e deduplicação persistida, incluindo retry após
+timeout remoto. Nenhuma chave ou parâmetro n8n não documentado foi inventado
+nesta alteração. Não assumir que timeout significa que a preferência não foi
+criada; não implementar retry cego de criação de checkout.
+
+Regressão local, sem serviços externos:
+
+```sh
+node --test tests/checkout-resilience.test.cjs tests/price-source.test.cjs
+```
+
 ## Legado
 
 A rota `/pagamento` redireciona para `/contratar-assistente-ia`. O antigo Plano Fundador de R$ 249 não faz parte da oferta pública atual.
