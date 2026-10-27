@@ -63,5 +63,8 @@ jobs:
       - name: Validar catalogo de precos vivo no Dashboard
         run: node scripts/check-live-prices.mjs
 
+      - name: Lint institutional site
+        run: npm run lint
+
       - name: Build institutional site
         run: npm run build
