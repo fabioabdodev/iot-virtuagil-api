@@ -3,6 +3,9 @@ on:
   push:
     branches: [review/codex-site-20261027]
     paths: [.github/workflows/site-only-codex.yml]
+concurrency:
+  group: codex-isolated-site-release
+  cancel-in-progress: true
 permissions:
   contents: read
   packages: write
@@ -33,6 +36,9 @@ jobs:
           file: ./institucional-site/web/Dockerfile
           push: true
           tags: ghcr.io/fabioabdodev/iot-virtuagil-api/institucional-site:codex-${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/553171029727
+            NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
       - name: Release site only to Swarm
         uses: appleboy/ssh-action@v1.2.0
         env:
