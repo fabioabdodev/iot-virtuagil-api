@@ -111,7 +111,16 @@ export async function POST(req: NextRequest) {
         result.plano_codigo !== HOMOLOGACAO_PLANO ||
         Number(result.valor_total) !== HOMOLOGACAO_VALOR ||
         !checkoutUrlConfiavel(result.checkout_url)) {
-      console.error('[homologacao-jade] checkout rejeitado', { status: upstream.status });
+      console.error('[homologacao-jade] checkout rejeitado', {
+        status: upstream.status,
+        upstreamOk: result?.ok === true,
+        codeMatches: result?.plano_codigo === HOMOLOGACAO_PLANO,
+        amountMatches: Number(result?.valor_total) === HOMOLOGACAO_VALOR,
+        checkoutUrlPresent: typeof result?.checkout_url === 'string',
+        checkoutUrlTrusted: checkoutUrlConfiavel(result?.checkout_url),
+        responseJsonObject: Boolean(result),
+        // NUNCA registrar corpo, URL, e-mail, telefone, preference_id ou credenciais.
+      });
       return resposta('Não foi possível validar o checkout de R$ 60. Nenhum pagamento foi iniciado.', 502);
     }
     return NextResponse.json({
