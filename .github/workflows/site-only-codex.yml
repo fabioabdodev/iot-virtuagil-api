@@ -1,13 +1,13 @@
-name: Publish only Virtuagil site on isolated branch
+name: Publish Virtuagil site only (main, isolated)
 on:
   push:
-    branches: [main, review/codex-site-20261027]
+    branches: [main]
     paths:
       - ".github/workflows/site-only-codex.yml"
       - "institucional-site/web/**"
 concurrency:
-  group: codex-isolated-site-release
-  cancel-in-progress: true
+  group: virtuagil-site-production-release
+  cancel-in-progress: false
 permissions:
   contents: read
   packages: write

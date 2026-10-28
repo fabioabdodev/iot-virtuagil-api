@@ -68,10 +68,10 @@ Este repositório cobre:
 
 Escopos paralelos locais:
 
-- `institucional-site/`: rascunho local do futuro site institucional da Virtuagil
-- `iot-virtuagil-firmware/`: base local do futuro projeto separado de firmware/hardware
+- `institucional-site/web/`: **site comercial real em produção** da Virtuagil, hospedado em `virtuagil.com.br`. Deploy independente e documentação em `docs/SITE-COMERCIAL-PRE-LANCAMENTO-2026-10-28.md`; **não** executar deploy completo IoT/Prisma só para o site.
+- `iot-virtuagil-firmware/`: base local do futuro projeto separado de firmware/hardware.
 
-Essas duas pastas não devem orientar mudanças deste backend/dashboard, a menos que a tarefa seja explicitamente sobre elas.
+As tarefas de cada produto devem respeitar essa fronteira. Leia `AGENTS.md` para evitar alterações cruzadas.
 
 ## Arquitetura operacional atual
 
