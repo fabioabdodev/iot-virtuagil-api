@@ -1,3 +1,5 @@
+> **Estado em 28/10/2026:** valores conferidos no catálogo Supabase, mas `sem juros` depende de conferir condições reais do Mercado Pago; pagamentos e provisionamento ainda não possuem evidência E2E. Ver `../../docs/SITE-COMERCIAL-PRE-LANCAMENTO-2026-10-28.md`. **Não promover campanha antes dos gates.**
+
 # Site comercial Virtuagil
 
 Aplicação institucional publicada em:
@@ -37,10 +39,10 @@ Oferta:
 - **Plano 500** — R$ 1.794 por 6 meses, até 6x de R$ 299 sem juros
 - **Plano 500 + Agenda** — R$ 2.394 por 6 meses, até 6x de R$ 399 sem juros
 - **Plano 500 + Hospedagem** — R$ 2.394 por 6 meses, até 6x de R$ 399 sem juros
-- ambos com até **500 contatos únicos/mês**
+- os três planos com até **500 contatos únicos/mês**
 - Mercado Pago
 
-Depois do pagamento aprovado, o fluxo existente provisiona o usuário e o acesso ao Painel Administrativo fica em:
+Após pagamento aprovado e validado, **o fluxo deverá** provisionar o usuário, conferir a conta recebedora e liberar o primeiro acesso de modo idempotente. **Essa cadeia completa ainda requer homologação ponta a ponta antes da campanha**. O Painel Administrativo é:
 
 - `https://atendente.virtuagil.com.br`
 
