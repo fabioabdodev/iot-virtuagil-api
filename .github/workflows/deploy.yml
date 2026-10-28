@@ -4,13 +4,22 @@ on:
   workflow_dispatch:
   push:
     branches: ['main']
-    # Mudancas so de workflow/documentacao nao justificam reconstruir
-    # tres imagens e atualizar stacks inteiras depois da migracao.
-    paths-ignore:
-      - '.github/workflows/**'
-      - '**/*.md'
-      - 'docs/**'
-      - 'institucional-site/web/**'
+    # Deploy completo IoT SOMENTE quando codigo/infra IoT mudarem.
+    # Um arquivo .dump vazio e documentação já dispararam indevidamente
+    # o pipeline geral; paths-ignore não é suficiente como controle.
+    paths:
+      - 'src/**'
+      - 'apps/web/**'
+      - 'prisma/**'
+      - 'deploy/swarm/**'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'nest-cli.json'
+      - 'tsconfig.json'
+      - 'tsconfig.build.json'
+      - 'eslint.config.mjs'
 
 # Evita corrida entre publicações: uma revisão mais antiga não deve
 # substituir outra mais nova depois do fim do build.
