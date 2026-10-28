@@ -5,3 +5,7 @@ Dockerfile*
 .git
 .gitignore
 README.md
+.env
+.env.*
+*.pem
+*.key
