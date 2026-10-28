@@ -7,7 +7,7 @@ export const HOMOLOGACAO_PARCELAS = 6;
 // 29/10/2026 23:59:59 America/Sao_Paulo. O link para de autorizar novas preferencias.
 export const HOMOLOGACAO_EXPIRA_EM = Date.parse('2026-10-30T02:59:59.000Z');
 // O token em claro nunca deve ser adicionado ao repositorio nem aos logs.
-const TOKEN_SHA256 = '2a0347c55ca07fbdb387555192b172873a718c3f49a228c0e29fe0a3fbbfe52f';
+const TOKEN_SHA256 = '1b5f9911e696196868fc806c83f5e0e5b7b39d28af2315c8dbedce76398284b5';
 
 export function tokenHomologacaoValido(token: unknown, agora = Date.now()): boolean {
   if (agora > HOMOLOGACAO_EXPIRA_EM ||
