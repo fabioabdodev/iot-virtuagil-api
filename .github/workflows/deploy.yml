@@ -10,6 +10,7 @@ on:
       - '.github/workflows/**'
       - '**/*.md'
       - 'docs/**'
+      - 'institucional-site/web/**'
 
 # Evita corrida entre publicações: uma revisão mais antiga não deve
 # substituir outra mais nova depois do fim do build.
