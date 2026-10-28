@@ -1,8 +1,10 @@
 name: Publish only Virtuagil site on isolated branch
 on:
   push:
-    branches: [review/codex-site-20261027]
-    paths: [.github/workflows/site-only-codex.yml]
+    branches: [main, review/codex-site-20261027]
+    paths:
+      - ".github/workflows/site-only-codex.yml"
+      - "institucional-site/web/**"
 concurrency:
   group: codex-isolated-site-release
   cancel-in-progress: true
@@ -60,4 +62,14 @@ jobs:
             docker pull "$DEPLOY_IMAGE" >/dev/null
             docker service update --detach=false --update-failure-action rollback --with-registry-auth --image "$DEPLOY_IMAGE" "$SERVICE"
             docker service ls --format '{{.Name}}|{{.Replicas}}' | grep -F "$SERVICE|1/1"
-            curl -fsSL --max-time 15 https://virtuagil.com.br/ >/dev/null
+            OK=0
+            for i in $(seq 1 25); do
+              if curl -fsSL --max-time 8 https://virtuagil.com.br/ >/dev/null 2>&1 && curl -fsSL --max-time 8 https://www.virtuagil.com.br/ >/dev/null 2>&1; then OK=1; break; fi
+              sleep 2
+            done
+            if [ "$OK" != "1" ]; then
+              echo SITE_HEALTH_FAILED_ROLLING_BACK
+              docker service rollback --detach=false "$SERVICE"
+              exit 1
+            fi
+            echo SITE_RELEASE_HTTP_OK
