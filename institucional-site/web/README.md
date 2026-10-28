@@ -1,77 +1,41 @@
-# Web Institucional Virtuagil
+# Site comercial Virtuagil
 
-Aplicação institucional e comercial da Virtuagil.
+Site **em produção** em https://virtuagil.com.br e https://www.virtuagil.com.br. Código Next.js em `institucional-site/web`, publicado separadamente das APIs IoT; Dashboard de clientes em https://atendente.virtuagil.com.br (outro repositório, privado).
 
-## Domínio e separação
+**Documentos de leitura obrigatória para agente novo:** `../../AGENTS.md` e `../../docs/SITE-COMERCIAL-PRE-LANCAMENTO-2026-10-28.md`. Fonte de preços: banco Supabase `public.planos_virtuagil`, não este README. O produto permanece **NO-GO** para campanha até homologar compra, cobrança aprovada, provisionamento, convite e suporte ponta a ponta.
 
-- site público: `https://virtuagil.com.br`
-- site público: `https://www.virtuagil.com.br`
-- Painel Administrativo do Assistente de IA: `https://atendente.virtuagil.com.br`
-- plataforma IoT: `https://monitor.virtuagil.com.br`
+## Rotas
 
-O institucional fica em `institucional-site/web` e não deve compartilhar navegação autenticada ou aparência de sistema administrativo.
+`/`, `/solucoes`, `/solucoes/atendente-ia` (URL legada), `/planos`, `/contato`, `/contratar-assistente-ia`, `/termos-de-contratacao`, `/politica-de-privacidade`, `/exclusao-de-dados`. `/pagamento` é compatibilidade de redirecionamento.
 
-## Stack
+## Planos comerciais (fotografia em 28/10/2026)
 
-- Next.js
-- TypeScript
-- Tailwind CSS
-- Docker Swarm
-- Traefik
-- Cloudflare
-- GHCR
-- GitHub Actions
+| Código | Oferta | Total 6 meses | Máx. parcelas |
+| --- | --- | ---: | ---: |
+| `jade_500_semestral` | Jade 500 | R$ 1.794,00 | 6 x R$ 299 |
+| `jade_500_agenda_semestral` | Jade 500 + Agenda | R$ 2.394,00 | 6 x R$ 399 |
+| `jade_500_hospedagem_semestral` | Jade 500 + Hospedagem | R$ 2.394,00 | 6 x R$ 399 |
 
-## Rotas comerciais principais
+Todos configurados para até 500 contatos únicos por mês. A UI carrega preço/parcelamento live; a promessa `sem juros` só deve ser feita após verificar as configurações da conta recebedora no Mercado Pago e os custos assumidos. **Não** usar preço de documentação antiga (Agenda R$ 2.388).
 
-- `/`
-- `/solucoes`
-- `/solucoes/atendente-ia` — URL mantida por compatibilidade; produto público = Assistente de IA Virtuagil (forma curta: Assistente de IA)
-- `/planos`
-- `/contato`
-- `/contratar-assistente-ia`
+## Checkout e segurança
 
-A rota legada `/pagamento` redireciona para a contratação atual.
+O navegador envia código do plano, dados mínimos e aceite de termos versionados. Servidor valida JSON, plano e dados, consulta catálogo ativo e chama n8n para criar checkout na conta autorizada. Webhook financeiro e persistência de pagamento/provisionamento ocorrem fora deste frontend. Resposta de checkout não prova compra aprovada. Não revelar `VIRTUAGIL_INTERNAL_KEY`, tokens, chaves ou dados de lead em `NEXT_PUBLIC_*`/logs.
 
-## Assistente de IA
+Variáveis públicas de contato (`NEXT_PUBLIC_WHATSAPP_URL`, `NEXT_PUBLIC_CONTACT_EMAIL`) são inseridas no build: **validar destino real com a equipe antes da campanha**; histórico de site usa `https://wa.me/553171029727`, ainda não homologado como número comercial correto. `NEXT_PUBLIC_MONITOR_URL` é do produto IoT, não do painel Jade. O endpoint real de checkout deve vir de variável privada `N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL`.
 
-Oferta pública vigente:
+A limitação de requisições atual do checkout é por processo; para campanha, acrescentar rate limiting na borda/API distribuída conforme o volume, preservando preços e termos. Confirmação/duplicação/expiração financeira ainda requerem teste E2E.
 
-- **Plano 500** — R$ 1.794 por 6 meses; até 6x de R$ 299 sem juros
-- **Plano 500 + Agenda** — R$ 2.388 por 6 meses; até 6x de R$ 398 sem juros
-- ambos com até **500 contatos únicos por mês**
-- pagamento via Mercado Pago
-
-O navegador envia o código do plano escolhido, nunca um preço confiável. O backend valida o código, chama o n8n com `VIRTUAGIL_INTERNAL_KEY` e só aceita o checkout quando código e valor retornados correspondem exatamente ao plano solicitado.
-
-## Ambiente de produção
-
-Arquivo opcional recomendado:
+## Desenvolvimento e release
 
 ```bash
-/opt/virtuagil-site/.env.prod
-```
-
-Variáveis:
-
-```bash
-NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/553171029727
-NEXT_PUBLIC_CONTACT_EMAIL=contato@virtuagil.com.br
-NEXT_PUBLIC_MONITOR_URL=https://monitor.virtuagil.com.br
-NEXT_PUBLIC_ASSISTENTE_URL=https://atendente.virtuagil.com.br
-VIRTUAGIL_INTERNAL_KEY=<segredo>
-N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL=https://webhookworkflow.virtuagil.com.br/webhook/mercadopago-criar-checkout-jade500
-```
-
-Nunca versionar o valor de `VIRTUAGIL_INTERNAL_KEY`.
-
-O deploy também pode reaproveitar a mesma chave já carregada em um serviço Virtuagil existente, sem imprimi-la em logs.
-
-## Validação
-
-```bash
+cd institucional-site/web
 npm ci
+node --test tests/*.test.cjs
+npm run lint
 npm run build
 ```
 
-A CI do repositório compila o institucional em pull requests antes do merge.
+`.github/workflows/site-only-codex.yml` (caminho legado) publica **só** `virtuagil-site_virtuagil-site` na VPS `srv2080409` após commit na `main`. Não cancelar deploy em andamento nem usar `.github/workflows/deploy.yml` (IoT/Prisma) para modificar o site. Verificar HTTPS raiz+www, imagem por SHA e rollback; nenhuma mensagem/cobrança real como smoke test.
+
+Para a fotografia atual da produção, riscos e checklist, ver os dois documentos iniciais.
