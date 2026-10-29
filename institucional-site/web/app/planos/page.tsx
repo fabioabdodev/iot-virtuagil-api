@@ -87,6 +87,12 @@ export default async function PlanosPage() {
               Não foi possível consultar os valores atuais. Nenhuma cobrança será iniciada até que os planos estejam disponíveis.
             </div>
           )}
+<div className="mt-6 rounded-2xl border border-amber-300/30 bg-amber-300/[0.07] p-5 text-sm leading-7 text-slate-200" role="note">
+            <p className="font-bold text-amber-100">Antes de contratar: custos externos e resultados</p>
+            <p className="mt-2">O valor do plano Virtuagil não inclui necessariamente chip/eSIM, linha telefônica, aparelho celular compatível (ou dual chip), internet, instalação e configuração de WhatsApp/WhatsApp Business e eventuais cobranças de plataformas de terceiros. A necessidade e o custo de cada item dependem da integração escolhida e devem ser confirmados na implantação. O cliente é responsável pelos itens externos que contratar em seu nome.</p>
+            <p className="mt-2">O pagamento não ativa imediatamente a assistente: é necessário fornecer dados e acessos, configurar, testar e homologar. A Virtuagil não garante aumento de clientes, vendas, faturamento ou lucro.</p>
+            <p className="mt-2">Há regras de desistência e cancelamento em qualquer etapa, respeitados os direitos legais, inclusive o arrependimento quando aplicável. Consulte os <Link href="/termos-de-contratacao" className="font-semibold text-amber-100 underline">Termos de Contratação</Link> antes de pagar.</p>
+          </div>
           <div className="grid gap-5 lg:grid-cols-3">
             {planList.map((plan) => (
               <article
