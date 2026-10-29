@@ -1,48 +1,10 @@
-# FAQ Comercial - Virtuagil
+# FAQ COMERCIAL — ARQUIVO LEGADO (NÃO UTILIZAR PELA JADE)
 
-## O que a Virtuagil faz?
+Este arquivo descrevia um posicionamento comercial antigo, centrado em monitoramento de temperatura, e não corresponde à oferta atual do **Assistente de IA Virtuagil**.
 
-A Virtuagil oferece solucoes de automacao e monitoramento por modulos, com foco
-em resolver problemas reais da operacao de forma simples e gradual.
+**Fonte oficial atualizada para o atendimento da Jade:**
+[BASE_CONHECIMENTO_OFICIAL_JADE.md](./BASE_CONHECIMENTO_OFICIAL_JADE.md).
 
-## O que significa trabalhar por modulos?
+Não adicionar este arquivo legado à base de conhecimento/RAG da Jade. Não utilizar seus preços, produtos, propostas de piloto ou escopos antigos como ofertas vigentes. Projetos de IoT e automações personalizadas só devem ser apresentados quando houver condições comerciais atuais e confirmação da equipe.
 
-Significa que o cliente pode contratar apenas a solucao que precisa no momento,
-como o modulo de temperatura, e depois expandir para outros modulos conforme a
-necessidade.
-
-## Qual e o primeiro modulo da Virtuagil?
-
-O primeiro modulo comercial e o Modulo Temperatura, voltado para monitoramento
-de freezers, geladeiras e equipamentos refrigerados.
-
-## Quem pode contratar essa solucao?
-
-Inicialmente, a proposta faz mais sentido para restaurantes, clinicas pequenas,
-laboratorios pequenos e operacoes com refrigeracao critica.
-
-## Preciso contratar tudo de uma vez?
-
-Nao. A proposta da Virtuagil e justamente permitir entrada gradual, comecando
-por um problema especifico.
-
-## E possivel comecar com um piloto?
-
-Sim. A estrategia inicial recomendada e validar com um piloto enxuto antes de
-expandir o servico.
-
-## A Virtuagil vende apenas monitoramento de temperatura?
-
-Nao. O modulo temperatura e a primeira oferta comercial, mas a visao da empresa
-e crescer com outros modulos de automacao e monitoramento.
-
-## A Virtuagil tambem faz bots e automacoes por WhatsApp?
-
-Sim. A proposta modular da Virtuagil tambem inclui a possibilidade de bots de
-WhatsApp, agendamento e automacoes operacionais com n8n, conforme a necessidade
-do cliente.
-
-## Como funciona o contato inicial?
-
-O primeiro passo e entender a realidade do cliente, avaliar a dor principal e
-ver se faz sentido propor um piloto ou uma solucao inicial.
+_Registro de substituição documental: 29/10/2026._
