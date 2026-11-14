@@ -12,9 +12,9 @@ Site **em produção** em https://virtuagil.com.br e https://www.virtuagil.com.b
 
 | Código | Oferta | Total 6 meses | Máx. parcelas |
 | --- | --- | ---: | ---: |
-| `jade_500_semestral` | Jade 500 | R$ 1.794,00 | 6 x R$ 299 |
-| `jade_500_agenda_semestral` | Jade 500 + Agenda | R$ 2.394,00 | 6 x R$ 399 |
-| `jade_500_hospedagem_semestral` | Jade 500 + Hospedagem | R$ 2.394,00 | 6 x R$ 399 |
+| `jade_500_semestral` | Jade 500 | R$ 3.894,00 | 6 x R$ 649 |
+| `jade_500_agenda_semestral` | Jade 500 + Agenda | R$ 5.394,00 | 6 x R$ 899 |
+| `jade_500_hospedagem_semestral` | Jade 500 + Hospedagem | R$ 5.394,00 | 6 x R$ 899 |
 
 Todos configurados para até 500 contatos únicos por mês. A UI carrega preço/parcelamento live; a promessa `sem juros` só deve ser feita após verificar as configurações da conta recebedora no Mercado Pago e os custos assumidos. **Não** usar preço de documentação antiga (Agenda R$ 2.388).
 
@@ -39,3 +39,6 @@ npm run build
 `.github/workflows/site-only-codex.yml` (caminho legado) publica **só** `virtuagil-site_virtuagil-site` na VPS `srv2080409` após commit na `main`. Não cancelar deploy em andamento nem usar `.github/workflows/deploy.yml` (IoT/Prisma) para modificar o site. Verificar HTTPS raiz+www, imagem por SHA e rollback; nenhuma mensagem/cobrança real como smoke test.
 
 Para a fotografia atual da produção, riscos e checklist, ver os dois documentos iniciais.
+
+## Campanha inaugural de 30% — bloqueada até homologação
+A nova promoção (até 10 contratos do primeiro semestre) usa `lib/launch-campaign.ts`: por padrão NÃO mostra desconto. Só a API pública do Dashboard confirma promoção ativa e vagas. Checkout solicita reserva com chave interna antes de cobrar; nunca transforma desconto indisponível em preço cheio sem reconfirmação. Códigos promocionais e preços são separados do catálogo regular. Confirmar n8n (preferências com prazo), integração webhook, juros e minuta contratual antes de ligar as flags no banco. Preços novos: Jade R$ 3.894; Agenda R$ 5.394; Hospedagem R$ 6.594. Não alterar aceites históricos.
