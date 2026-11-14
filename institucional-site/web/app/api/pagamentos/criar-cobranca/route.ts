@@ -4,6 +4,7 @@ import {
   isCommercialPlanCode,
 } from '@/lib/plans';
 import { loadCommercialPlans } from '@/lib/live-plans';
+import { loadLaunchCampaign } from '@/lib/launch-campaign';
 import { CONTRACT_VERSION } from '@/lib/legal';
 import { allowCheckoutAttempt } from '@/lib/checkout-rate-limit';
 
@@ -22,6 +23,7 @@ type CheckoutRequest = {
   aceite_termos?: boolean;
   termos_versao?: string;
   origem_compra?: 'whatsapp_jade' | 'site_virtuagil';
+  campanha_esperada?: boolean;
 };
 
 function isValidEmail(value: string) {
@@ -157,6 +159,62 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // A campanha é de 10 contratos, NÃO de dez links de checkout.
+  // O banco reserva uma vaga atomicamente. Reservas sem pagamento continuam
+  // comprometidas até conferência manual da validade da preferência Mercado Pago.
+  const campaign = await loadLaunchCampaign();
+  if (payload.campanha_esperada && !campaign?.ativa) {
+    return NextResponse.json(
+      { ok:false, message:'A condição de lançamento mudou. Atualize a página antes de contratar.' },
+      { status:409,headers:{'Cache-Control':'no-store'} },
+    );
+  }
+
+  let checkoutPlanCode:string = requestedPlan.code;
+  let expectedAmount = requestedPlan.total;
+  let launchReservationId:string|null = null;
+  if (campaign?.ativa) {
+    const offerAmount=campaign.precos[requestedPlan.code];
+    if (!offerAmount ||
+        Math.round(offerAmount*100)!==Math.round(requestedPlan.total*70)) {
+      return NextResponse.json(
+        {ok:false,message:'A campanha está em validação. Nenhuma cobrança foi iniciada.'},
+        {status:503,headers:{'Cache-Control':'no-store'}},
+      );
+    }
+    try {
+      const reserve=await fetch(
+        'https://atendente.virtuagil.com.br/api/interno/campanha-lancamento/reservar',{
+          method:'POST',cache:'no-store',redirect:'error',
+          headers:{'Content-Type':'application/json','x-virtuagil-key':internalKey},
+          body:JSON.stringify({email_acesso:emailAcesso,plano_codigo:requestedPlan.code}),
+          signal:AbortSignal.timeout(8000),
+        },
+      );
+      const reservation=(await reserve.json()) as {
+        ok?:boolean;reserva_id?:string;plano_promocional_codigo?:string;error?:string
+      };
+      if (!reserve.ok || reservation.ok!==true ||
+          reservation.plano_promocional_codigo!==requestedPlan.code+'_lancamento' ||
+          !/^[0-9a-f-]{36}$/i.test(String(reservation.reserva_id||''))) {
+        return NextResponse.json(
+          {ok:false,message:reservation.error==='PROMO_ESGOTADA'
+            ? 'As dez vagas promocionais estão reservadas. Atualize a página para ver os preços atuais.'
+            : 'Não foi possível reservar o desconto. Nenhuma cobrança foi iniciada.'},
+          {status:409,headers:{'Cache-Control':'no-store'}},
+        );
+      }
+      checkoutPlanCode=reservation.plano_promocional_codigo;
+      expectedAmount=offerAmount;
+      launchReservationId=String(reservation.reserva_id);
+    } catch {
+      return NextResponse.json(
+        {ok:false,message:'Não foi possível confirmar a vaga promocional. Nenhuma cobrança foi iniciada.'},
+        {status:503,headers:{'Cache-Control':'no-store'}},
+      );
+    }
+  }
+
   const webhookUrl =
     process.env.N8N_ASSISTENTE_CHECKOUT_WEBHOOK_URL?.trim() ||
     DEFAULT_PAYMENT_WEBHOOK_URL;
@@ -176,7 +234,8 @@ export async function POST(request: NextRequest) {
         nome_contato: nomeContato,
         telefone,
         email_acesso: emailAcesso,
-        plano_codigo: requestedPlan.code,
+        plano_codigo: checkoutPlanCode,
+        ...(launchReservationId ? { campanha_id:'lancamento_10', reserva_id:launchReservationId } : {}),
         aceite_termos: true,
         termos_versao: CONTRACT_VERSION,
         termos_aceite_em: new Date().toISOString(),
@@ -210,9 +269,9 @@ export async function POST(request: NextRequest) {
     const responsePlanCode = String(data?.plano_codigo ?? '');
     const responseTotal = Number(data?.valor_total);
     const planMatches =
-      responsePlanCode === requestedPlan.code &&
+      responsePlanCode === checkoutPlanCode &&
       Number.isFinite(responseTotal) &&
-      Math.abs(responseTotal - requestedPlan.total) < 0.001;
+      Math.abs(responseTotal - expectedAmount) < 0.001;
 
     if (
       !response.ok ||
@@ -248,6 +307,7 @@ export async function POST(request: NextRequest) {
         preference_id: data.preference_id,
         plano_codigo: responsePlanCode,
         valor_total: responseTotal,
+        campanha_aplicada: Boolean(launchReservationId),
       },
       {
         headers: {
