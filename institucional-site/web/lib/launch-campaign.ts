@@ -23,7 +23,7 @@ export async function loadLaunchCampaign(): Promise<LaunchCampaign | null> {
     const d=v as Record<string,unknown>
     if (d.ok!==true || d.ativa!==true ||
         d.desconto_percentual!==30 ||
-        !Number.isInteger(d.vagas_restantes) ||
+        !Number.isInteger(Number(d.vagas_restantes)) ||
         Number(d.vagas_restantes)<=0 || Number(d.vagas_restantes)>10) return null
     const p=(d.precos && typeof d.precos==="object" && !Array.isArray(d.precos)
       ?d.precos:{}) as Record<string,unknown>
