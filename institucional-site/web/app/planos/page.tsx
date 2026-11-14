@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatBrl } from '@/lib/plans';
 import { loadCommercialPlans } from '@/lib/live-plans';
+import { loadLaunchCampaign } from '@/lib/launch-campaign';
 import { CardBrands } from '@/components/card-brands';
 import { jadeWhatsappUrl } from '@/lib/jade-contact';
 
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PlanosPage() {
-  const livePlans = await loadCommercialPlans();
+  const [livePlans, campaign] = await Promise.all([loadCommercialPlans(),loadLaunchCampaign()]);
   const planList = Object.values(livePlans || {});
   const agendaPlan = livePlans?.jade_500_agenda_semestral;
 
@@ -93,6 +94,12 @@ export default async function PlanosPage() {
             <p className="mt-2">O pagamento não ativa imediatamente a assistente: é necessário fornecer dados e acessos, configurar, testar e homologar. A Virtuagil não garante aumento de clientes, vendas, faturamento ou lucro.</p>
             <p className="mt-2">Há regras de desistência e cancelamento em qualquer etapa, respeitados os direitos legais, inclusive o arrependimento quando aplicável. Consulte os <Link href="/termos-de-contratacao" className="font-semibold text-amber-100 underline">Termos de Contratação</Link> antes de pagar.</p>
           </div>
+          {campaign?.ativa && (
+            <div role="note" className="mb-5 rounded-2xl border border-emerald-300/40 bg-emerald-300/[0.08] p-5 text-sm text-slate-200">
+              <p className="text-lg font-bold text-emerald-200">Lançamento Virtuagil: 30% de desconto no primeiro semestre</p>
+              <p className="mt-1">Para até 10 primeiras contratações confirmadas. No momento, {campaign.vagas_restantes} {campaign.vagas_restantes===1?'vaga está reservável':'vagas estão reserváveis'}. A oferta depende de confirmação da vaga ao iniciar o checkout, aprovação do pagamento e condições da campanha. Renovação pelo preço vigente, sem desconto automático.</p>
+            </div>
+          )}
           <div className="grid gap-5 lg:grid-cols-3">
             {planList.map((plan) => (
               <article
@@ -131,19 +138,22 @@ export default async function PlanosPage() {
                   <div className="text-xs font-bold uppercase tracking-[.16em] text-slate-500">
                     Plano semestral
                   </div>
+                  {campaign?.ativa && campaign.precos[plan.code] && (
+                    <div className="mt-3 text-xs text-slate-400">Preço normal: <span className="line-through">{formatBrl(plan.total)}</span> · <strong className="text-emerald-200">30% OFF</strong></div>
+                  )}
                   <div className="mt-2 flex items-end gap-2 text-white">
                     <span className="pb-2 text-2xl font-bold">
                       {plan.installments}x de
                     </span>
                     <span className="font-display text-5xl font-semibold tracking-[-.05em] text-emerald-300">
-                      {formatBrl(plan.installmentValue).replace(',00', '')}
+                      {formatBrl((campaign?.ativa && campaign.precos[plan.code] ? campaign.precos[plan.code]! : plan.total) / plan.installments).replace(',00', '')}
                     </span>
                   </div>
                   <div className="mt-3 inline-flex rounded-lg border border-emerald-300/30 bg-emerald-300/[0.09] px-3 py-1.5 text-sm font-black uppercase tracking-[0.06em] text-emerald-200">
-                    SEM JUROS NO CARTÃO
+                    ATÉ 6X NO CARTÃO — CONDIÇÕES NO CHECKOUT
                   </div>
                   <div className="mt-3 text-xs text-slate-500">
-                    Total semestral: {formatBrl(plan.total)}
+                    Total semestral: {formatBrl(campaign?.ativa && campaign.precos[plan.code] ? campaign.precos[plan.code]! : plan.total)}
                   </div>
                   <CardBrands className="mt-4" />
                 </div>
@@ -212,7 +222,7 @@ export default async function PlanosPage() {
               </p>
               {agendaPlan && (
                 <p className="mt-4 text-sm text-slate-400">
-                  O módulo Agenda leva o plano completo a <strong className="text-white">{formatBrl(agendaPlan.total)}</strong>, em até {agendaPlan.installments}x de {formatBrl(agendaPlan.installmentValue)} sem juros.
+                  O módulo Agenda leva o plano completo a <strong className="text-white">{formatBrl(agendaPlan.total)}</strong>, em até {agendaPlan.installments}x de {formatBrl((campaign?.ativa && campaign.precos[agendaPlan.code] ? campaign.precos[agendaPlan.code]! : agendaPlan.total) / agendaPlan.installments)}, conforme condições do checkout.
                 </p>
               )}
             </div>
