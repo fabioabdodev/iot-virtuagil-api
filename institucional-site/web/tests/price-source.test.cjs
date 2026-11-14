@@ -14,7 +14,9 @@ test('checkout recebe preco vigente do servidor e falha se indisponivel', () => 
   const checkout = read('app/api/pagamentos/criar-cobranca/route.ts');
   assert.match(checkout, /await loadCommercialPlans\(\)/);
   assert.match(checkout, /status:\s*503/);
-  assert.match(checkout, /responseTotal - requestedPlan\.total/);
+  assert.match(checkout, /responseTotal - expectedAmount/);
+  assert.match(checkout, /campaign\?\.ativa/);
+  assert.match(checkout, /campanha_esperada/);
   assert.doesNotMatch(checkout, /commercialPlans\[/);
 });
 test('home, planos, solucoes e formulario nao usam catalogo hardcoded diretamente', () => {

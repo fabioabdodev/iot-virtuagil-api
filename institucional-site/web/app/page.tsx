@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { HomePage } from '@/components/site/home-page';
 import { loadCommercialPlans } from '@/lib/live-plans';
+import { loadLaunchCampaign } from '@/lib/launch-campaign';
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ?? 'https://wa.me/553171029727';
@@ -22,6 +23,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const livePlans = await loadCommercialPlans();
-  return <HomePage whatsappUrl={whatsappUrl} contactEmail={contactEmail} livePlans={livePlans} />;
+  const [livePlans,campaign] = await Promise.all([loadCommercialPlans(),loadLaunchCampaign()]);
+  return <HomePage whatsappUrl={whatsappUrl} contactEmail={contactEmail} livePlans={livePlans} campaign={campaign} />;
 }

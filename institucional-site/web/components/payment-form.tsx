@@ -20,6 +20,7 @@ import {
   formatBrl,
 } from '@/lib/plans';
 import type { LiveCommercialPlans } from '@/lib/live-plans';
+import type { LaunchCampaign } from '@/lib/launch-campaign';
 
 type FormState = {
   nome_empresa: string;
@@ -43,12 +44,14 @@ type PaymentFormProps = {
   plans: LiveCommercialPlans;
   initialPlan?: CommercialPlanCode;
   returnToWhatsapp?: boolean;
+  campaign?: LaunchCampaign | null;
 };
 
 export function PaymentForm({
   plans,
   initialPlan = defaultCommercialPlanCode,
   returnToWhatsapp = false,
+  campaign = null,
 }: PaymentFormProps) {
   const [form, setForm] = useState<FormState>(initialForm);
   const [planCode, setPlanCode] = useState<CommercialPlanCode>(initialPlan);
@@ -57,6 +60,8 @@ export function PaymentForm({
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [checkoutReturn, setCheckoutReturn] = useState<{ checkoutUrl: string; whatsappUrl: string } | null>(null);
   const plan = plans[planCode] ?? Object.values(plans)[0];
+  const promotionalPrice = campaign?.ativa && plan ? campaign.precos[plan.code] : undefined;
+  const displayPrice = promotionalPrice || plan?.total || 0;
 
   function updateField(field: keyof FormState, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -101,6 +106,7 @@ export function PaymentForm({
           aceite_termos: true,
           termos_versao: CONTRACT_VERSION,
           origem_compra: returnToWhatsapp ? 'whatsapp_jade' : 'site_virtuagil',
+          campanha_esperada: Boolean(campaign?.ativa),
         }),
       });
 
@@ -207,11 +213,11 @@ export function PaymentForm({
                 <div className="mt-4 text-sm text-slate-300">
                   {option.installments}x de{' '}
                   <strong className="text-lg text-emerald-300">
-                    {formatBrl(option.installmentValue)}
+                    {formatBrl(((campaign?.ativa && campaign.precos[option.code]) || option.total) / option.installments)}
                   </strong>
                 </div>
                 <div className="mt-1 text-xs text-slate-500">
-                  Total semestral: {formatBrl(option.total)}
+                  Total semestral: {formatBrl((campaign?.ativa && campaign.precos[option.code]) || option.total)}
                 </div>
               </button>
             );
@@ -230,6 +236,7 @@ export function PaymentForm({
             <div className="mt-5 font-display text-4xl font-semibold tracking-[-0.04em] text-white">
               {plan.name}
             </div>
+            {campaign?.ativa && promotionalPrice && <p className="mt-2 text-xs font-semibold text-emerald-200">Campanha de lançamento: 30% OFF · {campaign.vagas_restantes} vagas reserváveis</p>}
             <div className="mt-1 text-sm font-semibold uppercase tracking-[0.08em] text-slate-300">
               6 meses
             </div>
@@ -248,7 +255,7 @@ export function PaymentForm({
 
           <div className="relative flex flex-col justify-center rounded-[24px] border border-emerald-300/20 bg-[linear-gradient(135deg,rgba(5,35,31,0.98),rgba(4,20,24,0.98))] p-5 md:p-6">
             <div className="absolute right-0 top-0 rounded-bl-2xl bg-emerald-300 px-4 py-2 text-[10px] font-black uppercase tracking-[0.08em] text-[#02110d]">
-              Sem juros
+              Até 6x no cartão
             </div>
             <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
               Por apenas
@@ -256,16 +263,17 @@ export function PaymentForm({
             <div className="mt-2 flex flex-wrap items-end gap-x-3 text-white">
               <span className="pb-2 text-3xl font-bold">{plan.installments}x de</span>
               <span className="font-display text-5xl font-semibold tracking-[-0.055em] text-emerald-300 md:text-6xl">
-                {formatBrl(plan.installmentValue).replace(',00', '')}
+                {formatBrl(displayPrice/plan.installments).replace(',00', '')}
               </span>
             </div>
             <div className="mt-3 inline-flex w-fit rounded-lg border border-emerald-300/30 bg-emerald-300/[0.09] px-3 py-1.5 text-sm font-black uppercase tracking-[0.06em] text-emerald-200">
-              SEM JUROS NO CARTÃO
+              CONDIÇÕES DE PARCELAMENTO NO CHECKOUT
             </div>
+            {promotionalPrice && <div className="mt-3 text-xs text-emerald-100">Preço regular: <span className="line-through">{formatBrl(plan.total)}</span> · 30% de desconto para o primeiro semestre</div>}
             <CardBrands className="mt-4" />
             <div className="mt-5 flex items-center gap-2 border-t border-white/[0.08] pt-4 text-xs text-slate-400">
               <CreditCard className="h-4 w-4 text-emerald-300" />
-              Ou {formatBrl(plan.total)} no plano semestral
+              Total do primeiro semestre: {formatBrl(displayPrice)}
             </div>
             <Button type="submit" size="lg" disabled={loading || !acceptedTerms} className="mt-5 w-full">
               {loading ? (

@@ -32,6 +32,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { products } from '@/lib/products';
 import { formatBrl } from '@/lib/plans';
 import type { LiveCommercialPlans } from '@/lib/live-plans';
+import type { LaunchCampaign } from '@/lib/launch-campaign';
 import { CardBrands } from '@/components/card-brands';
 import { jadeWhatsappUrl } from '@/lib/jade-contact';
 
@@ -180,6 +181,7 @@ function WhatsAppDemo() {
 
 type HomePageProps = {
   livePlans: LiveCommercialPlans | null;
+  campaign: LaunchCampaign | null;
   whatsappUrl: string;
   contactEmail: string;
 };
@@ -273,7 +275,7 @@ const faqs = [
   },
 ];
 
-export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans }: HomePageProps) {
+export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans,campaign }: HomePageProps) {
   return (
     <main className="relative overflow-hidden">
       <div className="glow-orb left-[-120px] top-[80px] h-[360px] w-[360px] bg-emerald-400/20" />
@@ -383,6 +385,7 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans }
                 Planos temporariamente indisponíveis. Fale com a Virtuagil para receber uma proposta atualizada.
               </p>
             )}
+            {campaign?.ativa && <p className="mt-4 rounded-xl border border-emerald-300/30 bg-emerald-300/[0.08] p-3 text-center text-sm text-emerald-100">Campanha de lançamento: 30% de desconto para até 10 primeiros contratos confirmados. {campaign.vagas_restantes} vagas reserváveis; condição sujeita à confirmação no checkout e válida apenas no primeiro semestre.</p>}
             <div className="mt-6 grid gap-4 lg:grid-cols-3">
               {Object.values(livePlans || {}).map((plan) => (
                 <article
@@ -402,16 +405,17 @@ export function HomePage({ whatsappUrl, contactEmail: _contactEmail, livePlans }
                   <h3 className="mt-2 font-display text-3xl font-semibold text-white">{plan.name}</h3>
                   <p className="mt-2 pr-16 text-xs leading-6 text-slate-400">{plan.description}</p>
 
+                  {campaign?.ativa && campaign.precos[plan.code] && <p className="mt-3 text-xs text-emerald-200">Preço normal: <span className="line-through">{formatBrl(plan.total)}</span> · 30% OFF</p>}
                   <div className="mt-5 flex items-end gap-2">
                     <span className="pb-1 text-xl font-black text-white">{plan.installments}x de</span>
                     <span className="font-display text-4xl font-semibold tracking-[-.05em] text-emerald-300 md:text-5xl">
-                      {formatBrl(plan.installmentValue).replace(',00', '')}
+                      {formatBrl(((campaign?.ativa && campaign.precos[plan.code]) || plan.total)/plan.installments).replace(',00', '')}
                     </span>
                   </div>
                   <div className="mt-3 inline-flex rounded-lg border border-emerald-300/30 bg-emerald-300/[0.09] px-3 py-1.5 text-sm font-black uppercase tracking-[0.06em] text-emerald-200">
-                    SEM JUROS NO CARTÃO
+                    ATÉ 6X NO CARTÃO — CONDIÇÕES NO CHECKOUT
                   </div>
-                  <div className="mt-2 text-[11px] text-slate-500">Total semestral: {formatBrl(plan.total)}</div>
+                  <div className="mt-2 text-[11px] text-slate-500">Total semestral: {formatBrl((campaign?.ativa && campaign.precos[plan.code]) || plan.total)}</div>
                   <CardBrands className="mt-4" />
 
                   <div className="mt-5 grid gap-2.5 text-sm text-slate-200">

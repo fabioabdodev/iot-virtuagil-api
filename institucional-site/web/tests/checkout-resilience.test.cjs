@@ -23,6 +23,7 @@ function route({ allowed = true, checkoutUrl = 'https://www.mercadopago.com.br/c
     '@/lib/legal': { CONTRACT_VERSION: 'v1' },
     '@/lib/checkout-rate-limit': { allowCheckoutAttempt: () => allowed },
     '@/lib/live-plans': { loadCommercialPlans: async () => { calls.push('catalog'); return { jade_test: { code: 'jade_test', total: 1794 } }; } },
+    '@/lib/launch-campaign': { loadLaunchCampaign: async () => null },
   }, { process: { env: { VIRTUAGIL_INTERNAL_KEY: 'fixture-only' } }, fetch: async (url, options) => {
     calls.push('webhook'); assert.equal(options.redirect, 'error'); assert.ok(options.signal);
     return { ok: true, status: 200, text: async () => JSON.stringify({ ok: true, plano_codigo: 'jade_test', valor_total: total, checkout_url: checkoutUrl }) };
