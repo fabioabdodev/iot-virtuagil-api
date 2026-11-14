@@ -8,9 +8,9 @@
 - O site foi implantado isoladamente em 28/10 por [GitHub Actions 40622679521](https://github.com/fabioabdodev/iot-virtuagil-api/actions/runs/40622679521). Arquivo de workflow histórico `.github/workflows/site-only-codex.yml`. **A branch de revisão Codex não deve publicar produção**; somente main, sem cancelar release em andamento.
 - Código de checkout em `app/api/pagamentos/criar-cobranca/route.ts`, usa catálogo live em `lib/live-plans.ts`, valida códigos/forma/termos e chama n8n via chave interna no servidor. Não é prova de pagamento aprovado nem implantação de cliente.
 - Catálogo no Supabase em 28/10:
-  - `jade_500_semestral` — R$ 1.794,00 total / até 6x de R$ 299,00;
-  - `jade_500_agenda_semestral` — R$ 2.394,00 total / até 6x de R$ 399,00;
-  - `jade_500_hospedagem_semestral` — R$ 2.394,00 total / até 6x de R$ 399,00.
+  - `jade_500_semestral` — R$ 3.894,00 total / até 6x de R$ 649,00;
+  - `jade_500_agenda_semestral` — R$ 5.394,00 total / até 6x de R$ 899,00;
+  - `jade_500_hospedagem_semestral` — R$ 6.594,00 total / até 6x de R$ 1.099,00.
   Preço e parcelas devem ser consultados dinamicamente; não reutilizar valores estáticos do README antigo (que citava R$2.388 e omitia Hospedagem). Confirmar condições reais do Mercado Pago e taxa suportada antes de anunciar `sem juros`.
 - No repositório público havia um dump com **zero bytes** em `backups/db/db.npjmadrtstatwfcqqmei.supabase.co_postgres_2026-03-13_13-37-03.dump`; arquivo vazio excluído. Não há conteúdo de banco naquele objeto Git; esta constatação **não** certifica ausência de segredos em todo histórico Git.
 - `NEXT_PUBLIC_WHATSAPP_URL` estava hardcoded no workflow como `https://wa.me/553171029727` e contato e-mail `contato@virtuagil.com.br`. **Destinos ainda não confirmados pelo responsável**; não anunciar o WhatsApp nem marcar conversão válida sem conferir que chegam à Jade/atendimento correto. O número de TVTrade é outro produto e não deve ser usado como substituto.
@@ -39,3 +39,6 @@
 - Registrar evidência com data/versão. Não publicar automaticamente a partir de branch de revisão.
 
 Para qualquer agente novo, o ponto de entrada técnico obrigatório é `AGENTS.md`; revisão do produto no repo privado, não em prompts soltos.
+
+## Atualização 14/11/2026 — não liberar campanha ainda
+Catálogo vivo foi atualizado para R$ 3.894 / 5.394 / 6.594 por semestre. A campanha de 30% tem três planos promocionais inativos no Supabase e controle de reserva exclusivo para até 10 contratos. O site usa API de campanha do Dashboard em modo fail-closed, mas deve permanecer OFF até validar n8n, pagamento aprovado/refunds, juros, versão v4 de termos e correspondência das transações. Contratos/termos antigos são preservados. Condição normal do site permanece disponível sem desconto.
