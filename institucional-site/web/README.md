@@ -14,7 +14,7 @@ Site **em produção** em https://virtuagil.com.br e https://www.virtuagil.com.b
 | --- | --- | ---: | ---: |
 | `jade_500_semestral` | Jade 500 | R$ 3.894,00 | 6 x R$ 649 |
 | `jade_500_agenda_semestral` | Jade 500 + Agenda | R$ 5.394,00 | 6 x R$ 899 |
-| `jade_500_hospedagem_semestral` | Jade 500 + Hospedagem | R$ 5.394,00 | 6 x R$ 899 |
+| `jade_500_hospedagem_semestral` | Jade 500 + Hospedagem | R$ 6.594,00 | 6 x R$ 1.099 |
 
 Todos configurados para até 500 contatos únicos por mês. A UI carrega preço/parcelamento live; a promessa `sem juros` só deve ser feita após verificar as configurações da conta recebedora no Mercado Pago e os custos assumidos. **Não** usar preço de documentação antiga (Agenda R$ 2.388).
 
