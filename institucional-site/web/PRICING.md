@@ -19,8 +19,8 @@ A Virtuagil comercializa três planos semestrais.
 - Código interno: `jade_500_agenda_semestral`
 
 ### Plano 500 + Hospedagem
-- **R$ 5.394** por 6 meses
-- até **6x de R$ 899 sem juros**
+- **R$ 6.594** por 6 meses
+- até **6x de R$ 1.099**, condições no checkout
 - até **500 contatos únicos por mês**
 - tudo do Plano 500 + módulo especializado para pousadas e hospedagens, com disponibilidade por período, acomodações, tarifas e apoio ao atendimento de reservas
 - Código interno: `jade_500_hospedagem_semestral`
