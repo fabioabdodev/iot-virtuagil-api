@@ -160,7 +160,7 @@ export default async function TermosDeContratacaoPage() {
             </p>
 
             <p className="mt-3 text-xs text-slate-500">
-              Contratações anteriores: <Link href="/termos-de-contratacao/v2" className="underline underline-offset-2 hover:text-slate-300">
+              Contratações anteriores: <Link href="/termos-de-contratacao/v3" className="underline underline-offset-2 hover:text-slate-300">versão 2026-10-29-v3</Link> · <Link href="/termos-de-contratacao/v2" className="underline underline-offset-2 hover:text-slate-300">
                 consultar versão 2026-09-30-v2
               </Link>.
             </p>
