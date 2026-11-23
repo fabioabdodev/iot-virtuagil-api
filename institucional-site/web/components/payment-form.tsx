@@ -403,7 +403,6 @@ export function PaymentForm({
                 'Algumas funcionalidades, como o envio de mensagens automáticas de acompanhamento (follow-ups), também podem envolver pequenas tarifas cobradas diretamente pela Meta (WhatsApp), de acordo com a utilização.',
                 'Esses valores normalmente são baixos e variam conforme o volume de mensagens enviadas. Não representam uma mensalidade adicional fixa da Virtuagil.',
               ],
-              initiallyOpen: true,
             },
             {
               title: 'Transparência em todas as etapas',
@@ -419,8 +418,8 @@ export function PaymentForm({
                 'As condições de renovação e cancelamento estão disponíveis nos Termos de Contratação.',
               ],
             },
-          ].map(({ title, paragraphs, initiallyOpen }) => (
-            <details key={title} open={initiallyOpen} className="group">
+          ].map(({ title, paragraphs }) => (
+            <details key={title} className="group">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-lg py-3 text-sm font-semibold leading-snug text-slate-100 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-300 [&::-webkit-details-marker]:hidden">
                 <span>{title}</span>
                 <ChevronDown
