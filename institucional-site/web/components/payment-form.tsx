@@ -391,34 +391,46 @@ export function PaymentForm({
         >
           Informações importantes sobre seu plano
         </h2>
+        <p className="mt-2 max-w-prose text-sm leading-relaxed text-slate-300">
+          Na Virtuagil, queremos que você tenha clareza e tranquilidade ao contratar nossos serviços.
+        </p>
         <div className="mt-3 divide-y divide-white/10">
           {[
             {
-              question: 'Quais custos podem ficar fora do plano?',
-              answer:
-                'Dependendo da conexão escolhida, chip ou eSIM, linha, aparelho compatível, internet, instalação e configuração do WhatsApp ou WhatsApp Business e tarifas de terceiros podem ficar fora do plano. A necessidade e o custo de cada item são confirmados na implantação. Você é responsável pelos serviços e itens que contratar em seu nome.',
+              title: 'Custos externos simples e acessíveis',
+              paragraphs: [
+                'Dependendo da solução contratada, pode ser necessário manter uma linha telefônica comum para utilização do WhatsApp, com um custo semelhante ao de qualquer plano de telefonia convencional.',
+                'Algumas funcionalidades, como o envio de mensagens automáticas de acompanhamento (follow-ups), também podem envolver pequenas tarifas cobradas diretamente pela Meta (WhatsApp), de acordo com a utilização.',
+                'Esses valores normalmente são baixos e variam conforme o volume de mensagens enviadas. Não representam uma mensalidade adicional fixa da Virtuagil.',
+              ],
               initiallyOpen: true,
             },
             {
-              question: 'Como funciona a ativação e quais resultados posso esperar?',
-              answer:
-                'Após o pagamento, a Virtuagil orienta a coleta de dados e acessos. A assistente é ativada depois da configuração, dos testes e da homologação. A contratação não garante aumento de clientes, vendas, faturamento ou lucro.',
+              title: 'Transparência em todas as etapas',
+              paragraphs: [
+                'Antes da ativação, você receberá as orientações necessárias sobre o funcionamento do serviço e eventuais custos de terceiros.',
+                'Nossa proposta é oferecer uma solução prática, acessível e transparente, para que você saiba exatamente o que está contratando.',
+              ],
             },
             {
-              question: 'Posso desistir ou cancelar a contratação?',
-              answer:
-                'Consulte as condições nos Termos de Contratação abaixo. Seus direitos legais são preservados, inclusive o direito de arrependimento, quando aplicável.',
+              title: 'Ativação, resultados e cancelamento',
+              paragraphs: [
+                'A ativação dos serviços segue as condições do plano contratado. Os resultados podem variar conforme o uso da ferramenta e as características de cada negócio.',
+                'As condições de renovação e cancelamento estão disponíveis nos Termos de Contratação.',
+              ],
             },
-          ].map(({ question, answer, initiallyOpen }) => (
-            <details key={question} open={initiallyOpen} className="group">
+          ].map(({ title, paragraphs, initiallyOpen }) => (
+            <details key={title} open={initiallyOpen} className="group">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-lg py-3 text-sm font-semibold leading-snug text-slate-100 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-300 [&::-webkit-details-marker]:hidden">
-                <span>{question}</span>
+                <span>{title}</span>
                 <ChevronDown
                   aria-hidden="true"
                   className="h-4 w-4 shrink-0 text-slate-400 group-open:rotate-180"
                 />
               </summary>
-              <p className="max-w-prose pb-4 text-sm leading-relaxed text-slate-300">{answer}</p>
+              <div className="max-w-prose space-y-2 pb-4 text-sm leading-relaxed text-slate-300">
+                {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </div>
             </details>
           ))}
         </div>
