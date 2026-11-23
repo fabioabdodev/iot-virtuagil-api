@@ -275,24 +275,6 @@ export function PaymentForm({
               <CreditCard className="h-4 w-4 text-emerald-300" />
               Total do primeiro semestre: {formatBrl(displayPrice)}
             </div>
-            <Button type="submit" size="lg" disabled={loading || !acceptedTerms} className="mt-5 w-full">
-              {loading ? (
-                <>
-                  <LoaderCircle className="h-4 w-4 animate-spin" />
-                  Gerando checkout seguro...
-                </>
-              ) : (
-                <>
-                  <LockKeyhole className="h-4 w-4" />
-                  {returnToWhatsapp ? 'Aceitar contrato e voltar à Jade' : `Contratar ${plan.name}`}
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </Button>
-            <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-slate-500">
-              <ShieldCheck className="h-4 w-4 text-emerald-300" />
-              Pagamento seguro via Mercado Pago
-            </div>
           </div>
         </div>
       </div>
@@ -398,6 +380,44 @@ export function PaymentForm({
         </div>
       </div>
 
+      <section
+        aria-labelledby="condicoes-contratacao"
+        className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6"
+      >
+        <h2
+          id="condicoes-contratacao"
+          className="font-display text-lg font-semibold leading-snug text-white sm:text-xl"
+        >
+          Informações importantes sobre seu plano
+        </h2>
+        <dl className="mt-3 divide-y divide-white/10 text-sm leading-relaxed text-slate-300">
+          <div className="grid gap-1 py-3 first:pt-0 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
+            <dt className="font-semibold text-slate-100">Implantação assistida</dt>
+            <dd>
+              Após o pagamento, a Virtuagil orienta a coleta de dados e acessos. A assistente é
+              ativada depois da configuração, dos testes e da homologação. A contratação não
+              garante aumento de clientes, vendas, faturamento ou lucro.
+            </dd>
+          </div>
+          <div className="grid gap-1 py-3 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
+            <dt className="font-semibold text-slate-100">Custos da integração</dt>
+            <dd>
+              Dependendo da conexão escolhida, chip ou eSIM, linha, aparelho compatível, internet,
+              instalação e configuração do WhatsApp ou WhatsApp Business e tarifas de terceiros
+              podem ficar fora do plano. A necessidade e o custo de cada item são confirmados na
+              implantação. Você é responsável pelos serviços e itens que contratar em seu nome.
+            </dd>
+          </div>
+          <div className="grid gap-1 py-3 last:pb-0 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
+            <dt className="font-semibold text-slate-100">Desistência e cancelamento</dt>
+            <dd>
+              Consulte as condições nos Termos de Contratação abaixo. Seus direitos legais são
+              preservados, inclusive o direito de arrependimento, quando aplicável.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
       <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.045] p-4">
         <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 text-slate-200">
           <input
@@ -460,6 +480,21 @@ export function PaymentForm({
           {error}
         </div>
       ) : null}
+
+      <Button type="submit" size="lg" disabled={loading || !acceptedTerms} className="w-full sm:w-fit">
+        {loading ? (
+          <>
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+            Gerando checkout seguro...
+          </>
+        ) : (
+          <>
+            <LockKeyhole className="h-4 w-4" />
+            {returnToWhatsapp ? 'Aceitar contrato e voltar à Jade' : 'Continuar para o Mercado Pago'}
+            <ArrowRight className="h-4 w-4" />
+          </>
+        )}
+      </Button>
 
       <div className="flex items-start gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 text-xs leading-6 text-slate-400">
         <ShieldCheck className="mt-0.5 h-4 w-4 flex-none text-emerald-300" />
