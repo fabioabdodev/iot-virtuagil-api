@@ -6,6 +6,7 @@ import {
   ArrowRight,
   CalendarDays,
   CheckCircle2,
+  ChevronDown,
   CreditCard,
   LoaderCircle,
   LockKeyhole,
@@ -390,32 +391,37 @@ export function PaymentForm({
         >
           Informações importantes sobre seu plano
         </h2>
-        <dl className="mt-3 divide-y divide-white/10 text-sm leading-relaxed text-slate-300">
-          <div className="grid gap-1 py-3 first:pt-0 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
-            <dt className="font-semibold text-slate-100">Implantação assistida</dt>
-            <dd>
-              Após o pagamento, a Virtuagil orienta a coleta de dados e acessos. A assistente é
-              ativada depois da configuração, dos testes e da homologação. A contratação não
-              garante aumento de clientes, vendas, faturamento ou lucro.
-            </dd>
-          </div>
-          <div className="grid gap-1 py-3 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
-            <dt className="font-semibold text-slate-100">Custos da integração</dt>
-            <dd>
-              Dependendo da conexão escolhida, chip ou eSIM, linha, aparelho compatível, internet,
-              instalação e configuração do WhatsApp ou WhatsApp Business e tarifas de terceiros
-              podem ficar fora do plano. A necessidade e o custo de cada item são confirmados na
-              implantação. Você é responsável pelos serviços e itens que contratar em seu nome.
-            </dd>
-          </div>
-          <div className="grid gap-1 py-3 last:pb-0 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
-            <dt className="font-semibold text-slate-100">Desistência e cancelamento</dt>
-            <dd>
-              Consulte as condições nos Termos de Contratação abaixo. Seus direitos legais são
-              preservados, inclusive o direito de arrependimento, quando aplicável.
-            </dd>
-          </div>
-        </dl>
+        <div className="mt-3 divide-y divide-white/10">
+          {[
+            {
+              question: 'Quais custos podem ficar fora do plano?',
+              answer:
+                'Dependendo da conexão escolhida, chip ou eSIM, linha, aparelho compatível, internet, instalação e configuração do WhatsApp ou WhatsApp Business e tarifas de terceiros podem ficar fora do plano. A necessidade e o custo de cada item são confirmados na implantação. Você é responsável pelos serviços e itens que contratar em seu nome.',
+              initiallyOpen: true,
+            },
+            {
+              question: 'Como funciona a ativação e quais resultados posso esperar?',
+              answer:
+                'Após o pagamento, a Virtuagil orienta a coleta de dados e acessos. A assistente é ativada depois da configuração, dos testes e da homologação. A contratação não garante aumento de clientes, vendas, faturamento ou lucro.',
+            },
+            {
+              question: 'Posso desistir ou cancelar a contratação?',
+              answer:
+                'Consulte as condições nos Termos de Contratação abaixo. Seus direitos legais são preservados, inclusive o direito de arrependimento, quando aplicável.',
+            },
+          ].map(({ question, answer, initiallyOpen }) => (
+            <details key={question} open={initiallyOpen} className="group">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-lg py-3 text-sm font-semibold leading-snug text-slate-100 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-300 [&::-webkit-details-marker]:hidden">
+                <span>{question}</span>
+                <ChevronDown
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0 text-slate-400 group-open:rotate-180"
+                />
+              </summary>
+              <p className="max-w-prose pb-4 text-sm leading-relaxed text-slate-300">{answer}</p>
+            </details>
+          ))}
+        </div>
       </section>
 
       <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.045] p-4">
