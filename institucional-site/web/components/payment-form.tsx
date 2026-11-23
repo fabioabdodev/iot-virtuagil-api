@@ -380,22 +380,42 @@ export function PaymentForm({
         </div>
       </div>
 
-      <section aria-labelledby="condicoes-contratacao" className="rounded-2xl border border-white/10 bg-white/[0.025] p-4 text-sm leading-6 text-slate-300 sm:p-5">
-        <h2 id="condicoes-contratacao" className="font-semibold text-white">Antes de concluir a contratação</h2>
-        <ul className="mt-3 grid gap-3">
-          <li>
-            <strong className="text-slate-200">Implantação assistida.</strong>{' '}
-            Após o pagamento, a Virtuagil orienta a coleta de dados e acessos. A assistente é ativada depois da configuração, dos testes e da homologação. A contratação não garante aumento de clientes, vendas, faturamento ou lucro.
-          </li>
-          <li>
-            <strong className="text-slate-200">Custos da integração.</strong>{' '}
-            Dependendo da conexão escolhida, chip ou eSIM, linha, aparelho compatível, internet, instalação e configuração do WhatsApp ou WhatsApp Business e tarifas de terceiros podem ficar fora do plano. A necessidade e o custo de cada item são confirmados na implantação. Você é responsável pelos serviços e itens que contratar em seu nome.
-          </li>
-          <li>
-            <strong className="text-slate-200">Desistência e cancelamento.</strong>{' '}
-            Consulte as condições nos Termos de Contratação abaixo. Seus direitos legais são preservados, inclusive o direito de arrependimento, quando aplicável.
-          </li>
-        </ul>
+      <section
+        aria-labelledby="condicoes-contratacao"
+        className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6"
+      >
+        <h2
+          id="condicoes-contratacao"
+          className="font-display text-lg font-semibold leading-snug text-white sm:text-xl"
+        >
+          Informações importantes sobre seu plano
+        </h2>
+        <dl className="mt-3 divide-y divide-white/10 text-sm leading-relaxed text-slate-300">
+          <div className="grid gap-1 py-3 first:pt-0 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
+            <dt className="font-semibold text-slate-100">Implantação assistida</dt>
+            <dd>
+              Após o pagamento, a Virtuagil orienta a coleta de dados e acessos. A assistente é
+              ativada depois da configuração, dos testes e da homologação. A contratação não
+              garante aumento de clientes, vendas, faturamento ou lucro.
+            </dd>
+          </div>
+          <div className="grid gap-1 py-3 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
+            <dt className="font-semibold text-slate-100">Custos da integração</dt>
+            <dd>
+              Dependendo da conexão escolhida, chip ou eSIM, linha, aparelho compatível, internet,
+              instalação e configuração do WhatsApp ou WhatsApp Business e tarifas de terceiros
+              podem ficar fora do plano. A necessidade e o custo de cada item são confirmados na
+              implantação. Você é responsável pelos serviços e itens que contratar em seu nome.
+            </dd>
+          </div>
+          <div className="grid gap-1 py-3 last:pb-0 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-4">
+            <dt className="font-semibold text-slate-100">Desistência e cancelamento</dt>
+            <dd>
+              Consulte as condições nos Termos de Contratação abaixo. Seus direitos legais são
+              preservados, inclusive o direito de arrependimento, quando aplicável.
+            </dd>
+          </div>
+        </dl>
       </section>
 
       <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/[0.045] p-4">
