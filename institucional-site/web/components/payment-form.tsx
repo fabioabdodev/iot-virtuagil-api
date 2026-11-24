@@ -405,6 +405,13 @@ export function PaymentForm({
               ],
             },
             {
+              title: 'Como meu WhatsApp será conectado?',
+              paragraphs: [
+                'A integração oficial da Meta usa a API do WhatsApp Business e está sujeita à disponibilidade. A conexão por QR Code via Evolution vincula seu WhatsApp e pode precisar de reconexão.',
+                'A Virtuagil ajuda você a confirmar, antes do pagamento, qual opção funciona para o seu número, como será feita a conexão e quais custos podem surgir.',
+              ],
+            },
+            {
               title: 'Transparência em todas as etapas',
               paragraphs: [
                 'Antes da ativação, você receberá as orientações necessárias sobre o funcionamento do serviço e eventuais custos de terceiros.',
